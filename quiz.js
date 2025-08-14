@@ -24,7 +24,8 @@
     const state = {
       currentAnswer: null,
       questionsAnswered: 0,
-      correctAnswers: 0
+      correctAnswers: 0,
+      autoAdvanceTimerId: null
     };
 
     function updateStats() {
@@ -35,6 +36,10 @@
     }
 
     function pickQuestion() {
+      if (state.autoAdvanceTimerId != null) {
+        clearTimeout(state.autoAdvanceTimerId);
+        state.autoAdvanceTimerId = null;
+      }
       feedbackEl.textContent = '';
       nextBtn.style.display = 'none';
       optionsEl.innerHTML = '';
@@ -95,6 +100,14 @@
             state.correctAnswers++;
             feedbackEl.textContent = '✅ Correct!';
             nextBtn.style.display = 'inline-block';
+
+            if (state.autoAdvanceTimerId != null) {
+              clearTimeout(state.autoAdvanceTimerId);
+            }
+            state.autoAdvanceTimerId = setTimeout(() => {
+              state.autoAdvanceTimerId = null;
+              pickQuestion();
+            }, 2000);
           } else {
             feedbackEl.textContent = '❌ Try again!';
           }
