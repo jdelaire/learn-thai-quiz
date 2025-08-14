@@ -107,7 +107,7 @@
             state.autoAdvanceTimerId = setTimeout(() => {
               state.autoAdvanceTimerId = null;
               pickQuestion();
-            }, 2000);
+            }, 1500);
           } else {
             feedbackEl.textContent = '❌ Try again!';
           }
