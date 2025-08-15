@@ -378,6 +378,54 @@ body.vowel-quiz #symbol {
 }
 body.vowel-quiz .options { max-width: 300px; }
 
+/* Questions quiz */
+body.questions-quiz h1 { margin-bottom: 0.2em; }
+body.questions-quiz #symbol {
+  font-size: 4.2em;
+  margin: 0.6em 0 0.6em 0;
+  font-weight: 800;
+  color: white;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+  line-height: 1.2;
+}
+body.questions-quiz .options { max-width: 620px; }
+body.questions-quiz #symbol .secondary {
+  display: block;
+  font-size: 0.38em;
+  opacity: 0.95;
+  margin-top: 0.15em;
+  font-weight: 600;
+}
+body.questions-quiz .example {
+  margin-top: 0.5em;
+  font-size: 0.78em;
+  font-weight: 600;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  display: inline-block;
+  padding: 0.5em 0.7em;
+  border-radius: 10px;
+}
+body.questions-quiz .example .label {
+  display: inline-block;
+  opacity: 0.95;
+  font-size: 0.9em;
+  padding: 0.1em 0.45em;
+  margin-right: 0.45em;
+  border-radius: 6px;
+  background: rgba(46, 204, 113, 0.9);
+  color: white;
+}
+body.questions-quiz .example .text {
+  display: block;
+  margin-top: 0.35em;
+  font-weight: 600;
+}
+body.questions-quiz .correct-line {
+  display: block;
+  margin-bottom: 0.35em;
+}
+
 /* Filters */
 .filters {
   display: flex;

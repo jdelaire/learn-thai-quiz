@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thai Questions Quiz</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="questions-quiz">
+  <h1>Thai Questions Quiz</h1>
+  <div class="subtitle">Choose the correct phonetic for the Thai question word or pattern</div>
+  <div id="symbol" role="text" aria-label="Thai question phrase">?</div>
+  <div class="options" id="options" role="group" aria-label="Answer options"></div>
+  <div id="feedback" role="status" aria-live="polite"></div>
+  <button id="nextBtn" aria-label="Next question">Next</button>
+  <div class="stats" id="stats"></div>
+  <div class="footer">
+    <a href="index.html" class="back-btn">← Back to Home</a>
+    <div class="pro-tip">
+      <small>
+        • Most yes/no questions end in “mái?”<br>
+        • Add “khráp/khà” for politeness at the end<br>
+        • Use “bâaŋ” after question words for “what kinds / which ones”<br>
+        → khun chɔ̂ɔp sǐi à-rai bâaŋ? (Which colors do you like?)
+      </small>
+    </div>
+  </div>
+
+  <script src="quiz.js"></script>
+  <script>
+    const data = JSON.parse(`[
+      {"english":"what","thai":"อะไร","phonetic":"à-rai"},
+      {"english":"who","thai":"ใคร","phonetic":"khrai"},
+      {"english":"where","thai":"ที่ไหน","phonetic":"thîi-nǎi"},
+      {"english":"when","thai":"เมื่อไหร่","phonetic":"mûea-rài"},
+      {"english":"why","thai":"ทำไม","phonetic":"tham-mai"},
+      {"english":"have … yet","thai":"… หรือยัง","phonetic":"rw-yan"},
+      {"english":"how","thai":"ยังไง","phonetic":"yaŋ-ŋai"},
+      {"english":"how much","thai":"เท่าไหร่","phonetic":"thâo-rài"},
+      {"english":"how many","thai":"กี่","phonetic":"gìi"},
+      {"english":"which","thai":"ไหน","phonetic":"nǎi"},
+      {"english":"is it … ?","thai":"… ไหม","phonetic":"… mái?"},
+      {"english":"can … ?","thai":"… ได้ไหม","phonetic":"… dâay mái?"},
+      {"english":"have you ever … ?","thai":"เคย … ไหม","phonetic":"khəəy … mái?"}
+    ]`);
+
+    const examples = {
+      'what': 'What is this? → an níi khʉʉ à-rai?',
+      'who': 'Who is that? → khrai khʉʉ an nán?',
+      'where': 'Where are you going? → khun jà bpai thîi-nǎi?',
+      'when': 'When do you work? → khun tham ŋaan mûea-rài?',
+      'why': 'Why do you like Thai food? → tham-mai khun chɔ̂ɔp aa-hǎan thai?',
+      'how': 'How is the food? → aa-hǎan bpen yaŋ-ŋai?',
+      'how much': 'How much is it? → an níi thâo-rài?',
+      'how many': 'How many plates? → mii gìi jaan?',
+      'which': 'Which one do you want? → khun ao an nǎi?',
+      'is it … ?': 'Is it spicy? → phèt mái?',
+      'can … ?': 'Can you speak Thai? → khun phûut phaa-sǎa thai dâay mái?',
+      'have you ever … ?': 'Have you ever tried Pad Thai? → khun khəəy gin phàt-thai mái?'
+    };
+
+    ThaiQuiz.setupQuiz({
+      elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
+      pickRound: () => {
+        const answer = data[Math.floor(Math.random() * data.length)];
+        const choices = [answer];
+        while (choices.length < 4) {
+          const rand = data[Math.floor(Math.random() * data.length)];
+          if (!choices.find(c => c.phonetic === rand.phonetic)) choices.push(rand);
+        }
+        const symbolAriaLabel = `Thai and English: ${answer.thai} — ${answer.english}`;
+        return { answer, choices, symbolAriaLabel };
+      },
+      renderSymbol: (answer, els) => {
+        const thai = answer.thai || '';
+        const english = answer.english || '';
+        els.symbolEl.innerHTML = `${thai}${english ? `<span class=\"secondary\">${english}</span>` : ''}`;
+        els.symbolEl.setAttribute('aria-label', `Thai and English: ${thai}${english ? ' — ' + english : ''}`);
+      },
+      renderButtonContent: (choice) => choice.phonetic,
+      ariaLabelForChoice: (choice) => `Answer: ${choice.phonetic}`,
+      isCorrect: (choice, answer) => choice.phonetic === answer.phonetic,
+      onAnswered: ({ correct, answer, state }) => {
+        if (!correct) return;
+        try {
+          const fb = document.getElementById('feedback');
+          const ex = examples[answer.english];
+          fb.innerHTML = ex ? `<div class=\"correct-line\">✅ Correct!</div><div class=\"example\" aria-label=\"Example sentence\"><span class=\"label\">Example</span><div class=\"text\">${ex}</div></div>` : '<div class=\"correct-line\">✅ Correct!</div>';
+          if (state && state.autoAdvanceTimerId != null) {
+            clearTimeout(state.autoAdvanceTimerId);
+          }
+          state.autoAdvanceTimerId = setTimeout(() => {
+            const next = document.getElementById('nextBtn');
+            if (next && next.style.display !== 'none') next.click();
+          }, 3000);
+        } catch (e) {}
+      }
+    });
+  </script>
+</body>
+</html>

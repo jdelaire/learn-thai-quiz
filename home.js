@@ -74,6 +74,14 @@
         description: 'Telling time in Thai: keywords, formats, and common phrases.',
         bullets: ['Key words (นาที, โมง, ทุ่ม, ครึ่ง, ตรง)','AM/PM patterns (ตี…, …โมงเช้า, …ทุ่ม)','Practical sentences'],
         categories: ['Phrases']
+      },
+      {
+        id: 'questions',
+        title: '❓ Questions Quiz',
+        href: 'questions-quiz.html',
+        description: 'Asking questions in Thai: core words and common patterns.',
+        bullets: ['Question words (อะไร, ใคร, ที่ไหน, เมื่อไหร่, ทำไม)','Patterns (…ไหม, …ได้ไหม, เคย…ไหม)','How much/how many'],
+        categories: ['Phrases','Beginner']
       }
     ];
 
