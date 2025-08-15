@@ -396,6 +396,26 @@ body.questions-quiz #symbol .secondary {
   margin-top: 0.15em;
   font-weight: 600;
 }
+body.questions-quiz .example {
+  margin-top: 0.5em;
+  font-size: 0.78em;
+  font-weight: 600;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  display: inline-block;
+  padding: 0.5em 0.7em;
+  border-radius: 10px;
+}
+body.questions-quiz .example .label {
+  display: inline-block;
+  opacity: 0.95;
+  font-size: 0.9em;
+  padding: 0.1em 0.45em;
+  margin-right: 0.45em;
+  border-radius: 6px;
+  background: rgba(46, 204, 113, 0.9);
+  color: white;
+}
 
 /* Filters */
 .filters {
