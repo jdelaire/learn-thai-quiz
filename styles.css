@@ -421,6 +421,10 @@ body.questions-quiz .example .text {
   margin-top: 0.35em;
   font-weight: 600;
 }
+body.questions-quiz .correct-line {
+  display: block;
+  margin-bottom: 0.35em;
+}
 
 /* Filters */
 .filters {

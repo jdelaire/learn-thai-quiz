@@ -85,7 +85,7 @@
         try {
           const fb = document.getElementById('feedback');
           const ex = examples[answer.english];
-          fb.innerHTML = ex ? `✅ Correct!<div class=\"example\" aria-label=\"Example sentence\"><span class=\"label\">Example</span><div class=\"text\">${ex}</div></div>` : '✅ Correct!';
+          fb.innerHTML = ex ? `<div class=\"correct-line\">✅ Correct!</div><div class=\"example\" aria-label=\"Example sentence\"><span class=\"label\">Example</span><div class=\"text\">${ex}</div></div>` : '<div class=\"correct-line\">✅ Correct!</div>';
           if (state && state.autoAdvanceTimerId != null) {
             clearTimeout(state.autoAdvanceTimerId);
           }
