@@ -353,6 +353,13 @@ body.time-quiz #symbol {
   line-height: 1.2;
 }
 body.time-quiz .options { max-width: 620px; }
+body.time-quiz #symbol .secondary {
+  display: block;
+  font-size: 0.38em;
+  opacity: 0.95;
+  margin-top: 0.15em;
+  font-weight: 600;
+}
 
 /* Vowel quiz */
 body.vowel-quiz #symbol {
