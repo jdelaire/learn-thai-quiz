@@ -3,27 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Learn Thai consonants and vowels through interactive quizzes. Practice all 44 Thai consonants and 32 vowels with pronunciation and meanings.">
-  <meta name="keywords" content="Thai, consonants, vowels, alphabet, quiz, learning, language">
-  <meta name="author" content="Thai Language Quiz">
-  <title>Thai Quiz</title>
+  <meta name="description" content="Interactive Thai language quizzes to practice the alphabet, numbers, colors, time, and everyday phrases with phonetics." />
+  <meta name="keywords" content="Thai, language, quiz, learning, alphabet, consonants, vowels, numbers, colors, time, phrases, vocabulary" />
+  <meta name="author" content="Thai Language Quiz" />
+  <title>Thai Language Quiz</title>
   <link rel="stylesheet" href="styles.css">
+  <meta property="og:title" content="Thai Language Quiz" />
+  <meta property="og:description" content="Master Thai through interactive quizzes: alphabet, numbers, colors, time, and more." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
 </head>
 <body class="home">
-  <h1>🇹🇭 Thai Language Quiz</h1>
-  <p class="subtitle">Master Thai through interactive learning</p>
-  
-  <div class="today-card" aria-live="polite">
-    <div class="today-heading">Today</div>
-    <div class="today-thai" id="weekday-thai">...</div>
-    <div class="today-phonetic" id="weekday-phonetic">...</div>
+  <header class="hero" role="banner">
+    <h1>🇹🇭 Thai Language Quiz</h1>
+    <p class="subtitle">Master Thai through interactive learning</p>
 
-    <div class="today-section">
-      <div class="today-heading">Month</div>
-      <div class="today-thai" id="month-thai">...</div>
-      <div class="today-phonetic" id="month-phonetic">...</div>
+    <div class="today-card" aria-live="polite">
+      <div class="today-heading">Today</div>
+      <div class="today-thai" id="weekday-thai">...</div>
+      <div class="today-phonetic" id="weekday-phonetic">...</div>
+
+      <div class="today-section">
+        <div class="today-heading">Month</div>
+        <div class="today-thai" id="month-thai">...</div>
+        <div class="today-phonetic" id="month-phonetic">...</div>
+      </div>
     </div>
-  </div>
+  </header>
   
   <div id="filters" class="filters" aria-label="Quiz filters">
     <input id="search-input" type="search" placeholder="Search quizzes (e.g., vowels, time, colors)" autocomplete="off" />

@@ -164,7 +164,7 @@
         const a = document.createElement('a');
         a.href = q.href;
         a.className = 'start-btn';
-        a.textContent = 'Start ' + q.title.replace(/^[^ ]+\s*/, '');
+        a.textContent = 'Start';
 
         card.appendChild(h2);
         card.appendChild(p);
