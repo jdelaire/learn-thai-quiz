@@ -416,6 +416,11 @@ body.questions-quiz .example .label {
   background: rgba(46, 204, 113, 0.9);
   color: white;
 }
+body.questions-quiz .example .text {
+  display: block;
+  margin-top: 0.35em;
+  font-weight: 600;
+}
 
 /* Filters */
 .filters {
