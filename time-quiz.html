@@ -75,15 +75,14 @@
           const rand = pool[Math.floor(Math.random() * pool.length)];
           if (!choices.find(c => c.phonetic === rand.phonetic)) choices.push(rand);
         }
-        const symbolAriaLabel = `Thai, English and phonetic: ${answer.thai} — ${englishOf(answer)} — ${answer.phonetic}`;
+        const symbolAriaLabel = `Thai and English: ${answer.thai} — ${englishOf(answer)}`;
         return { answer, choices, symbolAriaLabel };
       },
       renderSymbol: (answer, els) => {
         const english = englishOf(answer);
         const thai = answer.thai || '';
-        const phon = answer.phonetic || '';
-        els.symbolEl.innerHTML = `${thai}${english ? `<span class=\"secondary\">${english}</span>` : ''}${phon ? `<span class=\"tertiary\">${phon}</span>` : ''}`;
-        els.symbolEl.setAttribute('aria-label', `Thai, English and phonetic: ${thai}${english ? ' — ' + english : ''}${phon ? ' — ' + phon : ''}`);
+        els.symbolEl.innerHTML = `${thai}${english ? `<span class=\"secondary\">${english}</span>` : ''}`;
+        els.symbolEl.setAttribute('aria-label', `Thai and English: ${thai}${english ? ' — ' + english : ''}`);
       },
       renderButtonContent: (choice) => choice.phonetic,
       ariaLabelForChoice: (choice) => `Answer: ${choice.phonetic}`,
