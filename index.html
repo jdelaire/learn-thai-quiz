@@ -25,70 +25,12 @@
     </div>
   </div>
   
-  <div class="quiz-container">
-    <div class="quiz-card" onclick="window.location.href='consonant-quiz.html'">
-      <h2>🔤 Consonant Quiz</h2>
-      <p>Learn all 44 Thai consonants with pronunciation, meanings, and tone classes.</p>
-      <div class="features">
-        <ul>
-          <li>✅ Color-coded tone classes</li>
-          <li>✅ Emoji associations</li>
-          <li>✅ Progress tracking</li>
-        </ul>
-      </div>
-      <a href="consonant-quiz.html" class="start-btn">Start Consonant Quiz</a>
-    </div>
-    
-    <div class="quiz-card" onclick="window.location.href='vowel-quiz.html'">
-      <h2>🔤 Vowel Quiz</h2>
-      <p>Practice 32 Thai vowels with sound patterns and example words.</p>
-      <div class="features">
-        <ul>
-          <li>✅ Vowel symbols</li>
-          <li>✅ Sound patterns</li>
-        </ul>
-      </div>
-      <a href="vowel-quiz.html" class="start-btn">Start Vowel Quiz</a>
-    </div>
+  <div id="filters" class="filters" aria-label="Quiz filters">
+    <input id="search-input" type="search" placeholder="Search quizzes (e.g., vowels, time, colors)" autocomplete="off" />
+    <div id="category-filters" class="chip-group" role="group" aria-label="Categories"></div>
+  </div>
 
-    <div class="quiz-card" onclick="window.location.href='color-quiz.html'">
-      <h2>🎨 Color Quiz</h2>
-      <p>Practice Thai colors including light/dark modifiers with phonetics.</p>
-      <div class="features">
-        <ul>
-          <li>✅ Base colors</li>
-          <li>✅ Light/Dark modifiers</li>
-        </ul>
-      </div>
-      <a href="color-quiz.html" class="start-btn">Start Color Quiz</a>
-    </div>
-    
-    <div class="quiz-card" onclick="window.location.href='numbers-quiz.html'">
-      <h2>🔢 Numbers Quiz</h2>
-      <p>Practice Thai numbers with phonetics, from 0 to the millions.</p>
-      <div class="features">
-        <ul>
-          <li>✅ Basic 0–10</li>
-          <li>✅ Teens and Tens</li>
-          <li>✅ Hundreds & Thousands</li>
-        </ul>
-      </div>
-      <a href="numbers-quiz.html" class="start-btn">Start Numbers Quiz</a>
-    </div>
-
-    <div class="quiz-card" onclick="window.location.href='time-quiz.html'">
-      <h2>⏰ Time Quiz</h2>
-      <p>Telling time in Thai: keywords, formats, and common phrases.</p>
-      <div class="features">
-        <ul>
-          <li>✅ Key words (นาที, โมง, ทุ่ม, ครึ่ง, ตรง)</li>
-          <li>✅ AM/PM patterns (ตี…, …โมงเช้า, …ทุ่ม)</li>
-          <li>✅ Practical sentences</li>
-        </ul>
-      </div>
-      <a href="time-quiz.html" class="start-btn">Start Time Quiz</a>
-    </div>
-   </div>
+  <div class="quiz-container" id="quiz-list" aria-live="polite"></div>
    <script src="quiz.js"></script>
    <script src="home.js"></script>
   </body>

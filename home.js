@@ -26,4 +26,170 @@
       monthPhonEl.textContent = phoneticMonths[month];
     }
   } catch (e) {}
+
+  try {
+    const quizListEl = document.getElementById('quiz-list');
+    if (!quizListEl) return;
+
+    /**
+     * Central registry of quizzes so the homepage scales as more are added.
+     */
+    const quizzes = [
+      {
+        id: 'consonants',
+        title: '🔤 Consonant Quiz',
+        href: 'consonant-quiz.html',
+        description: 'Learn all 44 Thai consonants with pronunciation, meanings, and tone classes.',
+        bullets: ['Color-coded tone classes','Emoji associations','Progress tracking'],
+        categories: ['Alphabet','Beginner']
+      },
+      {
+        id: 'vowels',
+        title: '🔤 Vowel Quiz',
+        href: 'vowel-quiz.html',
+        description: 'Practice 32 Thai vowels with sound patterns and example words.',
+        bullets: ['Vowel symbols','Sound patterns'],
+        categories: ['Alphabet','Beginner']
+      },
+      {
+        id: 'colors',
+        title: '🎨 Color Quiz',
+        href: 'color-quiz.html',
+        description: 'Practice Thai colors including light/dark modifiers with phonetics.',
+        bullets: ['Base colors','Light/Dark modifiers'],
+        categories: ['Vocabulary']
+      },
+      {
+        id: 'numbers',
+        title: '🔢 Numbers Quiz',
+        href: 'numbers-quiz.html',
+        description: 'Practice Thai numbers with phonetics, from 0 to the millions.',
+        bullets: ['Basic 0–10','Teens and Tens','Hundreds & Thousands'],
+        categories: ['Vocabulary','Beginner']
+      },
+      {
+        id: 'time',
+        title: '⏰ Time Quiz',
+        href: 'time-quiz.html',
+        description: 'Telling time in Thai: keywords, formats, and common phrases.',
+        bullets: ['Key words (นาที, โมง, ทุ่ม, ครึ่ง, ตรง)','AM/PM patterns (ตี…, …โมงเช้า, …ทุ่ม)','Practical sentences'],
+        categories: ['Phrases']
+      }
+    ];
+
+    // Build category set from quizzes
+    const categorySet = new Set();
+    quizzes.forEach(q => q.categories.forEach(c => categorySet.add(c)));
+    const categories = Array.from(categorySet).sort();
+
+    const searchInput = document.getElementById('search-input');
+    const categoryFilters = document.getElementById('category-filters');
+
+    function renderCategoryChips() {
+      if (!categoryFilters) return;
+      categoryFilters.innerHTML = '';
+
+      const allChip = document.createElement('button');
+      allChip.type = 'button';
+      allChip.className = 'chip active';
+      allChip.textContent = 'All';
+      allChip.dataset.value = '';
+      categoryFilters.appendChild(allChip);
+
+      categories.forEach(cat => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip';
+        chip.textContent = cat;
+        chip.dataset.value = cat;
+        categoryFilters.appendChild(chip);
+      });
+    }
+
+    function filterQuizzes() {
+      const term = (searchInput && searchInput.value || '').toLowerCase().trim();
+      const activeChip = categoryFilters ? categoryFilters.querySelector('.chip.active') : null;
+      const activeCategory = activeChip ? (activeChip.dataset.value || '') : '';
+
+      return quizzes.filter(q => {
+        const matchesTerm = !term || (
+          q.title.toLowerCase().includes(term) ||
+          q.description.toLowerCase().includes(term) ||
+          q.bullets.some(b => b.toLowerCase().includes(term))
+        );
+        const matchesCategory = !activeCategory || q.categories.includes(activeCategory);
+        return matchesTerm && matchesCategory;
+      });
+    }
+
+    function renderQuizCards(items) {
+      quizListEl.innerHTML = '';
+      if (!items.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = 'No quizzes match your search. Try a different term or category.';
+        quizListEl.appendChild(empty);
+        return;
+      }
+
+      items.forEach(q => {
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+        card.onclick = function() { window.location.href = q.href; };
+
+        const h2 = document.createElement('h2');
+        h2.textContent = q.title;
+
+        const p = document.createElement('p');
+        p.textContent = q.description;
+
+        const features = document.createElement('div');
+        features.className = 'features';
+        const ul = document.createElement('ul');
+        q.bullets.forEach(b => {
+          const li = document.createElement('li');
+          li.textContent = '✅ ' + b;
+          ul.appendChild(li);
+        });
+        features.appendChild(ul);
+
+        const a = document.createElement('a');
+        a.href = q.href;
+        a.className = 'start-btn';
+        a.textContent = 'Start ' + q.title.replace(/^[^ ]+\s*/, '');
+
+        card.appendChild(h2);
+        card.appendChild(p);
+        card.appendChild(features);
+        card.appendChild(a);
+        quizListEl.appendChild(card);
+      });
+    }
+
+    function updateUI() {
+      renderQuizCards(filterQuizzes());
+    }
+
+    function wireUpEvents() {
+      if (searchInput) {
+        searchInput.addEventListener('input', updateUI);
+      }
+      if (categoryFilters) {
+        categoryFilters.addEventListener('click', function(ev) {
+          const target = ev.target;
+          if (!(target instanceof Element)) return;
+          const chip = target.closest('.chip');
+          if (!chip) return;
+          const currentlyActive = categoryFilters.querySelector('.chip.active');
+          if (currentlyActive) currentlyActive.classList.remove('active');
+          chip.classList.add('active');
+          updateUI();
+        });
+      }
+    }
+
+    renderCategoryChips();
+    wireUpEvents();
+    updateUI();
+  } catch (e) {}
 })();
