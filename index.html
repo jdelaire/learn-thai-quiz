@@ -24,72 +24,118 @@
       <div class="today-phonetic" id="month-phonetic">...</div>
     </div>
   </div>
+
+  <!-- Search and Filter Section -->
+  <div class="search-section">
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search quizzes..." class="search-input">
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-category="all">All</button>
+        <button class="filter-btn" data-category="alphabet">Alphabet</button>
+        <button class="filter-btn" data-category="vocabulary">Vocabulary</button>
+        <button class="filter-btn" data-category="grammar">Grammar</button>
+      </div>
+    </div>
+  </div>
   
   <div class="quiz-container">
-    <div class="quiz-card" onclick="window.location.href='consonant-quiz.html'">
-      <h2>🔤 Consonant Quiz</h2>
+    <!-- Alphabet Category -->
+    <div class="quiz-card" data-category="alphabet" onclick="window.location.href='consonant-quiz.html'">
+      <div class="quiz-icon">🔤</div>
+      <h2>Consonant Quiz</h2>
       <p>Learn all 44 Thai consonants with pronunciation, meanings, and tone classes.</p>
-      <div class="features">
-        <ul>
-          <li>✅ Color-coded tone classes</li>
-          <li>✅ Emoji associations</li>
-          <li>✅ Progress tracking</li>
-        </ul>
+      <div class="quiz-stats">
+        <span class="stat">44 consonants</span>
+        <span class="stat">3 tone classes</span>
       </div>
-      <a href="consonant-quiz.html" class="start-btn">Start Consonant Quiz</a>
+      <a href="consonant-quiz.html" class="start-btn">Start Quiz</a>
     </div>
     
-    <div class="quiz-card" onclick="window.location.href='vowel-quiz.html'">
-      <h2>🔤 Vowel Quiz</h2>
+    <div class="quiz-card" data-category="alphabet" onclick="window.location.href='vowel-quiz.html'">
+      <div class="quiz-icon">🔤</div>
+      <h2>Vowel Quiz</h2>
       <p>Practice 32 Thai vowels with sound patterns and example words.</p>
-      <div class="features">
-        <ul>
-          <li>✅ Vowel symbols</li>
-          <li>✅ Sound patterns</li>
-        </ul>
+      <div class="quiz-stats">
+        <span class="stat">32 vowels</span>
+        <span class="stat">Sound patterns</span>
       </div>
-      <a href="vowel-quiz.html" class="start-btn">Start Vowel Quiz</a>
+      <a href="vowel-quiz.html" class="start-btn">Start Quiz</a>
     </div>
 
-    <div class="quiz-card" onclick="window.location.href='color-quiz.html'">
-      <h2>🎨 Color Quiz</h2>
+    <!-- Vocabulary Category -->
+    <div class="quiz-card" data-category="vocabulary" onclick="window.location.href='color-quiz.html'">
+      <div class="quiz-icon">🎨</div>
+      <h2>Color Quiz</h2>
       <p>Practice Thai colors including light/dark modifiers with phonetics.</p>
-      <div class="features">
-        <ul>
-          <li>✅ Base colors</li>
-          <li>✅ Light/Dark modifiers</li>
-        </ul>
+      <div class="quiz-stats">
+        <span class="stat">Base colors</span>
+        <span class="stat">Light/Dark modifiers</span>
       </div>
-      <a href="color-quiz.html" class="start-btn">Start Color Quiz</a>
+      <a href="color-quiz.html" class="start-btn">Start Quiz</a>
     </div>
     
-    <div class="quiz-card" onclick="window.location.href='numbers-quiz.html'">
-      <h2>🔢 Numbers Quiz</h2>
+    <div class="quiz-card" data-category="vocabulary" onclick="window.location.href='numbers-quiz.html'">
+      <div class="quiz-icon">🔢</div>
+      <h2>Numbers Quiz</h2>
       <p>Practice Thai numbers with phonetics, from 0 to the millions.</p>
-      <div class="features">
-        <ul>
-          <li>✅ Basic 0–10</li>
-          <li>✅ Teens and Tens</li>
-          <li>✅ Hundreds & Thousands</li>
-        </ul>
+      <div class="quiz-stats">
+        <span class="stat">0-10</span>
+        <span class="stat">Teens & Tens</span>
+        <span class="stat">Hundreds & Thousands</span>
       </div>
-      <a href="numbers-quiz.html" class="start-btn">Start Numbers Quiz</a>
+      <a href="numbers-quiz.html" class="start-btn">Start Quiz</a>
     </div>
 
-    <div class="quiz-card" onclick="window.location.href='time-quiz.html'">
-      <h2>⏰ Time Quiz</h2>
+    <div class="quiz-card" data-category="vocabulary" onclick="window.location.href='time-quiz.html'">
+      <div class="quiz-icon">⏰</div>
+      <h2>Time Quiz</h2>
       <p>Telling time in Thai: keywords, formats, and common phrases.</p>
-      <div class="features">
-        <ul>
-          <li>✅ Key words (นาที, โมง, ทุ่ม, ครึ่ง, ตรง)</li>
-          <li>✅ AM/PM patterns (ตี…, …โมงเช้า, …ทุ่ม)</li>
-          <li>✅ Practical sentences</li>
-        </ul>
+      <div class="quiz-stats">
+        <span class="stat">Key words</span>
+        <span class="stat">AM/PM patterns</span>
+        <span class="stat">Practical sentences</span>
       </div>
-      <a href="time-quiz.html" class="start-btn">Start Time Quiz</a>
+      <a href="time-quiz.html" class="start-btn">Start Quiz</a>
+    </div>
+
+    <!-- Placeholder cards for future quizzes -->
+    <div class="quiz-card coming-soon" data-category="vocabulary">
+      <div class="quiz-icon">🏠</div>
+      <h2>Family Quiz</h2>
+      <p>Learn Thai family terms and relationships.</p>
+      <div class="quiz-stats">
+        <span class="stat">Coming Soon</span>
+      </div>
+      <div class="coming-soon-badge">Coming Soon</div>
+    </div>
+
+    <div class="quiz-card coming-soon" data-category="vocabulary">
+      <div class="quiz-icon">🍽️</div>
+      <h2>Food Quiz</h2>
+      <p>Essential Thai food vocabulary and ordering phrases.</p>
+      <div class="quiz-stats">
+        <span class="stat">Coming Soon</span>
+      </div>
+      <div class="coming-soon-badge">Coming Soon</div>
+    </div>
+
+    <div class="quiz-card coming-soon" data-category="grammar">
+      <div class="quiz-icon">📝</div>
+      <h2>Basic Grammar</h2>
+      <p>Essential Thai grammar patterns and sentence structure.</p>
+      <div class="quiz-stats">
+        <span class="stat">Coming Soon</span>
+      </div>
+      <div class="coming-soon-badge">Coming Soon</div>
     </div>
    </div>
+
+   <div class="footer">
+     <p>More quizzes coming soon! Have a suggestion? Let us know.</p>
+   </div>
+
    <script src="quiz.js"></script>
    <script src="home.js"></script>
+   <script src="index.js"></script>
   </body>
  </html>
