@@ -360,6 +360,13 @@ body.time-quiz #symbol .secondary {
   margin-top: 0.15em;
   font-weight: 600;
 }
+body.time-quiz #symbol .tertiary {
+  display: block;
+  font-size: 0.34em;
+  opacity: 0.92;
+  margin-top: 0.10em;
+  font-weight: 600;
+}
 
 /* Vowel quiz */
 body.vowel-quiz #symbol {
