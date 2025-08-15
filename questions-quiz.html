@@ -44,6 +44,21 @@
       {"english":"have you ever … ?","thai":"เคย … ไหม","phonetic":"khəəy … mái?"}
     ]`);
 
+    const examples = {
+      'what': 'What is this? → an níi khʉʉ à-rai?',
+      'who': 'Who is that? → khrai khʉʉ an nán?',
+      'where': 'Where are you going? → khun jà bpai thîi-nǎi?',
+      'when': 'When do you work? → khun tham ŋaan mûea-rài?',
+      'why': 'Why do you like Thai food? → tham-mai khun chɔ̂ɔp aa-hǎan thai?',
+      'how': 'How is the food? → aa-hǎan bpen yaŋ-ŋai?',
+      'how much': 'How much is it? → an níi thâo-rài?',
+      'how many': 'How many plates? → mii gìi jaan?',
+      'which': 'Which one do you want? → khun ao an nǎi?',
+      'is it … ?': 'Is it spicy? → phèt mái?',
+      'can … ?': 'Can you speak Thai? → khun phûut phaa-sǎa thai dâay mái?',
+      'have you ever … ?': 'Have you ever tried Pad Thai? → khun khəəy gin phàt-thai mái?'
+    };
+
     ThaiQuiz.setupQuiz({
       elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
       pickRound: () => {
@@ -64,7 +79,15 @@
       },
       renderButtonContent: (choice) => choice.phonetic,
       ariaLabelForChoice: (choice) => `Answer: ${choice.phonetic}`,
-      isCorrect: (choice, answer) => choice.phonetic === answer.phonetic
+      isCorrect: (choice, answer) => choice.phonetic === answer.phonetic,
+      onAnswered: ({ correct, answer }) => {
+        if (!correct) return;
+        try {
+          const fb = document.getElementById('feedback');
+          const ex = examples[answer.english];
+          fb.innerHTML = ex ? `✅ Correct!<div><em>${ex}</em></div>` : '✅ Correct!';
+        } catch (e) {}
+      }
     });
   </script>
 </body>
