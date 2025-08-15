@@ -342,6 +342,32 @@ body.numbers-quiz .options { max-width: 600px; }
 .pro-tip { margin-top: 1.2em; font-size: 0.95em; opacity: 0.95; }
 .pro-tip small { opacity: 0.9; }
 
+/* Time quiz */
+body.time-quiz h1 { margin-bottom: 0.2em; }
+body.time-quiz #symbol {
+  font-size: 4.2em;
+  margin: 0.6em 0 0.6em 0;
+  font-weight: 800;
+  color: white;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+  line-height: 1.2;
+}
+body.time-quiz .options { max-width: 620px; }
+body.time-quiz #symbol .secondary {
+  display: block;
+  font-size: 0.38em;
+  opacity: 0.95;
+  margin-top: 0.15em;
+  font-weight: 600;
+}
+body.time-quiz #symbol .tertiary {
+  display: block;
+  font-size: 0.34em;
+  opacity: 0.92;
+  margin-top: 0.10em;
+  font-weight: 600;
+}
+
 /* Vowel quiz */
 body.vowel-quiz #symbol {
   font-size: 8em;
