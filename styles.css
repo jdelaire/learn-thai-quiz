@@ -21,6 +21,10 @@ h1 {
   opacity: 0.9;
 }
 
+/* Hero header */
+.hero { margin: 0 auto 2.5em; max-width: 780px; }
+.hero .subtitle { margin-bottom: 1.5em; }
+
 .options {
   display: flex;
   flex-direction: column;
