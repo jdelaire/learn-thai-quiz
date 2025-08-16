@@ -76,6 +76,12 @@
         const symbolAriaLabel = `Number and Thai: ${answer.number} ${answer.thai}`;
         return { answer, choices, symbolText, symbolAriaLabel };
       },
+      renderSymbol: (answer, els) => {
+        const num = answer.number || '';
+        const thai = answer.thai || '';
+        els.symbolEl.innerHTML = `${num}${thai ? `<span class="secondary">${thai}</span>` : ''}`;
+        els.symbolEl.setAttribute('aria-label', `Number and Thai: ${num}${thai ? ' ' + thai : ''}`);
+      },
       renderButtonContent: (choice) => choice.phonetic,
       ariaLabelForChoice: (choice) => `Answer: ${choice.phonetic}`,
       isCorrect: (choice, answer) => choice.phonetic === answer.phonetic
