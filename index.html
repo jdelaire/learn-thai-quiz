@@ -14,19 +14,30 @@
   <meta name="twitter:card" content="summary" />
 </head>
 <body class="home">
-  <header class="hero" role="banner">
-    <h1>🇹🇭 Thai Language Quiz</h1>
-    <p class="subtitle">Master Thai through interactive learning</p>
+  <header class="app-header" role="banner">
+    <div class="app-bar" role="navigation" aria-label="App header">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">🇹🇭</span>
+        <div class="brand-text">
+          <h1 class="brand-title">Thai Language Quiz</h1>
+          <p class="brand-subtitle subtitle">Master Thai through interactive learning</p>
+        </div>
+      </div>
+    </div>
 
     <div class="today-card" aria-live="polite">
-      <div class="today-heading">Today</div>
-      <div class="today-thai" id="weekday-thai">...</div>
-      <div class="today-phonetic" id="weekday-phonetic">...</div>
-
-      <div class="today-section">
-        <div class="today-heading">Month</div>
-        <div class="today-thai" id="month-thai">...</div>
-        <div class="today-phonetic" id="month-phonetic">...</div>
+      <div class="today-grid">
+                 <section class="today-section" aria-label="Today">
+           <div class="today-heading"><span class="today-icon" aria-hidden="true">📅</span><span class="today-label">Today</span></div>
+           <div class="today-thai" id="weekday-thai">...</div>
+           <div class="today-phonetic" id="weekday-phonetic">...</div>
+         </section>
+        <div class="sep" role="separator" aria-orientation="vertical"></div>
+                 <section class="today-section" aria-label="Month">
+           <div class="today-heading"><span class="today-icon" aria-hidden="true">🗓️</span><span class="today-label">Month</span></div>
+           <div class="today-thai" id="month-thai">...</div>
+           <div class="today-phonetic" id="month-phonetic">...</div>
+         </section>
       </div>
     </div>
   </header>
