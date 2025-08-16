@@ -426,6 +426,13 @@ body.numbers-quiz #symbol {
   line-height: 1.2;
 }
 body.numbers-quiz .options { max-width: 600px; }
+body.numbers-quiz #symbol .secondary {
+  display: block;
+  font-size: 0.38em;
+  opacity: 0.95;
+  margin-top: 0.15em;
+  font-weight: 600;
+}
 .pro-tip { margin-top: 1.2em; font-size: 0.95em; opacity: 0.95; }
 .pro-tip small { opacity: 0.9; }
 
