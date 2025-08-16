@@ -609,3 +609,122 @@ body.questions-quiz .correct-line {
   body.consonant-quiz .legend { flex-direction: column; gap: 0.5em; }
   body.consonant-quiz button { font-size: 0.9em; padding: 0.6em; }
 }
+
+/* Liquid glass theme (global) */
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.14);
+  --glass-border: rgba(255, 255, 255, 0.28);
+  --glass-shadow-1: 0 12px 30px rgba(0,0,0,0.18);
+  --glass-shadow-2: 0 6px 18px rgba(0,0,0,0.12);
+  --glass-blur: 18px;
+  --glass-saturation: 1.15;
+}
+
+/* Subtle animated aurora behind content */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -15% -25% -15% -25%;
+  background:
+    radial-gradient(700px 700px at 20% 10%, rgba(255, 182, 222, 0.22), rgba(255, 182, 222, 0) 60%),
+    radial-gradient(800px 800px at 85% 20%, rgba(139, 214, 246, 0.22), rgba(139, 214, 246, 0) 60%),
+    radial-gradient(850px 850px at 15% 85%, rgba(182, 156, 255, 0.20), rgba(182, 156, 255, 0) 55%);
+  filter: blur(55px) saturate(1.2);
+  opacity: 0.7;
+  transform: translate3d(0,0,0);
+  animation: glass-aurora-float 38s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0) 30%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes glass-aurora-float {
+  0% { transform: translate3d(-1%, -1%, 0) scale(1); }
+  100% { transform: translate3d(1%, 1%, 0) scale(1.03); }
+}
+
+/* Unified frosted glass surfaces */
+.app-bar,
+body.home .quiz-card,
+.today-card,
+button,
+.back-btn,
+#search-input,
+.chip,
+.empty,
+body.questions-quiz .example {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  box-shadow: var(--glass-shadow-1), var(--glass-shadow-2);
+  overflow: hidden;
+}
+
+/* Specular highlight overlay */
+.app-bar::before,
+body.home .quiz-card::before,
+.today-card::before,
+button::before,
+.back-btn::before,
+#search-input::before,
+.chip::before,
+.empty::before,
+body.questions-quiz .example::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 100% at -10% -10%, rgba(255,255,255,0.35), rgba(255,255,255,0) 42%),
+    linear-gradient(to bottom, rgba(255,255,255,0.10), rgba(255,255,255,0) 70%);
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  z-index: 0;
+}
+
+/* Subtle hover depth for cards and header */
+.app-bar:hover,
+body.home .quiz-card:hover,
+.today-card:hover {
+  box-shadow: 0 20px 40px rgba(0,0,0,0.22), 0 8px 30px rgba(0,0,0,0.16);
+}
+
+/* Ensure today card adopts glass styling across devices */
+.today-card {
+  padding: 0.8em 1em;
+  border-radius: 16px;
+  display: inline-block;
+}
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none; }
+  .app-bar:hover,
+  body.home .quiz-card:hover,
+  .today-card:hover,
+  button:hover { transform: none; box-shadow: var(--glass-shadow-1), var(--glass-shadow-2); }
+}
+
+/* Backdrop-filter fallback */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .app-bar,
+  body.home .quiz-card,
+  .today-card,
+  button,
+  .back-btn,
+  #search-input,
+  .chip,
+  .empty,
+  body.questions-quiz .example { background: rgba(255,255,255,0.18); }
+}
