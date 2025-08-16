@@ -609,3 +609,14 @@ body.questions-quiz .correct-line {
   body.consonant-quiz .legend { flex-direction: column; gap: 0.5em; }
   body.consonant-quiz button { font-size: 0.9em; padding: 0.6em; }
 }
+
+/* Dynamic quiz default styling (falls back to numbers style) */
+body.dynamic-quiz #symbol {
+  font-size: 4.6em;
+  margin: 0.6em 0 0.6em 0;
+  font-weight: 800;
+  color: white;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+  line-height: 1.2;
+}
+body.dynamic-quiz .options { max-width: 600px; }

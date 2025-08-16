@@ -29,21 +29,21 @@
       <div class="today-grid">
                  <section class="today-section" aria-label="Today">
            <div class="today-heading"><span class="today-icon" aria-hidden="true">📅</span><span class="today-label">Today</span></div>
-           <div class="today-thai" id="weekday-thai">...</div>
-           <div class="today-phonetic" id="weekday-phonetic">...</div>
+           <div class="today-thai" id="weekday-thai" aria-live="polite">...</div>
+           <div class="today-phonetic" id="weekday-phonetic" aria-live="polite">...</div>
          </section>
         <div class="sep" role="separator" aria-orientation="vertical"></div>
                  <section class="today-section" aria-label="Month">
            <div class="today-heading"><span class="today-icon" aria-hidden="true">🗓️</span><span class="today-label">Month</span></div>
-           <div class="today-thai" id="month-thai">...</div>
-           <div class="today-phonetic" id="month-phonetic">...</div>
+           <div class="today-thai" id="month-thai" aria-live="polite">...</div>
+           <div class="today-phonetic" id="month-phonetic" aria-live="polite">...</div>
          </section>
       </div>
     </div>
   </header>
   
   <div id="filters" class="filters" aria-label="Quiz filters">
-    <input id="search-input" type="search" placeholder="Search quizzes (e.g., vowels, time, colors)" autocomplete="off" />
+    <input id="search-input" type="search" placeholder="Search quizzes (e.g., vowels, time, colors)" autocomplete="off" aria-label="Search quizzes"/>
     <div id="category-filters" class="chip-group" role="group" aria-label="Categories"></div>
   </div>
 

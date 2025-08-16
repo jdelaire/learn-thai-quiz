@@ -1,0 +1,130 @@
+(function(g){
+  g.ThaiData = g.ThaiData || {};
+  g.ThaiData.vowels = JSON.parse(`[
+  {
+    "symbol": "-ะ",
+    "sound": "a",
+    "example": "but, cut"
+  },
+  {
+    "symbol": "-า",
+    "sound": "aa",
+    "example": "baht, cart"
+  },
+  {
+    "symbol": "-ิ",
+    "sound": "i",
+    "example": "did, bit"
+  },
+  {
+    "symbol": "-ี",
+    "sound": "ii",
+    "example": "beat, deed"
+  },
+  {
+    "symbol": "-ึ",
+    "sound": "ɯ",
+    "example": "-"
+  },
+  {
+    "symbol": "-ื",
+    "sound": "ɯɯ",
+    "example": "-"
+  },
+  {
+    "symbol": "-ุ",
+    "sound": "u (ou)",
+    "example": "foot, book"
+  },
+  {
+    "symbol": "-ู",
+    "sound": "uu (ouuu)",
+    "example": "blue, too"
+  },
+  {
+    "symbol": "เ-ะ",
+    "sound": "e (é)",
+    "example": "yet, bet"
+  },
+  {
+    "symbol": "เ-",
+    "sound": "ee (ééé)",
+    "example": "fate, taste"
+  },
+  {
+    "symbol": "แ-ะ",
+    "sound": "ɛ (è)",
+    "example": "fat, black"
+  },
+  {
+    "symbol": "แ-",
+    "sound": "ɛɛ (èèè)",
+    "example": "can, fan"
+  },
+  {
+    "symbol": "โ-ะ",
+    "sound": "o",
+    "example": "only, Toyota"
+  },
+  {
+    "symbol": "โ-",
+    "sound": "oo",
+    "example": "tone, doe"
+  },
+  {
+    "symbol": "เ-าะ",
+    "sound": "ɔ",
+    "example": "cot, watch"
+  },
+  {
+    "symbol": "-อ",
+    "sound": "ɔɔ",
+    "example": "bought, cause"
+  },
+  {
+    "symbol": "เ-อะ",
+    "sound": "ə (e)",
+    "example": "modern, gentle"
+  },
+  {
+    "symbol": "เ-อ",
+    "sound": "əə (eee)",
+    "example": "birth, dirt"
+  },
+  {
+    "symbol": "เ-ีย",
+    "sound": "iɑ",
+    "example": "tear, dear"
+  },
+  {
+    "symbol": "เ-ือ",
+    "sound": "ɯɑ",
+    "example": "-"
+  },
+  {
+    "symbol": "-ัว",
+    "sound": "uɑ",
+    "example": "tour"
+  },
+  {
+    "symbol": "ไ-",
+    "sound": "ɑi",
+    "example": "why, hi"
+  },
+  {
+    "symbol": "ใ-",
+    "sound": "ɑi",
+    "example": "why, hi"
+  },
+  {
+    "symbol": "-ำ",
+    "sound": "ɑm",
+    "example": "yummy"
+  },
+  {
+    "symbol": "เ-า",
+    "sound": "ɑw",
+    "example": "doubt, about"
+  }
+]`);
+})(window);

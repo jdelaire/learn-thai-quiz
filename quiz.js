@@ -28,6 +28,15 @@
       autoAdvanceTimerId: null
     };
 
+    const messages = Object.assign({
+      correct: '✅ Correct!',
+      wrong: '❌ Try again!'
+    }, config.messages || {});
+
+    const timings = Object.assign({
+      autoAdvanceMs: 1500
+    }, config.timings || {});
+
     function updateStats() {
       const accuracy = state.questionsAnswered > 0
         ? Math.round((state.correctAnswers / state.questionsAnswered) * 100)
@@ -98,7 +107,13 @@
 
           if (isCorrect) {
             state.correctAnswers++;
-            feedbackEl.textContent = '✅ Correct!';
+            if (feedbackEl) {
+              if (messages.correctHtml) {
+                feedbackEl.innerHTML = messages.correctHtml;
+              } else {
+                feedbackEl.textContent = messages.correct;
+              }
+            }
             nextBtn.style.display = 'inline-block';
 
             if (state.autoAdvanceTimerId != null) {
@@ -107,9 +122,15 @@
             state.autoAdvanceTimerId = setTimeout(() => {
               state.autoAdvanceTimerId = null;
               pickQuestion();
-            }, 1500);
+            }, timings.autoAdvanceMs);
           } else {
-            feedbackEl.textContent = '❌ Try again!';
+            if (feedbackEl) {
+              if (messages.wrongHtml) {
+                feedbackEl.innerHTML = messages.wrongHtml;
+              } else {
+                feedbackEl.textContent = messages.wrong;
+              }
+            }
           }
 
           updateStats();
