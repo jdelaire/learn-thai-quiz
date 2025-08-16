@@ -616,3 +616,179 @@ body.questions-quiz .correct-line {
   body.consonant-quiz .legend { flex-direction: column; gap: 0.5em; }
   body.consonant-quiz button { font-size: 0.9em; padding: 0.6em; }
 }
+
+/* Airbnb Mobile Theme – variables and overrides */
+:root {
+  --abnb-brand: #FF5A5F;
+  --abnb-accent: #00A699;
+  --abnb-warn: #FC642D;
+  --abnb-text: #222222;
+  --abnb-text-secondary: #717171;
+  --abnb-bg: #F7F7F7;
+  --abnb-surface: #FFFFFF;
+  --abnb-border: #EBEBEB;
+  --abnb-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  --abnb-radius-lg: 16px;
+  --abnb-radius-md: 12px;
+  --abnb-radius-sm: 10px;
+}
+
+/* Base layout tweaks for mobile-app feel */
+body {
+  background: var(--abnb-bg);
+  color: var(--abnb-text);
+  justify-content: flex-start;
+  padding-bottom: calc(2em + 64px + env(safe-area-inset-bottom));
+}
+
+h1 { color: var(--abnb-text); text-shadow: none; }
+.subtitle { color: var(--abnb-text-secondary); }
+
+/* App bar (home) */
+.app-bar {
+  background: var(--abnb-surface);
+  border: 1px solid var(--abnb-border);
+  box-shadow: var(--abnb-shadow);
+}
+.brand-title { color: var(--abnb-text); }
+
+/* Cards */
+body.home .quiz-card {
+  background: var(--abnb-surface);
+  border: 1px solid var(--abnb-border);
+  box-shadow: var(--abnb-shadow);
+}
+body.home .quiz-card h2 { color: var(--abnb-text); }
+body.home .quiz-card p { color: var(--abnb-text-secondary); }
+
+/* Buttons */
+button {
+  background: var(--abnb-surface);
+  color: var(--abnb-text);
+  border: 1px solid var(--abnb-border);
+  box-shadow: none;
+}
+button:hover { background: #f7f7f7; }
+
+/* Primary CTA */
+.start-btn {
+  background: var(--abnb-brand);
+  color: #fff;
+}
+.start-btn:hover { background: #e5484d; }
+
+/* Inputs and chips */
+#search-input {
+  background: var(--abnb-surface);
+  border: 1px solid var(--abnb-border);
+  color: var(--abnb-text);
+}
+.chip {
+  background: var(--abnb-surface);
+  border: 1px solid var(--abnb-border);
+  color: var(--abnb-text);
+}
+.chip.active {
+  background: var(--abnb-accent);
+  border-color: var(--abnb-accent);
+  color: #fff;
+}
+
+/* Stats & feedback */
+.stats { color: var(--abnb-text-secondary); }
+#feedback { color: var(--abnb-text); }
+
+/* Symbol text on white surfaces */
+.consonant-quiz #symbol,
+.color-quiz #symbol,
+.numbers-quiz #symbol,
+.time-quiz #symbol,
+.vowel-quiz #symbol,
+.questions-quiz #symbol {
+  color: var(--abnb-text);
+  text-shadow: none;
+}
+
+/* Top app bar for quiz pages */
+.top-app-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: calc(env(safe-area-inset-top) + 0.5em) 1em 0.5em 1em;
+  background: var(--abnb-surface);
+  border-bottom: 1px solid var(--abnb-border);
+}
+.top-app-bar .top-back {
+  text-decoration: none;
+  color: var(--abnb-text);
+  font-size: 1.25em;
+  line-height: 1;
+  padding: 0.2em 0.4em;
+  border-radius: 8px;
+}
+.top-app-bar .top-title {
+  font-weight: 800;
+  font-size: 1.05em;
+  color: var(--abnb-text);
+}
+body.with-top-bar { padding-top: calc(56px + env(safe-area-inset-top)); }
+
+/* Bottom navigation */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: var(--abnb-surface);
+  border-top: 1px solid var(--abnb-border);
+  padding: 0.2em 0 calc(env(safe-area-inset-bottom) + 0.2em);
+}
+.bottom-nav a {
+  text-decoration: none;
+  color: var(--abnb-text-secondary);
+  font-weight: 600;
+  padding: 0.55em 0.2em;
+  display: grid;
+  place-items: center;
+  gap: 0.15em;
+  font-size: 0.85em;
+}
+.bottom-nav a .icon { font-size: 1.2em; line-height: 1; }
+.bottom-nav a.active { color: var(--abnb-brand); }
+
+/* Hide old footers when app chrome is present */
+body.with-bottom-nav .footer { display: none; }
+
+/* Next button override to Airbnb accents */
+#nextBtn {
+  background: var(--abnb-accent);
+  color: #fff;
+  border: none;
+}
+#nextBtn:hover {
+  background: #00907f;
+}
+
+/* Readability & polish overrides */
+button:hover { color: var(--abnb-text); }
+.brand-subtitle { color: var(--abnb-text-secondary); }
+.legend { color: var(--abnb-text-secondary); }
+
+/* Avoid duplicate titles under the injected top app bar */
+body.with-top-bar h1 { display: none; }
+
+/* Input placeholder color override */
+#search-input::placeholder { color: var(--abnb-text-secondary); }
+
+/* Airbnb accent for example label */
+body.questions-quiz .example .label { background: var(--abnb-accent); }
+
+/* Neutralize legacy glass effects */
+.app-bar { backdrop-filter: none; }
+button { backdrop-filter: none; }

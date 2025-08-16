@@ -158,3 +158,58 @@
     shuffle
   };
 })(window);
+
+// Inject Airbnb-style app chrome (top app bar for quizzes, bottom navigation for all pages)
+(function() {
+  try {
+    var body = document.body;
+    if (!body) return;
+
+    // Bottom navigation
+    if (!document.querySelector('.bottom-nav')) {
+      var nav = document.createElement('nav');
+      nav.className = 'bottom-nav';
+      var items = [
+        { href: 'index.html', label: 'Home', icon: '🏠' },
+        { href: 'consonant-quiz.html', label: 'ABC', icon: '🔤' },
+        { href: 'vowel-quiz.html', label: 'Vowels', icon: '🔡' },
+        { href: 'color-quiz.html', label: 'Colors', icon: '🎨' },
+        { href: 'time-quiz.html', label: 'Time', icon: '⏰' }
+      ];
+      var current = (location.pathname || '').split('/').pop() || 'index.html';
+      items.forEach(function(item) {
+        var a = document.createElement('a');
+        a.href = item.href;
+        a.setAttribute('aria-label', item.label);
+        if (current === item.href || (!current && item.href === 'index.html')) {
+          a.classList.add('active');
+        }
+        a.innerHTML = '<span class="icon" aria-hidden="true">' + item.icon + '</span><span class="label">' + item.label + '</span>';
+        nav.appendChild(a);
+      });
+      body.appendChild(nav);
+      body.classList.add('with-bottom-nav');
+    }
+
+    // Top app bar on quiz pages
+    var isQuiz = /(consonant-quiz|vowel-quiz|color-quiz|numbers-quiz|time-quiz|questions-quiz)\b/.test(body.className || '');
+    if (isQuiz && !document.querySelector('.top-app-bar')) {
+      var titleEl = document.querySelector('h1');
+      var title = (titleEl && titleEl.textContent ? titleEl.textContent : (document.title || 'Thai Quiz')).trim();
+      var bar = document.createElement('div');
+      bar.className = 'top-app-bar';
+      var back = document.createElement('a');
+      back.href = 'index.html';
+      back.className = 'top-back';
+      back.setAttribute('aria-label', 'Back to home');
+      back.innerHTML = '←';
+      var t = document.createElement('div');
+      t.className = 'top-title';
+      t.textContent = title;
+      bar.appendChild(back);
+      bar.appendChild(t);
+      body.insertBefore(bar, body.firstChild);
+      body.classList.add('with-top-bar');
+    }
+  } catch (e) {}
+})();
