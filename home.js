@@ -31,12 +31,11 @@
 
       const todayCard = document.querySelector('.today-card');
       if (todayCard) {
-        todayCard.style.borderColor = hexToRgba(accent, 0.75);
-        todayCard.style.boxShadow = '0 10px 25px ' + hexToRgba(accent, 0.25);
-        const separator = todayCard.querySelector('.sep');
-        if (separator) {
-          separator.style.background = 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, ' + hexToRgba(accent, 0.7) + ' 50%, rgba(0,0,0,0) 100%)';
-        }
+        // Keep default CSS border/shadow to match other cards on all devices
+        // const separator = todayCard.querySelector('.sep');
+        // if (separator) {
+        //   separator.style.background = 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, ' + hexToRgba(accent, 0.7) + ' 50%, rgba(0,0,0,0) 100%)';
+        // }
       }
     }
 
@@ -145,8 +144,7 @@
       return quizzes.filter(q => {
         const matchesTerm = !term || (
           q.title.toLowerCase().includes(term) ||
-          q.description.toLowerCase().includes(term) ||
-          q.bullets.some(b => b.toLowerCase().includes(term))
+          q.description.toLowerCase().includes(term)
         );
         const matchesCategory = !activeCategory || q.categories.includes(activeCategory);
         return matchesTerm && matchesCategory;
@@ -158,7 +156,7 @@
       if (!items.length) {
         const empty = document.createElement('div');
         empty.className = 'empty';
-        empty.textContent = 'No quizzes match your search. Try a different term or category.';
+        empty.textContent = 'No quizzes found.';
         quizListEl.appendChild(empty);
         return;
       }
@@ -174,15 +172,13 @@
         const p = document.createElement('p');
         p.textContent = q.description;
 
-        const features = document.createElement('div');
+        const features = document.createElement('ul');
         features.className = 'features';
-        const ul = document.createElement('ul');
         q.bullets.forEach(b => {
           const li = document.createElement('li');
           li.textContent = '✅ ' + b;
-          ul.appendChild(li);
+          features.appendChild(li);
         });
-        features.appendChild(ul);
 
         const a = document.createElement('a');
         a.href = q.href;
