@@ -21,6 +21,61 @@ h1 {
   opacity: 0.9;
 }
 
+/* Modern app header */
+.app-header {
+  margin: 0 auto 2em;
+  max-width: 920px;
+  width: 100%;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 0.5em);
+}
+.app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8em;
+  padding: 0.75em 1em;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 18px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+}
+.brand-icon {
+  font-size: 1.6em;
+}
+.brand-text {
+  display: grid;
+  line-height: 1.1;
+}
+.brand-title {
+  margin: 0;
+  color: white;
+  font-weight: 800;
+  font-size: clamp(1.2em, 3.4vw, 1.8em);
+  letter-spacing: 0.2px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.25);
+}
+.brand-subtitle {
+  margin: 0;
+  font-size: clamp(0.9em, 2vw, 1.05em);
+  opacity: 0.9;
+}
+body.home .app-bar .brand-title { margin: 0; font-size: clamp(1.2em, 3.4vw, 1.8em); }
+body.home .app-bar .brand-subtitle { margin: 0; }
+
+.app-header .today-card {
+  margin-top: 1.2em;
+}
+@media (max-width: 480px) {
+  .app-bar { padding: 0.65em 0.8em; border-radius: 14px; }
+  .brand-icon { font-size: 1.5em; }
+}
+
 /* Hero header */
 .hero { margin: 0 auto 2.5em; max-width: 780px; }
 .hero .subtitle { margin-bottom: 1.5em; }
