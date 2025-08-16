@@ -13,8 +13,31 @@
       thaiEl.textContent = thaiWeekdays[day];
       phonEl.textContent = phoneticWeekdays[day] + ' (' + dayColorPhonetics[day] + ')';
       const dayColors = ['#e74c3c','#f1c40f','#e91e63','#2ecc71','#e67e22','#3498db','#8e44ad'];
-      thaiEl.style.color = dayColors[day];
-      phonEl.style.color = dayColors[day];
+      const accent = dayColors[day];
+      thaiEl.style.color = accent;
+      phonEl.style.color = accent;
+
+      function hexToRgba(hex, alpha) {
+        try {
+          let c = hex.replace('#','');
+          if (c.length === 3) c = c.split('').map(x => x + x).join('');
+          const r = parseInt(c.substring(0,2), 16);
+          const g = parseInt(c.substring(2,4), 16);
+          const b = parseInt(c.substring(4,6), 16);
+          const a = typeof alpha === 'number' ? alpha : 1;
+          return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+        } catch(e) { return hex; }
+      }
+
+      const todayCard = document.querySelector('.today-card');
+      if (todayCard) {
+        todayCard.style.borderColor = hexToRgba(accent, 0.75);
+        todayCard.style.boxShadow = '0 10px 25px ' + hexToRgba(accent, 0.25);
+        const separator = todayCard.querySelector('.sep');
+        if (separator) {
+          separator.style.background = 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, ' + hexToRgba(accent, 0.7) + ' 50%, rgba(0,0,0,0) 100%)';
+        }
+      }
     }
 
     const thaiMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
