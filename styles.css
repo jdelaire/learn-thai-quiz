@@ -257,14 +257,14 @@ body.home .footer {
 }
 
 .today-card {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(8px);
-  border-radius: 18px;
   display: inline-block;
-  padding: 1em;
+  padding: 0;
   margin: 0 auto 2em;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  background: transparent;
+  backdrop-filter: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .today-grid {
@@ -313,7 +313,7 @@ body.home .footer {
 @media (max-width: 560px) {
   .today-grid { grid-template-columns: 1fr; gap: 0.6em; }
   .sep { display: none; }
-  .today-card { width: 100%; padding: 0.9em 1em; display: block; }
+  .today-card { width: 100%; padding: 0; display: block; }
 }
 
 /* Consonant quiz */
