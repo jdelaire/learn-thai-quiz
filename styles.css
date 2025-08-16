@@ -313,7 +313,7 @@ body.home .footer {
 @media (max-width: 560px) {
   .today-grid { grid-template-columns: 1fr; gap: 0.6em; }
   .sep { display: none; }
-  .today-card { width: 100%; padding: 0.9em 1em; }
+  .today-card { width: 100%; padding: 0.9em 1em; display: block; }
 }
 
 /* Consonant quiz */
