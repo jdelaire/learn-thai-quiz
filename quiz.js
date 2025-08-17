@@ -99,7 +99,6 @@
           if (isCorrect) {
             state.correctAnswers++;
             feedbackEl.textContent = '✅ Correct!';
-            nextBtn.style.display = 'inline-block';
 
             if (state.autoAdvanceTimerId != null) {
               clearTimeout(state.autoAdvanceTimerId);

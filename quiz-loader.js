@@ -256,7 +256,7 @@
                 }
                 state.autoAdvanceTimerId = setTimeout(function() {
                   var next = document.getElementById('nextBtn');
-                  if (next && next.style.display !== 'none') next.click();
+                  if (next) next.click();
                 }, 3000);
               } catch (e) {}
             }
