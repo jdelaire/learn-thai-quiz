@@ -1,6 +1,18 @@
 (function() {
   'use strict';
 
+  function handleDataLoadError(err) {
+    var fb = document.getElementById('feedback');
+    if (fb) {
+      var msg = 'Failed to load data.';
+      if (window.location.protocol === 'file:') {
+        msg += ' Open this site via a local server (e.g., python3 -m http.server) so JSON files can be fetched.';
+      }
+      fb.textContent = msg;
+    }
+    try { console.error('Data load error:', err); } catch (e) {}
+  }
+
   // Centralized quiz configurations
   var ThaiQuizConfigs = {
     consonants: {
@@ -49,7 +61,7 @@
               isCorrect: function(choice, answer) { return choice.name === answer.name; }
             });
           })
-          .catch(function(){ document.getElementById('feedback').textContent = 'Failed to load data.'; });
+          .catch(function(err){ handleDataLoadError(err); });
       }
     },
 
@@ -76,7 +88,7 @@
               isCorrect: function(choice, answer) { return choice.sound === answer.sound; }
             });
           })
-          .catch(function(){ document.getElementById('feedback').textContent = 'Failed to load data.'; });
+          .catch(function(err){ handleDataLoadError(err); });
       }
     },
 
@@ -238,7 +250,7 @@
               isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
             });
           })
-          .catch(function(){ document.getElementById('feedback').textContent = 'Failed to load data.'; });
+          .catch(function(err){ handleDataLoadError(err); });
       }
     },
 
@@ -284,7 +296,7 @@
             ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
             isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
           });
-        }).catch(function(){ document.getElementById('feedback').textContent = 'Failed to load data.'; });
+        }).catch(function(err){ handleDataLoadError(err); });
       }
     },
 
@@ -348,7 +360,7 @@
               } catch (e) {}
             }
           });
-        }).catch(function(){ document.getElementById('feedback').textContent = 'Failed to load data.'; });
+        }).catch(function(err){ handleDataLoadError(err); });
       }
     }
   };
