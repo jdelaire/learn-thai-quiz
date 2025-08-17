@@ -14,10 +14,9 @@
     const symbolEl = document.getElementById(elementsConfig.symbol);
     const optionsEl = document.getElementById(elementsConfig.options);
     const feedbackEl = document.getElementById(elementsConfig.feedback);
-    const nextBtn = document.getElementById(elementsConfig.nextBtn);
     const statsEl = document.getElementById(elementsConfig.stats);
 
-    if (!symbolEl || !optionsEl || !feedbackEl || !nextBtn || !statsEl) {
+    if (!symbolEl || !optionsEl || !feedbackEl || !statsEl) {
       return null;
     }
 
@@ -41,7 +40,6 @@
         state.autoAdvanceTimerId = null;
       }
       feedbackEl.textContent = '';
-      nextBtn.style.display = 'none';
       optionsEl.innerHTML = '';
 
       const round = (typeof config.pickRound === 'function') ? config.pickRound(state) : null;
@@ -54,7 +52,7 @@
       state.currentAnswer = answer;
 
       if (typeof config.renderSymbol === 'function') {
-        config.renderSymbol(answer, { symbolEl, optionsEl, feedbackEl, nextBtn, statsEl }, state);
+        config.renderSymbol(answer, { symbolEl, optionsEl, feedbackEl, statsEl }, state);
       } else {
         // Fallback rendering if provided by round
         if (round.symbolText != null) {
@@ -114,7 +112,7 @@
           updateStats();
 
           if (typeof config.onAnswered === 'function') {
-            try { config.onAnswered({ correct: isCorrect, choice, answer, state }); } catch (_) {}
+            try { config.onAnswered({ correct: isCorrect, choice, answer, state, next: pickQuestion }); } catch (_) {}
           }
         };
 
@@ -130,13 +128,9 @@
           if (buttons[index]) {
             buttons[index].click();
           }
-        } else if (e.key === 'Enter' && nextBtn.style.display !== 'none') {
-          nextBtn.click();
         }
       });
     }
-
-    nextBtn.onclick = pickQuestion;
 
     // Initialize
     pickQuestion();

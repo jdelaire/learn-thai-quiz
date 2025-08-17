@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  var defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
+  var defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', stats: 'stats' };
 
   function handleDataLoadError(err) {
     var fb = document.getElementById('feedback');
@@ -255,8 +255,7 @@
                   clearTimeout(state.autoAdvanceTimerId);
                 }
                 state.autoAdvanceTimerId = setTimeout(function() {
-                  var next = document.getElementById('nextBtn');
-                  if (next) next.click();
+                  if (typeof ctx.next === 'function') ctx.next();
                 }, 3000);
               } catch (e) {}
             }

@@ -121,24 +121,6 @@ button:active {
   color: #111111;
 }
 
-#nextBtn {
-  margin-top: 2em;
-  padding: 0.8em 2em;
-  font-size: 1.1em;
-  display: none;
-  background: #00247D;
-  color: #ffffff;
-  border: none;
-  border-radius: 10px;
-  font-weight: 700;
-  transition: all 0.2s ease;
-}
-
-#nextBtn:hover {
-  background: #001a5a;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
-}
 
 .stats {
   margin-top: 2em;
@@ -640,7 +622,6 @@ body.questions-quiz .correct-line {
   body.consonant-quiz button { font-size: 1em; padding: 0.7em; min-height: 3em; }
   body.consonant-quiz button .emoji { font-size: 1.3em; }
   body.consonant-quiz #feedback { font-size: 1.2em; margin-top: 0.8em; }
-  body.consonant-quiz #nextBtn { margin-top: 1.5em; padding: 0.7em 1.5em; }
   body.consonant-quiz .stats { margin-top: 1.5em; font-size: 0.8em; }
 
   body.color-quiz button { font-size: 1.05em; padding: 0.8em; }
