@@ -34,11 +34,11 @@ h1 {
   justify-content: center;
   gap: 0.8em;
   padding: 0.75em 1em;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 18px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
   backdrop-filter: none;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  box-shadow: none;
 }
 .brand {
   display: flex;
@@ -72,7 +72,7 @@ body.home .app-bar .brand-subtitle { margin: 0; }
   margin-top: 1.2em;
 }
 @media (max-width: 480px) {
-  .app-bar { padding: 0.65em 0.8em; border-radius: 14px; }
+  .app-bar { padding: 0.65em 0.8em; }
   .brand-icon { font-size: 1.5em; }
 }
 
