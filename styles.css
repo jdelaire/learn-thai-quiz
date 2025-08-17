@@ -337,6 +337,7 @@ body.color-quiz .options button,
 body.numbers-quiz .options button,
 body.time-quiz .options button,
 body.vowel-quiz .options button,
+body.family-quiz .options button,
 body.questions-quiz .options button {
   background: #f7f7f7;
   color: #111111;
@@ -474,6 +475,25 @@ body.time-quiz #symbol .tertiary {
   font-size: 0.34em;
   opacity: 0.92;
   margin-top: 0.10em;
+  font-weight: 600;
+}
+
+/* Family quiz */
+body.family-quiz h1 { margin-bottom: 0.2em; }
+body.family-quiz #symbol {
+  font-size: 4.2em;
+  margin: 0.6em 0 0.6em 0;
+  font-weight: 800;
+  color: #111111;
+  text-shadow: none;
+  line-height: 1.2;
+}
+body.family-quiz .options { max-width: 620px; }
+body.family-quiz #symbol .secondary {
+  display: block;
+  font-size: 0.38em;
+  opacity: 0.95;
+  margin-top: 0.15em;
   font-weight: 600;
 }
 

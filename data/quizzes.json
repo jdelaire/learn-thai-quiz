@@ -46,5 +46,13 @@
     "description": "Asking questions in Thai: core words and common patterns.",
     "bullets": ["Question words (อะไร, ใคร, ที่ไหน, เมื่อไหร่, ทำไม)","Patterns (…ไหม, …ได้ไหม, เคย…ไหม)","How much/how many"],
     "categories": ["Phrases","Beginner"]
+  },
+  {
+    "id": "family",
+    "title": "🧑‍🧑‍🧒‍🧒 Thai Family Quiz",
+    "href": "quiz.html?quiz=family",
+    "description": "Learn Thai family members with Thai script and phonetics.",
+    "bullets": ["Parents & siblings","Extended family (aunts/uncles, grandparents)","Phonetics practice"],
+    "categories": ["Vocabulary","Beginner"]
   }
 ]
