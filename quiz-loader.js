@@ -35,8 +35,7 @@
           }
         } catch (e) {}
 
-        fetch('data/consonants.json')
-          .then(function(r){ return r.json(); })
+        Utils.fetchJSON('data/consonants.json')
           .then(function(data){
             ThaiQuiz.setupQuiz({
               elements: defaultElements,
