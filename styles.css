@@ -58,7 +58,7 @@ h1 {
   margin: 0;
   color: #111111;
   font-weight: 800;
-  font-size: clamp(1.2em, 3.4vw, 1.8em);
+  font-size: clamp(1.9em, 3.8vw, 2.4em);
   letter-spacing: 0.2px;
   text-shadow: none;
 }
@@ -67,7 +67,7 @@ h1 {
   font-size: clamp(0.9em, 2vw, 1.05em);
   opacity: 0.9;
 }
-body.home .app-bar .brand-title { margin: 0; font-size: clamp(1.2em, 3.4vw, 1.8em); }
+body.home .app-bar .brand-title { margin: 0; font-size: clamp(1.9em, 3.8vw, 2.4em); }
 body.home .app-bar .brand-subtitle { margin: 0; }
 
 .app-header .today-card {
