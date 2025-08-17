@@ -251,13 +251,7 @@
                 var fb = document.getElementById('feedback');
                 var ex = examples[answer.english];
                 fb.innerHTML = ex ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '';
-                if (state && state.autoAdvanceTimerId != null) {
-                  clearTimeout(state.autoAdvanceTimerId);
-                }
-                state.autoAdvanceTimerId = setTimeout(function() {
-                  var next = document.getElementById('nextBtn');
-                  if (next && next.style.display !== 'none') next.click();
-                }, 3000);
+                // Let the normal 1.5-second auto-advance handle progression
               } catch (e) {}
             }
           });

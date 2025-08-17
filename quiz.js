@@ -106,7 +106,8 @@
             btn.addEventListener('animationend', function handle() {
               btn.classList.remove('answer-correct');
             }, { once: true });
-            nextBtn.style.display = 'inline-block';
+            // Don't show next button - auto-advance only
+            nextBtn.style.display = 'none';
 
             if (state.autoAdvanceTimerId != null) {
               clearTimeout(state.autoAdvanceTimerId);
@@ -142,9 +143,8 @@
           if (buttons[index]) {
             buttons[index].click();
           }
-        } else if (e.key === 'Enter' && nextBtn.style.display !== 'none') {
-          nextBtn.click();
         }
+        // Enter key handling removed since next button is hidden after correct answers
       });
     }
 
