@@ -1,6 +1,8 @@
 (function() {
   'use strict';
 
+  var defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
+
   function handleDataLoadError(err) {
     var fb = document.getElementById('feedback');
     if (fb) {
@@ -37,15 +39,10 @@
           .then(function(r){ return r.json(); })
           .then(function(data){
             ThaiQuiz.setupQuiz({
-              elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
+              elements: defaultElements,
               pickRound: function(state) {
                 var answer = data[Math.floor(Math.random() * data.length)];
-                var choices = [answer];
-                var numChoices = state.correctAnswers >= 30 ? 6 : 4;
-                while (choices.length < numChoices) {
-                  var rand = data[Math.floor(Math.random() * data.length)];
-                  if (!choices.find(function(c) { return c.name === rand.name; })) choices.push(rand);
-                }
+                var choices = Utils.pickUniqueChoices(data, (state.correctAnswers >= 30 ? 6 : 4), Utils.byProp('name'), answer);
                 return { answer: answer, choices: choices };
               },
               renderSymbol: function(answer, els) {
@@ -70,18 +67,13 @@
       subtitle: '',
       bodyClass: 'vowel-quiz',
       init: function() {
-        fetch('data/vowels.json')
-          .then(function(r){ return r.json(); })
+        Utils.fetchJSON('data/vowels.json')
           .then(function(data){
             ThaiQuiz.setupQuiz({
-              elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
+              elements: defaultElements,
               pickRound: function() {
-                var answer = data[Math.floor(Math.random() * data.length)];
-                var choices = [answer];
-                while (choices.length < 4) {
-                  var rand = data[Math.floor(Math.random() * data.length)];
-                  if (!choices.includes(rand)) choices.push(rand);
-                }
+                var answer = Utils.pickRandom(data);
+                var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('sound'), answer);
                 return { answer: answer, choices: choices, symbolText: answer.symbol };
               },
               renderButtonContent: function(choice) { return choice.sound; },
@@ -97,114 +89,40 @@
       subtitle: 'Choose the correct phonetic for the Thai color',
       bodyClass: 'color-quiz',
       init: function() {
-        var baseColors = JSON.parse(`[
-  {"english":"white","thai":"สีขาว","phonetic":"sǐi khǎaw","hex":"#ecf0f1"},
-  {"english":"black","thai":"สีดำ","phonetic":"sǐi dam","hex":"#2d3436"},
-  {"english":"red","thai":"สีแดง","phonetic":"sǐi dɛɛŋ","hex":"#e74c3c"},
-  {"english":"yellow","thai":"สีเหลือง","phonetic":"sǐi lɯ̌aŋ","hex":"#f1c40f"},
-  {"english":"green","thai":"สีเขียว","phonetic":"sǐi khǐaw","hex":"#2ecc71"},
-  {"english":"sky blue","thai":"สีฟ้า","phonetic":"sǐi fáa","hex":"#3498db"},
-  {"english":"dark blue","thai":"สีน้ำเงิน","phonetic":"sǐi náam-ŋəən","hex":"#2c3e50"},
-  {"english":"orange","thai":"สีส้ม","phonetic":"sǐi sôm","hex":"#e67e22"},
-  {"english":"pink","thai":"สีชมพู","phonetic":"sǐi chom-phuu","hex":"#e91e63"},
-  {"english":"purple","thai":"สีม่วง","phonetic":"sǐi mûaŋ","hex":"#8e44ad"},
-  {"english":"brown","thai":"สีน้ำตาล","phonetic":"sǐi náam-dtaan","hex":"#8d6e63"},
-  {"english":"gray","thai":"สีเทา","phonetic":"sǐi thaw","hex":"#95a5a6"}
-]`);
+        Utils.fetchJSONs(['data/colors-base.json', 'data/color-modifiers.json']).then(function(results){
+          var baseColors = results[0] || [];
+          var modifiers = results[1] || [];
 
-        var modifiers = JSON.parse(`[
-  {"english":"light","thai":"อ่อน","phonetic":"ɔ̀ɔn"},
-  {"english":"dark","thai":"เข้ม","phonetic":"khêm"}
-]`);
-
-        function hexToRgb(hex) {
-          var h = hex.replace('#', '');
-          var bigint = parseInt(h, 16);
-          return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
-        }
-        function rgbToHex(r, g, b) {
-          var toHex = function(x) { return x.toString(16).padStart(2, '0'); };
-          return '#' + toHex(Math.max(0, Math.min(255, Math.round(r)))) + toHex(Math.max(0, Math.min(255, Math.round(g)))) + toHex(Math.max(0, Math.min(255, Math.round(b))));
-        }
-        function rgbToHsl(r, g, b) {
-          r /= 255; g /= 255; b /= 255;
-          var max = Math.max(r, g, b), min = Math.min(r, g, b);
-          var h, s, l = (max + min) / 2;
-          if (max === min) { h = s = 0; }
-          else {
-            var d = max - min;
-            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-            switch (max) {
-              case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-              case g: h = (b - r) / d + 2; break;
-              case b: h = (r - g) / d + 4; break;
-            }
-            h /= 6;
+          function buildColorPhrase(base, maybeModifier) {
+            var hasBuiltInShade = /(^|\s)(dark|light)\s/i.test(base.english);
+            var useModifier = !!maybeModifier && !hasBuiltInShade;
+            var thai = useModifier ? (base.thai + ' ' + maybeModifier.thai) : base.thai;
+            var phonetic = useModifier ? (base.phonetic + ' ' + maybeModifier.phonetic) : base.phonetic;
+            var english = useModifier ? (maybeModifier.english + ' ' + base.english) : base.english;
+            var hex = useModifier ? Utils.getDisplayHex(base.hex, maybeModifier) : base.hex;
+            return { english: english, thai: thai, phonetic: phonetic, hex: hex };
           }
-          return { h: h, s: s, l: l };
-        }
-        function hslToRgb(h, s, l) {
-          var r, g, b;
-          if (s === 0) { r = g = b = l; }
-          else {
-            var hue2rgb = function(p, q, t) {
-              if (t < 0) t += 1;
-              if (t > 1) t -= 1;
-              if (t < 1/6) return p + (q - p) * 6 * t;
-              if (t < 1/2) return q;
-              if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-              return p;
-            };
-            var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-            var p = 2 * l - q;
-            r = hue2rgb(p, q, h + 1/3);
-            g = hue2rgb(p, q, h);
-            b = hue2rgb(p, q, h - 1/3);
-          }
-          return { r: r * 255, g: g * 255, b: b * 255 };
-        }
-        function adjustLightness(hex, delta) {
-          var rgb = hexToRgb(hex);
-          var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
-          var newL = Math.max(0, Math.min(1, hsl.l + delta));
-          var nrgb = hslToRgb(hsl.h, hsl.s, newL);
-          return rgbToHex(nrgb.r, nrgb.g, nrgb.b);
-        }
-        function getDisplayHex(baseHex, modifier) {
-          if (!modifier) return baseHex;
-          if (/^light$/i.test(modifier.english)) return adjustLightness(baseHex, 0.25);
-          if (/^dark$/i.test(modifier.english)) return adjustLightness(baseHex, -0.25);
-          return baseHex;
-        }
-        function buildColorPhrase(base, maybeModifier) {
-          var hasBuiltInShade = /(^|\s)(dark|light)\s/i.test(base.english);
-          var useModifier = !!maybeModifier && !hasBuiltInShade;
-          var thai = useModifier ? (base.thai + ' ' + maybeModifier.thai) : base.thai;
-          var phonetic = useModifier ? (base.phonetic + ' ' + maybeModifier.phonetic) : base.phonetic;
-          var english = useModifier ? (maybeModifier.english + ' ' + base.english) : base.english;
-          var hex = useModifier ? getDisplayHex(base.hex, maybeModifier) : base.hex;
-          return { english: english, thai: thai, phonetic: phonetic, hex: hex };
-        }
 
-        ThaiQuiz.setupQuiz({
-          elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
-          pickRound: function() {
-            var base = baseColors[Math.floor(Math.random() * baseColors.length)];
-            var maybeModifier = Math.random() < 0.55 ? modifiers[Math.floor(Math.random() * modifiers.length)] : null;
-            var answer = buildColorPhrase(base, maybeModifier);
-            var choices = [answer];
-            while (choices.length < 4) {
-              var b = baseColors[Math.floor(Math.random() * baseColors.length)];
-              var m = Math.random() < 0.45 ? modifiers[Math.floor(Math.random() * modifiers.length)] : null;
-              var choice = buildColorPhrase(b, m);
-              if (!choices.find(function(c) { return c.phonetic === choice.phonetic; })) choices.push(choice);
-            }
-            return { answer: answer, choices: choices, symbolText: answer.thai, symbolStyle: { color: answer.hex }, symbolAriaLabel: 'Thai color phrase: ' + answer.thai };
-          },
-          renderButtonContent: function(choice) { return choice.phonetic; },
-          ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-          isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
-        });
+          ThaiQuiz.setupQuiz({
+            elements: defaultElements,
+            pickRound: function() {
+              var base = Utils.pickRandom(baseColors);
+              var maybeModifier = Math.random() < 0.55 ? Utils.pickRandom(modifiers) : null;
+              var answer = buildColorPhrase(base, maybeModifier);
+              var choices = [answer];
+              while (choices.length < 4) {
+                var b = Utils.pickRandom(baseColors);
+                var m = Math.random() < 0.45 ? Utils.pickRandom(modifiers) : null;
+                var choice = buildColorPhrase(b, m);
+                if (!choices.find(function(c) { return c.phonetic === choice.phonetic; })) choices.push(choice);
+              }
+              return { answer: answer, choices: choices, symbolText: answer.thai, symbolStyle: { color: answer.hex }, symbolAriaLabel: 'Thai color phrase: ' + answer.thai };
+            },
+            renderButtonContent: function(choice) { return choice.phonetic; },
+            ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
+            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
+          });
+        }).catch(function(err){ handleDataLoadError(err); });
       }
     },
 
@@ -223,18 +141,13 @@
           }
         } catch (e) {}
 
-        fetch('data/numbers.json')
-          .then(function(r){ return r.json(); })
+        Utils.fetchJSON('data/numbers.json')
           .then(function(data){
             ThaiQuiz.setupQuiz({
-              elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
+              elements: defaultElements,
               pickRound: function() {
-                var answer = data[Math.floor(Math.random() * data.length)];
-                var choices = [answer];
-                while (choices.length < 4) {
-                  var rand = data[Math.floor(Math.random() * data.length)];
-                  if (!choices.find(function(c) { return c.phonetic === rand.phonetic; })) choices.push(rand);
-                }
+                var answer = Utils.pickRandom(data);
+                var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
                 var symbolText = (answer.number || '') + '  ' + (answer.thai || '');
                 var symbolAriaLabel = 'Number and Thai: ' + (answer.number || '') + (answer.thai ? ' ' + answer.thai : '');
                 return { answer: answer, choices: choices, symbolText: symbolText, symbolAriaLabel: symbolAriaLabel };
@@ -259,14 +172,10 @@
       subtitle: 'Choose the correct phonetic for the Thai time phrase',
       bodyClass: 'time-quiz',
       init: function() {
-        Promise.all([
-          fetch('data/time-keywords.json').then(function(r){ return r.json(); }),
-          fetch('data/time-formats.json').then(function(r){ return r.json(); }),
-          fetch('data/time-examples.json').then(function(r){ return r.json(); })
-        ]).then(function(results){
-          var keyWords = results[0];
-          var timeFormats = results[1];
-          var examples = results[2];
+        Utils.fetchJSONs(['data/time-keywords.json','data/time-formats.json','data/time-examples.json']).then(function(results){
+          var keyWords = results[0] || [];
+          var timeFormats = results[1] || [];
+          var examples = results[2] || [];
 
           function englishOf(item) {
             return item.english || item.note || item.translation || '';
@@ -275,14 +184,10 @@
           var pool = keyWords.concat(timeFormats, examples);
 
           ThaiQuiz.setupQuiz({
-            elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
+            elements: defaultElements,
             pickRound: function() {
-              var answer = pool[Math.floor(Math.random() * pool.length)];
-              var choices = [answer];
-              while (choices.length < 4) {
-                var rand = pool[Math.floor(Math.random() * pool.length)];
-                if (!choices.find(function(c) { return c.phonetic === rand.phonetic; })) choices.push(rand);
-              }
+              var answer = Utils.pickRandom(pool);
+              var choices = Utils.pickUniqueChoices(pool, 4, Utils.byProp('phonetic'), answer);
               var symbolAriaLabel = 'English and Thai: ' + englishOf(answer) + ' — ' + answer.thai;
               return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
             },
@@ -316,21 +221,17 @@
         } catch (e) {}
 
         Promise.all([
-          fetch('data/questions.json').then(function(r){ return r.json(); }),
-          fetch('data/questions-examples.json').then(function(r){ return r.json(); })
+          Utils.fetchJSON('data/questions.json'),
+          Utils.fetchJSON('data/questions-examples.json')
         ]).then(function(results){
-          var data = results[0];
+          var data = results[0] || [];
           var examples = results[1] || {};
 
           ThaiQuiz.setupQuiz({
-            elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
+            elements: defaultElements,
             pickRound: function() {
-              var answer = data[Math.floor(Math.random() * data.length)];
-              var choices = [answer];
-              while (choices.length < 4) {
-                var rand = data[Math.floor(Math.random() * data.length)];
-                if (!choices.find(function(c) { return c.phonetic === rand.phonetic; })) choices.push(rand);
-              }
+              var answer = Utils.pickRandom(data);
+              var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
               var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
               return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
             },
@@ -366,15 +267,7 @@
   };
 
   function setText(id, text) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    if (text) {
-      el.textContent = text;
-      el.style.display = '';
-    } else {
-      el.textContent = '';
-      el.style.display = 'none';
-    }
+    try { Utils.setText(id, text); } catch (e) {}
   }
 
   function initFromQuery() {

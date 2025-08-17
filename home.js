@@ -1,4 +1,5 @@
 (function() {
+  'use strict';
   const thaiWeekdays = ['วันอาทิตย์','วันจันทร์','วันอังคาร','วันพุธ','วันพฤหัสบดี','วันศุกร์','วันเสาร์'];
   const phoneticWeekdays = ['wan aa-thít','wan jan','wan ang-khaan','wan phút','wan phá-rʉ́-hàt','wan sùk','wan sǎo'];
   try {
@@ -18,15 +19,7 @@
       phonEl.style.color = accent;
 
       function hexToRgba(hex, alpha) {
-        try {
-          let c = hex.replace('#','');
-          if (c.length === 3) c = c.split('').map(x => x + x).join('');
-          const r = parseInt(c.substring(0,2), 16);
-          const g = parseInt(c.substring(2,4), 16);
-          const b = parseInt(c.substring(4,6), 16);
-          const a = typeof alpha === 'number' ? alpha : 1;
-          return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
-        } catch(e) { return hex; }
+        try { return Utils.hexToRgba(hex, alpha); } catch(e) { return hex; }
       }
 
       const todayCard = document.querySelector('.today-card');
@@ -54,63 +47,10 @@
     if (!quizListEl) return;
 
     /**
-     * Central registry of quizzes so the homepage scales as more are added.
+     * Quizzes metadata loaded from JSON so homepage scales as more are added.
      */
-    const quizzes = [
-      {
-        id: 'consonants',
-        title: '🔤 Consonant Quiz',
-        href: 'quiz.html?quiz=consonants',
-        description: 'Learn all 44 Thai consonants with pronunciation, meanings, and tone classes.',
-        bullets: ['Color-coded tone classes','Emoji associations','Progress tracking'],
-        categories: ['Alphabet','Beginner']
-      },
-      {
-        id: 'vowels',
-        title: '🔤 Vowel Quiz',
-        href: 'quiz.html?quiz=vowels',
-        description: 'Practice 32 Thai vowels with sound patterns and example words.',
-        bullets: ['Vowel symbols','Sound patterns'],
-        categories: ['Alphabet','Beginner']
-      },
-      {
-        id: 'colors',
-        title: '🎨 Color Quiz',
-        href: 'quiz.html?quiz=colors',
-        description: 'Practice Thai colors including light/dark modifiers with phonetics.',
-        bullets: ['Base colors','Light/Dark modifiers'],
-        categories: ['Vocabulary']
-      },
-      {
-        id: 'numbers',
-        title: '🔢 Numbers Quiz',
-        href: 'quiz.html?quiz=numbers',
-        description: 'Practice Thai numbers with phonetics, from 0 to the millions.',
-        bullets: ['Basic 0–10','Teens and Tens','Hundreds & Thousands'],
-        categories: ['Vocabulary','Beginner']
-      },
-      {
-        id: 'time',
-        title: '⏰ Time Quiz',
-        href: 'quiz.html?quiz=time',
-        description: 'Telling time in Thai: keywords, formats, and common phrases.',
-        bullets: ['Key words (นาที, โมง, ทุ่ม, ครึ่ง, ตรง)','AM/PM patterns (ตี…, …โมงเช้า, …ทุ่ม)','Practical sentences'],
-        categories: ['Phrases']
-      },
-      {
-        id: 'questions',
-        title: '❓ Questions Quiz',
-        href: 'quiz.html?quiz=questions',
-        description: 'Asking questions in Thai: core words and common patterns.',
-        bullets: ['Question words (อะไร, ใคร, ที่ไหน, เมื่อไหร่, ทำไม)','Patterns (…ไหม, …ได้ไหม, เคย…ไหม)','How much/how many'],
-        categories: ['Phrases','Beginner']
-      }
-    ];
-
-    // Build category set from quizzes
-    const categorySet = new Set();
-    quizzes.forEach(q => q.categories.forEach(c => categorySet.add(c)));
-    const categories = Array.from(categorySet).sort();
+    let quizzes = [];
+    let categories = [];
 
     const searchInput = document.getElementById('search-input');
     const categoryFilters = document.getElementById('category-filters');
@@ -215,8 +155,23 @@
       }
     }
 
-    renderCategoryChips();
-    wireUpEvents();
-    updateUI();
+    (function init(){
+      Utils.fetchJSON('data/quizzes.json')
+        .then(function(data){
+          quizzes = Array.isArray(data) ? data : [];
+          const categorySet = new Set();
+          quizzes.forEach(q => (q.categories || []).forEach(c => categorySet.add(c)));
+          categories = Array.from(categorySet).sort();
+          renderCategoryChips();
+          wireUpEvents();
+          updateUI();
+        })
+        .catch(function(){
+          const error = document.createElement('div');
+          error.className = 'empty';
+          error.textContent = 'Failed to load quizzes.';
+          quizListEl.appendChild(error);
+        });
+    })();
   } catch (e) {}
 })();
