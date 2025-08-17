@@ -14,10 +14,10 @@
     const symbolEl = document.getElementById(elementsConfig.symbol);
     const optionsEl = document.getElementById(elementsConfig.options);
     const feedbackEl = document.getElementById(elementsConfig.feedback);
-    const nextBtn = document.getElementById(elementsConfig.nextBtn);
+    const nextBtn = elementsConfig.nextBtn ? document.getElementById(elementsConfig.nextBtn) : null;
     const statsEl = document.getElementById(elementsConfig.stats);
 
-    if (!symbolEl || !optionsEl || !feedbackEl || !nextBtn || !statsEl) {
+    if (!symbolEl || !optionsEl || !feedbackEl || !statsEl) {
       return null;
     }
 
@@ -41,7 +41,7 @@
         state.autoAdvanceTimerId = null;
       }
       feedbackEl.textContent = '';
-      nextBtn.style.display = 'none';
+      if (nextBtn) nextBtn.style.display = 'none';
       optionsEl.innerHTML = '';
 
       const round = (typeof config.pickRound === 'function') ? config.pickRound(state) : null;
@@ -99,7 +99,7 @@
           if (isCorrect) {
             state.correctAnswers++;
             feedbackEl.textContent = '✅ Correct!';
-            nextBtn.style.display = 'inline-block';
+            if (nextBtn) nextBtn.style.display = 'inline-block';
 
             if (state.autoAdvanceTimerId != null) {
               clearTimeout(state.autoAdvanceTimerId);
@@ -131,13 +131,13 @@
           if (buttons[index]) {
             buttons[index].click();
           }
-        } else if (e.key === 'Enter' && nextBtn.style.display !== 'none') {
+        } else if (e.key === 'Enter' && nextBtn && nextBtn.style.display !== 'none') {
           nextBtn.click();
         }
       });
     }
 
-    nextBtn.onclick = pickQuestion;
+    if (nextBtn) nextBtn.onclick = pickQuestion;
 
     // Initialize
     pickQuestion();

@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  var defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
+  var defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', stats: 'stats' };
 
   function handleDataLoadError(err) {
     var fb = document.getElementById('feedback');
@@ -245,19 +245,12 @@
             ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
             isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
             onAnswered: function(ctx) {
-              var correct = ctx.correct, answer = ctx.answer, state = ctx.state;
+              var correct = ctx.correct, answer = ctx.answer;
               if (!correct) return;
               try {
                 var fb = document.getElementById('feedback');
                 var ex = examples[answer.english];
                 fb.innerHTML = ex ? '<div class="correct-line">✅ Correct!</div><div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '<div class="correct-line">✅ Correct!</div>';
-                if (state && state.autoAdvanceTimerId != null) {
-                  clearTimeout(state.autoAdvanceTimerId);
-                }
-                state.autoAdvanceTimerId = setTimeout(function() {
-                  var next = document.getElementById('nextBtn');
-                  if (next && next.style.display !== 'none') next.click();
-                }, 3000);
               } catch (e) {}
             }
           });
