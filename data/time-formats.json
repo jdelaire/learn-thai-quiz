@@ -1,0 +1,10 @@
+[
+  {"thai":"ตีหนึ่ง","phonetic":"dtii nɯ̀ŋ","note":"1 AM"},
+  {"thai":"หกโมงเช้า","phonetic":"hòk mooŋ cháo","note":"6 AM"},
+  {"thai":"เที่ยง","phonetic":"thîaŋ","note":"12 PM (noon)"},
+  {"thai":"บ่ายโมง","phonetic":"bàay mooŋ","note":"1 PM"},
+  {"thai":"บ่ายสามโมง","phonetic":"bàay săam mooŋ","note":"3 PM"},
+  {"thai":"สี่โมงเย็น","phonetic":"sìi mooŋ yen","note":"4 PM"},
+  {"thai":"สองทุ่ม","phonetic":"sǒn thûm","note":"8 PM"},
+  {"thai":"เที่ยงคืน","phonetic":"thîaŋ-kʉʉn","note":"12 AM (midnight)"}
+]

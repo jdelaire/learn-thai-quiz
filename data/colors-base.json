@@ -1,0 +1,14 @@
+[
+  {"english":"white","thai":"สีขาว","phonetic":"sǐi khǎaw","hex":"#ecf0f1"},
+  {"english":"black","thai":"สีดำ","phonetic":"sǐi dam","hex":"#2d3436"},
+  {"english":"red","thai":"สีแดง","phonetic":"sǐi dɛɛŋ","hex":"#e74c3c"},
+  {"english":"yellow","thai":"สีเหลือง","phonetic":"sǐi lɯ̌aŋ","hex":"#f1c40f"},
+  {"english":"green","thai":"สีเขียว","phonetic":"sǐi khǐaw","hex":"#2ecc71"},
+  {"english":"sky blue","thai":"สีฟ้า","phonetic":"sǐi fáa","hex":"#3498db"},
+  {"english":"dark blue","thai":"สีน้ำเงิน","phonetic":"sǐi náam-ŋəən","hex":"#2c3e50"},
+  {"english":"orange","thai":"สีส้ม","phonetic":"sǐi sôm","hex":"#e67e22"},
+  {"english":"pink","thai":"สีชมพู","phonetic":"sǐi chom-phuu","hex":"#e91e63"},
+  {"english":"purple","thai":"สีม่วง","phonetic":"sǐi mûaŋ","hex":"#8e44ad"},
+  {"english":"brown","thai":"สีน้ำตาล","phonetic":"sǐi náam-dtaan","hex":"#8d6e63"},
+  {"english":"gray","thai":"สีเทา","phonetic":"sǐi thaw","hex":"#95a5a6"}
+]

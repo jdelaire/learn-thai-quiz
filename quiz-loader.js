@@ -21,341 +21,35 @@
           }
         } catch (e) {}
 
-        var data = JSON.parse(`[
-  {
-    "symbol": "ก",
-    "name": "gɔɔ gài",
-    "meaning": "chicken",
-    "emoji": "🐔",
-    "class": "middle"
-  },
-  {
-    "symbol": "ข",
-    "name": "khɔ̌ɔ khài",
-    "meaning": "egg",
-    "emoji": "🥚",
-    "class": "high"
-  },
-  {
-    "symbol": "ฃ",
-    "name": "khɔ̌ɔ khùat",
-    "meaning": "bottle",
-    "emoji": "🍾",
-    "class": "high"
-  },
-  {
-    "symbol": "ค",
-    "name": "khɔɔ khwaay",
-    "meaning": "water buffalo",
-    "emoji": "🐃",
-    "class": "low"
-  },
-  {
-    "symbol": "ฅ",
-    "name": "khɔɔ khon",
-    "meaning": "human",
-    "emoji": "👤",
-    "class": "low"
-  },
-  {
-    "symbol": "ฆ",
-    "name": "khɔɔ rá-khaŋ",
-    "meaning": "bell",
-    "emoji": "🔔",
-    "class": "low"
-  },
-  {
-    "symbol": "ง",
-    "name": "ŋɔɔ ŋuu",
-    "meaning": "snake",
-    "emoji": "🐍",
-    "class": "low"
-  },
-  {
-    "symbol": "จ",
-    "name": "jɔɔ jaan",
-    "meaning": "plate",
-    "emoji": "🍽️",
-    "class": "middle"
-  },
-  {
-    "symbol": "ฉ",
-    "name": "chɔ̌ɔ chìŋ",
-    "meaning": "cymbal",
-    "emoji": "🥁",
-    "class": "high"
-  },
-  {
-    "symbol": "ช",
-    "name": "chɔɔ cháaŋ",
-    "meaning": "elephant",
-    "emoji": "🐘",
-    "class": "low"
-  },
-  {
-    "symbol": "ซ",
-    "name": "sɔɔ sôo",
-    "meaning": "chain",
-    "emoji": "⛓️",
-    "class": "low"
-  },
-  {
-    "symbol": "ฌ",
-    "name": "chɔɔ chəə",
-    "meaning": "name of tree",
-    "emoji": "🌳",
-    "class": "low"
-  },
-  {
-    "symbol": "ญ",
-    "name": "yɔɔ phûu yǐŋ",
-    "meaning": "female",
-    "emoji": "👩",
-    "class": "low"
-  },
-  {
-    "symbol": "ฎ",
-    "name": "dɔɔ chá-daa",
-    "meaning": "head dress",
-    "emoji": "👑",
-    "class": "middle"
-  },
-  {
-    "symbol": "ฏ",
-    "name": "dtɔɔ bpà-dtàk",
-    "meaning": "lance",
-    "emoji": "⚔️",
-    "class": "middle"
-  },
-  {
-    "symbol": "ฐ",
-    "name": "thɔ̌ɔ thɑ̌ɑn",
-    "meaning": "pedestal",
-    "emoji": "🏛️",
-    "class": "high"
-  },
-  {
-    "symbol": "ฑ",
-    "name": "thɔɔ mon-thoo",
-    "meaning": "Lady Montho",
-    "emoji": "👸",
-    "class": "low"
-  },
-  {
-    "symbol": "ฒ",
-    "name": "thɔɔ phûu-thâw",
-    "meaning": "elderly",
-    "emoji": "👴",
-    "class": "low"
-  },
-  {
-    "symbol": "ณ",
-    "name": "nɔɔ neen",
-    "meaning": "novice",
-    "emoji": "🧘",
-    "class": "low"
-  },
-  {
-    "symbol": "ด",
-    "name": "dɔɔ dèk",
-    "meaning": "child",
-    "emoji": "👶",
-    "class": "middle"
-  },
-  {
-    "symbol": "ต",
-    "name": "dtɔɔ dtàw",
-    "meaning": "turtle",
-    "emoji": "🐢",
-    "class": "middle"
-  },
-  {
-    "symbol": "ถ",
-    "name": "thɔ̌ɔ thŭŋ",
-    "meaning": "bag",
-    "emoji": "👜",
-    "class": "high"
-  },
-  {
-    "symbol": "ท",
-    "name": "thɔɔ thá-hɑ̌an",
-    "meaning": "soldier",
-    "emoji": "💂",
-    "class": "low"
-  },
-  {
-    "symbol": "ธ",
-    "name": "thɔɔ thoŋ",
-    "meaning": "flag",
-    "emoji": "🇹🇭",
-    "class": "low"
-  },
-  {
-    "symbol": "น",
-    "name": "nɔɔ nǔu",
-    "meaning": "mouse",
-    "emoji": "🐭",
-    "class": "low"
-  },
-  {
-    "symbol": "บ",
-    "name": "bɔɔ bai-máay",
-    "meaning": "leaf",
-    "emoji": "🍃",
-    "class": "middle"
-  },
-  {
-    "symbol": "ป",
-    "name": "bpɔɔ bplaa",
-    "meaning": "fish",
-    "emoji": "🐟",
-    "class": "middle"
-  },
-  {
-    "symbol": "ผ",
-    "name": "phɔ̌ɔ phɯ̂ŋ",
-    "meaning": "bee",
-    "emoji": "🐝",
-    "class": "high"
-  },
-  {
-    "symbol": "ฝ",
-    "name": "fɔ̌ɔ făa",
-    "meaning": "lid/cover",
-    "emoji": "🔒",
-    "class": "high"
-  },
-  {
-    "symbol": "พ",
-    "name": "phɔɔ phaan",
-    "meaning": "offering tray",
-    "emoji": "🏆",
-    "class": "low"
-  },
-  {
-    "symbol": "ฟ",
-    "name": "fɔɔ fan",
-    "meaning": "tooth",
-    "emoji": "🦷",
-    "class": "low"
-  },
-  {
-    "symbol": "ภ",
-    "name": "phɔɔ săm-phaw",
-    "meaning": "junk",
-    "emoji": "🚢",
-    "class": "low"
-  },
-  {
-    "symbol": "ม",
-    "name": "mɔɔ máa",
-    "meaning": "horse",
-    "emoji": "🐎",
-    "class": "low"
-  },
-  {
-    "symbol": "ย",
-    "name": "yɔɔ yák",
-    "meaning": "giant",
-    "emoji": "👹",
-    "class": "high"
-  },
-  {
-    "symbol": "ร",
-    "name": "rɔɔ rɯa",
-    "meaning": "boat",
-    "emoji": "🚣",
-    "class": "low"
-  },
-  {
-    "symbol": "ล",
-    "name": "lɔɔ liŋ",
-    "meaning": "monkey",
-    "emoji": "🐒",
-    "class": "low"
-  },
-  {
-    "symbol": "ว",
-    "name": "wɔɔ wɛ̌ɛn",
-    "meaning": "ring",
-    "emoji": "💍",
-    "class": "low"
-  },
-  {
-    "symbol": "ศ",
-    "name": "sɔ̌ɔ sǎa-laa",
-    "meaning": "pavilion",
-    "emoji": "🏛️",
-    "class": "high"
-  },
-  {
-    "symbol": "ษ",
-    "name": "sɔ̌ɔ rɯɯ-sǐi",
-    "meaning": "hermit",
-    "emoji": "🧙",
-    "class": "high"
-  },
-  {
-    "symbol": "ส",
-    "name": "sɔ̌ɔ sɯ̌a",
-    "meaning": "tiger",
-    "emoji": "🐯",
-    "class": "high"
-  },
-  {
-    "symbol": "ห",
-    "name": "hɔ̌ɔ hìip",
-    "meaning": "treasure chest",
-    "emoji": "💎",
-    "class": "high"
-  },
-  {
-    "symbol": "ฬ",
-    "name": "lɔɔ jù-laa",
-    "meaning": "kite",
-    "emoji": "🪁",
-    "class": "low"
-  },
-  {
-    "symbol": "อ",
-    "name": "ɔɔ àaŋ",
-    "meaning": "basin",
-    "emoji": "🛁",
-    "class": "middle"
-  },
-  {
-    "symbol": "ฮ",
-    "name": "hɔɔ nók-hûuk",
-    "meaning": "owl",
-    "emoji": "🦉",
-    "class": "low"
-  }
-]`);
-
-        ThaiQuiz.setupQuiz({
-          elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
-          pickRound: function(state) {
-            var answer = data[Math.floor(Math.random() * data.length)];
-            var choices = [answer];
-            var numChoices = state.correctAnswers >= 30 ? 6 : 4;
-            while (choices.length < numChoices) {
-              var rand = data[Math.floor(Math.random() * data.length)];
-              if (!choices.find(function(c) { return c.name === rand.name; })) choices.push(rand);
-            }
-            return { answer: answer, choices: choices };
-          },
-          renderSymbol: function(answer, els) {
-            els.symbolEl.textContent = answer.symbol;
-            els.symbolEl.setAttribute('aria-label', 'Thai consonant symbol: ' + answer.symbol);
-          },
-          renderButtonContent: function(choice, state) {
-            var hideEmojis = state.correctAnswers >= 50;
-            return hideEmojis ? ('' + choice.name) : ('<span class="emoji">' + choice.emoji + '</span> ' + choice.name);
-          },
-          ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.name + ' (' + choice.meaning + ')'; },
-          decorateButton: function(btn, choice) { btn.classList.add(choice.class + '-class'); },
-          isCorrect: function(choice, answer) { return choice.name === answer.name; }
-        });
+        fetch('data/consonants.json')
+          .then(function(r){ return r.json(); })
+          .then(function(data){
+            ThaiQuiz.setupQuiz({
+              elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
+              pickRound: function(state) {
+                var answer = data[Math.floor(Math.random() * data.length)];
+                var choices = [answer];
+                var numChoices = state.correctAnswers >= 30 ? 6 : 4;
+                while (choices.length < numChoices) {
+                  var rand = data[Math.floor(Math.random() * data.length)];
+                  if (!choices.find(function(c) { return c.name === rand.name; })) choices.push(rand);
+                }
+                return { answer: answer, choices: choices };
+              },
+              renderSymbol: function(answer, els) {
+                els.symbolEl.textContent = answer.symbol;
+                els.symbolEl.setAttribute('aria-label', 'Thai consonant symbol: ' + answer.symbol);
+              },
+              renderButtonContent: function(choice, state) {
+                var hideEmojis = state.correctAnswers >= 50;
+                return hideEmojis ? ('' + choice.name) : ('<span class="emoji">' + choice.emoji + '</span> ' + choice.name);
+              },
+              ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.name + ' (' + choice.meaning + ')'; },
+              decorateButton: function(btn, choice) { btn.classList.add(choice.class + '-class'); },
+              isCorrect: function(choice, answer) { return choice.name === answer.name; }
+            });
+          })
+          .catch(function(){ document.getElementById('feedback').textContent = 'Failed to load data.'; });
       }
     },
 
@@ -364,48 +58,25 @@
       subtitle: '',
       bodyClass: 'vowel-quiz',
       init: function() {
-        var data = JSON.parse(`[
-  { "symbol": "-ะ", "sound": "a", "example": "but, cut" },
-  { "symbol": "-า", "sound": "aa", "example": "baht, cart" },
-  { "symbol": "-ิ", "sound": "i", "example": "did, bit" },
-  { "symbol": "-ี", "sound": "ii", "example": "beat, deed" },
-  { "symbol": "-ึ", "sound": "ɯ", "example": "-" },
-  { "symbol": "-ื", "sound": "ɯɯ", "example": "-" },
-  { "symbol": "-ุ", "sound": "u (ou)", "example": "foot, book" },
-  { "symbol": "-ู", "sound": "uu (ouuu)", "example": "blue, too" },
-  { "symbol": "เ-ะ", "sound": "e (é)", "example": "yet, bet" },
-  { "symbol": "เ-", "sound": "ee (ééé)", "example": "fate, taste" },
-  { "symbol": "แ-ะ", "sound": "ɛ (è)", "example": "fat, black" },
-  { "symbol": "แ-", "sound": "ɛɛ (èèè)", "example": "can, fan" },
-  { "symbol": "โ-ะ", "sound": "o", "example": "only, Toyota" },
-  { "symbol": "โ-", "sound": "oo", "example": "tone, doe" },
-  { "symbol": "เ-าะ", "sound": "ɔ", "example": "cot, watch" },
-  { "symbol": "-อ", "sound": "ɔɔ", "example": "bought, cause" },
-  { "symbol": "เ-อะ", "sound": "ə (e)", "example": "modern, gentle" },
-  { "symbol": "เ-อ", "sound": "əə (eee)", "example": "birth, dirt" },
-  { "symbol": "เ-ีย", "sound": "iɑ", "example": "tear, dear" },
-  { "symbol": "เ-ือ", "sound": "ɯɑ", "example": "-" },
-  { "symbol": "-ัว", "sound": "uɑ", "example": "tour" },
-  { "symbol": "ไ-", "sound": "ɑi", "example": "why, hi" },
-  { "symbol": "ใ-", "sound": "ɑi", "example": "why, hi" },
-  { "symbol": "-ำ", "sound": "ɑm", "example": "yummy" },
-  { "symbol": "เ-า", "sound": "ɑw", "example": "doubt, about" }
-]`);
-
-        ThaiQuiz.setupQuiz({
-          elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
-          pickRound: function() {
-            var answer = data[Math.floor(Math.random() * data.length)];
-            var choices = [answer];
-            while (choices.length < 4) {
-              var rand = data[Math.floor(Math.random() * data.length)];
-              if (!choices.includes(rand)) choices.push(rand);
-            }
-            return { answer: answer, choices: choices, symbolText: answer.symbol };
-          },
-          renderButtonContent: function(choice) { return choice.sound; },
-          isCorrect: function(choice, answer) { return choice.sound === answer.sound; }
-        });
+        fetch('data/vowels.json')
+          .then(function(r){ return r.json(); })
+          .then(function(data){
+            ThaiQuiz.setupQuiz({
+              elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
+              pickRound: function() {
+                var answer = data[Math.floor(Math.random() * data.length)];
+                var choices = [answer];
+                while (choices.length < 4) {
+                  var rand = data[Math.floor(Math.random() * data.length)];
+                  if (!choices.includes(rand)) choices.push(rand);
+                }
+                return { answer: answer, choices: choices, symbolText: answer.symbol };
+              },
+              renderButtonContent: function(choice) { return choice.sound; },
+              isCorrect: function(choice, answer) { return choice.sound === answer.sound; }
+            });
+          })
+          .catch(function(){ document.getElementById('feedback').textContent = 'Failed to load data.'; });
       }
     },
 
@@ -540,69 +211,34 @@
           }
         } catch (e) {}
 
-        var data = JSON.parse(`[
-  {"number":"0","thai":"ศูนย์","phonetic":"sǔun"},
-  {"number":"1","thai":"หนึ่ง","phonetic":"nɯ̀ŋ"},
-  {"number":"2","thai":"สอง","phonetic":"sɔ̌ɔŋ"},
-  {"number":"3","thai":"สาม","phonetic":"săam"},
-  {"number":"4","thai":"สี่","phonetic":"sìi"},
-  {"number":"5","thai":"ห้า","phonetic":"hâa"},
-  {"number":"6","thai":"หก","phonetic":"hòk"},
-  {"number":"7","thai":"เจ็ด","phonetic":"jèt"},
-  {"number":"8","thai":"แปด","phonetic":"bpɛ̀ɛt"},
-  {"number":"9","thai":"เก้า","phonetic":"gâao"},
-  {"number":"10","thai":"สิบ","phonetic":"sìp"},
-
-  {"number":"11","thai":"สิบเอ็ด","phonetic":"sìp-èt"},
-  {"number":"12","thai":"สิบสอง","phonetic":"sìp-sɔ̌ɔŋ"},
-  {"number":"13","thai":"สิบสาม","phonetic":"sìp-săam"},
-  {"number":"14","thai":"สิบสี่","phonetic":"sìp-sìi"},
-  {"number":"15","thai":"สิบห้า","phonetic":"sìp-hâa"},
-  {"number":"16","thai":"สิบหก","phonetic":"sìp-hòk"},
-  {"number":"17","thai":"สิบเจ็ด","phonetic":"sìp-jèt"},
-  {"number":"18","thai":"สิบแปด","phonetic":"sìp-bpɛ̀ɛt"},
-  {"number":"19","thai":"สิบเก้า","phonetic":"sìp-gâao"},
-
-  {"number":"20","thai":"ยี่สิบ","phonetic":"yîi-sìp"},
-  {"number":"30","thai":"สามสิบ","phonetic":"săam-sìp"},
-  {"number":"40","thai":"สี่สิบ","phonetic":"sìi-sìp"},
-  {"number":"50","thai":"ห้าสิบ","phonetic":"hâa-sìp"},
-  {"number":"60","thai":"หกสิบ","phonetic":"hòk-sìp"},
-  {"number":"70","thai":"เจ็ดสิบ","phonetic":"jèt-sìp"},
-  {"number":"80","thai":"แปดสิบ","phonetic":"bpɛ̀ɛt-sìp"},
-  {"number":"90","thai":"เก้าสิบ","phonetic":"gâao-sìp"},
-
-  {"number":"100","thai":"หนึ่งร้อย","phonetic":"nɯ̀ŋ-ráawy"},
-  {"number":"200","thai":"สองร้อย","phonetic":"sɔ̌ɔŋ-ráawy"},
-  {"number":"1,000","thai":"หนึ่งพัน","phonetic":"nɯ̀ŋ-phan"},
-  {"number":"10,000","thai":"หนึ่งหมื่น","phonetic":"nɯ̀ŋ-mɯ̀ɯn"},
-  {"number":"100,000","thai":"หนึ่งแสน","phonetic":"nɯ̀ŋ-sɛ̌ɛn"},
-  {"number":"1,000,000","thai":"หนึ่งล้าน","phonetic":"nɯ̀ŋ-láan"}
-]`);
-
-        ThaiQuiz.setupQuiz({
-          elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
-          pickRound: function() {
-            var answer = data[Math.floor(Math.random() * data.length)];
-            var choices = [answer];
-            while (choices.length < 4) {
-              var rand = data[Math.floor(Math.random() * data.length)];
-              if (!choices.find(function(c) { return c.phonetic === rand.phonetic; })) choices.push(rand);
-            }
-            var symbolText = (answer.number || '') + '  ' + (answer.thai || '');
-            var symbolAriaLabel = 'Number and Thai: ' + (answer.number || '') + (answer.thai ? ' ' + answer.thai : '');
-            return { answer: answer, choices: choices, symbolText: symbolText, symbolAriaLabel: symbolAriaLabel };
-          },
-          renderSymbol: function(answer, els) {
-            var num = answer.number || '';
-            var thai = answer.thai || '';
-            els.symbolEl.innerHTML = '' + num + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-            els.symbolEl.setAttribute('aria-label', 'Number and Thai: ' + num + (thai ? ' ' + thai : ''));
-          },
-          renderButtonContent: function(choice) { return choice.phonetic; },
-          ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-          isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
-        });
+        fetch('data/numbers.json')
+          .then(function(r){ return r.json(); })
+          .then(function(data){
+            ThaiQuiz.setupQuiz({
+              elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
+              pickRound: function() {
+                var answer = data[Math.floor(Math.random() * data.length)];
+                var choices = [answer];
+                while (choices.length < 4) {
+                  var rand = data[Math.floor(Math.random() * data.length)];
+                  if (!choices.find(function(c) { return c.phonetic === rand.phonetic; })) choices.push(rand);
+                }
+                var symbolText = (answer.number || '') + '  ' + (answer.thai || '');
+                var symbolAriaLabel = 'Number and Thai: ' + (answer.number || '') + (answer.thai ? ' ' + answer.thai : '');
+                return { answer: answer, choices: choices, symbolText: symbolText, symbolAriaLabel: symbolAriaLabel };
+              },
+              renderSymbol: function(answer, els) {
+                var num = answer.number || '';
+                var thai = answer.thai || '';
+                els.symbolEl.innerHTML = '' + num + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+                els.symbolEl.setAttribute('aria-label', 'Number and Thai: ' + num + (thai ? ' ' + thai : ''));
+              },
+              renderButtonContent: function(choice) { return choice.phonetic; },
+              ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
+              isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
+            });
+          })
+          .catch(function(){ document.getElementById('feedback').textContent = 'Failed to load data.'; });
       }
     },
 
@@ -611,73 +247,44 @@
       subtitle: 'Choose the correct phonetic for the Thai time phrase',
       bodyClass: 'time-quiz',
       init: function() {
-        var keyWords = JSON.parse(`[
-  {"english":"Hour (o’clock)","thai":"โมง","phonetic":"mooŋ"},
-  {"english":"Hour (o’clock)","thai":"ทุ่ม","phonetic":"thûm"},
-  {"english":"Hour (o’clock)","thai":"นาฬิกา","phonetic":"naa-lí-gaa"},
-  {"english":"Minute","thai":"นาที","phonetic":"naa-thii"},
-  {"english":"Second","thai":"วินาที","phonetic":"wí-naa-thii"},
-  {"english":"Time","thai":"เวลา","phonetic":"wee-laa"},
-  {"english":"O’clock sharp","thai":"ตรง","phonetic":"dtroŋ"},
-  {"english":"Half past (30 min)","thai":"ครึ่ง","phonetic":"khrɯ̂ŋ"},
-  {"english":"Quarter","thai":"หนึ่งในสี่","phonetic":"nɯ̀ŋ nai sìi"},
-  {"english":"Early morning (1–5 AM)","thai":"ตี…","phonetic":"dtii …"},
-  {"english":"Morning (6–11 AM)","thai":"…โมงเช้า","phonetic":"…mooŋ cháo"},
-  {"english":"Noon","thai":"เที่ยง","phonetic":"thîaŋ"},
-  {"english":"Afternoon (1–3 PM)","thai":"บ่าย…โมง","phonetic":"bàay … mooŋ"},
-  {"english":"Late afternoon (4–6 PM)","thai":"…โมงเย็น","phonetic":"…mooŋ yen"},
-  {"english":"Evening/Night (7–11 PM)","thai":"…ทุ่ม","phonetic":"…thûm"},
-  {"english":"Midnight","thai":"เที่ยงคืน","phonetic":"thîaŋ-kʉʉn"}
-]`);
+        Promise.all([
+          fetch('data/time-keywords.json').then(function(r){ return r.json(); }),
+          fetch('data/time-formats.json').then(function(r){ return r.json(); }),
+          fetch('data/time-examples.json').then(function(r){ return r.json(); })
+        ]).then(function(results){
+          var keyWords = results[0];
+          var timeFormats = results[1];
+          var examples = results[2];
 
-        var timeFormats = JSON.parse(`[
-  {"thai":"ตีหนึ่ง","phonetic":"dtii nɯ̀ŋ","note":"1 AM"},
-  {"thai":"หกโมงเช้า","phonetic":"hòk mooŋ cháo","note":"6 AM"},
-  {"thai":"เที่ยง","phonetic":"thîaŋ","note":"12 PM (noon)"},
-  {"thai":"บ่ายโมง","phonetic":"bàay mooŋ","note":"1 PM"},
-  {"thai":"บ่ายสามโมง","phonetic":"bàay săam mooŋ","note":"3 PM"},
-  {"thai":"สี่โมงเย็น","phonetic":"sìi mooŋ yen","note":"4 PM"},
-  {"thai":"สองทุ่ม","phonetic":"sǒn thûm","note":"8 PM"},
-  {"thai":"เที่ยงคืน","phonetic":"thîaŋ-kʉʉn","note":"12 AM (midnight)"}
-]`);
+          function englishOf(item) {
+            return item.english || item.note || item.translation || '';
+          }
 
-        var examples = JSON.parse(`[
-  {"thai":"กี่โมงแล้ว?","phonetic":"gìi mooŋ lɛ́ɛo?","translation":"What time is it now?"},
-  {"thai":"ตอนนี้เป็นสี่โมงเย็น","phonetic":"tîi-níi bpen sìi mooŋ yen","translation":"It’s 4 PM"},
-  {"thai":"ผมตื่นเช้าตีสี่","phonetic":"phǒm tam ŋaan tʉ̀ʉn cháo sìi dtii","translation":"I wake up at 4 AM"},
-  {"thai":"ฉันมาถึงบ้านบ่ายสองโมง","phonetic":"chǎn maa thʉ̌ŋ bâan bàay sɔ̌ɔŋ mooŋ","translation":"I arrived home at 2 PM"},
-  {"thai":"เราจะเจอกันหกโมงเช้าตรง","phonetic":"raw jà jer kan hòk mooŋ cháo dtrooŋ","translation":"Let’s meet at exactly 6 AM"},
-  {"thai":"พักเบรกใช้เวลาสิบนาที","phonetic":"náam-phàk rao khᴐ̌ɔp chái wee-laa sìp naa-thii","translation":"The break takes 10 minutes"}
-]`);
+          var pool = keyWords.concat(timeFormats, examples);
 
-        function englishOf(item) {
-          return item.english || item.note || item.translation || '';
-        }
-
-        var pool = keyWords.concat(timeFormats, examples);
-
-        ThaiQuiz.setupQuiz({
-          elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
-          pickRound: function() {
-            var answer = pool[Math.floor(Math.random() * pool.length)];
-            var choices = [answer];
-            while (choices.length < 4) {
-              var rand = pool[Math.floor(Math.random() * pool.length)];
-              if (!choices.find(function(c) { return c.phonetic === rand.phonetic; })) choices.push(rand);
-            }
-            var symbolAriaLabel = 'English and Thai: ' + englishOf(answer) + ' — ' + answer.thai;
-            return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
-          },
-          renderSymbol: function(answer, els) {
-            var english = englishOf(answer);
-            var thai = answer.thai || '';
-            els.symbolEl.innerHTML = '' + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-            els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
-          },
-          renderButtonContent: function(choice) { return choice.phonetic; },
-          ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-          isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
-        });
+          ThaiQuiz.setupQuiz({
+            elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
+            pickRound: function() {
+              var answer = pool[Math.floor(Math.random() * pool.length)];
+              var choices = [answer];
+              while (choices.length < 4) {
+                var rand = pool[Math.floor(Math.random() * pool.length)];
+                if (!choices.find(function(c) { return c.phonetic === rand.phonetic; })) choices.push(rand);
+              }
+              var symbolAriaLabel = 'English and Thai: ' + englishOf(answer) + ' — ' + answer.thai;
+              return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
+            },
+            renderSymbol: function(answer, els) {
+              var english = englishOf(answer);
+              var thai = answer.thai || '';
+              els.symbolEl.innerHTML = '' + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+              els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
+            },
+            renderButtonContent: function(choice) { return choice.phonetic; },
+            ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
+            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
+          });
+        }).catch(function(){ document.getElementById('feedback').textContent = 'Failed to load data.'; });
       }
     },
 
@@ -696,75 +303,52 @@
           }
         } catch (e) {}
 
-        var data = JSON.parse(`[
-  {"english":"what","thai":"อะไร","phonetic":"à-rai"},
-  {"english":"who","thai":"ใคร","phonetic":"khrai"},
-  {"english":"where","thai":"ที่ไหน","phonetic":"thîi-nǎi"},
-  {"english":"when","thai":"เมื่อไหร่","phonetic":"mûea-rài"},
-  {"english":"why","thai":"ทำไม","phonetic":"tham-mai"},
-  {"english":"have … yet","thai":"… หรือยัง","phonetic":"rw-yan"},
-  {"english":"how","thai":"ยังไง","phonetic":"yaŋ-ŋai"},
-  {"english":"how much","thai":"เท่าไหร่","phonetic":"thâo-rài"},
-  {"english":"how many","thai":"กี่","phonetic":"gìi"},
-  {"english":"which","thai":"ไหน","phonetic":"nǎi"},
-  {"english":"is it … ?","thai":"… ไหม","phonetic":"… mái?"},
-  {"english":"can … ?","thai":"… ได้ไหม","phonetic":"… dâay mái?"},
-  {"english":"have you ever … ?","thai":"เคย … ไหม","phonetic":"khəəy … mái?"}
-]`);
+        Promise.all([
+          fetch('data/questions.json').then(function(r){ return r.json(); }),
+          fetch('data/questions-examples.json').then(function(r){ return r.json(); })
+        ]).then(function(results){
+          var data = results[0];
+          var examples = results[1] || {};
 
-        var examples = {
-          'what': 'What is this? → an níi khʉʉ à-rai?',
-          'who': 'Who is that? → khrai khʉʉ an nán?',
-          'where': 'Where are you going? → khun jà bpai thîi-nǎi?',
-          'when': 'When do you work? → khun tham ŋaan mûea-rài?',
-          'why': 'Why do you like Thai food? → tham-mai khun chɔ̂ɔp aa-hǎan thai?',
-          'how': 'How is the food? → aa-hǎan bpen yaŋ-ŋai?',
-          'how much': 'How much is it? → an níi thâo-rài?',
-          'how many': 'How many plates? → mii gìi jaan?',
-          'which': 'Which one do you want? → khun ao an nǎi?',
-          'is it … ?': 'Is it spicy? → phèt mái?',
-          'can … ?': 'Can you speak Thai? → khun phûut phaa-sǎa thai dâay mái?',
-          'have you ever … ?': 'Have you ever tried Pad Thai? → khun khəəy gin phàt-thai mái?'
-        };
-
-        ThaiQuiz.setupQuiz({
-          elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
-          pickRound: function() {
-            var answer = data[Math.floor(Math.random() * data.length)];
-            var choices = [answer];
-            while (choices.length < 4) {
-              var rand = data[Math.floor(Math.random() * data.length)];
-              if (!choices.find(function(c) { return c.phonetic === rand.phonetic; })) choices.push(rand);
-            }
-            var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
-            return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
-          },
-          renderSymbol: function(answer, els) {
-            var thai = answer.thai || '';
-            var english = answer.english || '';
-            els.symbolEl.innerHTML = '' + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-            els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
-          },
-          renderButtonContent: function(choice) { return choice.phonetic; },
-          ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-          isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
-          onAnswered: function(ctx) {
-            var correct = ctx.correct, answer = ctx.answer, state = ctx.state;
-            if (!correct) return;
-            try {
-              var fb = document.getElementById('feedback');
-              var ex = examples[answer.english];
-              fb.innerHTML = ex ? '<div class="correct-line">✅ Correct!</div><div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '<div class="correct-line">✅ Correct!</div>';
-              if (state && state.autoAdvanceTimerId != null) {
-                clearTimeout(state.autoAdvanceTimerId);
+          ThaiQuiz.setupQuiz({
+            elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
+            pickRound: function() {
+              var answer = data[Math.floor(Math.random() * data.length)];
+              var choices = [answer];
+              while (choices.length < 4) {
+                var rand = data[Math.floor(Math.random() * data.length)];
+                if (!choices.find(function(c) { return c.phonetic === rand.phonetic; })) choices.push(rand);
               }
-              state.autoAdvanceTimerId = setTimeout(function() {
-                var next = document.getElementById('nextBtn');
-                if (next && next.style.display !== 'none') next.click();
-              }, 3000);
-            } catch (e) {}
-          }
-        });
+              var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
+              return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
+            },
+            renderSymbol: function(answer, els) {
+              var thai = answer.thai || '';
+              var english = answer.english || '';
+              els.symbolEl.innerHTML = '' + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+              els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
+            },
+            renderButtonContent: function(choice) { return choice.phonetic; },
+            ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
+            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
+            onAnswered: function(ctx) {
+              var correct = ctx.correct, answer = ctx.answer, state = ctx.state;
+              if (!correct) return;
+              try {
+                var fb = document.getElementById('feedback');
+                var ex = examples[answer.english];
+                fb.innerHTML = ex ? '<div class="correct-line">✅ Correct!</div><div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '<div class="correct-line">✅ Correct!</div>';
+                if (state && state.autoAdvanceTimerId != null) {
+                  clearTimeout(state.autoAdvanceTimerId);
+                }
+                state.autoAdvanceTimerId = setTimeout(function() {
+                  var next = document.getElementById('nextBtn');
+                  if (next && next.style.display !== 'none') next.click();
+                }, 3000);
+              } catch (e) {}
+            }
+          });
+        }).catch(function(){ document.getElementById('feedback').textContent = 'Failed to load data.'; });
       }
     }
   };
