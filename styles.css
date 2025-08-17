@@ -42,15 +42,17 @@ h1 {
 }
 .brand {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.7em;
+  gap: 0.4em;
 }
 .brand-icon {
-  font-size: 1.6em;
+  font-size: 4em;
 }
 .brand-text {
   display: grid;
   line-height: 1.1;
+  text-align: center;
 }
 .brand-title {
   margin: 0;
@@ -73,7 +75,7 @@ body.home .app-bar .brand-subtitle { margin: 0; }
 }
 @media (max-width: 480px) {
   .app-bar { padding: 0.65em 0.8em; }
-  .brand-icon { font-size: 1.5em; }
+  .brand-icon { font-size: 2em; }
 }
 
 /* Hero header */
