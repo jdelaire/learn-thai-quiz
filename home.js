@@ -60,7 +60,7 @@
       {
         id: 'consonants',
         title: '🔤 Consonant Quiz',
-        href: 'consonant-quiz.html',
+        href: 'quiz.html?quiz=consonants',
         description: 'Learn all 44 Thai consonants with pronunciation, meanings, and tone classes.',
         bullets: ['Color-coded tone classes','Emoji associations','Progress tracking'],
         categories: ['Alphabet','Beginner']
@@ -68,7 +68,7 @@
       {
         id: 'vowels',
         title: '🔤 Vowel Quiz',
-        href: 'vowel-quiz.html',
+        href: 'quiz.html?quiz=vowels',
         description: 'Practice 32 Thai vowels with sound patterns and example words.',
         bullets: ['Vowel symbols','Sound patterns'],
         categories: ['Alphabet','Beginner']
@@ -76,7 +76,7 @@
       {
         id: 'colors',
         title: '🎨 Color Quiz',
-        href: 'color-quiz.html',
+        href: 'quiz.html?quiz=colors',
         description: 'Practice Thai colors including light/dark modifiers with phonetics.',
         bullets: ['Base colors','Light/Dark modifiers'],
         categories: ['Vocabulary']
@@ -84,7 +84,7 @@
       {
         id: 'numbers',
         title: '🔢 Numbers Quiz',
-        href: 'numbers-quiz.html',
+        href: 'quiz.html?quiz=numbers',
         description: 'Practice Thai numbers with phonetics, from 0 to the millions.',
         bullets: ['Basic 0–10','Teens and Tens','Hundreds & Thousands'],
         categories: ['Vocabulary','Beginner']
@@ -92,7 +92,7 @@
       {
         id: 'time',
         title: '⏰ Time Quiz',
-        href: 'time-quiz.html',
+        href: 'quiz.html?quiz=time',
         description: 'Telling time in Thai: keywords, formats, and common phrases.',
         bullets: ['Key words (นาที, โมง, ทุ่ม, ครึ่ง, ตรง)','AM/PM patterns (ตี…, …โมงเช้า, …ทุ่ม)','Practical sentences'],
         categories: ['Phrases']
@@ -100,7 +100,7 @@
       {
         id: 'questions',
         title: '❓ Questions Quiz',
-        href: 'questions-quiz.html',
+        href: 'quiz.html?quiz=questions',
         description: 'Asking questions in Thai: core words and common patterns.',
         bullets: ['Question words (อะไร, ใคร, ที่ไหน, เมื่อไหร่, ทำไม)','Patterns (…ไหม, …ได้ไหม, เคย…ไหม)','How much/how many'],
         categories: ['Phrases','Beginner']
