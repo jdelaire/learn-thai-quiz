@@ -96,9 +96,16 @@
             ? !!config.isCorrect(choice, answer, state)
             : (choice === answer);
 
+          btn.classList.remove('answer-correct', 'answer-wrong');
+          void btn.offsetWidth;
+
           if (isCorrect) {
             state.correctAnswers++;
-            feedbackEl.textContent = '✅ Correct!';
+            feedbackEl.textContent = '';
+            btn.classList.add('answer-correct');
+            btn.addEventListener('animationend', function handle() {
+              btn.classList.remove('answer-correct');
+            }, { once: true });
             nextBtn.style.display = 'inline-block';
 
             if (state.autoAdvanceTimerId != null) {
@@ -109,7 +116,11 @@
               pickQuestion();
             }, 1500);
           } else {
-            feedbackEl.textContent = '❌ Try again!';
+            feedbackEl.textContent = '';
+            btn.classList.add('answer-wrong');
+            btn.addEventListener('animationend', function handle() {
+              btn.classList.remove('answer-wrong');
+            }, { once: true });
           }
 
           updateStats();
