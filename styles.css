@@ -102,6 +102,37 @@ button {
   backdrop-filter: none;
 }
 
+/* Answer feedback animations */
+@keyframes correctPulse {
+  0% { transform: scale(1); background-color: #f7f7f7; box-shadow: 0 0 0 rgba(0,0,0,0); }
+  20% { transform: scale(1.04); background-color: #d4edda; box-shadow: 0 8px 18px rgba(40,167,69,0.25); }
+  50% { transform: scale(1.02); background-color: #c3e6cb; }
+  100% { transform: scale(1); background-color: #f7f7f7; box-shadow: 0 0 0 rgba(0,0,0,0); }
+}
+
+@keyframes wrongShake {
+  0% { transform: translateX(0); }
+  15% { transform: translateX(-6px) rotate(-1deg); }
+  30% { transform: translateX(6px) rotate(1deg); }
+  45% { transform: translateX(-5px) rotate(-1deg); }
+  60% { transform: translateX(5px) rotate(1deg); }
+  75% { transform: translateX(-3px) rotate(-0.5deg); }
+  90% { transform: translateX(3px) rotate(0.5deg); }
+  100% { transform: translateX(0); }
+}
+
+button.answer-correct {
+  animation: correctPulse 500ms ease;
+  border-color: rgba(40,167,69,0.6);
+  box-shadow: 0 8px 18px rgba(40,167,69,0.25);
+}
+
+button.answer-wrong {
+  animation: wrongShake 500ms ease;
+  background-color: #f8d7da;
+  border-color: rgba(220,53,69,0.6);
+}
+
 button:hover {
   background: #efefef;
   color: #111111;

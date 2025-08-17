@@ -250,7 +250,7 @@
               try {
                 var fb = document.getElementById('feedback');
                 var ex = examples[answer.english];
-                fb.innerHTML = ex ? '<div class="correct-line">✅ Correct!</div><div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '<div class="correct-line">✅ Correct!</div>';
+                fb.innerHTML = ex ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '';
                 if (state && state.autoAdvanceTimerId != null) {
                   clearTimeout(state.autoAdvanceTimerId);
                 }
