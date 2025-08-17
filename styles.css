@@ -423,7 +423,7 @@ body.color-quiz #symbol {
   margin: 0.6em 0 0.6em 0;
   font-weight: 800;
   color: #111111;
-  text-shadow: none;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.6), 0 0 4px rgba(0,0,0,0.45);
   line-height: 1.2;
 }
 body.color-quiz .options { max-width: 500px; }
