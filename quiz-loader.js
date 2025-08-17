@@ -263,6 +263,36 @@
           });
         }).catch(function(err){ handleDataLoadError(err); });
       }
+    },
+
+    family: {
+      title: 'Thai Family Quiz',
+      subtitle: 'Choose the correct phonetic for the Thai family word',
+      bodyClass: 'family-quiz',
+      init: function() {
+        Utils.fetchJSON('data/family.json')
+          .then(function(data){
+            ThaiQuiz.setupQuiz({
+              elements: defaultElements,
+              pickRound: function() {
+                var answer = Utils.pickRandom(data);
+                var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
+                var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
+                return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
+              },
+              renderSymbol: function(answer, els) {
+                var english = answer.english || '';
+                var thai = answer.thai || '';
+                els.symbolEl.innerHTML = '' + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+                els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
+              },
+              renderButtonContent: function(choice) { return choice.phonetic; },
+              ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
+              isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
+            });
+          })
+          .catch(function(err){ handleDataLoadError(err); });
+      }
     }
   };
 
