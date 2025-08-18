@@ -302,14 +302,14 @@ body.home .footer {
 
 /* Socials card */
 body.home .socials-card {
-  background: #ffffff;
+  background: transparent;
   backdrop-filter: none;
   border-radius: 16px;
   padding: 1em 1.2em;
   max-width: 760px;
   width: 100%;
   margin: 1.5em auto 0;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: none;
   transition: all 0.2s ease;
 }
 body.home .socials-card h2 {
