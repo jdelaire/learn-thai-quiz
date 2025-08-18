@@ -59,10 +59,18 @@
       if (!categoryFilters) return;
       categoryFilters.innerHTML = '';
 
+      // Count quizzes in each category
+      const categoryCounts = {};
+      quizzes.forEach(q => {
+        (q.categories || []).forEach(cat => {
+          categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+        });
+      });
+
       const allChip = document.createElement('button');
       allChip.type = 'button';
       allChip.className = 'chip active';
-      allChip.textContent = 'All';
+      allChip.textContent = 'All (' + quizzes.length + ')';
       allChip.dataset.value = '';
       categoryFilters.appendChild(allChip);
 
@@ -70,7 +78,7 @@
         const chip = document.createElement('button');
         chip.type = 'button';
         chip.className = 'chip';
-        chip.textContent = cat;
+        chip.textContent = cat + ' (' + (categoryCounts[cat] || 0) + ')';
         chip.dataset.value = cat;
         categoryFilters.appendChild(chip);
       });
