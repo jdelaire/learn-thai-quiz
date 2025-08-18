@@ -558,6 +558,11 @@ body.classifiers-quiz #symbol .secondary {
   margin-top: 0.15em;
   font-weight: 600;
 }
+body.classifiers-quiz #symbol .emoji-line {
+  font-size: 0.45em;
+  opacity: 0.95;
+  margin-bottom: 0.1em;
+}
 
 /* Vowel quiz */
 body.vowel-quiz #symbol {

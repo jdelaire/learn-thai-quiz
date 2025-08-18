@@ -304,6 +304,48 @@
           }
         } catch (e) {}
 
+        function emojiForClassifier(item) {
+          try {
+            var txt = String(item && item.english || '').toLowerCase();
+            var rules = [
+              [/people|person/, '👥'],
+              [/animals?/, '🐾'],
+              [/shirts?/, '👕'],
+              [/chairs?/, '🪑'],
+              [/flat|paper|cds?|disc/, '📄'],
+              [/containers?|bags?/, '🧺'],
+              [/cups?|glasses?|drinkware/, '🥤'],
+              [/books?|notebooks?/, '📚'],
+              [/knives?/, '🔪'],
+              [/balls?|fruits?|round/, '⚽'],
+              [/vehicles?|cars?/, '🚗'],
+              [/umbrellas?/, '☂️'],
+              [/eggs?/, '🥚'],
+              [/seeds?/, '🌱'],
+              [/pills?/, '💊'],
+              [/buttons?/, '🔘'],
+              [/houses?/, '🏠'],
+              [/rooms?/, '🚪'],
+              [/machines?|devices?/, '🖥️'],
+              [/pairs?/, '👟'],
+              [/pieces?|slices?/, '🍰'],
+              [/general/, '📦'],
+              [/places?/, '📍'],
+              [/plates?/, '🍽️'],
+              [/bowls?/, '🍜'],
+              [/boxes?/, '📦'],
+              [/plastic\s*bags?/, '🛍️'],
+              [/bottles?/, '🍼'],
+              [/cans?|tins?/, '🥫'],
+              [/cartons?/, '🧃']
+            ];
+            for (var i = 0; i < rules.length; i++) {
+              if (rules[i][0].test(txt)) return rules[i][1];
+            }
+          } catch (e) {}
+          return '';
+        }
+
         Promise.all([
           Utils.fetchJSON('data/classifiers.json'),
           Utils.fetchJSON('data/classifiers-examples.json')
@@ -322,7 +364,8 @@
               renderSymbol: function(answer, els) {
                 var english = answer.english || '';
                 var thai = answer.thai || '';
-                els.symbolEl.innerHTML = '' + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+                var emoji = emojiForClassifier(answer);
+                els.symbolEl.innerHTML = (emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '') + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
                 els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
               },
               renderButtonContent: function(choice) { return choice.phonetic; },
