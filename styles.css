@@ -8,7 +8,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: center;
   color: #111111;
 }
 
@@ -300,47 +301,38 @@ body.home .footer {
   font-size: 0.9em;
 }
 
-/* Socials card */
-body.home .socials-card {
-  background: transparent;
-  backdrop-filter: none;
-  border-radius: 16px;
-  padding: 1em 1.2em;
-  max-width: 760px;
-  width: 100%;
-  margin: 1.5em auto 0;
-  border: none;
-  transition: all 0.2s ease;
+/* Socials */
+body.home .socials {
+  text-align: center;
+  margin: 2em 0 0 0;
+  padding: 1em;
 }
-body.home .socials-card h2 {
-  margin: 0 0 0.6em 0;
+
+body.home .socials h2 {
+  margin: 0 0 0.8em 0;
   font-size: 1.2em;
   color: #111111;
 }
-body.home .socials-card .avatar-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 0.6em;
-}
-body.home .socials-card .avatar {
+
+body.home .socials .avatar {
   width: 88px;
   height: 88px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid rgba(0, 0, 0, 0.12);
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-bottom: 0.8em;
 }
-body.home .socials-card .links {
+
+body.home .socials .social-links {
   display: flex;
-  gap: 0.5em;
-  flex-wrap: wrap;
+  gap: 0.8em;
   justify-content: center;
+  flex-wrap: wrap;
 }
-body.home .socials-card a.chip {
+
+body.home .socials a.chip {
   text-decoration: none;
-}
-body.home .socials-card a.chip:link,
-body.home .socials-card a.chip:visited {
   color: #111111;
 }
 
@@ -763,6 +755,13 @@ body.questions-quiz .correct-line {
     min-width: 280px;
     padding: 1.5em;
   }
+  body.home .socials {
+    padding: 0.8em;
+    margin: 1.5em 0 0 0;
+  }
+  body.home .socials .social-links {
+    gap: 0.6em;
+  }
 }
 
 @media (max-width: 600px) {
@@ -783,10 +782,34 @@ body.questions-quiz .correct-line {
   body.consonant-quiz .stats { margin-top: 1.5em; font-size: 0.8em; }
 
   body.color-quiz button { font-size: 1.05em; padding: 0.8em; }
+  
+  body.home .socials {
+    padding: 0.6em;
+    margin: 1.2em 0 0 0;
+  }
+  body.home .socials .social-links {
+    gap: 0.5em;
+  }
+  body.home .socials .chip {
+    font-size: 0.9em;
+    padding: 0.4em 0.8em;
+  }
 }
 
 @media (max-width: 400px) {
   body.consonant-quiz #symbol { font-size: 6em; }
   body.consonant-quiz .legend { flex-direction: column; gap: 0.5em; }
   body.consonant-quiz button { font-size: 0.9em; padding: 0.6em; }
+  
+  body.home .socials {
+    padding: 0.5em;
+    margin: 1em 0 0 0;
+  }
+  body.home .socials .social-links {
+    gap: 0.4em;
+  }
+  body.home .socials .chip {
+    font-size: 0.85em;
+    padding: 0.35em 0.7em;
+  }
 }
