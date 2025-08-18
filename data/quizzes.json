@@ -63,5 +63,13 @@
     "description": "Practice essential Thai classifiers with English, Thai, and phonetics.",
     "bullets": ["Core classifiers","Food & drinks classifiers","Usage tips"],
     "categories": ["Vocabulary","Beginner"]
+  },
+  {
+    "id": "rooms",
+    "title": "🏠 Rooms Quiz",
+    "href": "quiz.html?quiz=rooms",
+    "description": "Learn Thai room and house vocabulary with phonetics and example sentences.",
+    "bullets": ["Rooms & spaces","House types","Usage examples"],
+    "categories": ["Vocabulary","Beginner"]
   }
 ]

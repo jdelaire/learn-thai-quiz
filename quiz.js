@@ -112,10 +112,12 @@
             if (state.autoAdvanceTimerId != null) {
               clearTimeout(state.autoAdvanceTimerId);
             }
+            // Use longer delay (5 seconds) for quizzes that show examples
+            const delay = (typeof config.onAnswered === 'function') ? 4000 : 1500;
             state.autoAdvanceTimerId = setTimeout(() => {
               state.autoAdvanceTimerId = null;
               pickQuestion();
-            }, 1500);
+            }, delay);
           } else {
             feedbackEl.textContent = '';
             btn.classList.add('answer-wrong');

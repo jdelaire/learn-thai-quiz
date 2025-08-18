@@ -654,6 +654,50 @@ body.questions-quiz .example .text {
   font-weight: 600;
 }
 
+/* Rooms quiz (styled like Questions quiz) */
+body.rooms-quiz h1 { margin-bottom: 0.2em; }
+body.rooms-quiz #symbol {
+  font-size: 4.2em;
+  margin: 0.6em 0 0.6em 0;
+  font-weight: 800;
+  color: #111111;
+  text-shadow: none;
+  line-height: 1.2;
+}
+body.rooms-quiz .options { max-width: 620px; }
+body.rooms-quiz #symbol .secondary {
+  display: block;
+  font-size: 0.38em;
+  opacity: 0.95;
+  margin-top: 0.15em;
+  font-weight: 600;
+}
+body.rooms-quiz .example {
+  margin-top: 0.5em;
+  font-size: 0.78em;
+  font-weight: 600;
+  background: #f5f7fb;
+  border: 1px solid rgba(0, 36, 125, 0.2);
+  display: inline-block;
+  padding: 0.5em 0.7em;
+  border-radius: 10px;
+}
+body.rooms-quiz .example .label {
+  display: inline-block;
+  opacity: 0.95;
+  font-size: 0.9em;
+  padding: 0.1em 0.45em;
+  margin-right: 0.45em;
+  border-radius: 6px;
+  background: rgba(0, 36, 125, 0.9);
+  color: white;
+}
+body.rooms-quiz .example .text {
+  display: block;
+  margin-top: 0.35em;
+  font-weight: 600;
+}
+
 /* Classifiers quiz example styling (mirrors Questions quiz) */
 body.classifiers-quiz .example {
   margin-top: 0.5em;
@@ -782,6 +826,9 @@ body.questions-quiz .correct-line {
   body.consonant-quiz .stats { margin-top: 1.5em; font-size: 0.8em; }
 
   body.color-quiz button { font-size: 1.05em; padding: 0.8em; }
+  
+  body.rooms-quiz #symbol { font-size: 3.6em; }
+  body.rooms-quiz button { font-size: 1.05em; padding: 0.8em; }
   
   body.home .socials {
     padding: 0.6em;

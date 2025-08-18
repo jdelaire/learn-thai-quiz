@@ -25,6 +25,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Questions**: Core question words and common patterns; shows an example sentence after correct answers
 - **Family**: Immediate and extended family members with Thai script and phonetics
 - **Classifiers**: Common classifiers with example sentences and helpful emojis
+- **Rooms**: House and room vocabulary with example sentences and usage tips
 
 ### Quick start (local)
 
@@ -111,6 +112,11 @@ Time/phrases (any of these keys are supported by existing configs):
 Classifiers:
 ```json
 { "english": "people", "thai": "คน", "phonetic": "khon" }
+```
+
+Rooms:
+```json
+{ "english": "bedroom", "thai": "ห้องนอน", "phonetic": "hɔ̂ɔŋ nɔɔn" }
 ```
 
 #### Quiz config skeleton (`quiz-loader.js`)
