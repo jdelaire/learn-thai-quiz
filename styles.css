@@ -595,7 +595,7 @@ body.classifiers-quiz #symbol .secondary {
   font-weight: 600;
 }
 body.classifiers-quiz #symbol .emoji-line {
-  font-size: 0.45em;
+  font-size: 0.9em;
   opacity: 0.95;
   margin-bottom: 0.1em;
 }
@@ -671,6 +671,11 @@ body.rooms-quiz #symbol .secondary {
   opacity: 0.95;
   margin-top: 0.15em;
   font-weight: 600;
+}
+body.rooms-quiz #symbol .emoji-line {
+  font-size: 0.9em;
+  opacity: 0.95;
+  margin-bottom: 0.1em;
 }
 body.rooms-quiz .example {
   margin-top: 0.5em;

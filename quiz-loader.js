@@ -401,6 +401,37 @@
           }
         } catch (e) {}
 
+        function emojiForRoom(item) {
+          try {
+            var txt = String(item && item.english || '').toLowerCase();
+            var rules = [
+              [/bedroom/, '🛏️'],
+              [/bathroom|toilet/, '🚽'],
+              [/kitchen/, '🍳'],
+              [/living room/, '🛋️'],
+              [/dining room/, '🍽️'],
+              [/laundry room/, '🧺'],
+              [/storage room/, '📦'],
+              [/garage/, '🚗'],
+              [/balcony/, '🌿'],
+              [/garden|yard/, '🌱'],
+              [/rooftop/, '🏙️'],
+              [/apartment/, '🏢'],
+              [/condo/, '🏢'],
+              [/building/, '🏢'],
+              [/house/, '🏠'],
+              [/room/, '🚪'],
+              [/stairs/, '🪜'],
+              [/elevator/, '🛗'],
+              [/floor/, '🏢']
+            ];
+            for (var i = 0; i < rules.length; i++) {
+              if (rules[i][0].test(txt)) return rules[i][1];
+            }
+          } catch (e) {}
+          return '';
+        }
+
         Promise.all([
           Utils.fetchJSON('data/rooms.json'),
           Utils.fetchJSON('data/rooms-examples.json')
@@ -418,7 +449,8 @@
             renderSymbol: function(answer, els) {
               var english = answer.english || '';
               var thai = answer.thai || '';
-              els.symbolEl.innerHTML = '' + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+              var emoji = emojiForRoom(answer);
+              els.symbolEl.innerHTML = (emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '') + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
               els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
             },
             renderButtonContent: function(choice) { return choice.phonetic; },
