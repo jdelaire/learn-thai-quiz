@@ -540,6 +540,25 @@ body.family-quiz #symbol .secondary {
   font-weight: 600;
 }
 
+/* Classifiers quiz (styled like Numbers quiz) */
+body.classifiers-quiz h1 { margin-bottom: 0.2em; }
+body.classifiers-quiz #symbol {
+  font-size: 4.6em;
+  margin: 0.6em 0 0.6em 0;
+  font-weight: 800;
+  color: #111111;
+  text-shadow: none;
+  line-height: 1.2;
+}
+body.classifiers-quiz .options { max-width: 600px; }
+body.classifiers-quiz #symbol .secondary {
+  display: block;
+  font-size: 0.38em;
+  opacity: 0.95;
+  margin-top: 0.15em;
+  font-weight: 600;
+}
+
 /* Vowel quiz */
 body.vowel-quiz #symbol {
   font-size: 8em;
@@ -701,6 +720,7 @@ body.questions-quiz .correct-line {
   body { padding: 0.8em; }
   body.color-quiz #symbol { font-size: 3.4em; }
   body.numbers-quiz #symbol { font-size: 3.6em; }
+  body.classifiers-quiz #symbol { font-size: 3.6em; }
   body.consonant-quiz #symbol { font-size: 7em; margin: 0.3em 0 0.8em 0; }
   button { font-size: 1.05em; padding: 0.8em; }
 
