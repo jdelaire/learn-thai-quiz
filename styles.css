@@ -403,7 +403,7 @@ body.consonant-quiz h1 {
 
 body.consonant-quiz #symbol {
   font-size: 10em;
-  margin: 0.5em 0 1em 0;
+  margin: 0.6em 0 0.6em 0;
   font-weight: bold;
   color: #111111;
   text-shadow: none;
@@ -603,7 +603,7 @@ body.classifiers-quiz #symbol .emoji-line {
 /* Vowel quiz */
 body.vowel-quiz #symbol {
   font-size: 8em;
-  margin: 1em 0;
+  margin: 0.6em 0 0.6em 0;
   font-weight: bold;
   color: #111111;
   text-shadow: none;
@@ -818,7 +818,7 @@ body.questions-quiz .correct-line {
   body.color-quiz #symbol { font-size: 3.4em; }
   body.numbers-quiz #symbol { font-size: 3.6em; }
   body.classifiers-quiz #symbol { font-size: 3.6em; }
-  body.consonant-quiz #symbol { font-size: 7em; margin: 0.3em 0 0.8em 0; }
+  body.consonant-quiz #symbol { font-size: 7em; margin: 0.6em 0 0.6em 0; }
   button { font-size: 1.05em; padding: 0.8em; }
 
   body.consonant-quiz h1 { font-size: 1.5em; margin-bottom: 0.3em; }
