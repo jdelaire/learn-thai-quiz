@@ -89,6 +89,9 @@ body.home .app-bar .brand-subtitle { margin: 0; }
   margin: 0 auto;
 }
 
+/* Ensure a consistent minimum answer button width across all quizzes (using vowels as default) */
+body.quiz-page .options button { min-width: 240px; }
+
 button {
   padding: 1em;
   font-size: 1.2em;
@@ -377,7 +380,8 @@ body.numbers-quiz .options button,
 body.time-quiz .options button,
 body.vowel-quiz .options button,
 body.family-quiz .options button,
-body.questions-quiz .options button {
+body.questions-quiz .options button,
+body.classifiers-quiz .options button {
   background: #f7f7f7;
   color: #111111;
   border: 1px solid rgba(0,0,0,0.12);
@@ -585,6 +589,33 @@ body.questions-quiz .example .label {
   color: white;
 }
 body.questions-quiz .example .text {
+  display: block;
+  margin-top: 0.35em;
+  font-weight: 600;
+}
+
+/* Classifiers quiz example styling (mirrors Questions quiz) */
+body.classifiers-quiz .example {
+  margin-top: 0.5em;
+  font-size: 0.78em;
+  font-weight: 600;
+  background: #f5f7fb;
+  border: 1px solid rgba(0, 36, 125, 0.2);
+  display: inline-block;
+  padding: 0.5em 0.7em;
+  border-radius: 10px;
+}
+body.classifiers-quiz .example .label {
+  display: inline-block;
+  opacity: 0.95;
+  font-size: 0.9em;
+  padding: 0.1em 0.45em;
+  margin-right: 0.45em;
+  border-radius: 6px;
+  background: rgba(0, 36, 125, 0.9);
+  color: white;
+}
+body.classifiers-quiz .example .text {
   display: block;
   margin-top: 0.35em;
   font-weight: 600;
