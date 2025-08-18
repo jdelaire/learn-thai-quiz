@@ -55,4 +55,13 @@
     "bullets": ["Parents & siblings","Extended family (aunts/uncles, grandparents)","Phonetics practice"],
     "categories": ["Vocabulary","Beginner"]
   }
+  ,
+  {
+    "id": "classifiers",
+    "title": "🔢 Common Thai Classifiers",
+    "href": "quiz.html?quiz=classifiers",
+    "description": "Practice essential Thai classifiers with English, Thai, and phonetics.",
+    "bullets": ["Core classifiers","Food & drinks classifiers","Usage tips"],
+    "categories": ["Vocabulary","Beginner"]
+  }
 ]
