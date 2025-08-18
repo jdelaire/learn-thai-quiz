@@ -36,14 +36,14 @@ cd /Users/jdelaire/sources/learn-thai-quiz
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000/public/` in your browser.
+Then open `http://localhost:8000/` in your browser.
 
 Any static server works (Node, Ruby, nginx, etc.).
 
 ### Project structure
 
-- `public/index.html`: Home page with search and category filters, renders quiz cards from `data/quizzes.json`
-- `public/quiz.html`: Quiz runner page; loads a specific quiz via `?quiz=<id>`
+- `index.html`: Home page with search and category filters, renders quiz cards from `data/quizzes.json`
+- `quiz.html`: Quiz runner page; loads a specific quiz via `?quiz=<id>`
 - `scripts/quiz.js`: Quiz engine (rendering, answer handling, auto‑advance, stats)
 - `scripts/quiz-loader.js`: Quiz configurations (how to pick rounds, render symbols/options, correctness)
 - `scripts/utils.js`: Shared helpers (fetch JSON, random selection, color utilities, DOM helpers)
@@ -121,14 +121,14 @@ Rooms:
 
 #### Quiz config skeleton (`quiz-loader.js`)
 
-Add a new entry to `ThaiQuizConfigs` with an `id` (used by `public/quiz.html?quiz=<id>`):
+Add a new entry to `ThaiQuizConfigs` with an `id` (used by `quiz.html?quiz=<id>`):
 ```javascript
 myquiz: {
   title: 'My New Quiz',
   subtitle: 'Choose the correct phonetic for the Thai term',
   bodyClass: 'myquiz-quiz',
   init: function() {
-    Utils.fetchJSON('../data/myquiz.json')
+    Utils.fetchJSON('data/myquiz.json')
       .then(function(data){
         ThaiQuiz.setupQuiz({
           elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
