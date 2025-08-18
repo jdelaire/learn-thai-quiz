@@ -44,13 +44,13 @@ Any static server works (Node, Ruby, nginx, etc.).
 
 - `index.html`: Home page with search and category filters, renders quiz cards from `data/quizzes.json`
 - `quiz.html`: Quiz runner page; loads a specific quiz via `?quiz=<id>`
-- `quiz.js`: Quiz engine (rendering, answer handling, auto‑advance, stats)
-- `quiz-loader.js`: Quiz configurations (how to pick rounds, render symbols/options, correctness)
-- `utils.js`: Shared helpers (fetch JSON, random selection, color utilities, DOM helpers)
-- `home.js`: Home page logic (filters, chips, card rendering, Today/Month widgets)
-- `styles.css`: Shared and per‑quiz styles
+- `scripts/quiz.js`: Quiz engine (rendering, answer handling, auto‑advance, stats)
+- `scripts/quiz-loader.js`: Quiz configurations (how to pick rounds, render symbols/options, correctness)
+- `scripts/utils.js`: Shared helpers (fetch JSON, random selection, color utilities, DOM helpers)
+- `scripts/home.js`: Home page logic (filters, chips, card rendering, Today/Month widgets)
+- `styles/styles.css`: Shared and per‑quiz styles
 - `data/*.json`: Quiz datasets and metadata
-- `profile.jpg`: Avatar shown in the home page Socials card
+- `assets/profile.jpg`: Avatar shown in the home page Socials card
 
 ### How it works
 
