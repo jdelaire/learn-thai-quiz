@@ -300,6 +300,50 @@ body.home .footer {
   font-size: 0.9em;
 }
 
+/* Socials card */
+body.home .socials-card {
+  background: #ffffff;
+  backdrop-filter: none;
+  border-radius: 16px;
+  padding: 1em 1.2em;
+  max-width: 760px;
+  width: 100%;
+  margin: 1.5em auto 0;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+body.home .socials-card h2 {
+  margin: 0 0 0.6em 0;
+  font-size: 1.2em;
+  color: #111111;
+}
+body.home .socials-card .avatar-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.6em;
+}
+body.home .socials-card .avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+body.home .socials-card .links {
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+body.home .socials-card a.chip {
+  text-decoration: none;
+}
+body.home .socials-card a.chip:link,
+body.home .socials-card a.chip:visited {
+  color: #111111;
+}
+
 .today-card {
   display: inline-block;
   padding: 0;
