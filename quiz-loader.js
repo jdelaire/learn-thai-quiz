@@ -287,6 +287,60 @@
           })
           .catch(function(err){ handleDataLoadError(err); });
       }
+    },
+
+    classifiers: {
+      title: 'Thai Classifiers Quiz',
+      subtitle: 'Choose the correct phonetic for the Thai classifier',
+      bodyClass: 'classifiers-quiz',
+      init: function() {
+        try {
+          var footer = document.querySelector('.footer');
+          if (footer) {
+            var tip = document.createElement('div');
+            tip.className = 'pro-tip';
+            tip.innerHTML = '<small>Structure: <strong>[noun] + [number] + [classifier]</strong><br>"nɯ̀ŋ" (one) is often omitted in casual speech.</small>';
+            footer.appendChild(tip);
+          }
+        } catch (e) {}
+
+        Promise.all([
+          Utils.fetchJSON('data/classifiers.json'),
+          Utils.fetchJSON('data/classifiers-examples.json')
+        ])
+          .then(function(results){
+            var data = results[0] || [];
+            var examples = results[1] || {};
+            ThaiQuiz.setupQuiz({
+              elements: defaultElements,
+              pickRound: function() {
+                var answer = Utils.pickRandom(data);
+                var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
+                var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
+                return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
+              },
+              renderSymbol: function(answer, els) {
+                var english = answer.english || '';
+                var thai = answer.thai || '';
+                els.symbolEl.innerHTML = '' + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+                els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
+              },
+              renderButtonContent: function(choice) { return choice.phonetic; },
+              ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
+              isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
+              onAnswered: function(ctx) {
+                var correct = ctx.correct, answer = ctx.answer;
+                if (!correct) return;
+                try {
+                  var fb = document.getElementById('feedback');
+                  var ex = examples[answer.english];
+                  fb.innerHTML = ex ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '';
+                } catch (e) {}
+              }
+            });
+          })
+          .catch(function(err){ handleDataLoadError(err); });
+      }
     }
   };
 
