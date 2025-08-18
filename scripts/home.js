@@ -164,7 +164,7 @@
     }
 
     (function init(){
-      Utils.fetchJSON('data/quizzes.json')
+      Utils.fetchJSON('../data/quizzes.json')
         .then(function(data){
           quizzes = Array.isArray(data) ? data : [];
           const categorySet = new Set();

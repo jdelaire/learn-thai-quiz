@@ -36,14 +36,14 @@ cd /Users/jdelaire/sources/learn-thai-quiz
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000/` in your browser.
+Then open `http://localhost:8000/public/` in your browser.
 
 Any static server works (Node, Ruby, nginx, etc.).
 
 ### Project structure
 
-- `index.html`: Home page with search and category filters, renders quiz cards from `data/quizzes.json`
-- `quiz.html`: Quiz runner page; loads a specific quiz via `?quiz=<id>`
+- `public/index.html`: Home page with search and category filters, renders quiz cards from `data/quizzes.json`
+- `public/quiz.html`: Quiz runner page; loads a specific quiz via `?quiz=<id>`
 - `scripts/quiz.js`: Quiz engine (rendering, answer handling, auto‑advance, stats)
 - `scripts/quiz-loader.js`: Quiz configurations (how to pick rounds, render symbols/options, correctness)
 - `scripts/utils.js`: Shared helpers (fetch JSON, random selection, color utilities, DOM helpers)
@@ -56,14 +56,14 @@ Any static server works (Node, Ruby, nginx, etc.).
 
 1. The home page (`index.html`) loads `data/quizzes.json`, renders cards, and provides search/category filters.
 2. Clicking a card navigates to `quiz.html?quiz=<id>`.
-3. `quiz-loader.js` looks up a matching config and calls `ThaiQuiz.setupQuiz(...)` from `quiz.js`.
+3. `scripts/quiz-loader.js` looks up a matching config and calls `ThaiQuiz.setupQuiz(...)` from `scripts/quiz.js`.
 4. Each quiz config defines how to pick an answer/choices from its JSON data and how to render symbol and options.
 5. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
 
 ### Add a new quiz
 
 1. **Create data**: Add a new JSON file under `data/` with the items you want to quiz.
-2. **Configure**: In `quiz-loader.js`, add a new entry to `ThaiQuizConfigs` with:
+2. **Configure**: In `scripts/quiz-loader.js`, add a new entry to `ThaiQuizConfigs` with:
    - `title`, `subtitle`, optional `bodyClass`
    - `init()` that fetches your JSON and calls `ThaiQuiz.setupQuiz({ ... })`
    - Provide `pickRound`, `renderSymbol`, `renderButtonContent`, `isCorrect`, etc., as needed
@@ -121,14 +121,14 @@ Rooms:
 
 #### Quiz config skeleton (`quiz-loader.js`)
 
-Add a new entry to `ThaiQuizConfigs` with an `id` (used by `quiz.html?quiz=<id>`):
+Add a new entry to `ThaiQuizConfigs` with an `id` (used by `public/quiz.html?quiz=<id>`):
 ```javascript
 myquiz: {
   title: 'My New Quiz',
   subtitle: 'Choose the correct phonetic for the Thai term',
   bodyClass: 'myquiz-quiz',
   init: function() {
-    Utils.fetchJSON('data/myquiz.json')
+    Utils.fetchJSON('../data/myquiz.json')
       .then(function(data){
         ThaiQuiz.setupQuiz({
           elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },

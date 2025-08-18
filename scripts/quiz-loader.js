@@ -35,7 +35,7 @@
           }
         } catch (e) {}
 
-        fetch('data/consonants.json')
+        fetch('../data/consonants.json')
           .then(function(r){ return r.json(); })
           .then(function(data){
             ThaiQuiz.setupQuiz({
@@ -67,7 +67,7 @@
       subtitle: '',
       bodyClass: 'vowel-quiz',
       init: function() {
-        Utils.fetchJSON('data/vowels.json')
+        Utils.fetchJSON('../data/vowels.json')
           .then(function(data){
             ThaiQuiz.setupQuiz({
               elements: defaultElements,
@@ -89,7 +89,7 @@
       subtitle: 'Choose the correct phonetic for the Thai color',
       bodyClass: 'color-quiz',
       init: function() {
-        Utils.fetchJSONs(['data/colors-base.json', 'data/color-modifiers.json']).then(function(results){
+        Utils.fetchJSONs(['../data/colors-base.json', '../data/color-modifiers.json']).then(function(results){
           var baseColors = results[0] || [];
           var modifiers = results[1] || [];
 
@@ -141,7 +141,7 @@
           }
         } catch (e) {}
 
-        Utils.fetchJSON('data/numbers.json')
+        Utils.fetchJSON('../data/numbers.json')
           .then(function(data){
             ThaiQuiz.setupQuiz({
               elements: defaultElements,
@@ -172,7 +172,7 @@
       subtitle: 'Choose the correct phonetic for the Thai time phrase',
       bodyClass: 'time-quiz',
       init: function() {
-        Utils.fetchJSONs(['data/time-keywords.json','data/time-formats.json','data/time-examples.json']).then(function(results){
+        Utils.fetchJSONs(['../data/time-keywords.json','../data/time-formats.json','../data/time-examples.json']).then(function(results){
           var keyWords = results[0] || [];
           var timeFormats = results[1] || [];
           var examples = results[2] || [];
@@ -221,8 +221,8 @@
         } catch (e) {}
 
         Promise.all([
-          Utils.fetchJSON('data/questions.json'),
-          Utils.fetchJSON('data/questions-examples.json')
+          Utils.fetchJSON('../data/questions.json'),
+          Utils.fetchJSON('../data/questions-examples.json')
         ]).then(function(results){
           var data = results[0] || [];
           var examples = results[1] || {};
@@ -264,7 +264,7 @@
       subtitle: 'Choose the correct phonetic for the Thai family word',
       bodyClass: 'family-quiz',
       init: function() {
-        Utils.fetchJSON('data/family.json')
+        Utils.fetchJSON('../data/family.json')
           .then(function(data){
             ThaiQuiz.setupQuiz({
               elements: defaultElements,
@@ -347,8 +347,8 @@
         }
 
         Promise.all([
-          Utils.fetchJSON('data/classifiers.json'),
-          Utils.fetchJSON('data/classifiers-examples.json')
+          Utils.fetchJSON('../data/classifiers.json'),
+          Utils.fetchJSON('../data/classifiers-examples.json')
         ])
           .then(function(results){
             var data = results[0] || [];
@@ -433,8 +433,8 @@
         }
 
         Promise.all([
-          Utils.fetchJSON('data/rooms.json'),
-          Utils.fetchJSON('data/rooms-examples.json')
+          Utils.fetchJSON('../data/rooms.json'),
+          Utils.fetchJSON('../data/rooms-examples.json')
         ]).then(function(results){
           var data = results[0] || [];
           var examples = results[1] || {};
