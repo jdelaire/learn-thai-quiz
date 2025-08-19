@@ -426,7 +426,7 @@ body.consonant-quiz h1 {
 
 body.consonant-quiz #symbol {
   font-size: 10em;
-  margin: 0.6em 0 0.6em 0;
+  margin: 0 0 0.3em 0;
   font-weight: bold;
   color: #111111;
   text-shadow: none;
@@ -626,7 +626,7 @@ body.classifiers-quiz #symbol .emoji-line {
 /* Vowel quiz */
 body.vowel-quiz #symbol {
   font-size: 8em;
-  margin: 0.6em 0 0.6em 0;
+  margin: 0 0 0.3em 0;
   font-weight: bold;
   color: #111111;
   text-shadow: none;
