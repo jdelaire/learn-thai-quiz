@@ -440,7 +440,8 @@ body.time-quiz .options button,
 body.vowel-quiz .options button,
 body.family-quiz .options button,
 body.questions-quiz .options button,
-body.classifiers-quiz .options button {
+body.classifiers-quiz .options button,
+body.jobs-quiz .options button {
   background: #f7f7f7;
   color: #111111;
   border: 1px solid rgba(0,0,0,0.12);
@@ -677,6 +678,29 @@ body.questions-quiz .example .text {
   font-weight: 600;
 }
 
+/* Jobs quiz (styled like Questions/Rooms quiz) */
+body.jobs-quiz h1 { margin-bottom: 0.2em; }
+body.jobs-quiz #symbol {
+  font-size: 4.2em;
+  margin: 0.6em 0 0.6em 0;
+  text-align: center;
+  text-shadow: none;
+  line-height: 1.2;
+}
+body.jobs-quiz .options { max-width: 620px; }
+body.jobs-quiz #symbol .secondary {
+  display: block;
+  font-size: 0.38em;
+  opacity: 0.85;
+  margin-top: 0.15em;
+  font-weight: 600;
+}
+body.jobs-quiz #symbol .emoji-line {
+  font-size: 0.9em;
+  opacity: 0.95;
+  margin-bottom: 0.1em;
+}
+
 /* Rooms quiz (styled like Questions quiz) */
 body.rooms-quiz h1 { margin-bottom: 0.2em; }
 body.rooms-quiz #symbol {
@@ -857,6 +881,8 @@ body.questions-quiz .correct-line {
   
   body.rooms-quiz #symbol { font-size: 3.6em; }
   body.rooms-quiz button { font-size: 1.05em; padding: 0.8em; }
+  body.jobs-quiz #symbol { font-size: 3.6em; }
+  body.jobs-quiz button { font-size: 1.05em; padding: 0.8em; }
   
   body.home .socials {
     padding: 0.6em;

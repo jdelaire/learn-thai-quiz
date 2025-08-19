@@ -386,6 +386,81 @@
       }
     },
 
+    jobs: {
+      title: '🕵🏻‍♂️👨‍💼 Thai Jobs Quiz',
+      subtitle: 'Choose the correct phonetic for the Thai job or occupation',
+      bodyClass: 'jobs-quiz',
+      init: function() {
+        function emojiForJob(item) {
+          try {
+            var txt = String(item && item.english || '').toLowerCase();
+            var rules = [
+              [/professor/, '🎓'],
+              [/lecturer|teacher/, '🧑‍🏫'],
+              [/student/, '🎒'],
+              [/doctor/, '🩺'],
+              [/nurse/, '🧑‍⚕️'],
+              [/dentist/, '🦷'],
+              [/pharmacist/, '💊'],
+              [/engineer/, '⚙️'],
+              [/architect/, '📐'],
+              [/lawyer/, '⚖️'],
+              [/judge/, '🧑‍⚖️'],
+              [/police|policeman/, '👮'],
+              [/soldier/, '🪖'],
+              [/fire(fighter|man)/, '🚒'],
+              [/chef|cook/, '👩‍🍳'],
+              [/waiter|waitress|server/, '🍽️'],
+              [/driver/, '🚕'],
+              [/farmer/, '🌾'],
+              [/fisher(man)?/, '🎣'],
+              [/tour guide/, '🗺️'],
+              [/artist/, '🎨'],
+              [/musician/, '🎵'],
+              [/actor|actress/, '🎭'],
+              [/writer/, '✍️'],
+              [/journalist/, '📰'],
+              [/photographer/, '📷'],
+              [/cleaner|maid/, '🧹'],
+              [/security|guard/, '🛡️'],
+              [/boss|manager/, '👔'],
+              [/employee|office worker|staff/, '🧑‍💼'],
+              [/business(person)?/, '💼'],
+              [/job|occupation|work/, '💼']
+            ];
+            for (var i = 0; i < rules.length; i++) {
+              if (rules[i][0].test(txt)) return rules[i][1];
+            }
+          } catch (e) {}
+          return '';
+        }
+
+        Utils.fetchJSON('data/jobs.json')
+          .then(function(data){
+            ThaiQuiz.setupQuiz({
+              elements: defaultElements,
+              pickRound: function() {
+                var answer = Utils.pickRandom(data);
+                var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
+                var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
+                return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
+              },
+              renderSymbol: function(answer, els) {
+                var english = answer.english || '';
+                var thai = answer.thai || '';
+                var emoji = emojiForJob(answer);
+                els.symbolEl.innerHTML = (emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '') + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+                els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
+              },
+              renderButtonContent: function(choice) { return choice.phonetic; },
+              ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
+              isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
+            });
+          })
+          .catch(function(err){ handleDataLoadError(err); });
+      }
+    },
+
     rooms: {
       title: '🏠 Thai Rooms Quiz',
       subtitle: 'Choose the correct phonetic for the Thai room or house term',

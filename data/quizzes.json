@@ -71,5 +71,13 @@
     "description": "Learn Thai room and house vocabulary with phonetics and example sentences.",
     "bullets": ["Rooms & spaces","House types","Usage examples"],
     "categories": ["Vocabulary","Beginner"]
+  },
+  {
+    "id": "jobs",
+    "title": "🕵🏻‍♂️👨‍💼 Job Vocabularies",
+    "href": "quiz.html?quiz=jobs",
+    "description": "Practice Thai job and occupation vocabulary with phonetics.",
+    "bullets": ["Common professions","Thai script + phonetics","Emoji hints"],
+    "categories": ["Vocabulary","Beginner"]
   }
 ]
