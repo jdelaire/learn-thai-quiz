@@ -80,4 +80,13 @@
     "bullets": ["Common professions","Thai script + phonetics","Emoji hints"],
     "categories": ["Vocabulary","Beginner"]
   }
+  ,
+  {
+    "id": "foods",
+    "title": "🍛 Common Thai Foods",
+    "href": "quiz.html?quiz=foods",
+    "description": "Practice common Thai foods, fruits, and cooking methods with phonetics and examples.",
+    "bullets": ["Foods, fruits, and methods","English/Thai/phonetic","Emoji hints + examples"],
+    "categories": ["Vocabulary","Beginner"]
+  }
 ]

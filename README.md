@@ -27,6 +27,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Classifiers**: Common classifiers with example sentences and helpful emojis
 - **Rooms**: House and room vocabulary with example sentences and usage tips
 - **Jobs**: Common jobs and occupations with Thai script and phonetics
+- **Foods**: Common Thai foods, fruits, and cooking methods with phonetics and example phrases
 
 ### Quick start (local)
 
