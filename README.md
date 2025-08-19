@@ -26,6 +26,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Family**: Immediate and extended family members with Thai script and phonetics
 - **Classifiers**: Common classifiers with example sentences and helpful emojis
 - **Rooms**: House and room vocabulary with example sentences and usage tips
+- **Jobs**: Common jobs and occupations with Thai script and phonetics
 
 ### Quick start (local)
 
@@ -117,6 +118,11 @@ Classifiers:
 Rooms:
 ```json
 { "english": "bedroom", "thai": "ห้องนอน", "phonetic": "hɔ̂ɔŋ nɔɔn" }
+```
+
+Jobs:
+```json
+{ "english": "doctor", "thai": "หมอ", "phonetic": "mɔɔ" }
 ```
 
 #### Quiz config skeleton (`quiz-loader.js`)
