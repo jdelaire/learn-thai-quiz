@@ -461,6 +461,97 @@
       }
     },
 
+    foods: {
+      title: '🍛 Common Thai Foods',
+      subtitle: 'Choose the correct phonetic for the Thai food, fruit, or cooking method',
+      bodyClass: 'foods-quiz',
+      init: function() {
+        function emojiForFood(item) {
+          try {
+            var txt = String(item && item.english || '').toLowerCase();
+            var rules = [
+              [/sticky\s*rice|\brice\b/, '🍚'],
+              [/food|dish/, '🍽️'],
+              [/curry|green curry|red curry/, '🍛'],
+              [/soup|tom yum/, '🍲'],
+              [/papaya\s*salad/, '🥗'],
+              [/pad\s*thai|noodles?/, '🍜'],
+              [/fried\s*rice/, '🍚'],
+              [/fried\s*vegetables|vegetables?/, '🥦'],
+              [/omelet|egg/, '🥚'],
+              [/shrimp/, '🦐'],
+              [/squid/, '🦑'],
+              [/crab/, '🦀'],
+              [/chicken/, '🍗'],
+              [/pork/, '🍖'],
+              [/beef/, '🥩'],
+              [/duck/, '🦆'],
+              [/fish/, '🐟'],
+              [/seafood/, '🦞'],
+              [/tofu/, '🍱'],
+              [/fruit\(s\)|fruits?/, '🍎'],
+              [/apple/, '🍎'],
+              [/mango/, '🥭'],
+              [/banana/, '🍌'],
+              [/watermelon/, '🍉'],
+              [/pineapple/, '🍍'],
+              [/coconut/, '🥥'],
+              [/grape/, '🍇'],
+              [/orange/, '🍊'],
+              [/strawberry/, '🍓'],
+              [/cherry/, '🍒'],
+              [/grilled/, '🍢'],
+              [/stir-?fried/, '🍳'],
+              [/deep-?fried/, '🍤'],
+              [/steamed/, '♨️'],
+              [/boiled/, '🍲'],
+              [/baked/, '🥧']
+            ];
+            for (var i = 0; i < rules.length; i++) {
+              if (rules[i][0].test(txt)) return rules[i][1];
+            }
+          } catch (e) {}
+          return '';
+        }
+
+        Promise.all([
+          Utils.fetchJSON('data/foods.json'),
+          Utils.fetchJSON('data/foods-examples.json')
+        ]).then(function(results){
+          var data = results[0] || [];
+          var examples = results[1] || {};
+          ThaiQuiz.setupQuiz({
+            elements: defaultElements,
+            pickRound: function() {
+              var answer = Utils.pickRandom(data);
+              var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
+              var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
+              return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
+            },
+            renderSymbol: function(answer, els) {
+              var english = answer.english || '';
+              var thai = answer.thai || '';
+              var emoji = emojiForFood(answer);
+              els.symbolEl.innerHTML = (emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '') + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+              els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
+            },
+            renderButtonContent: function(choice) { return choice.phonetic; },
+            ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
+            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
+            onAnswered: function(ctx) {
+              var correct = ctx.correct, answer = ctx.answer;
+              if (!correct) return;
+              try {
+                var fb = document.getElementById('feedback');
+                var ex = examples[answer.english];
+                fb.innerHTML = ex ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '';
+              } catch (e) {}
+            }
+          });
+        }).catch(function(err){ handleDataLoadError(err); });
+      }
+    },
+
     rooms: {
       title: '🏠 Thai Rooms Quiz',
       subtitle: 'Choose the correct phonetic for the Thai room or house term',
