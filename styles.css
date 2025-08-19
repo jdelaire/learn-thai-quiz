@@ -237,6 +237,27 @@ button:active {
   box-shadow: 0 5px 14px rgba(0,0,0,0.08);
 }
 
+.coffee-btn {
+  color: #00247D;
+  text-decoration: none;
+  padding: 0.8em 1.5em;
+  border-radius: 25px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 36, 125, 0.35);
+  transition: all 0.2s ease;
+  font-size: 1em;
+  font-weight: 600;
+  backdrop-filter: none;
+  display: inline-block;
+  margin-left: 1em;
+}
+
+.coffee-btn:hover {
+  background: #f7faff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(0,0,0,0.08);
+}
+
 /* Page-specific overrides using body classes */
 
 /* Home (index) */
