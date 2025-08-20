@@ -18,7 +18,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 ### Quizzes included
 
 - **Consonants**: All 44 Thai consonants with meanings and tone classes (color‑coded)
-- **Vowels**: 32 Thai vowels, symbols and sounds
+- **Vowels**: 32 Thai vowels, symbols and sounds. On some browsers a placeholder consonant ก ("goo gai") is shown to indicate where a vowel attaches; it's not part of the answer.
 - **Colors**: Base colors plus light/dark modifiers; renders Thai text in the color tone
 - **Numbers**: From 0 upward, with Thai script and phonetics; classifier tips included
 - **Time**: Keywords, AM/PM patterns, and practical phrases
@@ -48,11 +48,13 @@ Any static server works (Node, Ruby, nginx, etc.).
 - `index.html`: Home page with search and category filters, renders quiz cards from `data/quizzes.json`
 - `quiz.html`: Quiz runner page; loads a specific quiz via `?quiz=<id>`
 - `quiz.js`: Quiz engine (rendering, answer handling, auto‑advance, stats)
-- `quiz-loader.js`: Quiz configurations (how to pick rounds, render symbols/options, correctness)
+- `quiz-loader.js`: Quiz configurations (now mostly use a shared factory to reduce boilerplate)
 - `utils.js`: Shared helpers (fetch JSON, random selection, color utilities, DOM helpers)
 - `home.js`: Home page logic (filters, chips, card rendering, Today/Month widgets)
 - `styles.css`: Shared and per‑quiz styles
 - `data/*.json`: Quiz datasets and metadata
+- `data/emoji-rules/*.json`: Optional per-quiz emoji matcher rules (pattern → emoji)
+  - Datasets may optionally include an `id` per item; when present, examples prefer `id` for lookups (falling back to `english`).
 - `profile.jpg`: Avatar shown in the home page Socials card
 
 ### How it works
@@ -167,7 +169,29 @@ myquiz: {
 
 Available hooks in the engine: `pickRound(state)`, `renderSymbol(answer, els, state)`, `renderButtonContent(choice, state)`, `ariaLabelForChoice(choice, state)`, `decorateButton(btn, choice, state)`, `isCorrect(choice, answer, state)`, `onAnswered(ctx)`.
 
-Utilities you can use: `Utils.fetchJSON(s)`, `Utils.pickRandom`, `Utils.pickUniqueChoices(pool, count, keyFn, seed)`, `Utils.byProp('phonetic')`, `Utils.getDisplayHex(baseHex, modifier)`.
+Utilities you can use: `Utils.fetchJSON(s)`, `Utils.fetchJSONCached(s)`, `Utils.pickRandom`, `Utils.pickUniqueChoices(pool, count, keyFn, seed)`, `Utils.byProp('phonetic')`, `Utils.getDisplayHex(baseHex, modifier)`, `Utils.createStandardQuiz(params)`.
+
+#### New utilities for faster quiz creation
+
+- `Utils.renderEnglishThaiSymbol(symbolEl, { english, thai, emoji?, ariaPrefix? })`
+  - Renders a standardized "English + Thai" symbol block, optionally with an emoji line, and sets an accessible `aria-label`.
+  - Use in `renderSymbol` for quizzes that show English/Thai with optional emoji.
+
+- `Utils.renderExample(feedbackEl, exampleText)`
+  - Renders a small Example card into the feedback area when `exampleText` is provided, or clears it if falsy.
+  - Use in `onAnswered` when showing an example sentence on correct answers.
+
+- `Utils.createStandardQuiz({ data, examples?, exampleKey?, answerKey='phonetic', buildSymbol?, choices=4, labelPrefix='English and Thai: ' })`
+  - Returns an object you can spread into `ThaiQuiz.setupQuiz` to wire a full quiz with minimal code.
+  - `buildSymbol(answer)` lets you supply English/Thai/emoji for the prompt.
+  - `examples` (object map) and optional `exampleKey(answer)` control example lookup; defaults to `answer.english` (use `answer.id || answer.english` if your data includes stable ids).
+  - Handles pickRound, options rendering, aria labels, isCorrect, and example rendering.
+
+#### Emoji rules (data-driven)
+
+- Add a file like `data/emoji-rules/foods.json` with an ordered list of objects `{ "pattern": "regex", "emoji": "🧪" }`.
+- Quizzes that support emojis (foods/rooms/jobs/verbs) will load these rules and match against the English text to show the emoji above the symbol.
+- If the file is missing or empty, the quiz still works (no emoji shown).
 
 #### Homepage card entry (`data/quizzes.json`)
 

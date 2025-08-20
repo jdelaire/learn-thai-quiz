@@ -212,6 +212,35 @@ button:active {
   color: rgba(17, 17, 17, 0.7);
 }
 
+/* Shared example card styling */
+.example {
+  margin-top: 0.5em;
+  font-size: 0.78em;
+  font-weight: 600;
+  background: #f5f7fb;
+  border: 1px solid rgba(0, 36, 125, 0.2);
+  display: inline-block;
+  padding: 0.5em 0.7em;
+  border-radius: 10px;
+}
+
+.example .label {
+  display: inline-block;
+  opacity: 0.95;
+  font-size: 0.9em;
+  padding: 0.1em 0.45em;
+  margin-right: 0.45em;
+  border-radius: 6px;
+  background: rgba(0, 36, 125, 0.9);
+  color: white;
+}
+
+.example .text {
+  display: block;
+  margin-top: 0.35em;
+  font-weight: 600;
+}
+
 .footer {
   margin-top: 2em;
   text-align: center;
@@ -654,6 +683,15 @@ body.vowel-quiz #symbol {
   color: #111111;
   text-shadow: none;
 }
+
+.vowel-note {
+  margin-top: 0.25em;
+  margin-bottom: 0.9em;
+  font-size: 0.95em;
+  color: rgba(17,17,17,0.75);
+}
+/* Light placeholder base for vowels (ko kai) */
+/* Removed wrapper for shaping compatibility */
 body.vowel-quiz .options { max-width: 300px; min-width: 240px; }
 
 /* Questions quiz */
@@ -674,31 +712,7 @@ body.questions-quiz #symbol .secondary {
   margin-top: 0.15em;
   font-weight: 600;
 }
-body.questions-quiz .example {
-  margin-top: 0.5em;
-  font-size: 0.78em;
-  font-weight: 600;
-  background: #f5f7fb;
-  border: 1px solid rgba(0, 36, 125, 0.2);
-  display: inline-block;
-  padding: 0.5em 0.7em;
-  border-radius: 10px;
-}
-body.questions-quiz .example .label {
-  display: inline-block;
-  opacity: 0.95;
-  font-size: 0.9em;
-  padding: 0.1em 0.45em;
-  margin-right: 0.45em;
-  border-radius: 6px;
-  background: rgba(0, 36, 125, 0.9);
-  color: white;
-}
-body.questions-quiz .example .text {
-  display: block;
-  margin-top: 0.35em;
-  font-weight: 600;
-}
+/* removed per shared .example */
 
 /* Emoji alignment for Questions-style quizzes */
 body.questions-quiz #symbol .emoji-line {
@@ -752,43 +766,10 @@ body.rooms-quiz #symbol .emoji-line {
   opacity: 0.95;
   margin-bottom: 0.1em;
 }
-body.rooms-quiz .example {
-  margin-top: 0.5em;
-  font-size: 0.78em;
-  font-weight: 600;
-  background: #f5f7fb;
-  border: 1px solid rgba(0, 36, 125, 0.2);
-  display: inline-block;
-  padding: 0.5em 0.7em;
-  border-radius: 10px;
-}
-body.rooms-quiz .example .label {
-  display: inline-block;
-  opacity: 0.95;
-  font-size: 0.9em;
-  padding: 0.1em 0.45em;
-  margin-right: 0.45em;
-  border-radius: 6px;
-  background: rgba(0, 36, 125, 0.9);
-  color: white;
-}
-body.rooms-quiz .example .text {
-  display: block;
-  margin-top: 0.35em;
-  font-weight: 600;
-}
+/* removed per shared .example */
 
 /* Classifiers quiz example styling (mirrors Questions quiz) */
-body.classifiers-quiz .example {
-  margin-top: 0.5em;
-  font-size: 0.78em;
-  font-weight: 600;
-  background: #f5f7fb;
-  border: 1px solid rgba(0, 36, 125, 0.2);
-  display: inline-block;
-  padding: 0.5em 0.7em;
-  border-radius: 10px;
-}
+/* removed per shared .example */
 
 /* Foods quiz (styled like Questions/Rooms quiz) */
 body.foods-quiz h1 { margin-bottom: 0.2em; }
@@ -813,46 +794,7 @@ body.foods-quiz #symbol .emoji-line {
   opacity: 0.95;
   margin-bottom: 0.1em;
 }
-body.foods-quiz .example {
-  margin-top: 0.5em;
-  font-size: 0.78em;
-  font-weight: 600;
-  background: #f5f7fb;
-  border: 1px solid rgba(0, 36, 125, 0.2);
-  display: inline-block;
-  padding: 0.5em 0.7em;
-  border-radius: 10px;
-}
-body.foods-quiz .example .label {
-  display: inline-block;
-  opacity: 0.95;
-  font-size: 0.9em;
-  padding: 0.1em 0.45em;
-  margin-right: 0.45em;
-  border-radius: 6px;
-  background: rgba(0, 36, 125, 0.9);
-  color: white;
-}
-body.foods-quiz .example .text {
-  display: block;
-  margin-top: 0.35em;
-  font-weight: 600;
-}
-body.classifiers-quiz .example .label {
-  display: inline-block;
-  opacity: 0.95;
-  font-size: 0.9em;
-  padding: 0.1em 0.45em;
-  margin-right: 0.45em;
-  border-radius: 6px;
-  background: rgba(0, 36, 125, 0.9);
-  color: white;
-}
-body.classifiers-quiz .example .text {
-  display: block;
-  margin-top: 0.35em;
-  font-weight: 600;
-}
+/* removed per shared .example */
 body.questions-quiz .correct-line {
   display: block;
   margin-bottom: 0.35em;
