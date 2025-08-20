@@ -43,6 +43,59 @@ Then open `http://localhost:8000/` in your browser.
 
 Any static server works (Node, Ruby, nginx, etc.).
 
+### Smoke tests (no libraries)
+
+Run quick end-to-end checks in your browser:
+
+1. Start a local server from the project root so JSON can load.
+
+```bash
+python3 -m http.server 8000
+```
+
+2. Open `http://localhost:8000/smoke.html` and click “Run Smoke Tests”.
+
+What it does:
+- Loads `index.html` in a hidden iframe, waits for quiz cards to render, and tries the search input.
+- Auto-discovers all quizzes from `data/quizzes.json` (fallback: parses links on the home page) and runs each via `quiz.html?quiz=<id>`.
+- Ensures options render, clicks an option, verifies stats update, and catches runtime errors.
+- Reports pass/fail per check; no external dependencies.
+
+#### Extending smoke tests when you add a quiz
+
+When you create a new quiz (new entry in `ThaiQuizConfigs` and `data/quizzes.json`), extend the smoke tests so it’s covered:
+
+You usually don’t need to update `smoke.js` when you add a quiz, because it auto‑discovers quizzes from `data/quizzes.json`.
+
+Optional: add a focused check for quiz‑specific behavior by creating a small helper and calling it from `runAll()`.
+
+Example: verify that the Color quiz sets an accessible aria‑label on the symbol.
+
+```javascript
+// smoke.js
+async function testColorsAria(serverRoot) {
+  var iframe = document.createElement('iframe');
+  iframe.className = 'smoke-frame';
+  document.body.appendChild(iframe);
+  try {
+    const res = await withTimeout(navigateFrame(iframe, serverRoot + '/quiz.html?quiz=colors'), 6000, 'Colors did not load');
+    if (!res.ok) return { name: 'Colors aria label', ok: false, details: String(res.error) };
+    const symbol = res.doc.querySelector('#symbol');
+    const aria = symbol && symbol.getAttribute('aria-label');
+    if (!aria || !/Thai color phrase:/i.test(aria)) {
+      return { name: 'Colors aria label', ok: false, details: 'Missing or incorrect aria-label' };
+    }
+    return { name: 'Colors aria label', ok: true };
+  } finally { try { iframe.remove(); } catch (_) {} }
+}
+
+// Inside runAll()
+results.push(await testColorsAria(root));
+```
+
+Tip: if your quiz shows an example sentence on correct answers, you can loop through the option buttons until `stats` shows `Correct: 1`, then assert that `#feedback .example` is present.
+
+
 ### Project structure
 
 - `index.html`: Home page with search and category filters, renders quiz cards from `data/quizzes.json`

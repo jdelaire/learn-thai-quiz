@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smoke Tests</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; }
+    h1 { margin: 0 0 8px; }
+    .desc { color: #555; margin-bottom: 16px; }
+    button { padding: 8px 14px; border-radius: 6px; border: 1px solid #ccc; background: #f7f7f7; cursor: pointer; }
+    button:disabled { opacity: 0.6; cursor: default; }
+    #log { margin-top: 16px; white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .ok { color: #1b8a4b; }
+    .fail { color: #b00020; }
+    .muted { color: #777; }
+    .row { margin: 6px 0; }
+    iframe.smoke-frame { width: 0; height: 0; border: 0; position: absolute; left: -9999px; top: -9999px; }
+  </style>
+</head>
+<body>
+  <h1>Smoke Tests</h1>
+  <div class="desc">Quick browser-based checks to ensure core pages load and basic interactions work. Run this over a local server (not file://).</div>
+  <button id="runBtn">Run Smoke Tests</button>
+  <span id="status" class="muted"></span>
+  <div id="log" aria-live="polite"></div>
+
+  <script src="smoke.js"></script>
+</body>
+</html>
+
