@@ -700,6 +700,12 @@ body.questions-quiz .example .text {
   font-weight: 600;
 }
 
+/* Emoji alignment for Questions-style quizzes */
+body.questions-quiz #symbol .emoji-line {
+  font-size: 0.9em;
+  opacity: 0.95;
+}
+
 /* Jobs quiz (styled like Questions/Rooms quiz) */
 body.jobs-quiz h1 { margin-bottom: 0.2em; }
 body.jobs-quiz #symbol {

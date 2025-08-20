@@ -23,6 +23,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Numbers**: From 0 upward, with Thai script and phonetics; classifier tips included
 - **Time**: Keywords, AM/PM patterns, and practical phrases
 - **Questions**: Core question words and common patterns; shows an example sentence after correct answers
+- **Verbs**: Common action verbs with English/Thai/phonetics and example sentences
 - **Family**: Immediate and extended family members with Thai script and phonetics
 - **Classifiers**: Common classifiers with example sentences and helpful emojis
 - **Rooms**: House and room vocabulary with example sentences and usage tips
