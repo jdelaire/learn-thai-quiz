@@ -19,7 +19,7 @@
   var ThaiQuizConfigs = {
     consonants: {
       title: 'Thai Consonant Quiz',
-      subtitle: '',
+      subtitle: 'Choose the correct name for the Thai consonant symbol',
       bodyClass: 'consonant-quiz',
       init: function() {
         // Insert legend above the symbol
@@ -63,7 +63,7 @@
 
     vowels: {
       title: 'Thai Vowel Quiz',
-      subtitle: '',
+      subtitle: 'Choose the correct sound for the Thai vowel',
       bodyClass: 'vowel-quiz',
       init: function() {
         try {
