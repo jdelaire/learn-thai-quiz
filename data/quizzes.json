@@ -48,6 +48,14 @@
     "categories": ["Phrases","Beginner"]
   },
   {
+    "id": "verbs",
+    "title": "🚀 Common Action Verbs",
+    "href": "quiz.html?quiz=verbs",
+    "description": "Practice essential Thai action verbs with English, Thai, and phonetics.",
+    "bullets": ["Core everyday verbs","Examples after correct answers","Emoji hints"],
+    "categories": ["Vocabulary","Beginner"]
+  },
+  {
     "id": "family",
     "title": "🧑‍🧑‍🧒‍🧒 Thai Family Quiz",
     "href": "quiz.html?quiz=family",

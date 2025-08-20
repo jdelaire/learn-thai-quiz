@@ -259,6 +259,106 @@
       }
     },
 
+    verbs: {
+      title: '🚀 Common Action Verbs',
+      subtitle: 'Choose the correct phonetic for the Thai verb',
+      bodyClass: 'questions-quiz',
+      init: function() {
+        try {
+          var footer = document.querySelector('.footer');
+          if (footer) {
+            var tip = document.createElement('div');
+            tip.className = 'pro-tip';
+            tip.innerHTML = '<small>• Common combos: "tham ŋaan" (work), "àap-náam" (shower)<br>• Use "bpai/maa" for go/come; add places with "thîi" (at)</small>';
+            footer.appendChild(tip);
+          }
+        } catch (e) {}
+
+        function emojiForVerb(item) {
+          try {
+            var txt = String(item && item.english || '').toLowerCase();
+            var rules = [
+              [/to go/, '🧭'],
+              [/to come/, '👣'],
+              [/to eat/, '🍽️'],
+              [/to drink/, '🥤'],
+              [/to sleep/, '😴'],
+              [/to wake up/, '⏰'],
+              [/to study/, '📖'],
+              [/to read/, '📚'],
+              [/to write/, '✍️'],
+              [/to speak/, '🗣️'],
+              [/to listen/, '👂'],
+              [/to see|watch/, '👀'],
+              [/to buy/, '🛒'],
+              [/to sell/, '💰'],
+              [/to pay/, '💳'],
+              [/to work/, '💼'],
+              [/to make|to do/, '🛠️'],
+              [/to take a shower/, '🚿'],
+              [/to exercise/, '🏋️'],
+              [/to walk/, '🚶'],
+              [/to run/, '🏃'],
+              [/to play/, '🎮'],
+              [/to wait/, '⏳'],
+              [/to want/, '💭'],
+              [/to love/, '❤️'],
+              [/to like/, '👍'],
+              [/to hate/, '💢'],
+              [/to understand/, '💡'],
+              [/to forget/, '🧠❌'],
+              [/to remember/, '🧠'],
+              [/to help/, '🆘'],
+              [/to start|begin/, '▶️'],
+              [/to finish|complete/, '✅'],
+              [/to call/, '📞'],
+              [/to drive/, '🚗']
+            ];
+            for (var i = 0; i < rules.length; i++) {
+              if (rules[i][0].test(txt)) return rules[i][1];
+            }
+          } catch (e) {}
+          return '';
+        }
+
+        Promise.all([
+          Utils.fetchJSON('data/verbs.json'),
+          Utils.fetchJSON('data/verbs-examples.json')
+        ]).then(function(results){
+          var data = results[0] || [];
+          var examples = results[1] || {};
+          ThaiQuiz.setupQuiz({
+            elements: defaultElements,
+            pickRound: function() {
+              var answer = Utils.pickRandom(data);
+              var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
+              var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
+              return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
+            },
+            renderSymbol: function(answer, els) {
+              var english = answer.english || '';
+              var thai = answer.thai || '';
+              var emoji = emojiForVerb(answer);
+              els.symbolEl.innerHTML = (emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '') + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+              els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
+            },
+            renderButtonContent: function(choice) { return choice.phonetic; },
+            ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
+            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
+            onAnswered: function(ctx) {
+              var correct = ctx.correct, answer = ctx.answer;
+              if (!correct) return;
+              try {
+                var fb = document.getElementById('feedback');
+                var ex = examples[answer.english];
+                fb.innerHTML = ex ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '';
+              } catch (e) {}
+            }
+          });
+        }).catch(function(err){ handleDataLoadError(err); });
+      }
+    },
+
     family: {
       title: 'Thai Family Quiz',
       subtitle: 'Choose the correct phonetic for the Thai family word',
