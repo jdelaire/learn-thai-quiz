@@ -200,7 +200,7 @@
 
     tones: {
       title: 'Thai Tone Markers',
-      subtitle: 'Choose the resulting tone from class, marker, and vowel length',
+      subtitle: 'Choose the resulting tone from consonant class, tone marker, and vowel length',
       bodyClass: 'questions-quiz',
       init: function() {
         Utils.fetchJSON('data/tones.json')
