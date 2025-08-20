@@ -48,6 +48,14 @@
     "categories": ["Phrases","Beginner"]
   },
   {
+    "id": "tones",
+    "title": "⚡ Thai Tone Markers",
+    "href": "quiz.html?quiz=tones",
+    "description": "Practice Thai tone outcomes by consonant class, tone mark, and vowel length.",
+    "bullets": ["Middle/High/Low consonant classes","Tone marks ( ่ ้ ๊ ๋ ) and none","Long vs short vowels"],
+    "categories": ["Pronunciation","Beginner"]
+  },
+  {
     "id": "verbs",
     "title": "🚀 Common Action Verbs",
     "href": "quiz.html?quiz=verbs",

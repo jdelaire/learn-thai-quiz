@@ -23,6 +23,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Numbers**: From 0 upward, with Thai script and phonetics; classifier tips included
 - **Time**: Keywords, AM/PM patterns, and practical phrases
 - **Questions**: Core question words and common patterns; shows an example sentence after correct answers
+- **Tone Markers**: Resulting tones from consonant class + tone mark + vowel length
 - **Verbs**: Common action verbs with English/Thai/phonetics and example sentences
 - **Family**: Immediate and extended family members with Thai script and phonetics
 - **Classifiers**: Common classifiers with example sentences and helpful emojis
@@ -182,6 +183,11 @@ Jobs:
 { "english": "doctor", "thai": "หมอ", "phonetic": "mɔɔ" }
 ```
 
+Tone Markers (class + marker + length → resulting tone):
+```json
+{ "english": "Middle + none (long)", "thai": "กลาง + ไม่มีวรรณยุกต์ (สระยาว)", "phonetic": "Mid" }
+```
+
 #### Quiz config skeleton (`quiz-loader.js`)
 
 Add a new entry to `ThaiQuizConfigs` with an `id` (used by `quiz.html?quiz=<id>`):
@@ -256,6 +262,29 @@ Utilities you can use: `Utils.fetchJSON(s)`, `Utils.fetchJSONCached(s)`, `Utils.
   "description": "Short description of what is being practiced.",
   "bullets": ["Key point A","Key point B"],
   "categories": ["Vocabulary","Beginner"]
+}
+```
+
+#### Tone rules used in the Tone Markers quiz
+
+```json
+{
+  "Middle + none (long)": "Mid",
+  "Middle + none (short)": "Low",
+  "Middle + ่": "Low",
+  "Middle + ้": "Falling",
+  "Middle + ๊": "High",
+  "Middle + ๋": "Rising",
+
+  "High + none (long)": "Rising",
+  "High + none (short)": "Low",
+  "High + ่": "Low",
+  "High + ้": "Falling",
+
+  "Low + none (long)": "Mid",
+  "Low + none (short)": "High",
+  "Low + ่": "Falling",
+  "Low + ้": "High"
 }
 ```
 

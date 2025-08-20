@@ -198,6 +198,24 @@
       }
     },
 
+    tones: {
+      title: 'Thai Tone Markers',
+      subtitle: 'Choose the resulting tone from class, marker, and vowel length',
+      bodyClass: 'questions-quiz',
+      init: function() {
+        Utils.fetchJSON('data/tones.json')
+          .then(function(data){
+            ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+              data: data,
+              answerKey: 'phonetic',
+              labelPrefix: 'Class + Marker + Length: ',
+              buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
+            })));
+          })
+          .catch(function(err){ handleDataLoadError(err); });
+      }
+    },
+
     questions: {
       title: 'Thai Questions Quiz',
       subtitle: 'Choose the correct phonetic for the Thai question word or pattern',
