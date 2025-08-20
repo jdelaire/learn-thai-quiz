@@ -35,8 +35,7 @@
           }
         } catch (e) {}
 
-        fetch('data/consonants.json')
-          .then(function(r){ return r.json(); })
+        Utils.fetchJSON('data/consonants.json')
           .then(function(data){
             ThaiQuiz.setupQuiz({
               elements: defaultElements,
@@ -256,10 +255,10 @@
           };
         })();
 
-        Promise.all([
-          Utils.fetchJSON('data/emoji-rules/verbs.json'),
-          Utils.fetchJSON('data/verbs.json'),
-          Utils.fetchJSON('data/verbs-examples.json')
+        Utils.fetchJSONs([
+          'data/emoji-rules/verbs.json',
+          'data/verbs.json',
+          'data/verbs-examples.json'
         ]).then(function(results){
           var rules = results[0] || [];
           var matcher = Utils.buildEmojiMatcher(rules);
@@ -316,10 +315,10 @@
           };
         })();
 
-        Promise.all([
-          Utils.fetchJSON('data/emoji-rules/classifiers.json'),
-          Utils.fetchJSON('data/classifiers.json'),
-          Utils.fetchJSON('data/classifiers-examples.json')
+        Utils.fetchJSONs([
+          'data/emoji-rules/classifiers.json',
+          'data/classifiers.json',
+          'data/classifiers-examples.json'
         ])
           .then(function(results){
             var rules = results[0] || [];
@@ -347,18 +346,13 @@
         var emojiForJob = (function(){
           var matcher = null;
           return function(item){
-            try {
-              if (!matcher) return '';
-              return Utils.buildEmojiMatcher.cache && Utils.buildEmojiMatcher.cache.jobs
-                ? Utils.buildEmojiMatcher.cache.jobs(String(item && item.english || ''))
-                : matcher(String(item && item.english || ''));
-            } catch (e) { return ''; }
+            try { return matcher ? matcher(String(item && item.english || '')) : ''; } catch (e) { return ''; }
           };
         })();
 
-        Promise.all([
-          Utils.fetchJSON('data/emoji-rules/jobs.json'),
-          Utils.fetchJSON('data/jobs.json')
+        Utils.fetchJSONs([
+          'data/emoji-rules/jobs.json',
+          'data/jobs.json'
         ])
           .then(function(results){
             var rules = results[0] || [];
@@ -384,19 +378,14 @@
         var emojiForFood = (function(){
           var matcher = null;
           return function(item){
-            try {
-              if (!matcher) return '';
-              return Utils.buildEmojiMatcher.cache && Utils.buildEmojiMatcher.cache.foods
-                ? Utils.buildEmojiMatcher.cache.foods(String(item && item.english || ''))
-                : matcher(String(item && item.english || ''));
-            } catch (e) { return ''; }
+            try { return matcher ? matcher(String(item && item.english || '')) : ''; } catch (e) { return ''; }
           };
         })();
 
-        Promise.all([
-          Utils.fetchJSON('data/emoji-rules/foods.json'),
-          Utils.fetchJSON('data/foods.json'),
-          Utils.fetchJSON('data/foods-examples.json')
+        Utils.fetchJSONs([
+          'data/emoji-rules/foods.json',
+          'data/foods.json',
+          'data/foods-examples.json'
         ]).then(function(results){
           var rules = results[0] || [];
           var matcher = Utils.buildEmojiMatcher(rules);
@@ -433,19 +422,14 @@
         var emojiForRoom = (function(){
           var matcher = null;
           return function(item){
-            try {
-              if (!matcher) return '';
-              return Utils.buildEmojiMatcher.cache && Utils.buildEmojiMatcher.cache.rooms
-                ? Utils.buildEmojiMatcher.cache.rooms(String(item && item.english || ''))
-                : matcher(String(item && item.english || ''));
-            } catch (e) { return ''; }
+            try { return matcher ? matcher(String(item && item.english || '')) : ''; } catch (e) { return ''; }
           };
         })();
 
-        Promise.all([
-          Utils.fetchJSON('data/emoji-rules/rooms.json'),
-          Utils.fetchJSON('data/rooms.json'),
-          Utils.fetchJSON('data/rooms-examples.json')
+        Utils.fetchJSONs([
+          'data/emoji-rules/rooms.json',
+          'data/rooms.json',
+          'data/rooms-examples.json'
         ]).then(function(results){
           var rules = results[0] || [];
           var matcher = Utils.buildEmojiMatcher(rules);

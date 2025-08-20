@@ -190,7 +190,7 @@ Utilities you can use: `Utils.fetchJSON(s)`, `Utils.fetchJSONCached(s)`, `Utils.
 #### Emoji rules (data-driven)
 
 - Add a file like `data/emoji-rules/foods.json` with an ordered list of objects `{ "pattern": "regex", "emoji": "🧪" }`.
-- Quizzes that support emojis (foods/rooms/jobs/verbs) will load these rules and match against the English text to show the emoji above the symbol.
+- Quizzes that support emojis (foods/rooms/jobs/verbs/classifiers) will load these rules and match against the English text to show the emoji above the symbol.
 - If the file is missing or empty, the quiz still works (no emoji shown).
 
 #### Homepage card entry (`data/quizzes.json`)
