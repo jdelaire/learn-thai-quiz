@@ -1,4 +1,4 @@
-## ThaiUp!
+## ThaiQuest
 
 Interactive, mobile‑friendly quizzes to learn Thai: consonants, vowels, colors, numbers, time, question patterns, family vocabulary, and common classifiers. Built with plain HTML/CSS/JS and JSON data files. No build step required.
 
