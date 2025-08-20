@@ -112,8 +112,8 @@
             if (state.autoAdvanceTimerId != null) {
               clearTimeout(state.autoAdvanceTimerId);
             }
-            // Use longer delay (5 seconds) for quizzes that show examples
-            const delay = (typeof config.onAnswered === 'function') ? 4000 : 1500;
+            // Use longer delay (3 seconds) for quizzes that show examples
+            const delay = (typeof config.onAnswered === 'function') ? 3000 : 1500;
             state.autoAdvanceTimerId = setTimeout(() => {
               state.autoAdvanceTimerId = null;
               pickQuestion();
