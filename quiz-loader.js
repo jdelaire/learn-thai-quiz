@@ -27,10 +27,10 @@
           var symbolAnchor = document.getElementById('symbol');
           if (symbolAnchor && symbolAnchor.parentNode) {
             var legend = document.createElement('div');
-            legend.className = 'legend';
-            legend.innerHTML = '<span class="legend-item"><span class="legend-color middle-class"></span> Middle Class</span>' +
-                               '<span class="legend-item"><span class="legend-color high-class"></span> High Class</span>' +
-                               '<span class="legend-item"><span class="legend-color low-class"></span> Low Class</span>';
+            legend.className = 'legend legend-chips';
+            legend.innerHTML = '<span class="class-chip middle-class">Middle Class</span>' +
+                               '<span class="class-chip high-class">High Class</span>' +
+                               '<span class="class-chip low-class">Low Class</span>';
             symbolAnchor.parentNode.insertBefore(legend, symbolAnchor);
           }
         } catch (e) {}

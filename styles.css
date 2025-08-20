@@ -573,6 +573,25 @@ button .emoji {
 .legend-color.high-class { background-color: #f39c12; }
 .legend-color.low-class { background-color: #3498db; }
 
+/* Consonant legend chips styled like answer buttons */
+.legend-chips { gap: 0.8em; flex-wrap: wrap; margin-top: 0.6em; }
+.class-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35em 0.7em;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.95em;
+  border: 2px solid transparent;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+.class-chip.middle-class:hover,
+.class-chip.high-class:hover,
+.class-chip.low-class:hover {
+  transform: none;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
 /* Color quiz */
 body.color-quiz h1 { margin-bottom: 0.2em; }
 body.color-quiz #symbol {
