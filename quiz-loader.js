@@ -67,6 +67,16 @@
       subtitle: '',
       bodyClass: 'vowel-quiz',
       init: function() {
+        try {
+          var symbolAnchor = document.getElementById('symbol');
+          if (symbolAnchor && !document.querySelector('.vowel-note')) {
+            var tip = document.createElement('div');
+            tip.className = 'vowel-note';
+            tip.setAttribute('role', 'note');
+            tip.textContent = 'Note: The consonant ก (goo gai) may appear as a placeholder to show where the vowel attaches; it is not part of the answer.';
+            symbolAnchor.insertAdjacentElement('afterend', tip);
+          }
+        } catch (e) {}
         Utils.fetchJSON('data/vowels.json')
           .then(function(data){
             ThaiQuiz.setupQuiz({
@@ -75,6 +85,15 @@
                 var answer = Utils.pickRandom(data);
                 var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('sound'), answer);
                 return { answer: answer, choices: choices, symbolText: answer.symbol };
+              },
+              renderSymbol: function(answer, els) {
+                try {
+                  var raw = String(answer.symbol || '');
+                  // Insert ko kai (\u0E01) directly; wrapping breaks shaping in Safari
+                  var out = raw.replace(/-/g, '\u0E01');
+                  els.symbolEl.textContent = out;
+                  els.symbolEl.setAttribute('aria-label', 'Thai vowel symbol: ' + (answer.symbol || ''));
+                } catch (e) {}
               },
               renderButtonContent: function(choice) { return choice.sound; },
               isCorrect: function(choice, answer) { return choice.sound === answer.sound; }
@@ -143,25 +162,12 @@
 
         Utils.fetchJSON('data/numbers.json')
           .then(function(data){
-            ThaiQuiz.setupQuiz({
-              elements: defaultElements,
-              pickRound: function() {
-                var answer = Utils.pickRandom(data);
-                var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
-                var symbolText = (answer.number || '') + '  ' + (answer.thai || '');
-                var symbolAriaLabel = 'Number and Thai: ' + (answer.number || '') + (answer.thai ? ' ' + answer.thai : '');
-                return { answer: answer, choices: choices, symbolText: symbolText, symbolAriaLabel: symbolAriaLabel };
-              },
-              renderSymbol: function(answer, els) {
-                var num = answer.number || '';
-                var thai = answer.thai || '';
-                els.symbolEl.innerHTML = '' + num + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-                els.symbolEl.setAttribute('aria-label', 'Number and Thai: ' + num + (thai ? ' ' + thai : ''));
-              },
-              renderButtonContent: function(choice) { return choice.phonetic; },
-              ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-              isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
-            });
+            ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+              data: data,
+              answerKey: 'phonetic',
+              labelPrefix: 'Number and Thai: ',
+              buildSymbol: function(a){ return { english: String(a.number || ''), thai: a.thai || '' }; }
+            })));
           })
           .catch(function(err){ handleDataLoadError(err); });
       }
@@ -183,24 +189,12 @@
 
           var pool = keyWords.concat(timeFormats, examples);
 
-          ThaiQuiz.setupQuiz({
-            elements: defaultElements,
-            pickRound: function() {
-              var answer = Utils.pickRandom(pool);
-              var choices = Utils.pickUniqueChoices(pool, 4, Utils.byProp('phonetic'), answer);
-              var symbolAriaLabel = 'English and Thai: ' + englishOf(answer) + ' — ' + answer.thai;
-              return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
-            },
-            renderSymbol: function(answer, els) {
-              var english = englishOf(answer);
-              var thai = answer.thai || '';
-              els.symbolEl.innerHTML = '' + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-              els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
-            },
-            renderButtonContent: function(choice) { return choice.phonetic; },
-            ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
-          });
+          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+            data: pool,
+            answerKey: 'phonetic',
+            labelPrefix: 'English and Thai: ',
+            buildSymbol: function(a){ return { english: englishOf(a), thai: a.thai || '' }; }
+          })));
         }).catch(function(err){ handleDataLoadError(err); });
       }
     },
@@ -227,34 +221,12 @@
           var data = results[0] || [];
           var examples = results[1] || {};
 
-          ThaiQuiz.setupQuiz({
-            elements: defaultElements,
-            pickRound: function() {
-              var answer = Utils.pickRandom(data);
-              var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
-              var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
-              return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
-            },
-            renderSymbol: function(answer, els) {
-              var thai = answer.thai || '';
-              var english = answer.english || '';
-              els.symbolEl.innerHTML = '' + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-              els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
-            },
-            renderButtonContent: function(choice) { return choice.phonetic; },
-            ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
-            onAnswered: function(ctx) {
-              var correct = ctx.correct, answer = ctx.answer, state = ctx.state;
-              if (!correct) return;
-              try {
-                var fb = document.getElementById('feedback');
-                var ex = examples[answer.english];
-                fb.innerHTML = ex ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '';
-                // Let the normal 1.5-second auto-advance handle progression
-              } catch (e) {}
-            }
-          });
+          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+            data: data,
+            examples: examples,
+            answerKey: 'phonetic',
+            labelPrefix: 'English and Thai: '
+          })));
         }).catch(function(err){ handleDataLoadError(err); });
       }
     },
@@ -274,87 +246,33 @@
           }
         } catch (e) {}
 
-        function emojiForVerb(item) {
-          try {
-            var txt = String(item && item.english || '').toLowerCase();
-            var rules = [
-              [/to go/, '🧭'],
-              [/to come/, '👣'],
-              [/to eat/, '🍽️'],
-              [/to drink/, '🥤'],
-              [/to sleep/, '😴'],
-              [/to wake up/, '⏰'],
-              [/to study/, '📖'],
-              [/to read/, '📚'],
-              [/to write/, '✍️'],
-              [/to speak/, '🗣️'],
-              [/to listen/, '👂'],
-              [/to see|watch/, '👀'],
-              [/to buy/, '🛒'],
-              [/to sell/, '💰'],
-              [/to pay/, '💳'],
-              [/to work/, '💼'],
-              [/to make|to do/, '🛠️'],
-              [/to take a shower/, '🚿'],
-              [/to exercise/, '🏋️'],
-              [/to walk/, '🚶'],
-              [/to run/, '🏃'],
-              [/to play/, '🎮'],
-              [/to wait/, '⏳'],
-              [/to want/, '💭'],
-              [/to love/, '❤️'],
-              [/to like/, '👍'],
-              [/to hate/, '💢'],
-              [/to understand/, '💡'],
-              [/to forget/, '🧠❌'],
-              [/to remember/, '🧠'],
-              [/to help/, '🆘'],
-              [/to start|begin/, '▶️'],
-              [/to finish|complete/, '✅'],
-              [/to call/, '📞'],
-              [/to drive/, '🚗']
-            ];
-            for (var i = 0; i < rules.length; i++) {
-              if (rules[i][0].test(txt)) return rules[i][1];
-            }
-          } catch (e) {}
-          return '';
-        }
+        var emojiForVerb = (function(){
+          var matcher = null;
+          return function(item){
+            try {
+              if (!matcher) return '';
+              return matcher(String(item && item.english || ''));
+            } catch (e) { return ''; }
+          };
+        })();
 
         Promise.all([
+          Utils.fetchJSON('data/emoji-rules/verbs.json'),
           Utils.fetchJSON('data/verbs.json'),
           Utils.fetchJSON('data/verbs-examples.json')
         ]).then(function(results){
-          var data = results[0] || [];
-          var examples = results[1] || {};
-          ThaiQuiz.setupQuiz({
-            elements: defaultElements,
-            pickRound: function() {
-              var answer = Utils.pickRandom(data);
-              var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
-              var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
-              return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
-            },
-            renderSymbol: function(answer, els) {
-              var english = answer.english || '';
-              var thai = answer.thai || '';
-              var emoji = emojiForVerb(answer);
-              els.symbolEl.innerHTML = (emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '') + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-              els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
-            },
-            renderButtonContent: function(choice) { return choice.phonetic; },
-            ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
-            onAnswered: function(ctx) {
-              var correct = ctx.correct, answer = ctx.answer;
-              if (!correct) return;
-              try {
-                var fb = document.getElementById('feedback');
-                var ex = examples[answer.english];
-                fb.innerHTML = ex ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '';
-              } catch (e) {}
-            }
-          });
+          var rules = results[0] || [];
+          var matcher = Utils.buildEmojiMatcher(rules);
+          emojiForVerb = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
+          var data = results[1] || [];
+          var examples = results[2] || {};
+          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+            data: data,
+            examples: examples,
+            answerKey: 'phonetic',
+            labelPrefix: 'English and Thai: ',
+            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: emojiForVerb(a) }; }
+          })));
         }).catch(function(err){ handleDataLoadError(err); });
       }
     },
@@ -366,24 +284,11 @@
       init: function() {
         Utils.fetchJSON('data/family.json')
           .then(function(data){
-            ThaiQuiz.setupQuiz({
-              elements: defaultElements,
-              pickRound: function() {
-                var answer = Utils.pickRandom(data);
-                var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
-                var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
-                return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
-              },
-              renderSymbol: function(answer, els) {
-                var english = answer.english || '';
-                var thai = answer.thai || '';
-                els.symbolEl.innerHTML = '' + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-                els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
-              },
-              renderButtonContent: function(choice) { return choice.phonetic; },
-              ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-              isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
-            });
+            ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+              data: data,
+              answerKey: 'phonetic',
+              labelPrefix: 'English and Thai: '
+            })));
           })
           .catch(function(err){ handleDataLoadError(err); });
       }
@@ -404,83 +309,31 @@
           }
         } catch (e) {}
 
-        function emojiForClassifier(item) {
-          try {
-            var txt = String(item && item.english || '').toLowerCase();
-            var rules = [
-              [/people|person/, '👥'],
-              [/animals?/, '🐾'],
-              [/shirts?/, '👕'],
-              [/chairs?/, '🪑'],
-              [/flat|paper|cds?|disc/, '📄'],
-              [/containers?|bags?/, '🧺'],
-              [/cups?|glasses?|drinkware/, '🥤'],
-              [/books?|notebooks?/, '📚'],
-              [/knives?/, '🔪'],
-              [/balls?|fruits?|round/, '⚽'],
-              [/vehicles?|cars?/, '🚗'],
-              [/umbrellas?/, '☂️'],
-              [/eggs?/, '🥚'],
-              [/seeds?/, '🌱'],
-              [/pills?/, '💊'],
-              [/buttons?/, '🔘'],
-              [/houses?/, '🏠'],
-              [/rooms?/, '🚪'],
-              [/machines?|devices?/, '🖥️'],
-              [/pairs?/, '👟'],
-              [/pieces?|slices?/, '🍰'],
-              [/general/, '📦'],
-              [/places?/, '📍'],
-              [/plates?/, '🍽️'],
-              [/bowls?/, '🍜'],
-              [/boxes?/, '📦'],
-              [/plastic\s*bags?/, '🛍️'],
-              [/bottles?/, '🍼'],
-              [/cans?|tins?/, '🥫'],
-              [/cartons?/, '🧃']
-            ];
-            for (var i = 0; i < rules.length; i++) {
-              if (rules[i][0].test(txt)) return rules[i][1];
-            }
-          } catch (e) {}
-          return '';
-        }
+        var emojiForClassifier = (function(){
+          var matcher = null;
+          return function(item){
+            try { return matcher ? matcher(String(item && item.english || '')) : ''; } catch (e) { return ''; }
+          };
+        })();
 
         Promise.all([
+          Utils.fetchJSON('data/emoji-rules/classifiers.json'),
           Utils.fetchJSON('data/classifiers.json'),
           Utils.fetchJSON('data/classifiers-examples.json')
         ])
           .then(function(results){
-            var data = results[0] || [];
-            var examples = results[1] || {};
-            ThaiQuiz.setupQuiz({
-              elements: defaultElements,
-              pickRound: function() {
-                var answer = Utils.pickRandom(data);
-                var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
-                var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
-                return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
-              },
-              renderSymbol: function(answer, els) {
-                var english = answer.english || '';
-                var thai = answer.thai || '';
-                var emoji = emojiForClassifier(answer);
-                els.symbolEl.innerHTML = (emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '') + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-                els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
-              },
-              renderButtonContent: function(choice) { return choice.phonetic; },
-              ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-              isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
-              onAnswered: function(ctx) {
-                var correct = ctx.correct, answer = ctx.answer;
-                if (!correct) return;
-                try {
-                  var fb = document.getElementById('feedback');
-                  var ex = examples[answer.english];
-                  fb.innerHTML = ex ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '';
-                } catch (e) {}
-              }
-            });
+            var rules = results[0] || [];
+            var matcher = Utils.buildEmojiMatcher(rules);
+            emojiForClassifier = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
+            var data = results[1] || [];
+            var examples = results[2] || {};
+            ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+              data: data,
+              examples: examples,
+              answerKey: 'phonetic',
+              labelPrefix: 'English and Thai: ',
+              buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: emojiForClassifier(a) }; }
+            })));
           })
           .catch(function(err){ handleDataLoadError(err); });
       }
@@ -491,71 +344,33 @@
       subtitle: 'Choose the correct phonetic for the Thai job or occupation',
       bodyClass: 'jobs-quiz',
       init: function() {
-        function emojiForJob(item) {
-          try {
-            var txt = String(item && item.english || '').toLowerCase();
-            var rules = [
-              [/professor/, '🎓'],
-              [/lecturer|teacher/, '🧑‍🏫'],
-              [/student/, '🎒'],
-              [/doctor/, '🩺'],
-              [/nurse/, '🧑‍⚕️'],
-              [/dentist/, '🦷'],
-              [/pharmacist/, '💊'],
-              [/engineer/, '⚙️'],
-              [/architect/, '📐'],
-              [/lawyer/, '⚖️'],
-              [/judge/, '🧑‍⚖️'],
-              [/police|policeman/, '👮'],
-              [/soldier/, '🪖'],
-              [/fire(fighter|man)/, '🚒'],
-              [/chef|cook/, '👩‍🍳'],
-              [/waiter|waitress|server/, '🍽️'],
-              [/driver/, '🚕'],
-              [/farmer/, '🌾'],
-              [/fisher(man)?/, '🎣'],
-              [/tour guide/, '🗺️'],
-              [/artist/, '🎨'],
-              [/musician/, '🎵'],
-              [/actor|actress/, '🎭'],
-              [/writer/, '✍️'],
-              [/journalist/, '📰'],
-              [/photographer/, '📷'],
-              [/cleaner|maid/, '🧹'],
-              [/security|guard/, '🛡️'],
-              [/boss|manager/, '👔'],
-              [/employee|office worker|staff/, '🧑‍💼'],
-              [/business(person)?/, '💼'],
-              [/job|occupation|work/, '💼']
-            ];
-            for (var i = 0; i < rules.length; i++) {
-              if (rules[i][0].test(txt)) return rules[i][1];
-            }
-          } catch (e) {}
-          return '';
-        }
+        var emojiForJob = (function(){
+          var matcher = null;
+          return function(item){
+            try {
+              if (!matcher) return '';
+              return Utils.buildEmojiMatcher.cache && Utils.buildEmojiMatcher.cache.jobs
+                ? Utils.buildEmojiMatcher.cache.jobs(String(item && item.english || ''))
+                : matcher(String(item && item.english || ''));
+            } catch (e) { return ''; }
+          };
+        })();
 
-        Utils.fetchJSON('data/jobs.json')
-          .then(function(data){
-            ThaiQuiz.setupQuiz({
-              elements: defaultElements,
-              pickRound: function() {
-                var answer = Utils.pickRandom(data);
-                var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
-                var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
-                return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
-              },
-              renderSymbol: function(answer, els) {
-                var english = answer.english || '';
-                var thai = answer.thai || '';
-                var emoji = emojiForJob(answer);
-                els.symbolEl.innerHTML = (emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '') + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-                els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
-              },
-              renderButtonContent: function(choice) { return choice.phonetic; },
-              ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-              isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
-            });
+        Promise.all([
+          Utils.fetchJSON('data/emoji-rules/jobs.json'),
+          Utils.fetchJSON('data/jobs.json')
+        ])
+          .then(function(results){
+            var rules = results[0] || [];
+            var matcher = Utils.buildEmojiMatcher(rules);
+            emojiForJob = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
+            var data = results[1] || [];
+            ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+              data: data,
+              answerKey: 'phonetic',
+              labelPrefix: 'English and Thai: ',
+              buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: emojiForJob(a) }; }
+            })));
           })
           .catch(function(err){ handleDataLoadError(err); });
       }
@@ -566,88 +381,36 @@
       subtitle: 'Choose the correct phonetic for the Thai food, fruit, or cooking method',
       bodyClass: 'foods-quiz',
       init: function() {
-        function emojiForFood(item) {
-          try {
-            var txt = String(item && item.english || '').toLowerCase();
-            var rules = [
-              [/sticky\s*rice|\brice\b/, '🍚'],
-              [/food|dish/, '🍽️'],
-              [/curry|green curry|red curry/, '🍛'],
-              [/soup|tom yum/, '🍲'],
-              [/papaya\s*salad/, '🥗'],
-              [/pad\s*thai|noodles?/, '🍜'],
-              [/fried\s*rice/, '🍚'],
-              [/fried\s*vegetables|vegetables?/, '🥦'],
-              [/omelet|egg/, '🥚'],
-              [/shrimp/, '🦐'],
-              [/squid/, '🦑'],
-              [/crab/, '🦀'],
-              [/chicken/, '🍗'],
-              [/pork/, '🍖'],
-              [/beef/, '🥩'],
-              [/duck/, '🦆'],
-              [/fish/, '🐟'],
-              [/seafood/, '🦞'],
-              [/tofu/, '🍱'],
-              [/fruit\(s\)|fruits?/, '🍎'],
-              [/apple/, '🍎'],
-              [/mango/, '🥭'],
-              [/banana/, '🍌'],
-              [/watermelon/, '🍉'],
-              [/pineapple/, '🍍'],
-              [/coconut/, '🥥'],
-              [/grape/, '🍇'],
-              [/orange/, '🍊'],
-              [/strawberry/, '🍓'],
-              [/cherry/, '🍒'],
-              [/grilled/, '🍢'],
-              [/stir-?fried/, '🍳'],
-              [/deep-?fried/, '🍤'],
-              [/steamed/, '♨️'],
-              [/boiled/, '🍲'],
-              [/baked/, '🥧']
-            ];
-            for (var i = 0; i < rules.length; i++) {
-              if (rules[i][0].test(txt)) return rules[i][1];
-            }
-          } catch (e) {}
-          return '';
-        }
+        var emojiForFood = (function(){
+          var matcher = null;
+          return function(item){
+            try {
+              if (!matcher) return '';
+              return Utils.buildEmojiMatcher.cache && Utils.buildEmojiMatcher.cache.foods
+                ? Utils.buildEmojiMatcher.cache.foods(String(item && item.english || ''))
+                : matcher(String(item && item.english || ''));
+            } catch (e) { return ''; }
+          };
+        })();
 
         Promise.all([
+          Utils.fetchJSON('data/emoji-rules/foods.json'),
           Utils.fetchJSON('data/foods.json'),
           Utils.fetchJSON('data/foods-examples.json')
         ]).then(function(results){
-          var data = results[0] || [];
-          var examples = results[1] || {};
-          ThaiQuiz.setupQuiz({
-            elements: defaultElements,
-            pickRound: function() {
-              var answer = Utils.pickRandom(data);
-              var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
-              var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
-              return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
-            },
-            renderSymbol: function(answer, els) {
-              var english = answer.english || '';
-              var thai = answer.thai || '';
-              var emoji = emojiForFood(answer);
-              els.symbolEl.innerHTML = (emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '') + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-              els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
-            },
-            renderButtonContent: function(choice) { return choice.phonetic; },
-            ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
-            onAnswered: function(ctx) {
-              var correct = ctx.correct, answer = ctx.answer;
-              if (!correct) return;
-              try {
-                var fb = document.getElementById('feedback');
-                var ex = examples[answer.english];
-                fb.innerHTML = ex ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '';
-              } catch (e) {}
-            }
-          });
+          var rules = results[0] || [];
+          var matcher = Utils.buildEmojiMatcher(rules);
+          emojiForFood = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
+          var data = results[1] || [];
+          var examples = results[2] || {};
+          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+            data: data,
+            examples: examples,
+            exampleKey: function(a){ return a.id || a.english; },
+            answerKey: 'phonetic',
+            labelPrefix: 'English and Thai: ',
+            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: emojiForFood(a) }; }
+          })));
         }).catch(function(err){ handleDataLoadError(err); });
       }
     },
@@ -667,71 +430,36 @@
           }
         } catch (e) {}
 
-        function emojiForRoom(item) {
-          try {
-            var txt = String(item && item.english || '').toLowerCase();
-            var rules = [
-              [/bedroom/, '🛏️'],
-              [/bathroom|toilet/, '🚽'],
-              [/kitchen/, '🍳'],
-              [/living room/, '🛋️'],
-              [/dining room/, '🍽️'],
-              [/laundry room/, '🧺'],
-              [/storage room/, '📦'],
-              [/garage/, '🚗'],
-              [/balcony/, '🌿'],
-              [/garden|yard/, '🌱'],
-              [/rooftop/, '🏙️'],
-              [/apartment/, '🏢'],
-              [/condo/, '🏢'],
-              [/building/, '🏢'],
-              [/house/, '🏠'],
-              [/room/, '🚪'],
-              [/stairs/, '🪜'],
-              [/elevator/, '🛗'],
-              [/floor/, '🏢']
-            ];
-            for (var i = 0; i < rules.length; i++) {
-              if (rules[i][0].test(txt)) return rules[i][1];
-            }
-          } catch (e) {}
-          return '';
-        }
+        var emojiForRoom = (function(){
+          var matcher = null;
+          return function(item){
+            try {
+              if (!matcher) return '';
+              return Utils.buildEmojiMatcher.cache && Utils.buildEmojiMatcher.cache.rooms
+                ? Utils.buildEmojiMatcher.cache.rooms(String(item && item.english || ''))
+                : matcher(String(item && item.english || ''));
+            } catch (e) { return ''; }
+          };
+        })();
 
         Promise.all([
+          Utils.fetchJSON('data/emoji-rules/rooms.json'),
           Utils.fetchJSON('data/rooms.json'),
           Utils.fetchJSON('data/rooms-examples.json')
         ]).then(function(results){
-          var data = results[0] || [];
-          var examples = results[1] || {};
-          ThaiQuiz.setupQuiz({
-            elements: defaultElements,
-            pickRound: function() {
-              var answer = Utils.pickRandom(data);
-              var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
-              var symbolAriaLabel = 'English and Thai: ' + (answer.english || '') + ' — ' + (answer.thai || '');
-              return { answer: answer, choices: choices, symbolAriaLabel: symbolAriaLabel };
-            },
-            renderSymbol: function(answer, els) {
-              var english = answer.english || '';
-              var thai = answer.thai || '';
-              var emoji = emojiForRoom(answer);
-              els.symbolEl.innerHTML = (emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '') + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-              els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
-            },
-            renderButtonContent: function(choice) { return choice.phonetic; },
-            ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
-            onAnswered: function(ctx) {
-              var correct = ctx.correct, answer = ctx.answer;
-              if (!correct) return;
-              try {
-                var fb = document.getElementById('feedback');
-                var ex = examples[answer.english];
-                fb.innerHTML = ex ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + ex + '</div></div>' : '';
-              } catch (e) {}
-            }
-          });
+          var rules = results[0] || [];
+          var matcher = Utils.buildEmojiMatcher(rules);
+          emojiForRoom = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
+          var data = results[1] || [];
+          var examples = results[2] || {};
+          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+            data: data,
+            examples: examples,
+            exampleKey: function(a){ return a.id || a.english; },
+            answerKey: 'phonetic',
+            labelPrefix: 'English and Thai: ',
+            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: emojiForRoom(a) }; }
+          })));
         }).catch(function(err){ handleDataLoadError(err); });
       }
     }

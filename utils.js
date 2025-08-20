@@ -5,6 +5,18 @@
     return fetch(url).then(function(r) { return r.json(); });
   }
 
+  // Simple in-memory cache for JSON fetches
+  var __jsonCache = Object.create(null);
+  function fetchJSONCached(url) {
+    try {
+      if (__jsonCache[url]) return __jsonCache[url];
+      __jsonCache[url] = fetchJSON(url).catch(function(err){ delete __jsonCache[url]; throw err; });
+      return __jsonCache[url];
+    } catch (_) {
+      return fetchJSON(url);
+    }
+  }
+
   function fetchJSONs(urls) {
     return Promise.all(urls.map(fetchJSON));
   }
@@ -130,8 +142,122 @@
     return function(obj) { return obj && obj[propName]; };
   }
 
+  // Creates a standard quiz configuration block for ThaiQuiz.setupQuiz
+  // params: { data, examples?, exampleKey?(answer)->string, answerKey='phonetic', buildSymbol(answer) -> { english, thai, emoji? }, choices=4, labelPrefix='English and Thai: ' }
+  function createStandardQuiz(params) {
+    var data = params && params.data || [];
+    var examples = params && params.examples || null;
+    var exampleKeyFn = params && params.exampleKey;
+    var answerKey = (params && params.answerKey) || 'phonetic';
+    var buildSymbol = (params && params.buildSymbol) || function(a){ return { english: String(a && a.english || ''), thai: String(a && a.thai || '') }; };
+    var choices = (params && params.choices) || 4;
+    var labelPrefix = (params && params.labelPrefix) || 'English and Thai: ';
+
+    return {
+      pickRound: function() {
+        var answer = pickRandom(data);
+        var uniqueChoices = pickUniqueChoices(data, choices, byProp(answerKey), answer);
+        return { answer: answer, choices: uniqueChoices };
+      },
+      renderSymbol: function(answer, els) {
+        try {
+          var sym = buildSymbol(answer) || {};
+          renderEnglishThaiSymbol(els.symbolEl, {
+            english: String(sym.english || ''),
+            thai: String(sym.thai || ''),
+            emoji: String(sym.emoji || ''),
+            ariaPrefix: labelPrefix
+          });
+        } catch (_) {}
+      },
+      renderButtonContent: function(choice) { return choice && choice[answerKey]; },
+      ariaLabelForChoice: function(choice) { return 'Answer: ' + (choice && choice[answerKey]); },
+      isCorrect: function(choice, answer) { return (choice && choice[answerKey]) === (answer && answer[answerKey]); },
+      onAnswered: function(ctx) {
+        if (!examples) return;
+        var correct = ctx && ctx.correct;
+        if (!correct) return;
+        try {
+          var fb = document.getElementById('feedback');
+          var ans = ctx && ctx.answer || {};
+          var key = null;
+          try { key = exampleKeyFn ? exampleKeyFn(ans) : ans.english; } catch (_) { key = ans.english; }
+          var ex = examples[key];
+          renderExample(fb, ex);
+        } catch (_) {}
+      }
+    };
+  }
+
+  // Build a function that maps a text (usually English) to an emoji based on regex rules
+  function buildEmojiMatcher(rules) {
+    try {
+      var compiled = (rules || []).map(function(r){ return [new RegExp(r.pattern, 'i'), r.emoji]; });
+      return function toEmoji(text) {
+        var t = String(text || '').toLowerCase();
+        for (var i = 0; i < compiled.length; i++) {
+          if (compiled[i][0].test(t)) return compiled[i][1];
+        }
+        return '';
+      };
+    } catch (_) {
+      return function(){ return ''; };
+    }
+  }
+
+  // Simple validation helpers (console-only)
+  function validateDataset(items, requiredKeys) {
+    try {
+      var missing = 0;
+      for (var i = 0; i < (items || []).length; i++) {
+        for (var j = 0; j < (requiredKeys || []).length; j++) {
+          if (items[i][requiredKeys[j]] == null) { missing++; break; }
+        }
+      }
+      if (missing > 0) console.warn('[validateDataset] Missing required keys in', missing, 'items');
+    } catch (_) {}
+  }
+
+  function validateExamples(items, examples, key) {
+    try {
+      if (!examples || typeof examples !== 'object') return;
+      var k = key || 'english';
+      var set = Object.create(null);
+      for (var i = 0; i < (items || []).length; i++) {
+        var val = String(items[i][k] || '');
+        set[val] = true;
+      }
+      var unknown = [];
+      Object.keys(examples).forEach(function(exKey){ if (!set[exKey]) unknown.push(exKey); });
+      if (unknown.length) console.warn('[validateExamples] Unmatched example keys:', unknown.slice(0, 10).join(', '), (unknown.length > 10 ? '…' : ''));
+    } catch (_) {}
+  }
+
+  // Renders a common "English + Thai (+ optional emoji)" symbol layout and sets ARIA label
+  function renderEnglishThaiSymbol(symbolEl, params) {
+    try {
+      var english = String((params && params.english) || '');
+      var thai = String((params && params.thai) || '');
+      var emoji = String((params && params.emoji) || '');
+      var ariaPrefix = String((params && params.ariaPrefix) || 'English and Thai: ');
+      var emojiLine = emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '';
+      symbolEl.innerHTML = emojiLine + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+      symbolEl.setAttribute('aria-label', ariaPrefix + english + (thai ? ' — ' + thai : ''));
+    } catch (_) {}
+  }
+
+  // Renders an example block into the feedback element
+  function renderExample(feedbackEl, exampleText) {
+    try {
+      feedbackEl.innerHTML = exampleText
+        ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + exampleText + '</div></div>'
+        : '';
+    } catch (_) {}
+  }
+
   global.Utils = {
     fetchJSON: fetchJSON,
+    fetchJSONCached: fetchJSONCached,
     fetchJSONs: fetchJSONs,
     pickRandom: pickRandom,
     pickUniqueChoices: pickUniqueChoices,
@@ -143,6 +269,12 @@
     getDisplayHex: getDisplayHex,
     hexToRgba: hexToRgba,
     setText: setText,
-    byProp: byProp
+    byProp: byProp,
+    createStandardQuiz: createStandardQuiz,
+    buildEmojiMatcher: buildEmojiMatcher,
+    validateDataset: validateDataset,
+    validateExamples: validateExamples,
+    renderEnglishThaiSymbol: renderEnglishThaiSymbol,
+    renderExample: renderExample
   };
 })(window);

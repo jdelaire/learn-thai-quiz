@@ -1,0 +1,19 @@
+[
+  { "pattern": "bedroom", "emoji": "🛏️" },
+  { "pattern": "bathroom|toilet", "emoji": "🚽" },
+  { "pattern": "kitchen", "emoji": "🍳" },
+  { "pattern": "living room", "emoji": "🛋️" },
+  { "pattern": "dining room", "emoji": "🍽️" },
+  { "pattern": "laundry room", "emoji": "🧺" },
+  { "pattern": "storage room", "emoji": "📦" },
+  { "pattern": "garage", "emoji": "🚗" },
+  { "pattern": "balcony", "emoji": "🌿" },
+  { "pattern": "garden|yard", "emoji": "🌱" },
+  { "pattern": "rooftop", "emoji": "🏙️" },
+  { "pattern": "apartment|condo|building", "emoji": "🏢" },
+  { "pattern": "house", "emoji": "🏠" },
+  { "pattern": "room", "emoji": "🚪" },
+  { "pattern": "stairs", "emoji": "🪜" },
+  { "pattern": "elevator", "emoji": "🛗" },
+  { "pattern": "floor", "emoji": "🏢" }
+]
