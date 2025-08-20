@@ -482,7 +482,7 @@
         return;
       }
 
-      document.title = config.title;
+      document.title = config.title + ' — ThaiUp!';
       setText('page-title', config.title);
       setText('page-subtitle', config.subtitle || '');
       if (config.bodyClass) {

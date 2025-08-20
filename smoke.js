@@ -111,7 +111,7 @@
   }
 
   async function testHome(serverRoot) {
-    var name = 'Home page loads with quizzes and filters';
+    var name = 'Home page (ThaiUp!) loads with quizzes and filters';
     var iframe = createFrame();
     try {
       var nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 5000, 'Home did not load');
