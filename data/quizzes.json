@@ -70,8 +70,15 @@
     "description": "Learn Thai family members with Thai script and phonetics.",
     "bullets": ["Parents & siblings","Extended family (aunts/uncles, grandparents)","Phonetics practice"],
     "categories": ["Vocabulary","Beginner"]
-  }
-  ,
+  },
+  {
+    "id": "months",
+    "title": "📆 Months & Seasons",
+    "href": "quiz.html?quiz=months",
+    "description": "Practice Thai months and seasons with Thai script, phonetics, and examples.",
+    "bullets": ["12 months","Thailand's seasons","Examples after correct answers"],
+    "categories": ["Vocabulary","Beginner"]
+  },
   {
     "id": "classifiers",
     "title": "🔢 Common Thai Classifiers",

@@ -1,0 +1,21 @@
+[
+  { "english": "January", "thai": "มกราคม", "phonetic": "má-gà-raa-khom" },
+  { "english": "February", "thai": "กุมภาพันธ์", "phonetic": "gum-phaa-pan" },
+  { "english": "March", "thai": "มีนาคม", "phonetic": "mii-naa-khom" },
+  { "english": "April", "thai": "เมษายน", "phonetic": "mee-sǎa-yon" },
+  { "english": "May", "thai": "พฤษภาคม", "phonetic": "phrɯ́t-sà-phaa-khom" },
+  { "english": "June", "thai": "มิถุนายน", "phonetic": "mí-thù-naa-yon" },
+  { "english": "July", "thai": "กรกฎาคม", "phonetic": "gà-rá-gà-daa-khom" },
+  { "english": "August", "thai": "สิงหาคม", "phonetic": "sǐŋ-hǎa-khom" },
+  { "english": "September", "thai": "กันยายน", "phonetic": "gan-yaa-yon" },
+  { "english": "October", "thai": "ตุลาคม", "phonetic": "dtù-laa-khom" },
+  { "english": "November", "thai": "พฤศจิกายน", "phonetic": "phrɯ́t-sà-jì-gaa-yon" },
+  { "english": "December", "thai": "ธันวาคม", "phonetic": "than-waa-khom" },
+
+  { "english": "season", "thai": "ฤดู", "phonetic": "rɯ́-duu" },
+  { "english": "summer", "thai": "ฤดูร้อน", "phonetic": "rɯ́-duu rɔ́ɔn" },
+  { "english": "rainy season", "thai": "ฤดูฝน", "phonetic": "rɯ́-duu fǒn" },
+  { "english": "winter", "thai": "ฤดูหนาว", "phonetic": "rɯ́-duu nǎaw" },
+  { "english": "spring", "thai": "ฤดูใบไม้ผลิ", "phonetic": "rɯ́-duu bai-mái-phlì" },
+  { "english": "autumn/fall", "thai": "ฤดูใบไม้ร่วง", "phonetic": "rɯ́-duu bai-mái-rûaŋ" }
+]

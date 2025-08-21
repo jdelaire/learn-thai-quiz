@@ -422,6 +422,39 @@
       }
     },
 
+    months: {
+      title: '📆 Months & Seasons',
+      subtitle: 'Choose the correct phonetic for the Thai month or season',
+      bodyClass: 'questions-quiz',
+      init: function() {
+        var emojiForTerm = (function(){
+          var matcher = null;
+          return function(item){
+            try { return matcher ? matcher(String(item && item.english || '')) : ''; } catch (e) { return ''; }
+          };
+        })();
+
+        Utils.fetchJSONs([
+          'data/emoji-rules/months-seasons.json',
+          'data/months-seasons.json',
+          'data/months-seasons-examples.json'
+        ]).then(function(results){
+          var rules = results[0] || [];
+          var matcher = Utils.buildEmojiMatcher(rules);
+          emojiForTerm = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
+          var data = results[1] || [];
+          var examples = results[2] || {};
+          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+            data: data,
+            examples: examples,
+            answerKey: 'phonetic',
+            labelPrefix: 'English and Thai: ',
+            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: emojiForTerm(a) }; }
+          })));
+        }).catch(function(err){ handleDataLoadError(err); });
+      }
+    },
+
     rooms: {
       title: '🏠 Thai Rooms Quiz',
       subtitle: 'Choose the correct phonetic for the Thai room or house term',
