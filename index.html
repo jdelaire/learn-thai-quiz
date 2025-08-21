@@ -8,6 +8,7 @@
   <meta name="author" content="ThaiQuest" />
   <title>ThaiQuest</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="preload" as="image" href="asset/thai-quest-logo.png" />
   <meta property="og:title" content="ThaiQuest" />
   <meta property="og:description" content="Master Thai through interactive quizzes: alphabet, numbers, colors, time, and more." />
   <meta property="og:type" content="website" />
@@ -17,9 +18,9 @@
   <header class="app-header" role="banner">
     <div class="app-bar" role="navigation" aria-label="App header">
       <div class="brand">
-        <span class="brand-icon" aria-hidden="true">🇹🇭</span>
+        <img class="brand-logo" src="asset/thai-quest-logo.png" alt="ThaiQuest" decoding="async" />
         <div class="brand-text">
-          <h1 class="brand-title">ThaiQuest</h1>
+          <h1 class="visually-hidden">ThaiQuest</h1>
           <p class="brand-subtitle subtitle">Master Thai through interactive learning</p>
         </div>
       </div>
@@ -50,7 +51,7 @@
   <div class="quiz-container" id="quiz-list" aria-live="polite"></div>
 
   <div class="socials" aria-label="Social links">
-    <img class="avatar" src="profile.jpg" alt="Profile photo" loading="lazy" />
+    <img class="avatar" src="asset/profile.jpg" alt="Profile photo" loading="lazy" />
     <div class="social-links">
       <a class="chip" href="https://www.instagram.com/john.dlr/" target="_blank" rel="noopener noreferrer">📸 Instagram</a>
       <a class="chip" href="https://youtube.com/@landscapesuhd" target="_blank" rel="noopener noreferrer">▶️ YouTube</a>

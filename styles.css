@@ -70,8 +70,11 @@ h1 {
   align-items: center;
   gap: 0.4em;
 }
-.brand-icon {
-  font-size: 4em;
+.brand-logo {
+  height: clamp(96px, 20vw, 176px);
+  width: auto;
+  display: block;
+  object-fit: contain;
 }
 .brand-text {
   display: grid;
@@ -99,7 +102,17 @@ body.home .app-bar .brand-subtitle { margin: 0; }
 }
 @media (max-width: 480px) {
   .app-bar { padding: 0.65em 0.8em; }
-  .brand-icon { font-size: 2em; }
+  .brand-logo { height: 176px; }
+}
+
+/* Accessibility utility */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
 }
 
 /* Hero header */
