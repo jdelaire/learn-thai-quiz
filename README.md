@@ -31,6 +31,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Jobs**: Common jobs and occupations with Thai script and phonetics
 - **Foods**: Common Thai foods, fruits, and cooking methods with phonetics and example phrases
 - **Months & Seasons**: 12 months and Thailand’s seasons with Thai script, phonetics, and example sentences
+- **Tense Markers**: Thai time words and structures; examples after correct answers
 
 ### Quick start (local)
 
@@ -110,6 +111,7 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 - `data/*.json`: Quiz datasets and metadata
 - `data/emoji-rules/*.json`: Optional per-quiz emoji matcher rules (pattern → emoji)
   - Datasets may optionally include an `id` per item; when present, examples prefer `id` for lookups (falling back to `english`).
+  - For Tense Markers, see `data/tenses.json`, `data/tenses-examples.json`, and optional `data/emoji-rules/tenses.json`
 - `profile.jpg`: Avatar shown in the home page Socials card
 
 ### How it works
@@ -144,6 +146,11 @@ Use this checklist and templates to add a quiz end‑to‑end with minimal chang
 Basic item (English/Thai/phonetic):
 ```json
 { "english": "water", "thai": "น้ำ", "phonetic": "náam" }
+```
+
+Tense marker item:
+```json
+{ "english": "already", "thai": "แล้ว", "phonetic": "lɛ́ɛw" }
 ```
 
 Numbers:
@@ -250,7 +257,7 @@ Utilities you can use: `Utils.fetchJSON(s)`, `Utils.fetchJSONCached(s)`, `Utils.
 #### Emoji rules (data-driven)
 
 - Add a file like `data/emoji-rules/foods.json` with an ordered list of objects `{ "pattern": "regex", "emoji": "🧪" }`.
-- Quizzes that support emojis (foods/rooms/jobs/verbs/classifiers) will load these rules and match against the English text to show the emoji above the symbol.
+- Quizzes that support emojis (foods/rooms/jobs/verbs/classifiers/tenses) will load these rules and match against the English text to show the emoji above the symbol.
 - If the file is missing or empty, the quiz still works (no emoji shown).
 
 #### Homepage card entry (`data/quizzes.json`)
@@ -325,3 +332,39 @@ MIT License © 2025 jdelaire. See the [MIT License](https://opensource.org/licen
 ### Credits
 
 - Data and phonetics curated for learning purposes. Emojis and color accents are used to aid memorization.
+
+### ⏱️ Thai Tense Markers (Time Words & Structures)
+
+Thai uses time markers rather than verb conjugation for tense.
+Structure: [Subject] + [Time Marker] + [Verb] + [Particle]
+
+| English | Thai Word | Phonetic |
+| --- | --- | --- |
+| now / currently | ตอนนี้ | dtɔɔn-níi |
+| today | วันนี้ | wan-níi |
+| yesterday | เมื่อวาน | mûea-waan |
+| tomorrow | พรุ่งนี้ | phrûŋ-níi |
+| already | แล้ว | lɛ́ɛw |
+| not yet | ยังไม่ | yaŋ mâi |
+| still | ยัง | yaŋ |
+| just (recently) | เพิ่ง | phə̂ŋ |
+| soon | เร็วๆนี้ | rew-rew níi |
+| in the past | เมื่อก่อน | mûea-gɔ̀ɔn |
+| in the future | ในอนาคต | nai à-naa-khót |
+| often | บ่อยๆ | bɔ̀y-bɔ̀y |
+| sometimes | บางที | baaŋ-thii |
+| always | เสมอ | sà-mɯ̌ɯ |
+| never | ไม่เคย | mâi khəəy |
+| ever | เคย | khəəy |
+| still not (yet) | ยังไม่ได้ | yaŋ mâi dâay |
+| cannot yet | ยังทำไม่ได้ | yaŋ tham mâi dâay |
+
+🧠 Tense Examples
+
+- phǒm rian phaa-sǎa thai lɛ́ɛw → I have already studied Thai
+- khun gin khâaw rʉ́ yaŋ? → Have you eaten yet?
+- chǎn yang mâi bpai raan-khǎay → I haven’t gone to the shop yet
+- phǒm jà bpai cháw níi → I will go this morning
+- kháw phə̂ŋ maa → He just arrived
+- wan-níi mâi mii rian → There’s no class today
+- phǒm mâi khəəy gin néua → I never eat beef

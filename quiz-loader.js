@@ -497,6 +497,49 @@
           })));
         }).catch(function(err){ handleDataLoadError(err); });
       }
+    },
+
+    tenses: {
+      title: '⏱️ Thai Tense Markers',
+      subtitle: 'Choose the correct phonetic for the Thai time marker',
+      bodyClass: 'questions-quiz',
+      init: function() {
+        try {
+          var footer = document.querySelector('.footer');
+          if (footer) {
+            var tip = document.createElement('div');
+            tip.className = 'pro-tip';
+            tip.innerHTML = '<small>Structure: <strong>[Subject] + [Time Marker] + [Verb] + [Particle]</strong></small>';
+            footer.appendChild(tip);
+          }
+        } catch (e) {}
+
+        var emojiForTense = (function(){
+          var matcher = null;
+          return function(item){
+            try { return matcher ? matcher(String(item && item.english || '')) : ''; } catch (e) { return ''; }
+          };
+        })();
+
+        Utils.fetchJSONs([
+          'data/emoji-rules/tenses.json',
+          'data/tenses.json',
+          'data/tenses-examples.json'
+        ]).then(function(results){
+          var rules = results[0] || [];
+          var matcher = Utils.buildEmojiMatcher(rules);
+          emojiForTense = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
+          var data = results[1] || [];
+          var examples = results[2] || {};
+          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+            data: data,
+            examples: examples,
+            answerKey: 'phonetic',
+            labelPrefix: 'English and Thai: ',
+            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: emojiForTense(a) }; }
+          })));
+        }).catch(function(err){ handleDataLoadError(err); });
+      }
     }
   };
 

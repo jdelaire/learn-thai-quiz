@@ -1,0 +1,10 @@
+[
+  { "pattern": "now|currently|today|this (morning|afternoon|evening)?", "emoji": "🕒" },
+  { "pattern": "yesterday|in the past|before", "emoji": "📅" },
+  { "pattern": "tomorrow|soon|in the future|later", "emoji": "🚀" },
+  { "pattern": "already|ever", "emoji": "✅" },
+  { "pattern": "not yet|still not|cannot yet", "emoji": "⏳" },
+  { "pattern": "still", "emoji": "🔁" },
+  { "pattern": "just", "emoji": "✨" },
+  { "pattern": "often|sometimes|always|never", "emoji": "🔄" }
+]
