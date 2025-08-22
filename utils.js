@@ -263,6 +263,63 @@
     } catch (e) { logError(e, 'Utils.renderExample'); }
   }
 
+  // New helpers for data-driven configs and shared UI snippets
+  function createEmojiGetter(rules) {
+    try {
+      const matcher = buildEmojiMatcher(rules || []);
+      return function getEmojiForText(text) {
+        try { return matcher(String(text || '')); } catch (e) { return ''; }
+      };
+    } catch (e) {
+      logError(e, 'Utils.createEmojiGetter');
+      return function(){ return ''; };
+    }
+  }
+
+  function loadEmojiGetter(rulesUrl) {
+    try {
+      return fetchJSONCached(rulesUrl).then(function(rules){ return createEmojiGetter(rules); });
+    } catch (e) {
+      logError(e, 'Utils.loadEmojiGetter');
+      return Promise.resolve(function(){ return ''; });
+    }
+  }
+
+  function insertProTip(text) {
+    try {
+      const footer = document.querySelector('.footer');
+      if (footer && text) {
+        const tip = document.createElement('div');
+        tip.className = 'pro-tip';
+        tip.innerHTML = '<small>' + text + '</small>';
+        footer.appendChild(tip);
+      }
+    } catch (e) { logError(e, 'Utils.insertProTip'); }
+  }
+
+  function insertConsonantLegend() {
+    try {
+      const symbolAnchor = document.getElementById('symbol');
+      if (symbolAnchor && symbolAnchor.parentNode && !document.querySelector('.legend-chips')) {
+        const legend = document.createElement('div');
+        legend.className = 'legend legend-chips';
+        legend.innerHTML = '<span class="class-chip middle-class">Middle Class</span>' +
+                           '<span class="class-chip high-class">High Class</span>' +
+                           '<span class="class-chip low-class">Low Class</span>';
+        symbolAnchor.parentNode.insertBefore(legend, symbolAnchor);
+      }
+    } catch (e) { logError(e, 'Utils.insertConsonantLegend'); }
+  }
+
+  function renderVowelSymbol(symbolEl, symbol) {
+    try {
+      const raw = String(symbol || '');
+      const out = raw.replace(/-/g, '\u0E01');
+      symbolEl.textContent = out;
+      symbolEl.setAttribute('aria-label', 'Thai vowel symbol: ' + raw);
+    } catch (e) { logError(e, 'Utils.renderVowelSymbol'); }
+  }
+
   global.Utils = {
     fetchJSON: fetchJSON,
     fetchJSONCached: fetchJSONCached,
@@ -284,6 +341,12 @@
     validateExamples: validateExamples,
     renderEnglishThaiSymbol: renderEnglishThaiSymbol,
     renderExample: renderExample,
-    logError: logError
+    logError: logError,
+    // New helpers
+    createEmojiGetter: createEmojiGetter,
+    loadEmojiGetter: loadEmojiGetter,
+    insertProTip: insertProTip,
+    insertConsonantLegend: insertConsonantLegend,
+    renderVowelSymbol: renderVowelSymbol
   };
 })(window);
