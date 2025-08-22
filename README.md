@@ -30,6 +30,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Rooms**: House and room vocabulary with example sentences and usage tips
 - **Jobs**: Common jobs and occupations with Thai script and phonetics
 - **Foods**: Common Thai foods, fruits, and cooking methods with phonetics and example phrases
+- **Months & Seasons**: 12 months and Thailand’s seasons with Thai script, phonetics, and example sentences
 
 ### Quick start (local)
 
