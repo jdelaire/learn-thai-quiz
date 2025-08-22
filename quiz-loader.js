@@ -345,11 +345,14 @@
           classifiers: 'classifiers-quiz',
           rooms: 'rooms-quiz',
           jobs: 'jobs-quiz',
+          foods: 'foods-quiz',
           months: 'questions-quiz',
           tenses: 'questions-quiz'
         };
         const cls = bodyClassMap[quizId];
         if (cls) document.body.classList.add(cls);
+        // Always add a generic per-quiz class as a fallback (e.g., foods -> foods-quiz)
+        try { if (quizId) document.body.classList.add(quizId + '-quiz'); } catch (e) {}
 
         // Add per-quiz pro tips moved to metadata-free helpers for simplicity
         try {
