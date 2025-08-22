@@ -106,6 +106,19 @@
             btn.addEventListener('animationend', function handle() {
               btn.classList.remove('answer-correct');
             }, { once: true });
+            // Disable other options until next question
+            try {
+              const buttons = optionsEl.querySelectorAll('button');
+              buttons.forEach(function(b) {
+                if (b !== btn) {
+                  b.disabled = true;
+                  try { b.setAttribute('aria-disabled', 'true'); } catch (e) {}
+                  try { b.tabIndex = -1; } catch (e) {}
+                }
+              });
+            } catch (e) {}
+            // Also prevent re-clicks on the correct button during the delay
+            try { btn.onclick = null; } catch (e) {}
             // Don't show next button - auto-advance only
             nextBtn.style.display = 'none';
 
@@ -142,7 +155,7 @@
         if (/^[1-9]$/.test(e.key)) {
           const buttons = optionsEl.querySelectorAll('button');
           const index = parseInt(e.key, 10) - 1;
-          if (buttons[index]) {
+          if (buttons[index] && !buttons[index].disabled) {
             buttons[index].click();
           }
         }
