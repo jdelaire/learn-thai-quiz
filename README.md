@@ -59,7 +59,7 @@ python3 -m http.server 8000
 2. Open `http://localhost:8000/smoke.html` and click “Run Smoke Tests”.
 
 What it does:
-- Loads `index.html` in a hidden iframe, waits for quiz cards to render, and tries the search input.
+- Loads `index.html` in a hidden iframe and verifies it loads successfully.
 - Auto-discovers all quizzes from `data/quizzes.json` (fallback: parses links on the home page) and runs each via `quiz.html?quiz=<id>`.
 - Ensures options render, clicks an option, verifies stats update, and catches runtime errors.
 - Reports pass/fail per check; no external dependencies.
@@ -111,8 +111,10 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 - `data/*.json`: Quiz datasets and metadata
 - `data/emoji-rules/*.json`: Optional per-quiz emoji matcher rules (pattern → emoji)
   - Datasets may optionally include an `id` per item; when present, examples prefer `id` for lookups (falling back to `english`).
-  - For Tense Markers, see `data/tenses.json`, `data/tenses-examples.json`, and optional `data/emoji-rules/tenses.json`
-- `profile.jpg`: Avatar shown in the home page Socials card
+- `asset/`: Images and icons used across the site
+  - `asset/profile.jpg`: Avatar shown in the home page Socials card
+  - `asset/thai-quest-logo.png`: App logo used in the header
+- Favicons and PWA manifest: `asset/favicon.ico`, `asset/favicon-16x16.png`, `asset/favicon-32x32.png`, `asset/apple-touch-icon.png`, `asset/site.webmanifest`
 
 ### How it works
 
