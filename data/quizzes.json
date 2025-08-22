@@ -102,8 +102,15 @@
     "description": "Practice Thai job and occupation vocabulary with phonetics.",
     "bullets": ["Common professions","Thai script + phonetics","Emoji hints"],
     "categories": ["Vocabulary","Beginner"]
-  }
-  ,
+  },
+  {
+    "id": "tenses",
+    "title": "⏱️ Thai Tense Markers",
+    "href": "quiz.html?quiz=tenses",
+    "description": "Practice Thai time markers and aspects: now, already, not yet, soon, often, never.",
+    "bullets": ["Time words & structures","English/Thai/phonetics","Examples after correct answers"],
+    "categories": ["Phrases","Beginner"]
+  },
   {
     "id": "foods",
     "title": "🍛 Common Thai Foods",
