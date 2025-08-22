@@ -1,6 +1,16 @@
 (function(global) {
   'use strict';
 
+  function logError(error, context) {
+    try {
+      if (context) {
+        console.error('[ThaiQuest]', context, error);
+      } else {
+        console.error('[ThaiQuest]', error);
+      }
+    } catch (_) {}
+  }
+
   function fetchJSON(url) {
     return fetch(url).then(function(r) { return r.json(); });
   }
@@ -12,9 +22,7 @@
       if (__jsonCache[url]) return __jsonCache[url];
       __jsonCache[url] = fetchJSON(url).catch(function(err){ delete __jsonCache[url]; throw err; });
       return __jsonCache[url];
-    } catch (_) {
-      return fetchJSON(url);
-    }
+    } catch (e) { logError(e, 'Utils.fetchJSONCached'); return fetchJSON(url); }
   }
 
   function fetchJSONs(urls) {
@@ -31,13 +39,13 @@
 
     if (seed != null) {
       choices.push(seed);
-      try { usedKeys.add(String(keyFn(seed))); } catch (_) {}
+      try { usedKeys.add(String(keyFn(seed))); } catch (e) { logError(e, 'Utils.pickUniqueChoices keyFn(seed)'); }
     }
 
     while (choices.length < count && choices.length < pool.length) {
       var candidate = pickRandom(pool);
       var key = null;
-      try { key = String(keyFn(candidate)); } catch (_) {}
+      try { key = String(keyFn(candidate)); } catch (e) { logError(e, 'Utils.pickUniqueChoices keyFn(candidate)'); }
       if (key == null) continue;
       if (!usedKeys.has(key)) {
         usedKeys.add(key);
@@ -168,7 +176,7 @@
             emoji: String(sym.emoji || ''),
             ariaPrefix: labelPrefix
           });
-        } catch (_) {}
+        } catch (e) { logError(e, 'Utils.createStandardQuiz.renderSymbol'); }
       },
       renderButtonContent: function(choice) { return choice && choice[answerKey]; },
       ariaLabelForChoice: function(choice) { return 'Answer: ' + (choice && choice[answerKey]); },
@@ -184,7 +192,7 @@
           try { key = exampleKeyFn ? exampleKeyFn(ans) : ans.english; } catch (_) { key = ans.english; }
           var ex = examples[key];
           renderExample(fb, ex);
-        } catch (_) {}
+        } catch (e) { logError(e, 'Utils.createStandardQuiz.onAnswered'); }
       }
     };
   }
@@ -215,7 +223,7 @@
         }
       }
       if (missing > 0) console.warn('[validateDataset] Missing required keys in', missing, 'items');
-    } catch (_) {}
+    } catch (e) { logError(e, 'Utils.validateDataset'); }
   }
 
   function validateExamples(items, examples, key) {
@@ -230,7 +238,7 @@
       var unknown = [];
       Object.keys(examples).forEach(function(exKey){ if (!set[exKey]) unknown.push(exKey); });
       if (unknown.length) console.warn('[validateExamples] Unmatched example keys:', unknown.slice(0, 10).join(', '), (unknown.length > 10 ? '…' : ''));
-    } catch (_) {}
+    } catch (e) { logError(e, 'Utils.validateExamples'); }
   }
 
   // Renders a common "English + Thai (+ optional emoji)" symbol layout and sets ARIA label
@@ -243,7 +251,7 @@
       var emojiLine = emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '';
       symbolEl.innerHTML = emojiLine + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
       symbolEl.setAttribute('aria-label', ariaPrefix + english + (thai ? ' — ' + thai : ''));
-    } catch (_) {}
+    } catch (e) { logError(e, 'Utils.renderEnglishThaiSymbol'); }
   }
 
   // Renders an example block into the feedback element
@@ -252,7 +260,7 @@
       feedbackEl.innerHTML = exampleText
         ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + exampleText + '</div></div>'
         : '';
-    } catch (_) {}
+    } catch (e) { logError(e, 'Utils.renderExample'); }
   }
 
   global.Utils = {
@@ -275,6 +283,7 @@
     validateDataset: validateDataset,
     validateExamples: validateExamples,
     renderEnglishThaiSymbol: renderEnglishThaiSymbol,
-    renderExample: renderExample
+    renderExample: renderExample,
+    logError: logError
   };
 })(window);

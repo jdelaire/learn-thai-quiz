@@ -40,7 +40,7 @@
       monthThaiEl.textContent = thaiMonths[month];
       monthPhonEl.textContent = phoneticMonths[month];
     }
-  } catch (e) {}
+  } catch (e) { try { Utils.logError(e, 'home.js: today/month widgets'); } catch (_) {} }
 
   try {
     const quizListEl = document.getElementById('quiz-list');
@@ -174,12 +174,13 @@
           wireUpEvents();
           updateUI();
         })
-        .catch(function(){
+        .catch(function(err){
           const error = document.createElement('div');
           error.className = 'empty';
           error.textContent = 'Failed to load quizzes.';
           quizListEl.appendChild(error);
+          try { Utils.logError(err, 'home.js: failed to load data/quizzes.json'); } catch (_) {}
         });
     })();
-  } catch (e) {}
+  } catch (e) { try { Utils.logError(e, 'home.js: init'); } catch (_) {} }
 })();
