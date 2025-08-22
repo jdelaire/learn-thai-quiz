@@ -918,6 +918,7 @@ body.questions-quiz .correct-line {
   body.classifiers-quiz #symbol { font-size: 3.6em; }
   body.consonant-quiz #symbol { font-size: 7em; margin: 0.6em 0 0.6em 0; }
   button { font-size: 1.05em; padding: 0.8em; }
+  .pro-tip { display: none; }
 
   body.consonant-quiz h1 { font-size: 1.5em; margin-bottom: 0.3em; }
   body.consonant-quiz .legend { gap: 1em; margin-bottom: 0.3em; font-size: 0.8em; flex-wrap: wrap; justify-content: center; }
