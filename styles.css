@@ -302,6 +302,31 @@ button:active {
 
 /* Page-specific overrides using body classes */
 
+/* Shared quiz-page utilities and deduped rules */
+body.quiz-page h1 { margin-bottom: 0.2em; }
+body.quiz-page #symbol .secondary {
+  display: block;
+  font-size: 0.38em;
+  opacity: 0.95;
+  margin-top: 0.15em;
+  font-weight: 600;
+}
+body.quiz-page #symbol .emoji-line {
+  font-size: 0.9em;
+  opacity: 0.95;
+  margin-bottom: 0.1em;
+}
+
+/* Consolidated options widths */
+body.questions-quiz .options,
+body.jobs-quiz .options,
+body.rooms-quiz .options,
+body.foods-quiz .options,
+body.family-quiz .options,
+body.time-quiz .options { max-width: 620px; }
+body.numbers-quiz .options,
+body.classifiers-quiz .options { max-width: 600px; }
+
 /* Home (index) */
 body.home h1 {
   margin-bottom: 1em;
@@ -496,16 +521,7 @@ body.consonant-quiz #symbol {
 }
 
 /* Ensure quiz option buttons remain readable on white */
-body.consonant-quiz .options button,
-body.color-quiz .options button,
-body.numbers-quiz .options button,
-body.time-quiz .options button,
-body.vowel-quiz .options button,
-body.family-quiz .options button,
-body.questions-quiz .options button,
-body.classifiers-quiz .options button,
-body.jobs-quiz .options button,
-body.foods-quiz .options button {
+body.quiz-page .options button {
   background: #f7f7f7;
   color: #111111;
   border: 1px solid rgba(0,0,0,0.12);
@@ -618,7 +634,6 @@ body.color-quiz #symbol {
 body.color-quiz .options { max-width: 500px; }
 
 /* Numbers quiz */
-body.numbers-quiz h1 { margin-bottom: 0.2em; }
 body.numbers-quiz #symbol {
   font-size: 4.6em;
   margin: 0.6em 0 0.6em 0;
@@ -627,19 +642,10 @@ body.numbers-quiz #symbol {
   text-shadow: none;
   line-height: 1.2;
 }
-body.numbers-quiz .options { max-width: 600px; }
-body.numbers-quiz #symbol .secondary {
-  display: block;
-  font-size: 0.38em;
-  opacity: 0.95;
-  margin-top: 0.15em;
-  font-weight: 600;
-}
 .pro-tip { margin-top: 1.2em; font-size: 0.95em; opacity: 0.95; }
 .pro-tip small { opacity: 0.9; }
 
 /* Time quiz */
-body.time-quiz h1 { margin-bottom: 0.2em; }
 body.time-quiz #symbol {
   font-size: 4.2em;
   margin: 0.6em 0 0.6em 0;
@@ -647,14 +653,6 @@ body.time-quiz #symbol {
   color: #111111;
   text-shadow: none;
   line-height: 1.2;
-}
-body.time-quiz .options { max-width: 620px; }
-body.time-quiz #symbol .secondary {
-  display: block;
-  font-size: 0.38em;
-  opacity: 0.95;
-  margin-top: 0.15em;
-  font-weight: 600;
 }
 body.time-quiz #symbol .tertiary {
   display: block;
@@ -665,7 +663,6 @@ body.time-quiz #symbol .tertiary {
 }
 
 /* Family quiz */
-body.family-quiz h1 { margin-bottom: 0.2em; }
 body.family-quiz #symbol {
   font-size: 4.2em;
   margin: 0.6em 0 0.6em 0;
@@ -674,17 +671,8 @@ body.family-quiz #symbol {
   text-shadow: none;
   line-height: 1.2;
 }
-body.family-quiz .options { max-width: 620px; }
-body.family-quiz #symbol .secondary {
-  display: block;
-  font-size: 0.38em;
-  opacity: 0.95;
-  margin-top: 0.15em;
-  font-weight: 600;
-}
 
 /* Classifiers quiz (styled like Numbers quiz) */
-body.classifiers-quiz h1 { margin-bottom: 0.2em; }
 body.classifiers-quiz #symbol {
   font-size: 4.6em;
   margin: 0.6em 0 0.6em 0;
@@ -692,19 +680,6 @@ body.classifiers-quiz #symbol {
   color: #111111;
   text-shadow: none;
   line-height: 1.2;
-}
-body.classifiers-quiz .options { max-width: 600px; }
-body.classifiers-quiz #symbol .secondary {
-  display: block;
-  font-size: 0.38em;
-  opacity: 0.95;
-  margin-top: 0.15em;
-  font-weight: 600;
-}
-body.classifiers-quiz #symbol .emoji-line {
-  font-size: 0.9em;
-  opacity: 0.95;
-  margin-bottom: 0.1em;
 }
 
 /* Vowel quiz */
@@ -727,7 +702,6 @@ body.vowel-quiz #symbol {
 body.vowel-quiz .options { max-width: 300px; min-width: 240px; }
 
 /* Questions quiz */
-body.questions-quiz h1 { margin-bottom: 0.2em; }
 body.questions-quiz #symbol {
   font-size: 4.2em;
   margin: 0.6em 0 0.6em 0;
@@ -736,24 +710,9 @@ body.questions-quiz #symbol {
   text-shadow: none;
   line-height: 1.2;
 }
-body.questions-quiz .options { max-width: 620px; }
-body.questions-quiz #symbol .secondary {
-  display: block;
-  font-size: 0.38em;
-  opacity: 0.95;
-  margin-top: 0.15em;
-  font-weight: 600;
-}
 /* removed per shared .example */
 
-/* Emoji alignment for Questions-style quizzes */
-body.questions-quiz #symbol .emoji-line {
-  font-size: 0.9em;
-  opacity: 0.95;
-}
-
 /* Jobs quiz (styled like Questions/Rooms quiz) */
-body.jobs-quiz h1 { margin-bottom: 0.2em; }
 body.jobs-quiz #symbol {
   font-size: 4.2em;
   margin: 0.6em 0 0.6em 0;
@@ -761,22 +720,8 @@ body.jobs-quiz #symbol {
   text-shadow: none;
   line-height: 1.2;
 }
-body.jobs-quiz .options { max-width: 620px; }
-body.jobs-quiz #symbol .secondary {
-  display: block;
-  font-size: 0.38em;
-  opacity: 0.85;
-  margin-top: 0.15em;
-  font-weight: 600;
-}
-body.jobs-quiz #symbol .emoji-line {
-  font-size: 0.9em;
-  opacity: 0.95;
-  margin-bottom: 0.1em;
-}
 
 /* Rooms quiz (styled like Questions quiz) */
-body.rooms-quiz h1 { margin-bottom: 0.2em; }
 body.rooms-quiz #symbol {
   font-size: 4.2em;
   margin: 0.6em 0 0.6em 0;
@@ -785,26 +730,12 @@ body.rooms-quiz #symbol {
   text-shadow: none;
   line-height: 1.2;
 }
-body.rooms-quiz .options { max-width: 620px; }
-body.rooms-quiz #symbol .secondary {
-  display: block;
-  font-size: 0.38em;
-  opacity: 0.95;
-  margin-top: 0.15em;
-  font-weight: 600;
-}
-body.rooms-quiz #symbol .emoji-line {
-  font-size: 0.9em;
-  opacity: 0.95;
-  margin-bottom: 0.1em;
-}
 /* removed per shared .example */
 
 /* Classifiers quiz example styling (mirrors Questions quiz) */
 /* removed per shared .example */
 
 /* Foods quiz (styled like Questions/Rooms quiz) */
-body.foods-quiz h1 { margin-bottom: 0.2em; }
 body.foods-quiz #symbol {
   font-size: 4.2em;
   margin: 0.6em 0 0.6em 0;
@@ -812,19 +743,6 @@ body.foods-quiz #symbol {
   color: #111111;
   text-shadow: none;
   line-height: 1.2;
-}
-body.foods-quiz .options { max-width: 620px; }
-body.foods-quiz #symbol .secondary {
-  display: block;
-  font-size: 0.38em;
-  opacity: 0.95;
-  margin-top: 0.15em;
-  font-weight: 600;
-}
-body.foods-quiz #symbol .emoji-line {
-  font-size: 0.9em;
-  opacity: 0.95;
-  margin-bottom: 0.1em;
 }
 /* removed per shared .example */
 body.questions-quiz .correct-line {
