@@ -104,8 +104,8 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 - `index.html`: Home page with search and category filters, renders quiz cards from `data/quizzes.json`
 - `quiz.html`: Quiz runner page; loads a specific quiz via `?quiz=<id>`
 - `quiz.js`: Quiz engine (rendering, answer handling, auto‑advance, stats)
-- `quiz-loader.js`: Quiz configurations (now mostly use a shared factory to reduce boilerplate)
-- `utils.js`: Shared helpers (fetch JSON, random selection, color utilities, DOM helpers)
+- `quiz-loader.js`: Metadata‑driven loader with per‑quiz builder functions keyed by id; reads `data/quizzes.json` for page chrome and wires `ThaiQuiz.setupQuiz(...)` via `Utils.createStandardQuiz` and small helpers
+- `utils.js`: Shared helpers (fetch JSON, caching, random selection, color utilities, DOM helpers). Includes `createStandardQuiz`, `renderEnglishThaiSymbol`, `renderExample`, `createEmojiGetter`/`loadEmojiGetter`, `insertProTip`, `insertConsonantLegend`, and `renderVowelSymbol`
 - `home.js`: Home page logic (filters, chips, card rendering, Today/Month widgets)
 - `styles.css`: Shared and per‑quiz styles
 - `data/*.json`: Quiz datasets and metadata
