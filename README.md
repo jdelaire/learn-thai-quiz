@@ -66,7 +66,7 @@ What it does:
 
 #### Extending smoke tests when you add a quiz
 
-When you create a new quiz (new entry in `ThaiQuizConfigs` and `data/quizzes.json`), extend the smoke tests so it’s covered:
+When you create a new quiz (add a builder in `quiz-loader.js` and an entry in `data/quizzes.json`), extend the smoke tests so it’s covered:
 
 You usually don’t need to update `smoke.js` when you add a quiz, because it auto‑discovers quizzes from `data/quizzes.json`.
 
@@ -120,19 +120,18 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 
 1. The home page (`index.html`) loads `data/quizzes.json`, renders cards, and provides search/category filters.
 2. Clicking a card navigates to `quiz.html?quiz=<id>`.
-3. `quiz-loader.js` looks up a matching config and calls `ThaiQuiz.setupQuiz(...)` from `quiz.js`.
-4. Each quiz config defines how to pick an answer/choices from its JSON data and how to render symbol and options.
+3. `quiz-loader.js` reads the `id` from the URL, sets page title/subtitle/body class from `data/quizzes.json`, and invokes a per‑quiz builder.
+4. Each builder fetches JSON via `Utils.fetchJSONCached`/`Utils.fetchJSONs` and wires `ThaiQuiz.setupQuiz(...)` using `Utils.createStandardQuiz` plus small overrides (emoji, examples, symbol rendering).
 5. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
 
 ### Add a new quiz
 
 1. **Create data**: Add a new JSON file under `data/` with the items you want to quiz.
-2. **Configure**: In `quiz-loader.js`, add a new entry to `ThaiQuizConfigs` with:
-   - `title`, `subtitle`, optional `bodyClass`
-   - `init()` that fetches your JSON and calls `ThaiQuiz.setupQuiz({ ... })`
-   - Provide `pickRound`, `renderSymbol`, `renderButtonContent`, `isCorrect`, etc., as needed
-3. **Show on home**: Add an object to `data/quizzes.json` with `id`, `title`, `href`, `description`, `bullets`, `categories`.
-4. **Style (optional)**: Add CSS rules in `styles.css` using a body class
+2. **Add metadata**: In `data/quizzes.json`, add an object with `id`, `title`, `href`, `description`, `bullets`, `categories`.
+3. **Add a builder**: In `quiz-loader.js`, add `QuizBuilders.<id> = function(){ ... }` that fetches your JSON via `Utils.fetchJSONCached` and returns an `init()` which calls `ThaiQuiz.setupQuiz(Object.assign({ elements: ... }, Utils.createStandardQuiz({...})))`.
+   - Use `buildSymbol` to show English/Thai/emoji.
+   - If you show examples after correct answers, pass `examples` and an `exampleKey` if needed.
+4. **Style (optional)**: Add CSS rules in `styles.css` using a body class (e.g., `body.questions-quiz`).
 
 #### Data schema templates
 
@@ -189,63 +188,51 @@ Tone Markers (class + marker + length → resulting tone):
 { "english": "Middle + none (long)", "thai": "กลาง + ไม่มีวรรณยุกต์ (สระยาว)", "phonetic": "Mid" }
 ```
 
-#### Quiz config skeleton (`quiz-loader.js`)
+#### Quiz config skeleton (metadata‑driven)
 
-Add a new entry to `ThaiQuizConfigs` with an `id` (used by `quiz.html?quiz=<id>`):
+Add a `QuizBuilders.<id>` entry in `quiz-loader.js` that fetches data via cache and returns an initializer using `Utils.createStandardQuiz`:
 ```javascript
-myquiz: {
-  title: 'My New Quiz',
-  subtitle: 'Choose the correct phonetic for the Thai term',
-  bodyClass: 'myquiz-quiz',
-  init: function() {
-    Utils.fetchJSON('data/myquiz.json')
-      .then(function(data){
-        ThaiQuiz.setupQuiz({
-          elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' },
-          pickRound: function() {
-            var answer = Utils.pickRandom(data);
-            var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('phonetic'), answer);
-            return {
-              answer: answer,
-              choices: choices,
-              symbolText: (answer.english || ''),
-              symbolAriaLabel: 'English and Thai: ' + (answer.english || '') + (answer.thai ? ' — ' + answer.thai : '')
-            };
-          },
-          renderSymbol: function(answer, els) {
-            var english = answer.english || '';
-            var thai = answer.thai || '';
-            els.symbolEl.innerHTML = '' + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
-            els.symbolEl.setAttribute('aria-label', 'English and Thai: ' + english + (thai ? ' — ' + thai : ''));
-          },
-          renderButtonContent: function(choice) { return choice.phonetic; },
-          ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
-          isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
-        });
-      });
-  }
-}
+// quiz-loader.js
+QuizBuilders.myquiz = function() {
+  return Utils.fetchJSONCached('data/myquiz.json').then(function(data){
+    return function init(){
+      ThaiQuiz.setupQuiz(Object.assign({ elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' } }, Utils.createStandardQuiz({
+        data: data,
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: ',
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
+      })));
+    };
+  });
+};
 ```
+
 
 Available hooks in the engine: `pickRound(state)`, `renderSymbol(answer, els, state)`, `renderButtonContent(choice, state)`, `ariaLabelForChoice(choice, state)`, `decorateButton(btn, choice, state)`, `isCorrect(choice, answer, state)`, `onAnswered(ctx)`.
 
-Utilities you can use: `Utils.fetchJSON(s)`, `Utils.fetchJSONCached(s)`, `Utils.pickRandom`, `Utils.pickUniqueChoices(pool, count, keyFn, seed)`, `Utils.byProp('phonetic')`, `Utils.getDisplayHex(baseHex, modifier)`, `Utils.createStandardQuiz(params)`.
+Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `Utils.pickRandom`, `Utils.pickUniqueChoices(pool, count, keyFn, seed)`, `Utils.byProp('phonetic')`, `Utils.getDisplayHex(baseHex, modifier)`, `Utils.createStandardQuiz(params)`.
 
 #### New utilities for faster quiz creation
 
 - `Utils.renderEnglishThaiSymbol(symbolEl, { english, thai, emoji?, ariaPrefix? })`
   - Renders a standardized "English + Thai" symbol block, optionally with an emoji line, and sets an accessible `aria-label`.
-  - Use in `renderSymbol` for quizzes that show English/Thai with optional emoji.
 
 - `Utils.renderExample(feedbackEl, exampleText)`
   - Renders a small Example card into the feedback area when `exampleText` is provided, or clears it if falsy.
-  - Use in `onAnswered` when showing an example sentence on correct answers.
 
 - `Utils.createStandardQuiz({ data, examples?, exampleKey?, answerKey='phonetic', buildSymbol?, choices=4, labelPrefix='English and Thai: ' })`
   - Returns an object you can spread into `ThaiQuiz.setupQuiz` to wire a full quiz with minimal code.
   - `buildSymbol(answer)` lets you supply English/Thai/emoji for the prompt.
   - `examples` (object map) and optional `exampleKey(answer)` control example lookup; defaults to `answer.english` (use `answer.id || answer.english` if your data includes stable ids).
-  - Handles pickRound, options rendering, aria labels, isCorrect, and example rendering.
+
+- `Utils.createEmojiGetter(rules)` / `Utils.loadEmojiGetter(url)`
+  - Build an emoji matcher from regex rules or load them from JSON and return a function mapping English text → emoji.
+
+- `Utils.insertProTip(html)` / `Utils.insertConsonantLegend()`
+  - Insert a pro‑tip into the quiz footer or a consonant legend before the symbol.
+
+- `Utils.renderVowelSymbol(symbolEl, symbol)`
+  - Render vowel symbols with the shaping‑safe placeholder behavior (ko kai replacement) and set `aria-label`.
 
 #### Emoji rules (data-driven)
 
