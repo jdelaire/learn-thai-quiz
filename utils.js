@@ -10,13 +10,13 @@
       }
     } catch (_) {}
   }
-
+  
   function fetchJSON(url) {
     return fetch(url).then(function(r) { return r.json(); });
   }
 
   // Simple in-memory cache for JSON fetches
-  var __jsonCache = Object.create(null);
+  const __jsonCache = Object.create(null);
   function fetchJSONCached(url) {
     try {
       if (__jsonCache[url]) return __jsonCache[url];
@@ -26,7 +26,7 @@
   }
 
   function fetchJSONs(urls) {
-    return Promise.all(urls.map(fetchJSON));
+    return Promise.all(urls.map(fetchJSONCached));
   }
 
   function pickRandom(array) {
@@ -34,8 +34,8 @@
   }
 
   function pickUniqueChoices(pool, count, keyFn, seed) {
-    var choices = [];
-    var usedKeys = new Set();
+    const choices = [];
+    const usedKeys = new Set();
 
     if (seed != null) {
       choices.push(seed);
@@ -43,8 +43,8 @@
     }
 
     while (choices.length < count && choices.length < pool.length) {
-      var candidate = pickRandom(pool);
-      var key = null;
+      const candidate = pickRandom(pool);
+      let key = null;
       try { key = String(keyFn(candidate)); } catch (e) { logError(e, 'Utils.pickUniqueChoices keyFn(candidate)'); }
       if (key == null) continue;
       if (!usedKeys.has(key)) {
@@ -57,11 +57,11 @@
   }
 
   function hexToRgb(hex) {
-    var h = String(hex || '').replace('#', '');
+    let h = String(hex || '').replace('#', '');
     if (h.length === 3) {
       h = h.split('').map(function(x){ return x + x; }).join('');
     }
-    var bigint = parseInt(h, 16);
+    const bigint = parseInt(h, 16);
     if (isNaN(bigint)) return { r: 0, g: 0, b: 0 };
     return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
   }
@@ -73,12 +73,12 @@
 
   function rgbToHsl(r, g, b) {
     r /= 255; g /= 255; b /= 255;
-    var max = Math.max(r, g, b), min = Math.min(r, g, b);
-    var h, s, l = (max + min) / 2;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
     if (max === min) {
       h = s = 0;
     } else {
-      var d = max - min;
+      const d = max - min;
       s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
       switch (max) {
         case r: h = (g - b) / d + (g < b ? 6 : 0); break;
@@ -91,11 +91,11 @@
   }
 
   function hslToRgb(h, s, l) {
-    var r, g, b;
+    let r, g, b;
     if (s === 0) {
       r = g = b = l;
     } else {
-      var hue2rgb = function(p, q, t) {
+      const hue2rgb = function(p, q, t) {
         if (t < 0) t += 1;
         if (t > 1) t -= 1;
         if (t < 1/6) return p + (q - p) * 6 * t;
@@ -103,8 +103,8 @@
         if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
         return p;
       };
-      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-      var p = 2 * l - q;
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const p = 2 * l - q;
       r = hue2rgb(p, q, h + 1/3);
       g = hue2rgb(p, q, h);
       b = hue2rgb(p, q, h - 1/3);
@@ -113,29 +113,29 @@
   }
 
   function adjustLightness(hex, delta) {
-    var rgb = hexToRgb(hex);
-    var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
-    var newL = Math.max(0, Math.min(1, hsl.l + delta));
-    var nrgb = hslToRgb(hsl.h, hsl.s, newL);
+    const rgb = hexToRgb(hex);
+    const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+    const newL = Math.max(0, Math.min(1, hsl.l + delta));
+    const nrgb = hslToRgb(hsl.h, hsl.s, newL);
     return rgbToHex(nrgb.r, nrgb.g, nrgb.b);
   }
 
   function getDisplayHex(baseHex, modifier) {
     if (!modifier) return baseHex;
-    var eng = String(modifier.english || '');
+    const eng = String(modifier.english || '');
     if (/^light$/i.test(eng)) return adjustLightness(baseHex, 0.25);
     if (/^dark$/i.test(eng)) return adjustLightness(baseHex, -0.25);
     return baseHex;
   }
 
   function hexToRgba(hex, alpha) {
-    var rgb = hexToRgb(hex);
-    var a = (typeof alpha === 'number') ? alpha : 1;
+    const rgb = hexToRgb(hex);
+    const a = (typeof alpha === 'number') ? alpha : 1;
     return 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + a + ')';
   }
 
   function setText(id, text) {
-    var el = document.getElementById(id);
+    const el = document.getElementById(id);
     if (!el) return;
     if (text) {
       el.textContent = text;
@@ -153,23 +153,23 @@
   // Creates a standard quiz configuration block for ThaiQuiz.setupQuiz
   // params: { data, examples?, exampleKey?(answer)->string, answerKey='phonetic', buildSymbol(answer) -> { english, thai, emoji? }, choices=4, labelPrefix='English and Thai: ' }
   function createStandardQuiz(params) {
-    var data = params && params.data || [];
-    var examples = params && params.examples || null;
-    var exampleKeyFn = params && params.exampleKey;
-    var answerKey = (params && params.answerKey) || 'phonetic';
-    var buildSymbol = (params && params.buildSymbol) || function(a){ return { english: String(a && a.english || ''), thai: String(a && a.thai || '') }; };
-    var choices = (params && params.choices) || 4;
-    var labelPrefix = (params && params.labelPrefix) || 'English and Thai: ';
+    const data = params && params.data || [];
+    const examples = params && params.examples || null;
+    const exampleKeyFn = params && params.exampleKey;
+    const answerKey = (params && params.answerKey) || 'phonetic';
+    const buildSymbol = (params && params.buildSymbol) || function(a){ return { english: String(a && a.english || ''), thai: String(a && a.thai || '') }; };
+    const choices = (params && params.choices) || 4;
+    const labelPrefix = (params && params.labelPrefix) || 'English and Thai: ';
 
     return {
       pickRound: function() {
-        var answer = pickRandom(data);
-        var uniqueChoices = pickUniqueChoices(data, choices, byProp(answerKey), answer);
+        const answer = pickRandom(data);
+        const uniqueChoices = pickUniqueChoices(data, choices, byProp(answerKey), answer);
         return { answer: answer, choices: uniqueChoices };
       },
       renderSymbol: function(answer, els) {
         try {
-          var sym = buildSymbol(answer) || {};
+          const sym = buildSymbol(answer) || {};
           renderEnglishThaiSymbol(els.symbolEl, {
             english: String(sym.english || ''),
             thai: String(sym.thai || ''),
@@ -183,14 +183,14 @@
       isCorrect: function(choice, answer) { return (choice && choice[answerKey]) === (answer && answer[answerKey]); },
       onAnswered: function(ctx) {
         if (!examples) return;
-        var correct = ctx && ctx.correct;
+        const correct = ctx && ctx.correct;
         if (!correct) return;
         try {
-          var fb = document.getElementById('feedback');
-          var ans = ctx && ctx.answer || {};
-          var key = null;
+          const fb = document.getElementById('feedback');
+          const ans = ctx && ctx.answer || {};
+          let key = null;
           try { key = exampleKeyFn ? exampleKeyFn(ans) : ans.english; } catch (_) { key = ans.english; }
-          var ex = examples[key];
+          const ex = examples[key];
           renderExample(fb, ex);
         } catch (e) { logError(e, 'Utils.createStandardQuiz.onAnswered'); }
       }
@@ -200,10 +200,10 @@
   // Build a function that maps a text (usually English) to an emoji based on regex rules
   function buildEmojiMatcher(rules) {
     try {
-      var compiled = (rules || []).map(function(r){ return [new RegExp(r.pattern, 'i'), r.emoji]; });
+      const compiled = (rules || []).map(function(r){ return [new RegExp(r.pattern, 'i'), r.emoji]; });
       return function toEmoji(text) {
-        var t = String(text || '').toLowerCase();
-        for (var i = 0; i < compiled.length; i++) {
+        const t = String(text || '').toLowerCase();
+        for (let i = 0; i < compiled.length; i++) {
           if (compiled[i][0].test(t)) return compiled[i][1];
         }
         return '';
@@ -216,9 +216,9 @@
   // Simple validation helpers (console-only)
   function validateDataset(items, requiredKeys) {
     try {
-      var missing = 0;
-      for (var i = 0; i < (items || []).length; i++) {
-        for (var j = 0; j < (requiredKeys || []).length; j++) {
+      let missing = 0;
+      for (let i = 0; i < (items || []).length; i++) {
+        for (let j = 0; j < (requiredKeys || []).length; j++) {
           if (items[i][requiredKeys[j]] == null) { missing++; break; }
         }
       }
@@ -229,13 +229,13 @@
   function validateExamples(items, examples, key) {
     try {
       if (!examples || typeof examples !== 'object') return;
-      var k = key || 'english';
-      var set = Object.create(null);
-      for (var i = 0; i < (items || []).length; i++) {
-        var val = String(items[i][k] || '');
+      const k = key || 'english';
+      const set = Object.create(null);
+      for (let i = 0; i < (items || []).length; i++) {
+        const val = String(items[i][k] || '');
         set[val] = true;
       }
-      var unknown = [];
+      const unknown = [];
       Object.keys(examples).forEach(function(exKey){ if (!set[exKey]) unknown.push(exKey); });
       if (unknown.length) console.warn('[validateExamples] Unmatched example keys:', unknown.slice(0, 10).join(', '), (unknown.length > 10 ? '…' : ''));
     } catch (e) { logError(e, 'Utils.validateExamples'); }
@@ -244,11 +244,11 @@
   // Renders a common "English + Thai (+ optional emoji)" symbol layout and sets ARIA label
   function renderEnglishThaiSymbol(symbolEl, params) {
     try {
-      var english = String((params && params.english) || '');
-      var thai = String((params && params.thai) || '');
-      var emoji = String((params && params.emoji) || '');
-      var ariaPrefix = String((params && params.ariaPrefix) || 'English and Thai: ');
-      var emojiLine = emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '';
+      const english = String((params && params.english) || '');
+      const thai = String((params && params.thai) || '');
+      const emoji = String((params && params.emoji) || '');
+      const ariaPrefix = String((params && params.ariaPrefix) || 'English and Thai: ');
+      const emojiLine = emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '';
       symbolEl.innerHTML = emojiLine + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
       symbolEl.setAttribute('aria-label', ariaPrefix + english + (thai ? ' — ' + thai : ''));
     } catch (e) { logError(e, 'Utils.renderEnglishThaiSymbol'); }

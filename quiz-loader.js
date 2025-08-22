@@ -1,12 +1,12 @@
 (function() {
   'use strict';
 
-  var defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
+  const defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
 
   function handleDataLoadError(err) {
-    var fb = document.getElementById('feedback');
+    const fb = document.getElementById('feedback');
     if (fb) {
-      var msg = 'Failed to load data.';
+      let msg = 'Failed to load data.';
       if (window.location.protocol === 'file:') {
         msg += ' Open this site via a local server (e.g., python3 -m http.server) so JSON files can be fetched.';
       }
@@ -16,7 +16,7 @@
   }
 
   // Centralized quiz configurations
-  var ThaiQuizConfigs = {
+  const ThaiQuizConfigs = {
     consonants: {
       title: 'Thai Consonant Quiz',
       subtitle: 'Choose the correct name for the Thai consonant symbol',
@@ -24,9 +24,9 @@
       init: function() {
         // Insert legend above the symbol
         try {
-          var symbolAnchor = document.getElementById('symbol');
+          const symbolAnchor = document.getElementById('symbol');
           if (symbolAnchor && symbolAnchor.parentNode) {
-            var legend = document.createElement('div');
+            const legend = document.createElement('div');
             legend.className = 'legend legend-chips';
             legend.innerHTML = '<span class="class-chip middle-class">Middle Class</span>' +
                                '<span class="class-chip high-class">High Class</span>' +
@@ -40,8 +40,8 @@
             ThaiQuiz.setupQuiz({
               elements: defaultElements,
               pickRound: function(state) {
-                var answer = data[Math.floor(Math.random() * data.length)];
-                var choices = Utils.pickUniqueChoices(data, (state.correctAnswers >= 30 ? 6 : 4), Utils.byProp('name'), answer);
+                const answer = data[Math.floor(Math.random() * data.length)];
+                const choices = Utils.pickUniqueChoices(data, (state.correctAnswers >= 30 ? 6 : 4), Utils.byProp('name'), answer);
                 return { answer: answer, choices: choices };
               },
               renderSymbol: function(answer, els) {
@@ -49,7 +49,7 @@
                 els.symbolEl.setAttribute('aria-label', 'Thai consonant symbol: ' + answer.symbol);
               },
               renderButtonContent: function(choice, state) {
-                var hideEmojis = state.correctAnswers >= 50;
+                const hideEmojis = state.correctAnswers >= 50;
                 return hideEmojis ? ('' + choice.name) : ('<span class="emoji">' + choice.emoji + '</span> ' + choice.name);
               },
               ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.name + ' (' + choice.meaning + ')'; },
@@ -67,9 +67,9 @@
       bodyClass: 'vowel-quiz',
       init: function() {
         try {
-          var symbolAnchor = document.getElementById('symbol');
+          const symbolAnchor = document.getElementById('symbol');
           if (symbolAnchor && !document.querySelector('.vowel-note')) {
-            var tip = document.createElement('div');
+            const tip = document.createElement('div');
             tip.className = 'vowel-note';
             tip.setAttribute('role', 'note');
             tip.textContent = 'Note: The consonant ก (goo gai) may appear as a placeholder to show where the vowel attaches; it is not part of the answer.';
@@ -81,15 +81,15 @@
             ThaiQuiz.setupQuiz({
               elements: defaultElements,
               pickRound: function() {
-                var answer = Utils.pickRandom(data);
-                var choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('sound'), answer);
+                const answer = Utils.pickRandom(data);
+                const choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('sound'), answer);
                 return { answer: answer, choices: choices, symbolText: answer.symbol };
               },
               renderSymbol: function(answer, els) {
                 try {
-                  var raw = String(answer.symbol || '');
+                  const raw = String(answer.symbol || '');
                   // Insert ko kai (\u0E01) directly; wrapping breaks shaping in Safari
-                  var out = raw.replace(/-/g, '\u0E01');
+                  const out = raw.replace(/-/g, '\u0E01');
                   els.symbolEl.textContent = out;
                   els.symbolEl.setAttribute('aria-label', 'Thai vowel symbol: ' + (answer.symbol || ''));
                 } catch (e) {}
@@ -108,30 +108,30 @@
       bodyClass: 'color-quiz',
       init: function() {
         Utils.fetchJSONs(['data/colors-base.json', 'data/color-modifiers.json']).then(function(results){
-          var baseColors = results[0] || [];
-          var modifiers = results[1] || [];
+          const baseColors = results[0] || [];
+          const modifiers = results[1] || [];
 
           function buildColorPhrase(base, maybeModifier) {
-            var hasBuiltInShade = /(^|\s)(dark|light)\s/i.test(base.english);
-            var useModifier = !!maybeModifier && !hasBuiltInShade;
-            var thai = useModifier ? (base.thai + ' ' + maybeModifier.thai) : base.thai;
-            var phonetic = useModifier ? (base.phonetic + ' ' + maybeModifier.phonetic) : base.phonetic;
-            var english = useModifier ? (maybeModifier.english + ' ' + base.english) : base.english;
-            var hex = useModifier ? Utils.getDisplayHex(base.hex, maybeModifier) : base.hex;
+            const hasBuiltInShade = /(^|\s)(dark|light)\s/i.test(base.english);
+            const useModifier = !!maybeModifier && !hasBuiltInShade;
+            const thai = useModifier ? (base.thai + ' ' + maybeModifier.thai) : base.thai;
+            const phonetic = useModifier ? (base.phonetic + ' ' + maybeModifier.phonetic) : base.phonetic;
+            const english = useModifier ? (maybeModifier.english + ' ' + base.english) : base.english;
+            const hex = useModifier ? Utils.getDisplayHex(base.hex, maybeModifier) : base.hex;
             return { english: english, thai: thai, phonetic: phonetic, hex: hex };
           }
 
           ThaiQuiz.setupQuiz({
             elements: defaultElements,
             pickRound: function() {
-              var base = Utils.pickRandom(baseColors);
-              var maybeModifier = Math.random() < 0.55 ? Utils.pickRandom(modifiers) : null;
-              var answer = buildColorPhrase(base, maybeModifier);
-              var choices = [answer];
+              const base = Utils.pickRandom(baseColors);
+              const maybeModifier = Math.random() < 0.55 ? Utils.pickRandom(modifiers) : null;
+              const answer = buildColorPhrase(base, maybeModifier);
+              const choices = [answer];
               while (choices.length < 4) {
-                var b = Utils.pickRandom(baseColors);
-                var m = Math.random() < 0.45 ? Utils.pickRandom(modifiers) : null;
-                var choice = buildColorPhrase(b, m);
+                const b = Utils.pickRandom(baseColors);
+                const m = Math.random() < 0.45 ? Utils.pickRandom(modifiers) : null;
+                const choice = buildColorPhrase(b, m);
                 if (!choices.find(function(c) { return c.phonetic === choice.phonetic; })) choices.push(choice);
               }
               return { answer: answer, choices: choices, symbolText: answer.thai, symbolStyle: { color: answer.hex }, symbolAriaLabel: 'Thai color phrase: ' + answer.thai };
@@ -150,9 +150,9 @@
       bodyClass: 'numbers-quiz',
       init: function() {
         try {
-          var footer = document.querySelector('.footer');
+          const footer = document.querySelector('.footer');
           if (footer) {
-            var tip = document.createElement('div');
+            const tip = document.createElement('div');
             tip.className = 'pro-tip';
             tip.innerHTML = '<small>Pro tip: Insert a classifier after the number for counting. e.g., 2 bottles = <strong>สองขวด</strong> (<em>sɔ̌ɔŋ khùat</em>), 5 people = <strong>ห้าคน</strong> (<em>hâa khon</em>).</small>';
             footer.appendChild(tip);
@@ -178,15 +178,15 @@
       bodyClass: 'time-quiz',
       init: function() {
         Utils.fetchJSONs(['data/time-keywords.json','data/time-formats.json','data/time-examples.json']).then(function(results){
-          var keyWords = results[0] || [];
-          var timeFormats = results[1] || [];
-          var examples = results[2] || [];
+          const keyWords = results[0] || [];
+          const timeFormats = results[1] || [];
+          const examples = results[2] || [];
 
           function englishOf(item) {
             return item.english || item.note || item.translation || '';
           }
 
-          var pool = keyWords.concat(timeFormats, examples);
+          const pool = keyWords.concat(timeFormats, examples);
 
           ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
             data: pool,
@@ -222,9 +222,9 @@
       bodyClass: 'questions-quiz',
       init: function() {
         try {
-          var footer = document.querySelector('.footer');
+          const footer = document.querySelector('.footer');
           if (footer) {
-            var tip = document.createElement('div');
+            const tip = document.createElement('div');
             tip.className = 'pro-tip';
             tip.innerHTML = '<small>• Most yes/no questions end in “mái?”<br>• Add “khráp/khà” for politeness at the end<br>• Use “bâaŋ” after question words for “what kinds / which ones”<br>→ khun chɔ̂ɔp sǐi à-rai bâaŋ? (Which colors do you like?)</small>';
             footer.appendChild(tip);
@@ -235,8 +235,8 @@
           Utils.fetchJSON('data/questions.json'),
           Utils.fetchJSON('data/questions-examples.json')
         ]).then(function(results){
-          var data = results[0] || [];
-          var examples = results[1] || {};
+          const data = results[0] || [];
+          const examples = results[1] || {};
 
           ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
             data: data,
@@ -254,17 +254,17 @@
       bodyClass: 'questions-quiz',
       init: function() {
         try {
-          var footer = document.querySelector('.footer');
+          const footer = document.querySelector('.footer');
           if (footer) {
-            var tip = document.createElement('div');
+            const tip = document.createElement('div');
             tip.className = 'pro-tip';
             tip.innerHTML = '<small>• Common combos: "tham ŋaan" (work), "àap-náam" (shower)<br>• Use "bpai/maa" for go/come; add places with "thîi" (at)</small>';
             footer.appendChild(tip);
           }
         } catch (e) {}
 
-        var emojiForVerb = (function(){
-          var matcher = null;
+        let emojiForVerb = (function(){
+          let matcher = null;
           return function(item){
             try {
               if (!matcher) return '';
@@ -278,11 +278,11 @@
           'data/verbs.json',
           'data/verbs-examples.json'
         ]).then(function(results){
-          var rules = results[0] || [];
-          var matcher = Utils.buildEmojiMatcher(rules);
+          const rules = results[0] || [];
+          const matcher = Utils.buildEmojiMatcher(rules);
           emojiForVerb = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
-          var data = results[1] || [];
-          var examples = results[2] || {};
+          const data = results[1] || [];
+          const examples = results[2] || {};
           ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
             data: data,
             examples: examples,
@@ -317,17 +317,17 @@
       bodyClass: 'classifiers-quiz',
       init: function() {
         try {
-          var footer = document.querySelector('.footer');
+          const footer = document.querySelector('.footer');
           if (footer) {
-            var tip = document.createElement('div');
+            const tip = document.createElement('div');
             tip.className = 'pro-tip';
             tip.innerHTML = '<small>Structure: <strong>[noun] + [number] + [classifier]</strong><br>"nɯ̀ŋ" (one) is often omitted in casual speech.</small>';
             footer.appendChild(tip);
           }
         } catch (e) {}
 
-        var emojiForClassifier = (function(){
-          var matcher = null;
+        let emojiForClassifier = (function(){
+          let matcher = null;
           return function(item){
             try { return matcher ? matcher(String(item && item.english || '')) : ''; } catch (e) { return ''; }
           };
@@ -339,11 +339,11 @@
           'data/classifiers-examples.json'
         ])
           .then(function(results){
-            var rules = results[0] || [];
-            var matcher = Utils.buildEmojiMatcher(rules);
+            const rules = results[0] || [];
+            const matcher = Utils.buildEmojiMatcher(rules);
             emojiForClassifier = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
-            var data = results[1] || [];
-            var examples = results[2] || {};
+            const data = results[1] || [];
+            const examples = results[2] || {};
             ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
               data: data,
               examples: examples,
@@ -361,8 +361,8 @@
       subtitle: 'Choose the correct phonetic for the Thai job or occupation',
       bodyClass: 'jobs-quiz',
       init: function() {
-        var emojiForJob = (function(){
-          var matcher = null;
+        let emojiForJob = (function(){
+          let matcher = null;
           return function(item){
             try { return matcher ? matcher(String(item && item.english || '')) : ''; } catch (e) { return ''; }
           };
@@ -373,10 +373,10 @@
           'data/jobs.json'
         ])
           .then(function(results){
-            var rules = results[0] || [];
-            var matcher = Utils.buildEmojiMatcher(rules);
+            const rules = results[0] || [];
+            const matcher = Utils.buildEmojiMatcher(rules);
             emojiForJob = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
-            var data = results[1] || [];
+            const data = results[1] || [];
             ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
               data: data,
               answerKey: 'phonetic',
@@ -393,8 +393,8 @@
       subtitle: 'Choose the correct phonetic for the Thai food, fruit, or cooking method',
       bodyClass: 'foods-quiz',
       init: function() {
-        var emojiForFood = (function(){
-          var matcher = null;
+        let emojiForFood = (function(){
+          let matcher = null;
           return function(item){
             try { return matcher ? matcher(String(item && item.english || '')) : ''; } catch (e) { return ''; }
           };
@@ -405,11 +405,11 @@
           'data/foods.json',
           'data/foods-examples.json'
         ]).then(function(results){
-          var rules = results[0] || [];
-          var matcher = Utils.buildEmojiMatcher(rules);
+          const rules = results[0] || [];
+          const matcher = Utils.buildEmojiMatcher(rules);
           emojiForFood = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
-          var data = results[1] || [];
-          var examples = results[2] || {};
+          const data = results[1] || [];
+          const examples = results[2] || {};
           ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
             data: data,
             examples: examples,
@@ -427,8 +427,8 @@
       subtitle: 'Choose the correct phonetic for the Thai month or season',
       bodyClass: 'questions-quiz',
       init: function() {
-        var emojiForTerm = (function(){
-          var matcher = null;
+        let emojiForTerm = (function(){
+          let matcher = null;
           return function(item){
             try { return matcher ? matcher(String(item && item.english || '')) : ''; } catch (e) { return ''; }
           };
@@ -439,11 +439,11 @@
           'data/months-seasons.json',
           'data/months-seasons-examples.json'
         ]).then(function(results){
-          var rules = results[0] || [];
-          var matcher = Utils.buildEmojiMatcher(rules);
+          const rules = results[0] || [];
+          const matcher = Utils.buildEmojiMatcher(rules);
           emojiForTerm = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
-          var data = results[1] || [];
-          var examples = results[2] || {};
+          const data = results[1] || [];
+          const examples = results[2] || {};
           ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
             data: data,
             examples: examples,
@@ -461,17 +461,17 @@
       bodyClass: 'rooms-quiz',
       init: function() {
         try {
-          var footer = document.querySelector('.footer');
+          const footer = document.querySelector('.footer');
           if (footer) {
-            var tip = document.createElement('div');
+            const tip = document.createElement('div');
             tip.className = 'pro-tip';
             tip.innerHTML = '<small>• Use "hɔ̂ɔŋ" (room) before specific room names<br>• "nai" means "in" - phǒm yùu nai hɔ̂ɔŋ nɔɔn (I\'m in the bedroom)<br>• "thîi" means "at" - rao nâŋ lên thîi rá-biiang (We sit on the balcony)</small>';
             footer.appendChild(tip);
           }
         } catch (e) {}
 
-        var emojiForRoom = (function(){
-          var matcher = null;
+        let emojiForRoom = (function(){
+          let matcher = null;
           return function(item){
             try { return matcher ? matcher(String(item && item.english || '')) : ''; } catch (e) { return ''; }
           };
@@ -482,11 +482,11 @@
           'data/rooms.json',
           'data/rooms-examples.json'
         ]).then(function(results){
-          var rules = results[0] || [];
-          var matcher = Utils.buildEmojiMatcher(rules);
+          const rules = results[0] || [];
+          const matcher = Utils.buildEmojiMatcher(rules);
           emojiForRoom = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
-          var data = results[1] || [];
-          var examples = results[2] || {};
+          const data = results[1] || [];
+          const examples = results[2] || {};
           ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
             data: data,
             examples: examples,
@@ -505,17 +505,17 @@
       bodyClass: 'questions-quiz',
       init: function() {
         try {
-          var footer = document.querySelector('.footer');
+          const footer = document.querySelector('.footer');
           if (footer) {
-            var tip = document.createElement('div');
+            const tip = document.createElement('div');
             tip.className = 'pro-tip';
             tip.innerHTML = '<small>Structure: <strong>[Subject] + [Time Marker] + [Verb] + [Particle]</strong></small>';
             footer.appendChild(tip);
           }
         } catch (e) {}
 
-        var emojiForTense = (function(){
-          var matcher = null;
+        let emojiForTense = (function(){
+          let matcher = null;
           return function(item){
             try { return matcher ? matcher(String(item && item.english || '')) : ''; } catch (e) { return ''; }
           };
@@ -526,11 +526,11 @@
           'data/tenses.json',
           'data/tenses-examples.json'
         ]).then(function(results){
-          var rules = results[0] || [];
-          var matcher = Utils.buildEmojiMatcher(rules);
+          const rules = results[0] || [];
+          const matcher = Utils.buildEmojiMatcher(rules);
           emojiForTense = function(item){ try { return matcher(String(item && item.english || '')); } catch (e) { return ''; } };
-          var data = results[1] || [];
-          var examples = results[2] || {};
+          const data = results[1] || [];
+          const examples = results[2] || {};
           ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
             data: data,
             examples: examples,
@@ -549,9 +549,9 @@
 
   function initFromQuery() {
     try {
-      var params = new URLSearchParams(window.location.search);
-      var quizId = params.get('quiz') || '';
-      var config = ThaiQuizConfigs[quizId];
+      const params = new URLSearchParams(window.location.search);
+      const quizId = params.get('quiz') || '';
+      const config = ThaiQuizConfigs[quizId];
       if (!config) {
         setText('page-title', 'Quiz not found');
         setText('page-subtitle', 'Unknown quiz: ' + quizId);
