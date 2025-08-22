@@ -77,7 +77,7 @@ Example: verify that the Color quiz sets an accessible aria‑label on the symbo
 ```javascript
 // smoke.js
 async function testColorsAria(serverRoot) {
-  var iframe = document.createElement('iframe');
+  const iframe = document.createElement('iframe');
   iframe.className = 'smoke-frame';
   document.body.appendChild(iframe);
   try {
@@ -132,16 +132,7 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
    - `init()` that fetches your JSON and calls `ThaiQuiz.setupQuiz({ ... })`
    - Provide `pickRound`, `renderSymbol`, `renderButtonContent`, `isCorrect`, etc., as needed
 3. **Show on home**: Add an object to `data/quizzes.json` with `id`, `title`, `href`, `description`, `bullets`, `categories`.
-4. **Style (optional)**: Add CSS rules under a body class in `styles.css`.
-
-### For AI agents: implement a new quiz correctly
-
-Use this checklist and templates to add a quiz end‑to‑end with minimal changes.
-
-- Create a data file in `data/`
-- Add a config in `quiz-loader.js` under `ThaiQuizConfigs`
-- Add a card to `data/quizzes.json`
-- (Optional) Add styles in `styles.css` using a body class
+4. **Style (optional)**: Add CSS rules in `styles.css` using a body class
 
 #### Data schema templates
 
@@ -324,7 +315,7 @@ Utilities you can use: `Utils.fetchJSON(s)`, `Utils.fetchJSONCached(s)`, `Utils.
 
 ### Tech stack
 
-- Vanilla **HTML/CSS/JavaScript**
+- Vanilla **HTML/CSS/JavaScript** (ES2015+). The codebase prefers `const`/`let` over `var`, arrow functions only where they do not change `this` semantics, and simple modules via script tags without bundlers.
 - No frameworks, no bundlers
 
 ### License
