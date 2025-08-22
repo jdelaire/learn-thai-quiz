@@ -1,0 +1,20 @@
+[
+  { "english": "now / currently", "thai": "ตอนนี้", "phonetic": "dtɔɔn-níi" },
+  { "english": "today", "thai": "วันนี้", "phonetic": "wan-níi" },
+  { "english": "yesterday", "thai": "เมื่อวาน", "phonetic": "mûea-waan" },
+  { "english": "tomorrow", "thai": "พรุ่งนี้", "phonetic": "phrûŋ-níi" },
+  { "english": "already", "thai": "แล้ว", "phonetic": "lɛ́ɛw" },
+  { "english": "not yet", "thai": "ยังไม่", "phonetic": "yaŋ mâi" },
+  { "english": "still", "thai": "ยัง", "phonetic": "yaŋ" },
+  { "english": "just (recently)", "thai": "เพิ่ง", "phonetic": "phə̂ŋ" },
+  { "english": "soon", "thai": "เร็วๆนี้", "phonetic": "rew-rew níi" },
+  { "english": "in the past", "thai": "เมื่อก่อน", "phonetic": "mûea-gɔ̀ɔn" },
+  { "english": "in the future", "thai": "ในอนาคต", "phonetic": "nai à-naa-khót" },
+  { "english": "often", "thai": "บ่อยๆ", "phonetic": "bɔ̀y-bɔ̀y" },
+  { "english": "sometimes", "thai": "บางที", "phonetic": "baaŋ-thii" },
+  { "english": "always", "thai": "เสมอ", "phonetic": "sà-mɯ̌ɯ" },
+  { "english": "never", "thai": "ไม่เคย", "phonetic": "mâi khəəy" },
+  { "english": "ever", "thai": "เคย", "phonetic": "khəəy" },
+  { "english": "still not (yet)", "thai": "ยังไม่ได้", "phonetic": "yaŋ mâi dâay" },
+  { "english": "cannot yet", "thai": "ยังทำไม่ได้", "phonetic": "yaŋ tham mâi dâay" }
+]
