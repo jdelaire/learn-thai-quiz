@@ -94,8 +94,6 @@ h1 {
   font-size: clamp(0.9em, 2vw, 1.05em);
   opacity: 0.9;
 }
-body.home .app-bar .brand-title { margin: 0; font-size: clamp(1.9em, 3.8vw, 2.4em); }
-body.home .app-bar .brand-subtitle { margin: 0; }
 
 .app-header .today-card {
   margin-top: 1.2em;
@@ -259,7 +257,7 @@ button:active {
   text-align: center;
 }
 
-.back-btn {
+.back-btn, .coffee-btn {
   color: #00247D;
   text-decoration: none;
   padding: 0.8em 1.5em;
@@ -272,29 +270,9 @@ button:active {
   backdrop-filter: none;
   display: inline-block;
 }
+.coffee-btn { margin-left: 1em; }
 
-.back-btn:hover {
-  background: #f7faff;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 14px rgba(0,0,0,0.08);
-}
-
-.coffee-btn {
-  color: #00247D;
-  text-decoration: none;
-  padding: 0.8em 1.5em;
-  border-radius: 25px;
-  background: #ffffff;
-  border: 1px solid rgba(0, 36, 125, 0.35);
-  transition: all 0.2s ease;
-  font-size: 1em;
-  font-weight: 600;
-  backdrop-filter: none;
-  display: inline-block;
-  margin-left: 1em;
-}
-
-.coffee-btn:hover {
+.back-btn:hover, .coffee-btn:hover {
   background: #f7faff;
   transform: translateY(-2px);
   box-shadow: 0 5px 14px rgba(0,0,0,0.08);
@@ -531,12 +509,6 @@ body.consonant-quiz h1 {
 
 body.consonant-quiz { --symbol-font-size: 10em; --symbol-margin: 0 0 0.3em 0; --symbol-font-weight: bold; }
 
-/* Ensure quiz option buttons remain readable on white */
-body.quiz-page .options button {
-  background: #f7f7f7;
-  color: #111111;
-  border: 1px solid rgba(0,0,0,0.12);
-}
 
 
 
@@ -630,8 +602,7 @@ button .emoji {
 }
 
 /* Color quiz */
-body.color-quiz h1 { margin-bottom: 0.2em; }
-body.color-quiz { --symbol-font-size: 4.5em; --symbol-text-shadow: 0 1px 1px rgba(0,0,0,0.6), 0 0 4px rgba(0,0,0,0.45); --symbol-line-height: 1.2; }
+body.color-quiz { --symbol-font-size: 4.5em; --symbol-text-shadow: 0 1px 1px rgba(0,0,0,0.6), 0 0 4px rgba(0,0,0,0.45); }
 
 /* Numbers quiz */
 .pro-tip { margin-top: 1.2em; font-size: 0.95em; opacity: 0.95; }
@@ -777,19 +748,16 @@ body.questions-quiz .correct-line {
 
   body.consonant-quiz h1 { font-size: 1.5em; margin-bottom: 0.3em; }
   body.consonant-quiz .legend { gap: 1em; margin-bottom: 0.3em; font-size: 0.8em; flex-wrap: wrap; justify-content: center; }
-  body.consonant-quiz .options { max-width: 100%; gap: 0.8em; }
+  body.consonant-quiz .options { gap: 0.8em; }
   body.consonant-quiz button { font-size: 1em; padding: 0.7em; min-height: 3em; }
   body.consonant-quiz button .emoji { font-size: 1.3em; }
   body.consonant-quiz #feedback { font-size: 1.2em; margin-top: 0.8em; }
   body.consonant-quiz #nextBtn { margin-top: 1.5em; padding: 0.7em 1.5em; }
   body.consonant-quiz .stats { margin-top: 1.5em; font-size: 0.8em; }
 
-  body.color-quiz button { font-size: 1.05em; padding: 0.8em; }
   
   body.rooms-quiz { --symbol-font-size: 3.6em; }
-  body.rooms-quiz button { font-size: 1.05em; padding: 0.8em; }
   body.jobs-quiz { --symbol-font-size: 3.6em; }
-  body.jobs-quiz button { font-size: 1.05em; padding: 0.8em; }
   
   body.home .socials {
     padding: 0.6em;
