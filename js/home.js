@@ -91,8 +91,8 @@
 
       return quizzes.filter(q => {
         const matchesTerm = !term || (
-          q.title.toLowerCase().includes(term) ||
-          q.description.toLowerCase().includes(term)
+          q._titleLower.includes(term) ||
+          q._descriptionLower.includes(term)
         );
         const matchesCategory = !activeCategory || q.categories.includes(activeCategory);
         return matchesTerm && matchesCategory;
@@ -109,6 +109,7 @@
         return;
       }
 
+      const frag = document.createDocumentFragment();
       items.forEach(q => {
         const card = document.createElement('div');
         card.className = 'quiz-card';
@@ -137,17 +138,29 @@
         card.appendChild(p);
         card.appendChild(features);
         card.appendChild(a);
-        quizListEl.appendChild(card);
+        frag.appendChild(card);
       });
+      quizListEl.appendChild(frag);
     }
 
     function updateUI() {
       renderQuizCards(filterQuizzes());
     }
 
+    function debounce(fn, ms) {
+      let t = null;
+      return function() {
+        const ctx = this; const args = arguments;
+        if (t) clearTimeout(t);
+        t = setTimeout(function(){ fn.apply(ctx, args); }, ms);
+      };
+    }
+
+    const updateUIDebounced = debounce(updateUI, 120);
+
     function wireUpEvents() {
       if (searchInput) {
-        searchInput.addEventListener('input', updateUI);
+        searchInput.addEventListener('input', updateUIDebounced);
       }
       if (categoryFilters) {
         categoryFilters.addEventListener('click', function(ev) {
@@ -167,6 +180,11 @@
       Utils.fetchJSONCached('data/quizzes.json')
         .then(function(data){
           quizzes = Array.isArray(data) ? data : [];
+          // Precompute lowercase fields for faster filtering
+          quizzes.forEach(function(q){
+            q._titleLower = (q.title || '').toLowerCase();
+            q._descriptionLower = (q.description || '').toLowerCase();
+          });
           const categorySet = new Set();
           quizzes.forEach(q => (q.categories || []).forEach(c => categorySet.add(c)));
           categories = Array.from(categorySet).sort();
