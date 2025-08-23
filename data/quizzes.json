@@ -118,5 +118,13 @@
     "description": "Practice common Thai foods, fruits, and cooking methods with phonetics and examples.",
     "bullets": ["Foods, fruits, and methods","English/Thai/phonetic","Emoji hints + examples"],
     "categories": ["Vocabulary","Beginner"]
+  },
+  {
+    "id": "days",
+    "title": "📅 Days of the Week",
+    "href": "quiz.html?quiz=days",
+    "description": "Thai days with phonetics, planet, and color associations.",
+    "bullets": ["Thai + phonetic","Planet and color associations","Emoji hints"],
+    "categories": ["Vocabulary","Beginner"]
   }
 ]

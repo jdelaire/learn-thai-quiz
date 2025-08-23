@@ -302,6 +302,22 @@
           })));
         };
       });
+    },
+
+    days: function() {
+      return Utils.fetchJSONCached('data/days.json').then(function(data){
+        return function init(){
+          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+            data: data,
+            answerKey: 'phonetic',
+            labelPrefix: 'English and Thai: ',
+            buildSymbol: function(a){
+              var eng = (a && a.english) ? (a.english + (a.planet ? ' (' + a.planet + ')' : '')) : '';
+              return { english: eng, thai: (a && a.thai) || '', emoji: (a && a.emoji) || '' };
+            }
+          })));
+        };
+      });
     }
   };
 
@@ -347,7 +363,8 @@
           jobs: 'jobs-quiz',
           foods: 'foods-quiz',
           months: 'questions-quiz',
-          tenses: 'questions-quiz'
+          tenses: 'questions-quiz',
+          days: 'questions-quiz'
         };
         const cls = bodyClassMap[quizId];
         if (cls) document.body.classList.add(cls);
@@ -380,6 +397,8 @@
                 symbolAnchor.insertAdjacentElement('afterend', tip);
               }
             } catch (e) {}
+          } else if (quizId === 'days') {
+            Utils.insertProTip('• "wan" = day, used before every day name<br>• Each day links to a planet and traditional color in Thai culture<br>• These associations show up in temples, birthdays, and auspicious events');
           }
         } catch (e) {}
 
