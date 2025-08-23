@@ -311,7 +311,10 @@
             data: data,
             answerKey: 'phonetic',
             labelPrefix: 'English and Thai: ',
-            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: a.emoji || '' }; }
+            buildSymbol: function(a){
+              var eng = (a && a.english) ? (a.english + (a.planet ? ' (' + a.planet + ')' : '')) : '';
+              return { english: eng, thai: (a && a.thai) || '', emoji: (a && a.emoji) || '' };
+            }
           })));
         };
       });
