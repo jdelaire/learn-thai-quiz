@@ -15,6 +15,23 @@
     try { console.error('Data load error:', err); } catch (e) {}
   }
 
+  // Helper to build standard data-driven quizzes with minimal duplication
+  function makeStandardQuizBuilder(urls, transform) {
+    return function() {
+      try {
+        const list = Array.isArray(urls) ? urls : [urls];
+        return Utils.fetchJSONs(list).then(function(results){
+          const params = (typeof transform === 'function') ? (transform(results) || {}) : {};
+          return function init(){
+            ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz(params)));
+          };
+        });
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    };
+  }
+
   // Data-driven configs: per-quiz builder functions
   const QuizBuilders = {
     consonants: function() {
@@ -107,218 +124,170 @@
       });
     },
 
-    numbers: function() {
-      return Utils.fetchJSONCached('data/numbers.json').then(function(data){
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: data,
-            answerKey: 'phonetic',
-            labelPrefix: 'Number and Thai: ',
-            buildSymbol: function(a){ return { english: String(a.number || ''), thai: a.thai || '' }; }
-          })));
-        };
-      });
-    },
+    numbers: makeStandardQuizBuilder('data/numbers.json', function(results) {
+      const data = results[0] || [];
+      return {
+        data: data,
+        answerKey: 'phonetic',
+        labelPrefix: 'Number and Thai: ',
+        buildSymbol: function(a){ return { english: String(a.number || ''), thai: a.thai || '' }; }
+      };
+    }),
 
-    time: function() {
-      return Utils.fetchJSONs(['data/time-keywords.json','data/time-formats.json','data/time-examples.json']).then(function(results){
-        const keyWords = results[0] || [];
-        const timeFormats = results[1] || [];
-        const examples = results[2] || [];
-        function englishOf(item) { return item.english || item.note || item.translation || ''; }
-        const pool = keyWords.concat(timeFormats, examples);
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: pool,
-            answerKey: 'phonetic',
-            labelPrefix: 'English and Thai: ',
-            buildSymbol: function(a){ return { english: englishOf(a), thai: a.thai || '' }; }
-          })));
-        };
-      });
-    },
+    time: makeStandardQuizBuilder(['data/time-keywords.json','data/time-formats.json','data/time-examples.json'], function(results) {
+      const keyWords = results[0] || [];
+      const timeFormats = results[1] || [];
+      const examples = results[2] || [];
+      function englishOf(item) { return item.english || item.note || item.translation || ''; }
+      const pool = keyWords.concat(timeFormats, examples);
+      return {
+        data: pool,
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: ',
+        buildSymbol: function(a){ return { english: englishOf(a), thai: a.thai || '' }; }
+      };
+    }),
 
-    tones: function() {
-      return Utils.fetchJSONCached('data/tones.json').then(function(data){
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: data,
-            answerKey: 'phonetic',
-            labelPrefix: 'Class + Marker + Length: ',
-            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
-          })));
-        };
-      });
-    },
+    tones: makeStandardQuizBuilder('data/tones.json', function(results) {
+      const data = results[0] || [];
+      return {
+        data: data,
+        answerKey: 'phonetic',
+        labelPrefix: 'Class + Marker + Length: ',
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
+      };
+    }),
 
-    questions: function() {
-      return Utils.fetchJSONs(['data/questions.json','data/questions-examples.json']).then(function(results){
-        const data = results[0] || [];
-        const examples = results[1] || {};
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: data,
-            examples: examples,
-            answerKey: 'phonetic',
-            labelPrefix: 'English and Thai: '
-          })));
-        };
-      });
-    },
+    questions: makeStandardQuizBuilder(['data/questions.json','data/questions-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
+      return {
+        data: data,
+        examples: examples,
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: '
+      };
+    }),
 
-    verbs: function() {
-      return Utils.fetchJSONs(['data/emoji-rules/verbs.json','data/verbs.json','data/verbs-examples.json']).then(function(results){
-        const rules = results[0] || [];
-        const getEmoji = Utils.createEmojiGetter(rules);
-        const data = results[1] || [];
-        const examples = results[2] || {};
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: data,
-            examples: examples,
-            answerKey: 'phonetic',
-            labelPrefix: 'English and Thai: ',
-            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
-          })));
-        };
-      });
-    },
+    verbs: makeStandardQuizBuilder(['data/emoji-rules/verbs.json','data/verbs.json','data/verbs-examples.json'], function(results) {
+      const rules = results[0] || [];
+      const getEmoji = Utils.createEmojiGetter(rules);
+      const data = results[1] || [];
+      const examples = results[2] || {};
+      return {
+        data: data,
+        examples: examples,
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: ',
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+      };
+    }),
 
-    family: function() {
-      return Utils.fetchJSONCached('data/family.json').then(function(data){
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: data,
-            answerKey: 'phonetic',
-            labelPrefix: 'English and Thai: '
-          })));
-        };
-      });
-    },
+    family: makeStandardQuizBuilder('data/family.json', function(results) {
+      const data = results[0] || [];
+      return {
+        data: data,
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: '
+      };
+    }),
 
-    classifiers: function() {
-      return Utils.fetchJSONs(['data/emoji-rules/classifiers.json','data/classifiers.json','data/classifiers-examples.json']).then(function(results){
-        const rules = results[0] || [];
-        const getEmoji = Utils.createEmojiGetter(rules);
-        const data = results[1] || [];
-        const examples = results[2] || {};
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: data,
-            examples: examples,
-            answerKey: 'phonetic',
-            labelPrefix: 'English and Thai: ',
-            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
-          })));
-        };
-      });
-    },
+    classifiers: makeStandardQuizBuilder(['data/emoji-rules/classifiers.json','data/classifiers.json','data/classifiers-examples.json'], function(results) {
+      const rules = results[0] || [];
+      const getEmoji = Utils.createEmojiGetter(rules);
+      const data = results[1] || [];
+      const examples = results[2] || {};
+      return {
+        data: data,
+        examples: examples,
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: ',
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+      };
+    }),
 
-    jobs: function() {
-      return Utils.fetchJSONs(['data/emoji-rules/jobs.json','data/jobs.json']).then(function(results){
-        const rules = results[0] || [];
-        const getEmoji = Utils.createEmojiGetter(rules);
-        const data = results[1] || [];
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: data,
-            answerKey: 'phonetic',
-            labelPrefix: 'English and Thai: ',
-            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
-          })));
-        };
-      });
-    },
+    jobs: makeStandardQuizBuilder(['data/emoji-rules/jobs.json','data/jobs.json'], function(results) {
+      const rules = results[0] || [];
+      const getEmoji = Utils.createEmojiGetter(rules);
+      const data = results[1] || [];
+      return {
+        data: data,
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: ',
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+      };
+    }),
 
-    foods: function() {
-      return Utils.fetchJSONs(['data/emoji-rules/foods.json','data/foods.json','data/foods-examples.json']).then(function(results){
-        const rules = results[0] || [];
-        const getEmoji = Utils.createEmojiGetter(rules);
-        const data = results[1] || [];
-        const examples = results[2] || {};
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: data,
-            examples: examples,
-            exampleKey: function(a){ return a.id || a.english; },
-            answerKey: 'phonetic',
-            labelPrefix: 'English and Thai: ',
-            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
-          })));
-        };
-      });
-    },
+    foods: makeStandardQuizBuilder(['data/emoji-rules/foods.json','data/foods.json','data/foods-examples.json'], function(results) {
+      const rules = results[0] || [];
+      const getEmoji = Utils.createEmojiGetter(rules);
+      const data = results[1] || [];
+      const examples = results[2] || {};
+      return {
+        data: data,
+        examples: examples,
+        exampleKey: function(a){ return a.id || a.english; },
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: ',
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+      };
+    }),
 
-    months: function() {
-      return Utils.fetchJSONs(['data/emoji-rules/months-seasons.json','data/months-seasons.json','data/months-seasons-examples.json']).then(function(results){
-        const rules = results[0] || [];
-        const getEmoji = Utils.createEmojiGetter(rules);
-        const data = results[1] || [];
-        const examples = results[2] || {};
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: data,
-            examples: examples,
-            answerKey: 'phonetic',
-            labelPrefix: 'English and Thai: ',
-            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
-          })));
-        };
-      });
-    },
+    months: makeStandardQuizBuilder(['data/emoji-rules/months-seasons.json','data/months-seasons.json','data/months-seasons-examples.json'], function(results) {
+      const rules = results[0] || [];
+      const getEmoji = Utils.createEmojiGetter(rules);
+      const data = results[1] || [];
+      const examples = results[2] || {};
+      return {
+        data: data,
+        examples: examples,
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: ',
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+      };
+    }),
 
-    rooms: function() {
-      return Utils.fetchJSONs(['data/emoji-rules/rooms.json','data/rooms.json','data/rooms-examples.json']).then(function(results){
-        const rules = results[0] || [];
-        const getEmoji = Utils.createEmojiGetter(rules);
-        const data = results[1] || [];
-        const examples = results[2] || {};
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: data,
-            examples: examples,
-            exampleKey: function(a){ return a.id || a.english; },
-            answerKey: 'phonetic',
-            labelPrefix: 'English and Thai: ',
-            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
-          })));
-        };
-      });
-    },
+    rooms: makeStandardQuizBuilder(['data/emoji-rules/rooms.json','data/rooms.json','data/rooms-examples.json'], function(results) {
+      const rules = results[0] || [];
+      const getEmoji = Utils.createEmojiGetter(rules);
+      const data = results[1] || [];
+      const examples = results[2] || {};
+      return {
+        data: data,
+        examples: examples,
+        exampleKey: function(a){ return a.id || a.english; },
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: ',
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+      };
+    }),
 
-    tenses: function() {
-      return Utils.fetchJSONs(['data/emoji-rules/tenses.json','data/tenses.json','data/tenses-examples.json']).then(function(results){
-        const rules = results[0] || [];
-        const getEmoji = Utils.createEmojiGetter(rules);
-        const data = results[1] || [];
-        const examples = results[2] || {};
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: data,
-            examples: examples,
-            answerKey: 'phonetic',
-            labelPrefix: 'English and Thai: ',
-            buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
-          })));
-        };
-      });
-    },
+    tenses: makeStandardQuizBuilder(['data/emoji-rules/tenses.json','data/tenses.json','data/tenses-examples.json'], function(results) {
+      const rules = results[0] || [];
+      const getEmoji = Utils.createEmojiGetter(rules);
+      const data = results[1] || [];
+      const examples = results[2] || {};
+      return {
+        data: data,
+        examples: examples,
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: ',
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+      };
+    }),
 
-    days: function() {
-      return Utils.fetchJSONCached('data/days.json').then(function(data){
-        return function init(){
-          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-            data: data,
-            answerKey: 'phonetic',
-            labelPrefix: 'English and Thai: ',
-            buildSymbol: function(a){
-              var eng = (a && a.english) ? (a.english + (a.planet ? ' (' + a.planet + ')' : '')) : '';
-              return { english: eng, thai: (a && a.thai) || '', emoji: (a && a.emoji) || '' };
-            }
-          })));
-        };
-      });
-    }
+    days: makeStandardQuizBuilder('data/days.json', function(results) {
+      const data = results[0] || [];
+      return {
+        data: data,
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: ',
+        buildSymbol: function(a){
+          var eng = (a && a.english) ? (a.english + (a.planet ? ' (' + a.planet + ')' : '')) : '';
+          return { english: eng, thai: (a && a.thai) || '', emoji: (a && a.emoji) || '' };
+        }
+      };
+    })
   };
 
   function setText(id, text) {
@@ -347,7 +316,7 @@
         document.title = (meta.title || 'ThaiQuest') + ' — ThaiQuest';
         setText('page-title', meta.title || 'ThaiQuest');
         setText('page-subtitle', meta.description || '');
-        // Map categories to a default body class; allow overrides per builder if needed
+        // Map categories to a default body class; allow overrides via metadata
         const bodyClassMap = {
           consonants: 'consonant-quiz',
           vowels: 'vowel-quiz',
@@ -366,47 +335,72 @@
           tenses: 'questions-quiz',
           days: 'questions-quiz'
         };
-        const cls = bodyClassMap[quizId];
+        const cls = (meta && meta.bodyClass) || bodyClassMap[quizId];
         if (cls) document.body.classList.add(cls);
         // Always add a generic per-quiz class as a fallback (e.g., foods -> foods-quiz)
         try { if (quizId) document.body.classList.add(quizId + '-quiz'); } catch (e) {}
 
-        // Add per-quiz pro tips moved to metadata-free helpers for simplicity
+        // Add per-quiz pro tips, prefer metadata if provided
         try {
-          if (quizId === 'numbers') {
-            Utils.insertProTip('Pro tip: Insert a classifier after the number for counting. e.g., 2 bottles = <strong>สองขวด</strong> (<em>sɔ̌ɔŋ khùat</em>), 5 people = <strong>ห้าคน</strong> (<em>hâa khon</em>).');
-          } else if (quizId === 'questions') {
-            Utils.insertProTip('• Most yes/no questions end in “mái?”<br>• Add “khráp/khà” for politeness at the end<br>• Use “bâaŋ” after question words for “what kinds / which ones”<br>→ khun chɔ̂ɔp sǐi à-rai bâaŋ? (Which colors do you like?)');
-          } else if (quizId === 'verbs') {
-            Utils.insertProTip('• Common combos: "tham ŋaan" (work), "àap-náam" (shower)<br>• Use "bpai/maa" for go/come; add places with "thîi" (at)');
-          } else if (quizId === 'classifiers') {
-            Utils.insertProTip('Structure: <strong>[noun] + [number] + [classifier]</strong><br>"nɯ̀ŋ" (one) is often omitted in casual speech.');
-          } else if (quizId === 'rooms') {
-            Utils.insertProTip('• Use "hɔ̂ɔŋ" (room) before specific room names<br>• "nai" means "in" - phǒm yùu nai hɔ̂ɔŋ nɔɔn (I\'m in the bedroom)<br>• "thîi" means "at" - rao nâŋ lên thîi rá-biiang (We sit on the balcony)');
-          } else if (quizId === 'tenses') {
-            Utils.insertProTip('Structure: <strong>[Subject] + [Time Marker] + [Verb] + [Particle]</strong>');
-          } else if (quizId === 'vowels') {
-            // Friendly note specific to vowel shaping
-            try {
-              const symbolAnchor = document.getElementById('symbol');
-              if (symbolAnchor && !document.querySelector('.vowel-note')) {
-                const tip = document.createElement('div');
-                tip.className = 'vowel-note';
-                tip.setAttribute('role', 'note');
-                tip.textContent = 'Note: The consonant ก (goo gai) may appear as a placeholder to show where the vowel attaches; it is not part of the answer.';
-                symbolAnchor.insertAdjacentElement('afterend', tip);
-              }
-            } catch (e) {}
-          } else if (quizId === 'days') {
-            Utils.insertProTip('• "wan" = day, used before every day name<br>• Each day links to a planet and traditional color in Thai culture<br>• These associations show up in temples, birthdays, and auspicious events');
+          if (meta && meta.proTip) {
+            Utils.insertProTip(meta.proTip);
+          } else {
+            if (quizId === 'numbers') {
+              Utils.insertProTip('Pro tip: Insert a classifier after the number for counting. e.g., 2 bottles = <strong>สองขวด</strong> (<em>sɔ̌ɔŋ khùat</em>), 5 people = <strong>ห้าคน</strong> (<em>hâa khon</em>).');
+            } else if (quizId === 'questions') {
+              Utils.insertProTip('• Most yes/no questions end in “mái?”<br>• Add “khráp/khà” for politeness at the end<br>• Use “bâaŋ” after question words for “what kinds / which ones”<br>→ khun chɔ̂ɔp sǐi à-rai bâaŋ? (Which colors do you like?)');
+            } else if (quizId === 'verbs') {
+              Utils.insertProTip('• Common combos: "tham ŋaan" (work), "àap-náam" (shower)<br>• Use "bpai/maa" for go/come; add places with "thîi" (at)');
+            } else if (quizId === 'classifiers') {
+              Utils.insertProTip('Structure: <strong>[noun] + [number] + [classifier]</strong><br>"nɯ̀ŋ" (one) is often omitted in casual speech.');
+            } else if (quizId === 'rooms') {
+              Utils.insertProTip('• Use "hɔ̂ɔŋ" (room) before specific room names<br>• "nai" means "in" - phǒm yùu nai hɔ̂ɔŋ nɔɔn (I\'m in the bedroom)<br>• "thîi" means "at" - rao nâŋ lên thîi rá-biiang (We sit on the balcony)');
+            } else if (quizId === 'tenses') {
+              Utils.insertProTip('Structure: <strong>[Subject] + [Time Marker] + [Verb] + [Particle]</strong>');
+            } else if (quizId === 'vowels') {
+              // Friendly note specific to vowel shaping
+              try {
+                const symbolAnchor = document.getElementById('symbol');
+                if (symbolAnchor && !document.querySelector('.vowel-note')) {
+                  const tip = document.createElement('div');
+                  tip.className = 'vowel-note';
+                  tip.setAttribute('role', 'note');
+                  tip.textContent = 'Note: The consonant ก (goo gai) may appear as a placeholder to show where the vowel attaches; it is not part of the answer.';
+                  symbolAnchor.insertAdjacentElement('afterend', tip);
+                }
+              } catch (e) {}
+            } else if (quizId === 'days') {
+              Utils.insertProTip('• "wan" = day, used before every day name<br>• Each day links to a planet and traditional color in Thai culture<br>• These associations show up in temples, birthdays, and auspicious events');
+            }
           }
         } catch (e) {}
 
         // Build and start the selected quiz
         const builder = QuizBuilders[quizId];
         if (!builder) {
-          setText('page-title', 'Quiz not found');
-          setText('page-subtitle', 'Unknown quiz: ' + quizId);
+          // Fallback: try to load data/<quizId>.json as a standard quiz dataset
+          try {
+            Utils.fetchJSONCached('data/' + quizId + '.json').then(function(data){
+              if (!Array.isArray(data) || data.length === 0) {
+                setText('page-title', 'Quiz not found');
+                setText('page-subtitle', 'Unknown quiz: ' + quizId);
+                return;
+              }
+              try {
+                ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+                  data: data,
+                  answerKey: 'phonetic',
+                  labelPrefix: 'English and Thai: '
+                })));
+              } catch (e) { handleDataLoadError(e); }
+            }).catch(function(){
+              setText('page-title', 'Quiz not found');
+              setText('page-subtitle', 'Unknown quiz: ' + quizId);
+            });
+          } catch (e) {
+            setText('page-title', 'Quiz not found');
+            setText('page-subtitle', 'Unknown quiz: ' + quizId);
+          }
           return;
         }
         builder().then(function(initFn){
