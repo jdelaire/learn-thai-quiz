@@ -74,7 +74,7 @@ You usually don’t need to update `smoke.js` when you add a quiz, because it au
 Example: verify that the Color quiz sets an accessible aria‑label on the symbol.
 
 ```javascript
-// smoke.js
+// js/smoke.js
 async function testColorsAria(serverRoot) {
   const iframe = document.createElement('iframe');
   iframe.className = 'smoke-frame';
@@ -102,11 +102,15 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 
 - `index.html`: Home page with search and category filters, renders quiz cards from `data/quizzes.json`
 - `quiz.html`: Quiz runner page; loads a specific quiz via `?quiz=<id>`
-- `quiz.js`: Quiz engine (rendering, answer handling, auto‑advance, stats)
-- `quiz-loader.js`: Metadata‑driven loader with per‑quiz builder functions keyed by id (`QuizBuilders.<id>()`). It reads `data/quizzes.json` for title/subtitle, applies a body class based on the quiz id, also adds a generic `<id>-quiz` class (e.g., `foods-quiz`), and wires `ThaiQuiz.setupQuiz(...)` via `Utils.createStandardQuiz` plus small helpers
-- `utils.js`: Shared helpers (fetch JSON, caching, random selection, color utilities, DOM helpers). Includes `createStandardQuiz`, `renderEnglishThaiSymbol`, `renderExample`, `createEmojiGetter`/`loadEmojiGetter`, `insertProTip`, `insertConsonantLegend`, and `renderVowelSymbol`
-- `home.js`: Home page logic (filters, chips, card rendering, Today/Month widgets)
-- `styles.css`: Shared and per‑quiz styles
+- `smoke.html`: Browser-based smoke tests for end-to-end validation
+- `js/`: JavaScript modules
+  - `quiz.js`: Quiz engine (rendering, answer handling, auto‑advance, stats)
+  - `quiz-loader.js`: Metadata‑driven loader with per‑quiz builder functions keyed by id (`QuizBuilders.<id>()`). It reads `data/quizzes.json` for title/subtitle, applies a body class based on the quiz id, also adds a generic `<id>-quiz` class (e.g., `foods-quiz`), and wires `ThaiQuiz.setupQuiz(...)` via `Utils.createStandardQuiz` plus small helpers
+  - `utils.js`: Shared helpers (fetch JSON, caching, random selection, color utilities, DOM helpers). Includes `createStandardQuiz`, `renderEnglishThaiSymbol`, `renderExample`, `createEmojiGetter`/`loadEmojiGetter`, `insertProTip`, `insertConsonantLegend`, and `renderVowelSymbol`
+  - `home.js`: Home page logic (filters, chips, card rendering, Today/Month widgets)
+  - `smoke.js`: Smoke test runner for automated validation
+- `css/`: Stylesheets
+  - `styles.css`: Shared and per‑quiz styles
 - `data/*.json`: Quiz datasets and metadata
 - `data/emoji-rules/*.json`: Optional per-quiz emoji matcher rules (pattern → emoji)
   - Datasets may optionally include an `id` per item; when present, examples prefer `id` for lookups (falling back to `english`).
@@ -119,13 +123,13 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 
 1. The home page (`index.html`) loads `data/quizzes.json`, renders cards, and provides search/category filters.
 2. Clicking a card navigates to `quiz.html?quiz=<id>`.
-3. `quiz-loader.js` reads the `id` from the URL, sets page title/subtitle, applies both a mapped body class and a generic `<id>-quiz` class, and invokes a per‑quiz builder.
+3. `js/quiz-loader.js` reads the `id` from the URL, sets page title/subtitle, applies both a mapped body class and a generic `<id>-quiz` class, and invokes a per‑quiz builder.
 4. Each builder fetches JSON via `Utils.fetchJSONCached`/`Utils.fetchJSONs` and wires `ThaiQuiz.setupQuiz(...)` using `Utils.createStandardQuiz` plus small overrides (emoji, examples, symbol rendering).
 5. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
 
 ### Styling & overrides
 
-The default styling for all quizzes is defined in `styles.css` under `body.quiz-page` using CSS variables. Prefer overriding these variables per quiz instead of duplicating CSS rules.
+The default styling for all quizzes is defined in `css/styles.css` under `body.quiz-page` using CSS variables. Prefer overriding these variables per quiz instead of duplicating CSS rules.
 
 - Variables available: `--symbol-font-size`, `--symbol-margin`, `--symbol-font-weight`, `--symbol-color`, `--symbol-text-shadow`, `--symbol-line-height`, `--options-max-width`.
 - Override per quiz on either the mapped class (e.g., `body.questions-quiz`) or the generic class (e.g., `body.foods-quiz`). The loader applies both.
@@ -159,7 +163,7 @@ body.color-quiz {
 
 1. **Create data**: Add a new JSON file under `data/` with the items you want to quiz.
 2. **Add metadata**: In `data/quizzes.json`, add an object with `id`, `title`, `href`, `description`, `bullets`, `categories`.
-3. **Add a builder**: In `quiz-loader.js`, add `QuizBuilders.<id> = function(){ ... }` that fetches your JSON via `Utils.fetchJSONCached` and returns an `init()` which calls `ThaiQuiz.setupQuiz(Object.assign({ elements: ... }, Utils.createStandardQuiz({...})))`.
+3. **Add a builder**: In `js/quiz-loader.js`, add `QuizBuilders.<id> = function(){ ... }` that fetches your JSON via `Utils.fetchJSONCached` and returns an `init()` which calls `ThaiQuiz.setupQuiz(Object.assign({ elements: ... }, Utils.createStandardQuiz({...})))`.
    - Use `buildSymbol` to show English/Thai/emoji.
    - If you show examples after correct answers, pass `examples` and an `exampleKey` if needed.
 4. **Style (optional)**: Add CSS rules in `styles.css` using `body.<id>-quiz` (e.g., `body.foods-quiz`) or the mapped class (e.g., `body.questions-quiz`). The loader ensures both exist.
@@ -169,7 +173,7 @@ body.color-quiz {
 Use this skeleton when adding a new dataset‑driven quiz. The loader resolves data first, then returns an initializer that calls `ThaiQuiz.setupQuiz` with a config from `Utils.createStandardQuiz`.
 
 ```javascript
-// quiz-loader.js
+// js/quiz-loader.js
 QuizBuilders.myquiz = function() {
   return Utils.fetchJSONCached('data/myquiz.json').then(function(items){
     return function init(){
@@ -241,9 +245,9 @@ Tone Markers (class + marker + length → resulting tone):
 
 #### Quiz config skeleton (metadata‑driven)
 
-Add a `QuizBuilders.<id>` entry in `quiz-loader.js` that fetches data via cache and returns an initializer using `Utils.createStandardQuiz`:
+Add a `QuizBuilders.<id>` entry in `js/quiz-loader.js` that fetches data via cache and returns an initializer using `Utils.createStandardQuiz`:
 ```javascript
-// quiz-loader.js
+// js/quiz-loader.js
 QuizBuilders.myquiz = function() {
   return Utils.fetchJSONCached('data/myquiz.json').then(function(data){
     return function init(){
