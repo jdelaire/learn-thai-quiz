@@ -123,6 +123,38 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 4. Each builder fetches JSON via `Utils.fetchJSONCached`/`Utils.fetchJSONs` and wires `ThaiQuiz.setupQuiz(...)` using `Utils.createStandardQuiz` plus small overrides (emoji, examples, symbol rendering).
 5. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
 
+### Styling & overrides
+
+The default styling for all quizzes is defined in `styles.css` under `body.quiz-page` using CSS variables. Prefer overriding these variables per quiz instead of duplicating CSS rules.
+
+- Variables available: `--symbol-font-size`, `--symbol-margin`, `--symbol-font-weight`, `--symbol-color`, `--symbol-text-shadow`, `--symbol-line-height`, `--options-max-width`.
+- Override per quiz on either the mapped class (e.g., `body.questions-quiz`) or the generic class (e.g., `body.foods-quiz`). The loader applies both.
+
+```css
+/* Example: tweak Foods quiz symbol size and options width */
+body.foods-quiz {
+  --symbol-font-size: 4.6em;
+  --options-max-width: 600px;
+}
+```
+
+```css
+/* Responsive override using the same variables */
+@media (max-width: 600px) {
+  body.foods-quiz { --symbol-font-size: 3.6em; }
+}
+```
+
+- Special look & feel: If variables are not enough, add targeted rules. For example, the Colors quiz adds a text shadow via the variable:
+
+```css
+body.color-quiz {
+  --symbol-text-shadow: 0 1px 1px rgba(0,0,0,0.6), 0 0 4px rgba(0,0,0,0.45);
+}
+```
+
+- Notes: Buttons have a sensible default (`body.quiz-page .options button { min-width: 240px; }`). Only override per quiz if needed.
+
 ### Add a new quiz
 
 1. **Create data**: Add a new JSON file under `data/` with the items you want to quiz.
