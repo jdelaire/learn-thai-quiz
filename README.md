@@ -67,9 +67,8 @@ What it does:
 
 #### Extending smoke tests when you add a quiz
 
-When you create a new quiz (add a builder in `quiz-loader.js` and an entry in `data/quizzes.json`), extend the smoke tests so it’s covered:
-
-You usually don’t need to update `smoke.js` when you add a quiz, because it auto‑discovers quizzes from `data/quizzes.json`.
+- When you create a new quiz (add an entry in `data/quizzes.json` and, if needed, a builder in `js/quiz-loader.js`), the smoke tests will pick it up automatically from metadata.
+- You usually don’t need to update `smoke.js` when adding a quiz, because it auto‑discovers quizzes from `data/quizzes.json`.
 
 Example: verify that the Color quiz sets an accessible aria‑label on the symbol.
 
@@ -105,7 +104,7 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 - `smoke.html`: Browser-based smoke tests for end-to-end validation
 - `js/`: JavaScript modules
   - `quiz.js`: Quiz engine (rendering, answer handling, auto‑advance, stats)
-  - `quiz-loader.js`: Metadata‑driven loader with per‑quiz builder functions keyed by id (`QuizBuilders.<id>()`). It reads `data/quizzes.json` for title/subtitle, applies a body class based on the quiz id, also adds a generic `<id>-quiz` class (e.g., `foods-quiz`), and wires `ThaiQuiz.setupQuiz(...)` via `Utils.createStandardQuiz` plus small helpers
+  - `quiz-loader.js`: Metadata‑driven loader with per‑quiz builder functions keyed by id (`QuizBuilders.<id>()`). It reads `data/quizzes.json` for title/subtitle, applies `meta.bodyClass` when present (otherwise a sensible default), always adds a generic `<id>-quiz` class (e.g., `foods-quiz`), and inserts `meta.proTip` when provided. Includes a `makeStandardQuizBuilder(urls, transform)` helper to wire standard quizzes with minimal code, and a fallback that runs a standard quiz from `data/<id>.json` when no custom builder exists.
   - `utils.js`: Shared helpers (fetch JSON, caching, random selection, color utilities, DOM helpers). Includes `createStandardQuiz`, `renderEnglishThaiSymbol`, `renderExample`, `createEmojiGetter`/`loadEmojiGetter`, `insertProTip`, `insertConsonantLegend`, and `renderVowelSymbol`
   - `home.js`: Home page logic (filters, chips, card rendering, Today/Month widgets)
   - `smoke.js`: Smoke test runner for automated validation
@@ -123,9 +122,10 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 
 1. The home page (`index.html`) loads `data/quizzes.json`, renders cards, and provides search/category filters.
 2. Clicking a card navigates to `quiz.html?quiz=<id>`.
-3. `js/quiz-loader.js` reads the `id` from the URL, sets page title/subtitle, applies both a mapped body class and a generic `<id>-quiz` class, and invokes a per‑quiz builder.
-4. Each builder fetches JSON via `Utils.fetchJSONCached`/`Utils.fetchJSONs` and wires `ThaiQuiz.setupQuiz(...)` using `Utils.createStandardQuiz` plus small overrides (emoji, examples, symbol rendering).
-5. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
+3. `js/quiz-loader.js` reads the `id` and metadata from `data/quizzes.json`, sets page title/subtitle, applies `meta.bodyClass` when present (else a default mapping) and also adds a generic `<id>-quiz` class. If `meta.proTip` is present, it is inserted into the quiz footer.
+4. The loader invokes a per‑quiz builder. If no builder exists for the `id`, it falls back to running a standard quiz from `data/<id>.json` using `phonetic` as the answer key.
+5. Builders fetch JSON via `Utils.fetchJSONCached`/`Utils.fetchJSONs` and wire `ThaiQuiz.setupQuiz(...)` using `Utils.createStandardQuiz` plus small overrides (emoji, examples, symbol rendering).
+6. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
 
 ### Styling & overrides
 
@@ -161,16 +161,33 @@ body.color-quiz {
 
 ### Add a new quiz
 
-1. **Create data**: Add a new JSON file under `data/` with the items you want to quiz.
-2. **Add metadata**: In `data/quizzes.json`, add an object with `id`, `title`, `href`, `description`, `bullets`, `categories`.
-3. **Add a builder**: In `js/quiz-loader.js`, add `QuizBuilders.<id> = function(){ ... }` that fetches your JSON via `Utils.fetchJSONCached` and returns an `init()` which calls `ThaiQuiz.setupQuiz(Object.assign({ elements: ... }, Utils.createStandardQuiz({...})))`.
-   - Use `buildSymbol` to show English/Thai/emoji.
-   - If you show examples after correct answers, pass `examples` and an `exampleKey` if needed.
+1. **Create data**: Add a new JSON file under `data/`. For a standard quiz, prefer `data/<id>.json` with items like `{ "english": "water", "thai": "น้ำ", "phonetic": "náam" }`.
+2. **Add metadata**: In `data/quizzes.json`, add an object with `id`, `title`, `href`, `description`, `bullets`, `categories`, and optionally `bodyClass` and `proTip`.
+3. **Wire it up**:
+   - If you don’t need custom logic, you can skip a builder. The loader will automatically run a standard quiz from `data/<id>.json` using `phonetic` as the answer key.
+   - If you need custom behavior (emoji rules, multiple datasets, special symbol rendering, examples), add a builder using the helper `makeStandardQuizBuilder(urls, transform)` or write a manual builder.
 4. **Style (optional)**: Add CSS rules in `styles.css` using `body.<id>-quiz` (e.g., `body.foods-quiz`) or the mapped class (e.g., `body.questions-quiz`). The loader ensures both exist.
 
-#### AI quickstart: minimal builder template
+#### Loader helper (recommended)
 
-Use this skeleton when adding a new dataset‑driven quiz. The loader resolves data first, then returns an initializer that calls `ThaiQuiz.setupQuiz` with a config from `Utils.createStandardQuiz`.
+Use `makeStandardQuizBuilder` to wire a data-driven quiz with minimal code.
+
+```javascript
+// js/quiz-loader.js
+QuizBuilders.myquiz = makeStandardQuizBuilder('data/myquiz.json', function(results) {
+  const data = results[0] || [];
+  return {
+    data: data,
+    answerKey: 'phonetic',
+    labelPrefix: 'English and Thai: ',
+    buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
+  };
+});
+```
+
+#### AI quickstart: minimal builder template (manual)
+
+Use this skeleton when you need full control. The loader resolves data first, then returns an initializer that calls `ThaiQuiz.setupQuiz` with a config from `Utils.createStandardQuiz`.
 
 ```javascript
 // js/quiz-loader.js
@@ -304,9 +321,13 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
   "href": "quiz.html?quiz=myquiz",
   "description": "Short description of what is being practiced.",
   "bullets": ["Key point A","Key point B"],
-  "categories": ["Vocabulary","Beginner"]
+  "categories": ["Vocabulary","Beginner"],
+  "bodyClass": "questions-quiz",
+  "proTip": "Optional HTML snippet shown in the quiz footer with helpful hints."
 }
 ```
+
+- `bodyClass` and `proTip` are optional. If omitted, the loader picks a sensible default class and no tip is shown (some quizzes still add inline notes, e.g., the vowel placement hint).
 
 #### Accessibility and UX requirements
 
