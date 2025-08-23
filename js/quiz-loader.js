@@ -345,19 +345,7 @@
           if (meta && meta.proTip) {
             Utils.insertProTip(meta.proTip);
           } else {
-            if (quizId === 'numbers') {
-              Utils.insertProTip('Pro tip: Insert a classifier after the number for counting. e.g., 2 bottles = <strong>สองขวด</strong> (<em>sɔ̌ɔŋ khùat</em>), 5 people = <strong>ห้าคน</strong> (<em>hâa khon</em>).');
-            } else if (quizId === 'questions') {
-              Utils.insertProTip('• Most yes/no questions end in “mái?”<br>• Add “khráp/khà” for politeness at the end<br>• Use “bâaŋ” after question words for “what kinds / which ones”<br>→ khun chɔ̂ɔp sǐi à-rai bâaŋ? (Which colors do you like?)');
-            } else if (quizId === 'verbs') {
-              Utils.insertProTip('• Common combos: "tham ŋaan" (work), "àap-náam" (shower)<br>• Use "bpai/maa" for go/come; add places with "thîi" (at)');
-            } else if (quizId === 'classifiers') {
-              Utils.insertProTip('Structure: <strong>[noun] + [number] + [classifier]</strong><br>"nɯ̀ŋ" (one) is often omitted in casual speech.');
-            } else if (quizId === 'rooms') {
-              Utils.insertProTip('• Use "hɔ̂ɔŋ" (room) before specific room names<br>• "nai" means "in" - phǒm yùu nai hɔ̂ɔŋ nɔɔn (I\'m in the bedroom)<br>• "thîi" means "at" - rao nâŋ lên thîi rá-biiang (We sit on the balcony)');
-            } else if (quizId === 'tenses') {
-              Utils.insertProTip('Structure: <strong>[Subject] + [Time Marker] + [Verb] + [Particle]</strong>');
-            } else if (quizId === 'vowels') {
+             if (quizId === 'vowels') {
               // Friendly note specific to vowel shaping
               try {
                 const symbolAnchor = document.getElementById('symbol');
@@ -369,8 +357,6 @@
                   symbolAnchor.insertAdjacentElement('afterend', tip);
                 }
               } catch (e) {}
-            } else if (quizId === 'days') {
-              Utils.insertProTip('• "wan" = day, used before every day name<br>• Each day links to a planet and traditional color in Thai culture<br>• These associations show up in temples, birthdays, and auspicious events');
             }
           }
         } catch (e) {}
