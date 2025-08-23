@@ -70,8 +70,6 @@ When you create a new quiz (add a builder in `quiz-loader.js` and an entry in `d
 
 You usually don’t need to update `smoke.js` when you add a quiz, because it auto‑discovers quizzes from `data/quizzes.json`.
 
-Optional: add a focused check for quiz‑specific behavior by creating a small helper and calling it from `runAll()`.
-
 Example: verify that the Color quiz sets an accessible aria‑label on the symbol.
 
 ```javascript
@@ -104,7 +102,7 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 - `index.html`: Home page with search and category filters, renders quiz cards from `data/quizzes.json`
 - `quiz.html`: Quiz runner page; loads a specific quiz via `?quiz=<id>`
 - `quiz.js`: Quiz engine (rendering, answer handling, auto‑advance, stats)
-- `quiz-loader.js`: Metadata‑driven loader with per‑quiz builder functions keyed by id; reads `data/quizzes.json` for page chrome and wires `ThaiQuiz.setupQuiz(...)` via `Utils.createStandardQuiz` and small helpers
+- `quiz-loader.js`: Metadata‑driven loader with per‑quiz builder functions keyed by id (`QuizBuilders.<id>()`). It reads `data/quizzes.json` for title/subtitle, applies a body class based on the quiz id, also adds a generic `<id>-quiz` class (e.g., `foods-quiz`), and wires `ThaiQuiz.setupQuiz(...)` via `Utils.createStandardQuiz` plus small helpers
 - `utils.js`: Shared helpers (fetch JSON, caching, random selection, color utilities, DOM helpers). Includes `createStandardQuiz`, `renderEnglishThaiSymbol`, `renderExample`, `createEmojiGetter`/`loadEmojiGetter`, `insertProTip`, `insertConsonantLegend`, and `renderVowelSymbol`
 - `home.js`: Home page logic (filters, chips, card rendering, Today/Month widgets)
 - `styles.css`: Shared and per‑quiz styles
@@ -120,7 +118,7 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 
 1. The home page (`index.html`) loads `data/quizzes.json`, renders cards, and provides search/category filters.
 2. Clicking a card navigates to `quiz.html?quiz=<id>`.
-3. `quiz-loader.js` reads the `id` from the URL, sets page title/subtitle/body class from `data/quizzes.json`, and invokes a per‑quiz builder.
+3. `quiz-loader.js` reads the `id` from the URL, sets page title/subtitle, applies both a mapped body class and a generic `<id>-quiz` class, and invokes a per‑quiz builder.
 4. Each builder fetches JSON via `Utils.fetchJSONCached`/`Utils.fetchJSONs` and wires `ThaiQuiz.setupQuiz(...)` using `Utils.createStandardQuiz` plus small overrides (emoji, examples, symbol rendering).
 5. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
 
@@ -131,7 +129,27 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 3. **Add a builder**: In `quiz-loader.js`, add `QuizBuilders.<id> = function(){ ... }` that fetches your JSON via `Utils.fetchJSONCached` and returns an `init()` which calls `ThaiQuiz.setupQuiz(Object.assign({ elements: ... }, Utils.createStandardQuiz({...})))`.
    - Use `buildSymbol` to show English/Thai/emoji.
    - If you show examples after correct answers, pass `examples` and an `exampleKey` if needed.
-4. **Style (optional)**: Add CSS rules in `styles.css` using a body class (e.g., `body.questions-quiz`).
+4. **Style (optional)**: Add CSS rules in `styles.css` using `body.<id>-quiz` (e.g., `body.foods-quiz`) or the mapped class (e.g., `body.questions-quiz`). The loader ensures both exist.
+
+#### AI quickstart: minimal builder template
+
+Use this skeleton when adding a new dataset‑driven quiz. The loader resolves data first, then returns an initializer that calls `ThaiQuiz.setupQuiz` with a config from `Utils.createStandardQuiz`.
+
+```javascript
+// quiz-loader.js
+QuizBuilders.myquiz = function() {
+  return Utils.fetchJSONCached('data/myquiz.json').then(function(items){
+    return function init(){
+      ThaiQuiz.setupQuiz(Object.assign({ elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' } }, Utils.createStandardQuiz({
+        data: items,
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: ',
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
+      })));
+    };
+  });
+};
+```
 
 #### Data schema templates
 
@@ -226,7 +244,7 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
   - `examples` (object map) and optional `exampleKey(answer)` control example lookup; defaults to `answer.english` (use `answer.id || answer.english` if your data includes stable ids).
 
 - `Utils.createEmojiGetter(rules)` / `Utils.loadEmojiGetter(url)`
-  - Build an emoji matcher from regex rules or load them from JSON and return a function mapping English text → emoji.
+  - Build an emoji matcher from regex rules or load them from JSON and return a function mapping English text → emoji. Many quizzes derive an emoji line above the symbol using this.
 
 - `Utils.insertProTip(html)` / `Utils.insertConsonantLegend()`
   - Insert a pro‑tip into the quiz footer or a consonant legend before the symbol.
@@ -253,29 +271,6 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 }
 ```
 
-#### Tone rules used in the Tone Markers quiz
-
-```json
-{
-  "Middle + none (long)": "Mid",
-  "Middle + none (short)": "Low",
-  "Middle + ่": "Low",
-  "Middle + ้": "Falling",
-  "Middle + ๊": "High",
-  "Middle + ๋": "Rising",
-
-  "High + none (long)": "Rising",
-  "High + none (short)": "Low",
-  "High + ่": "Low",
-  "High + ้": "Falling",
-
-  "Low + none (long)": "Mid",
-  "Low + none (short)": "High",
-  "Low + ่": "Falling",
-  "Low + ้": "High"
-}
-```
-
 #### Accessibility and UX requirements
 
 - Set `aria-label` on the symbol (or return `symbolAriaLabel` from `pickRound`)
@@ -283,7 +278,7 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 - Support keyboard 1–9 for selecting options (engine does this automatically)
 - Do not rely on the “Next” button; auto‑advance on correct answers is built‑in
 - Prefer `textContent` over `innerHTML` unless you intentionally render HTML
-- Maintain readable contrast; follow existing CSS patterns and body classes
+- Maintain readable contrast; follow existing CSS patterns and body classes. The loader always applies both a mapped class and `<id>-quiz` (e.g., `foods-quiz`).
 
 #### Quick test checklist
 
@@ -312,39 +307,3 @@ MIT License © 2025 jdelaire. See the [MIT License](https://opensource.org/licen
 ### Credits
 
 - Data and phonetics curated for learning purposes. Emojis and color accents are used to aid memorization.
-
-### ⏱️ Thai Tense Markers (Time Words & Structures)
-
-Thai uses time markers rather than verb conjugation for tense.
-Structure: [Subject] + [Time Marker] + [Verb] + [Particle]
-
-| English | Thai Word | Phonetic |
-| --- | --- | --- |
-| now / currently | ตอนนี้ | dtɔɔn-níi |
-| today | วันนี้ | wan-níi |
-| yesterday | เมื่อวาน | mûea-waan |
-| tomorrow | พรุ่งนี้ | phrûŋ-níi |
-| already | แล้ว | lɛ́ɛw |
-| not yet | ยังไม่ | yaŋ mâi |
-| still | ยัง | yaŋ |
-| just (recently) | เพิ่ง | phə̂ŋ |
-| soon | เร็วๆนี้ | rew-rew níi |
-| in the past | เมื่อก่อน | mûea-gɔ̀ɔn |
-| in the future | ในอนาคต | nai à-naa-khót |
-| often | บ่อยๆ | bɔ̀y-bɔ̀y |
-| sometimes | บางที | baaŋ-thii |
-| always | เสมอ | sà-mɯ̌ɯ |
-| never | ไม่เคย | mâi khəəy |
-| ever | เคย | khəəy |
-| still not (yet) | ยังไม่ได้ | yaŋ mâi dâay |
-| cannot yet | ยังทำไม่ได้ | yaŋ tham mâi dâay |
-
-🧠 Tense Examples
-
-- phǒm rian phaa-sǎa thai lɛ́ɛw → I have already studied Thai
-- khun gin khâaw rʉ́ yaŋ? → Have you eaten yet?
-- chǎn yang mâi bpai raan-khǎay → I haven’t gone to the shop yet
-- phǒm jà bpai cháw níi → I will go this morning
-- kháw phə̂ŋ maa → He just arrived
-- wan-níi mâi mii rian → There’s no class today
-- phǒm mâi khəəy gin néua → I never eat beef
