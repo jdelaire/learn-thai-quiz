@@ -32,6 +32,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Foods**: Common Thai foods, fruits, and cooking methods with phonetics and example phrases
 - **Months & Seasons**: 12 months and Thailand’s seasons with Thai script, phonetics, and example sentences
 - **Tense Markers**: Thai time words and structures; examples after correct answers
+- **Days of the Week**: Thai day names with phonetics, planet, and color associations
 
 ### Quick start (local)
 
