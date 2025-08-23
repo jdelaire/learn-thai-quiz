@@ -1,8 +1,15 @@
 /* Shared base styles */
+:root {
+  --color-text: #111111;
+  --color-bg: #ffffff;
+  --color-brand: #00247D;
+  --color-brand-dark: #001a5a;
+  --color-accent: #A51931;
+}
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   text-align: center;
-  background: #ffffff;
+  background: var(--color-bg);
   padding: 2em;
   margin: 0;
   min-height: 100vh;
@@ -10,7 +17,7 @@ body {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  color: #111111;
+  color: var(--color-text);
 }
 
 /* Lightweight loader */
@@ -26,7 +33,7 @@ body {
   width: 1em;
   height: 1em;
   border: 2px solid rgba(0,0,0,0.15);
-  border-top-color: #00247D;
+  border-top-color: var(--color-brand);
   border-radius: 50%;
   display: inline-block;
   animation: spin 0.8s linear infinite;
@@ -37,8 +44,7 @@ body {
 }
 
 h1 {
-  color: #111111;
-  text-shadow: none;
+  color: var(--color-text);
 }
 
 .subtitle {
@@ -83,11 +89,10 @@ h1 {
 }
 .brand-title {
   margin: 0;
-  color: #111111;
+  color: var(--color-text);
   font-weight: 800;
   font-size: clamp(1.9em, 3.8vw, 2.4em);
   letter-spacing: 0.2px;
-  text-shadow: none;
 }
 .brand-subtitle {
   margin: 0;
@@ -133,7 +138,7 @@ button {
   cursor: pointer;
   border: 1px solid rgba(0, 0, 0, 0.12);
   background: #f7f7f7;
-  color: #111111;
+  color: var(--color-text);
   border-radius: 12px;
   transition: all 0.2s ease;
   font-weight: 500;
@@ -181,7 +186,7 @@ button.answer-wrong:hover {
 
 button:hover {
   background: #efefef;
-  color: #111111;
+  color: var(--color-text);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
@@ -195,7 +200,7 @@ button:active {
   font-size: 1.3em;
   font-weight: bold;
   min-height: 1.5em;
-  color: #111111;
+  color: var(--color-text);
 }
 
 #nextBtn {
@@ -203,8 +208,8 @@ button:active {
   padding: 0.8em 2em;
   font-size: 1.1em;
   display: none;
-  background: #00247D;
-  color: #ffffff;
+  background: var(--color-brand);
+  color: var(--color-bg);
   border: none;
   border-radius: 10px;
   font-weight: 700;
@@ -212,7 +217,7 @@ button:active {
 }
 
 #nextBtn:hover {
-  background: #001a5a;
+  background: var(--color-brand-dark);
   transform: translateY(-2px);
   box-shadow: 0 8px 18px rgba(0,0,0,0.12);
 }
@@ -258,11 +263,11 @@ button:active {
 }
 
 .back-btn, .coffee-btn {
-  color: #00247D;
+  color: var(--color-brand);
   text-decoration: none;
   padding: 0.8em 1.5em;
   border-radius: 25px;
-  background: #ffffff;
+  background: var(--color-bg);
   border: 1px solid rgba(0, 36, 125, 0.35);
   transition: all 0.2s ease;
   font-size: 1em;
@@ -286,7 +291,7 @@ body.quiz-page {
   --symbol-font-size: 4.6em;
   --symbol-margin: 0.6em 0 0.6em 0;
   --symbol-font-weight: 800;
-  --symbol-color: #111111;
+  --symbol-color: var(--color-text);
   --symbol-text-shadow: none;
   --symbol-line-height: 1.2;
   --options-max-width: 620px;
@@ -342,7 +347,7 @@ body.home .quiz-container {
 }
 
 body.home .quiz-card {
-  background: #ffffff;
+  background: var(--color-bg);
   backdrop-filter: none;
   border-radius: 16px;
   padding: 2em;
@@ -355,14 +360,14 @@ body.home .quiz-card {
 
 body.home .quiz-card:hover {
   transform: translateY(-4px);
-  background: #ffffff;
+  background: var(--color-bg);
   box-shadow: 0 16px 32px rgba(0,0,0,0.08);
 }
 
 body.home .quiz-card h2 {
   margin: 0 0 1em 0;
   font-size: 1.8em;
-  color: #111111;
+  color: var(--color-text);
 }
 
 body.home .quiz-card p {
@@ -382,8 +387,8 @@ body.home .quiz-card .features li {
 }
 
 .start-btn {
-  background: #A51931;
-  color: #ffffff;
+  background: var(--color-accent);
+  color: var(--color-bg);
   border: none;
   padding: 1em 2em;
   border-radius: 10px;
@@ -417,7 +422,7 @@ body.home .socials {
 body.home .socials h2 {
   margin: 0 0 0.8em 0;
   font-size: 1.2em;
-  color: #111111;
+  color: var(--color-text);
 }
 
 body.home .socials .avatar {
@@ -439,7 +444,7 @@ body.home .socials .social-links {
 
 body.home .socials a.chip {
   text-decoration: none;
-  color: #111111;
+  color: var(--color-text);
 }
 
 .today-card {
@@ -562,7 +567,7 @@ button .emoji {
   gap: 1.5em;
   margin-bottom: 0.5em;
   font-size: 0.9em;
-  color: #111111;
+  color: var(--color-text);
 }
 
 .legend-item {
@@ -672,8 +677,8 @@ body.questions-quiz .correct-line {
   font-size: 1em;
   border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.12);
-  background: #ffffff;
-  color: #111111;
+  background: var(--color-bg);
+  color: var(--color-text);
   outline: none;
   transition: all 0.2s ease;
   backdrop-filter: none;
@@ -697,15 +702,15 @@ body.questions-quiz .correct-line {
   font-size: 0.95em;
   border-radius: 999px;
   border: 1px solid rgba(0, 0, 0, 0.12);
-  background: #ffffff;
-  color: #111111;
+  background: var(--color-bg);
+  color: var(--color-text);
   cursor: pointer;
   transition: all 0.2s ease;
   backdrop-filter: none;
 }
 
 .chip:hover { background: #f5f7fb; transform: translateY(-1px); }
-.chip.active { background: rgba(0, 36, 125, 0.08); border-color: rgba(0, 36, 125, 0.5); color: #00247D; }
+.chip.active { background: rgba(0, 36, 125, 0.08); border-color: rgba(0, 36, 125, 0.5); color: var(--color-brand); }
 
 .empty {
   opacity: 0.9;
