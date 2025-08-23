@@ -12,7 +12,12 @@
   }
   
   function fetchJSON(url) {
-    return fetch(url).then(function(r) { return r.json(); });
+    return fetch(url).then(function(r) {
+      if (!r || !r.ok) {
+        throw new Error('Failed to fetch ' + url + ' (' + (r && r.status) + ')');
+      }
+      return r.json();
+    });
   }
 
   // Simple in-memory cache for JSON fetches
@@ -34,26 +39,54 @@
   }
 
   function pickUniqueChoices(pool, count, keyFn, seed) {
-    const choices = [];
-    const usedKeys = new Set();
+    try {
+      const sourceArray = Array.isArray(pool) ? pool : [];
+      const requestedCount = Math.max(0, count || 0);
 
-    if (seed != null) {
-      choices.push(seed);
-      try { usedKeys.add(String(keyFn(seed))); } catch (e) { logError(e, 'Utils.pickUniqueChoices keyFn(seed)'); }
-    }
+      const getKey = function(item) {
+        try { return String(keyFn ? keyFn(item) : item); } catch (e) { return null; }
+      };
 
-    while (choices.length < count && choices.length < pool.length) {
-      const candidate = pickRandom(pool);
-      let key = null;
-      try { key = String(keyFn(candidate)); } catch (e) { logError(e, 'Utils.pickUniqueChoices keyFn(candidate)'); }
-      if (key == null) continue;
-      if (!usedKeys.has(key)) {
-        usedKeys.add(key);
+      const choices = [];
+      const usedKeys = new Set();
+
+      if (seed != null) {
+        const seedKey = getKey(seed);
+        if (seedKey != null && !usedKeys.has(seedKey)) {
+          choices.push(seed);
+          usedKeys.add(seedKey);
+        }
+      }
+
+      // Build a pool of unique-by-key items excluding any with the same key as the seed
+      const uniquePool = [];
+      const seen = new Set(usedKeys);
+      for (let i = 0; i < sourceArray.length; i++) {
+        const key = getKey(sourceArray[i]);
+        if (key == null) continue;
+        if (!seen.has(key)) {
+          seen.add(key);
+          uniquePool.push(sourceArray[i]);
+        }
+      }
+
+      const maxAvailable = choices.length + uniquePool.length;
+      const target = Math.min(requestedCount, maxAvailable);
+
+      // Random sample without replacement from the unique pool
+      while (choices.length < target && uniquePool.length > 0) {
+        const idx = Math.floor(Math.random() * uniquePool.length);
+        const candidate = uniquePool.splice(idx, 1)[0];
         choices.push(candidate);
       }
-    }
 
-    return choices;
+      return choices;
+    } catch (e) {
+      logError(e, 'Utils.pickUniqueChoices');
+      const n = Math.max(0, count || 0);
+      const remainder = Array.isArray(pool) ? pool.slice(0, Math.max(0, n - (seed ? 1 : 0))) : [];
+      return seed != null ? [seed].concat(remainder) : remainder;
+    }
   }
 
   function hexToRgb(hex) {

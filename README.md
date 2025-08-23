@@ -234,6 +234,11 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 - `Utils.renderVowelSymbol(symbolEl, symbol)`
   - Render vowel symbols with the shaping‑safe placeholder behavior (ko kai replacement) and set `aria-label`.
 
+#### Utility behavior notes
+- `Utils.pickUniqueChoices(pool, count, keyFn, seed)` returns unique choices by key without infinite loops. It includes `seed` when provided and may return fewer than `count` if the pool lacks enough unique items.
+- `Utils.fetchJSONCached(url)` throws on non‑OK HTTP responses and caches successful fetches. Handle errors via `.catch(...)` or via `handleDataLoadError(...)` in `quiz-loader.js`.
+- `ThaiQuiz.setupQuiz` → `renderButtonContent(choice, state)` can return text or small HTML. If HTML tags are present, the engine assigns `innerHTML` to the button. Only return HTML from trusted content (datasets are static).
+
 #### Emoji rules (data-driven)
 
 - Add a file like `data/emoji-rules/foods.json` with an ordered list of objects `{ "pattern": "regex", "emoji": "🧪" }`.
