@@ -149,5 +149,14 @@
     "categories": ["Vocabulary","Beginner"],
     "bodyClass": "questions-quiz",
     "proTip": "• ‘wan’ = day, used before every day name<br>• Each day links to a planet and traditional color in Thai culture"
+  },
+  {
+    "id": "body-parts",
+    "title": "🧍‍♂️ Body Parts in Thai",
+    "href": "quiz.html?quiz=body-parts",
+    "description": "Practice common body parts with Thai script and phonetics.",
+    "bullets": ["English/Thai/phonetics","Emoji hints when available","Core anatomy words"],
+    "categories": ["Vocabulary","Beginner"],
+    "bodyClass": "questions-quiz"
   }
 ]

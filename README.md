@@ -33,6 +33,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Months & Seasons**: 12 months and Thailand’s seasons with Thai script, phonetics, and example sentences
 - **Tense Markers**: Thai time words and structures; examples after correct answers
 - **Days of the Week**: Thai day names with phonetics, planet, and color associations
+ - **Body Parts in Thai**: Common anatomy words with Thai script, phonetics, and emoji hints
 
 ### Quick start (local)
 
