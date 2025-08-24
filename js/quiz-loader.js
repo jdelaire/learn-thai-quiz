@@ -308,25 +308,7 @@
         setText('page-title', meta.title || 'ThaiQuest');
         setText('page-subtitle', meta.description || '');
         // Map categories to a default body class; allow overrides via metadata
-        const bodyClassMap = {
-          consonants: 'consonant-quiz',
-          vowels: 'vowel-quiz',
-          colors: 'color-quiz',
-          numbers: 'numbers-quiz',
-          time: 'time-quiz',
-          tones: 'questions-quiz',
-          questions: 'questions-quiz',
-          verbs: 'questions-quiz',
-          family: 'family-quiz',
-          classifiers: 'classifiers-quiz',
-          rooms: 'rooms-quiz',
-          jobs: 'jobs-quiz',
-          foods: 'foods-quiz',
-          months: 'questions-quiz',
-          tenses: 'questions-quiz',
-          days: 'questions-quiz'
-        };
-        const cls = (meta && meta.bodyClass) || bodyClassMap[quizId];
+        var cls = (meta && meta.bodyClass) || (Utils && typeof Utils.getBodyClass === 'function' ? Utils.getBodyClass(quizId) : null);
         if (cls) document.body.classList.add(cls);
         // Always add a generic per-quiz class as a fallback (e.g., foods -> foods-quiz)
         try { if (quizId) document.body.classList.add(quizId + '-quiz'); } catch (e) {}

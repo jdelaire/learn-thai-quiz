@@ -21,6 +21,9 @@
       return null;
     }
 
+    // Ensure options container is focusable for scoped keyboard events
+    try { if (!optionsEl.hasAttribute('tabindex')) optionsEl.setAttribute('tabindex', '0'); } catch (e) {}
+
     const state = {
       currentAnswer: null,
       questionsAnswered: 0,
@@ -35,6 +38,16 @@
       statsEl.textContent = `Questions: ${state.questionsAnswered} | Correct: ${state.correctAnswers} | Accuracy: ${accuracy}%`;
     }
 
+    function showNoDataMessage() {
+      try {
+        const msg = (global && global.Utils && global.Utils.i18n && global.Utils.i18n.noDataMessage) || 'No data available for this quiz.';
+        symbolEl.textContent = msg;
+        symbolEl.setAttribute('aria-label', msg);
+        optionsEl.innerHTML = '';
+        nextBtn.style.display = 'none';
+      } catch (_) {}
+    }
+
     function pickQuestion() {
       if (state.autoAdvanceTimerId != null) {
         clearTimeout(state.autoAdvanceTimerId);
@@ -46,12 +59,17 @@
 
       const round = (typeof config.pickRound === 'function') ? config.pickRound(state) : null;
       if (!round || !round.answer || !Array.isArray(round.choices)) {
+        showNoDataMessage();
         return;
       }
 
       const answer = round.answer;
       const choices = shuffle(round.choices.slice());
       state.currentAnswer = answer;
+
+      if (typeof config.onRoundStart === 'function') {
+        try { config.onRoundStart({ answer: answer, choices: choices, state: state }); } catch (_) {}
+      }
 
       if (typeof config.renderSymbol === 'function') {
         config.renderSymbol(answer, { symbolEl, optionsEl, feedbackEl, nextBtn, statsEl }, state);
@@ -151,7 +169,7 @@
     }
 
     if (config.enableKeyboard !== false) {
-      document.addEventListener('keydown', (e) => {
+      optionsEl.addEventListener('keydown', (e) => {
         if (/^[1-9]$/.test(e.key)) {
           const buttons = optionsEl.querySelectorAll('button');
           const index = parseInt(e.key, 10) - 1;
