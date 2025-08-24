@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  const defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
+  const defaultElements = (typeof Utils !== 'undefined' && Utils.defaultElements) ? Utils.defaultElements : { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
 
   function handleDataLoadError(err) {
     const fb = document.getElementById('feedback');
@@ -50,12 +50,16 @@
               els.symbolEl.textContent = answer.symbol;
               els.symbolEl.setAttribute('aria-label', 'Thai consonant symbol: ' + answer.symbol);
             },
-            renderButtonContent: function(choice, state) {
-              const hideEmojis = state.correctAnswers >= 50;
-              return hideEmojis ? ('' + choice.name) : ('<span class="emoji">' + choice.emoji + '</span> ' + choice.name);
-            },
+            renderButtonContent: function(choice) { return String(choice.name); },
             ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.name + ' (' + choice.meaning + ')'; },
-            decorateButton: function(btn, choice) { btn.classList.add(choice.class + '-class'); },
+            decorateButton: function(btn, choice, state) {
+              try { btn.classList.add(choice.class + '-class'); } catch (e) {}
+              if (state.correctAnswers >= 50) return;
+              const span = document.createElement('span');
+              span.className = 'emoji';
+              span.textContent = choice.emoji;
+              btn.insertBefore(span, btn.firstChild);
+            },
             isCorrect: function(choice, answer) { return choice.name === answer.name; }
           });
         };
@@ -128,8 +132,7 @@
       const data = results[0] || [];
       return {
         data: data,
-        answerKey: 'phonetic',
-        labelPrefix: 'Number and Thai: ',
+        labelPrefix: (Utils && Utils.i18n && Utils.i18n.labelNumberThaiPrefix) || 'Number and Thai: ',
         buildSymbol: function(a){ return { english: String(a.number || ''), thai: a.thai || '' }; }
       };
     }),
@@ -142,8 +145,6 @@
       const pool = keyWords.concat(timeFormats, examples);
       return {
         data: pool,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: englishOf(a), thai: a.thai || '' }; }
       };
     }),
@@ -152,8 +153,7 @@
       const data = results[0] || [];
       return {
         data: data,
-        answerKey: 'phonetic',
-        labelPrefix: 'Class + Marker + Length: ',
+        labelPrefix: (Utils && Utils.i18n && Utils.i18n.labelClassMarkerLengthPrefix) || 'Class + Marker + Length: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
       };
     }),
@@ -163,9 +163,7 @@
       const examples = results[1] || {};
       return {
         data: data,
-        examples: examples,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: '
+        examples: examples
       };
     }),
 
@@ -177,8 +175,6 @@
       return {
         data: data,
         examples: examples,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -186,9 +182,7 @@
     family: makeStandardQuizBuilder('data/family.json', function(results) {
       const data = results[0] || [];
       return {
-        data: data,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: '
+        data: data
       };
     }),
 
@@ -200,8 +194,6 @@
       return {
         data: data,
         examples: examples,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -212,8 +204,6 @@
       const data = results[1] || [];
       return {
         data: data,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -227,8 +217,6 @@
         data: data,
         examples: examples,
         exampleKey: function(a){ return a.id || a.english; },
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -241,8 +229,6 @@
       return {
         data: data,
         examples: examples,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -256,8 +242,6 @@
         data: data,
         examples: examples,
         exampleKey: function(a){ return a.id || a.english; },
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -270,8 +254,6 @@
       return {
         data: data,
         examples: examples,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -280,8 +262,6 @@
       const data = results[0] || [];
       return {
         data: data,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){
           var eng = (a && a.english) ? (a.english + (a.planet ? ' (' + a.planet + ')' : '')) : '';
           return { english: eng, thai: (a && a.thai) || '', emoji: (a && a.emoji) || '' };
@@ -296,8 +276,6 @@
       const data = results[1] || [];
       return {
         data: data,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     })
@@ -330,25 +308,7 @@
         setText('page-title', meta.title || 'ThaiQuest');
         setText('page-subtitle', meta.description || '');
         // Map categories to a default body class; allow overrides via metadata
-        const bodyClassMap = {
-          consonants: 'consonant-quiz',
-          vowels: 'vowel-quiz',
-          colors: 'color-quiz',
-          numbers: 'numbers-quiz',
-          time: 'time-quiz',
-          tones: 'questions-quiz',
-          questions: 'questions-quiz',
-          verbs: 'questions-quiz',
-          family: 'family-quiz',
-          classifiers: 'classifiers-quiz',
-          rooms: 'rooms-quiz',
-          jobs: 'jobs-quiz',
-          foods: 'foods-quiz',
-          months: 'questions-quiz',
-          tenses: 'questions-quiz',
-          days: 'questions-quiz'
-        };
-        const cls = (meta && meta.bodyClass) || bodyClassMap[quizId];
+        var cls = (meta && meta.bodyClass) || (Utils && typeof Utils.getBodyClass === 'function' ? Utils.getBodyClass(quizId) : null);
         if (cls) document.body.classList.add(cls);
         // Always add a generic per-quiz class as a fallback (e.g., foods -> foods-quiz)
         try { if (quizId) document.body.classList.add(quizId + '-quiz'); } catch (e) {}
@@ -387,9 +347,7 @@
               }
               try {
                 ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-                  data: data,
-                  answerKey: 'phonetic',
-                  labelPrefix: 'English and Thai: '
+                  data: data
                 })));
               } catch (e) { handleDataLoadError(e); }
             }).catch(function(){

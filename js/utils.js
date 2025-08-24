@@ -12,7 +12,7 @@
   }
   
   function fetchJSON(url) {
-    return fetch(url).then(function(r) { return r.json(); });
+    return fetch(url).then(function(r) { if (!r.ok) { throw new Error('HTTP ' + r.status + ' for ' + url); } return r.json(); });
   }
 
   // Simple in-memory cache for JSON fetches
@@ -150,6 +150,39 @@
     return function(obj) { return obj && obj[propName]; };
   }
 
+  // i18n labels and body class helper
+  const i18n = {
+    answerPrefix: 'Answer: ',
+    exampleLabel: 'Example',
+    labelEnglishThaiPrefix: 'English and Thai: ',
+    labelNumberThaiPrefix: 'Number and Thai: ',
+    labelClassMarkerLengthPrefix: 'Class + Marker + Length: ',
+    noDataMessage: 'No data available for this quiz.'
+  };
+
+  function getBodyClass(quizId) {
+    const map = {
+      consonants: 'consonant-quiz',
+      vowels: 'vowel-quiz',
+      colors: 'color-quiz',
+      numbers: 'numbers-quiz',
+      time: 'time-quiz',
+      tones: 'questions-quiz',
+      questions: 'questions-quiz',
+      verbs: 'questions-quiz',
+      family: 'family-quiz',
+      classifiers: 'classifiers-quiz',
+      rooms: 'rooms-quiz',
+      jobs: 'jobs-quiz',
+      foods: 'foods-quiz',
+      months: 'questions-quiz',
+      tenses: 'questions-quiz',
+      days: 'questions-quiz',
+      'body-parts': 'questions-quiz'
+    };
+    return map[quizId] || null;
+  }
+
   // Creates a standard quiz configuration block for ThaiQuiz.setupQuiz
   // params: { data, examples?, exampleKey?(answer)->string, answerKey='phonetic', buildSymbol(answer) -> { english, thai, emoji? }, choices=4, labelPrefix='English and Thai: ' }
   function createStandardQuiz(params) {
@@ -159,10 +192,11 @@
     const answerKey = (params && params.answerKey) || 'phonetic';
     const buildSymbol = (params && params.buildSymbol) || function(a){ return { english: String(a && a.english || ''), thai: String(a && a.thai || '') }; };
     const choices = (params && params.choices) || 4;
-    const labelPrefix = (params && params.labelPrefix) || 'English and Thai: ';
+    const labelPrefix = (params && params.labelPrefix) || ((global && global.Utils && global.Utils.i18n && global.Utils.i18n.labelEnglishThaiPrefix) || 'English and Thai: ');
 
     return {
       pickRound: function() {
+        if (!Array.isArray(data) || data.length === 0) return null;
         const answer = pickRandom(data);
         const uniqueChoices = pickUniqueChoices(data, choices, byProp(answerKey), answer);
         return { answer: answer, choices: uniqueChoices };
@@ -179,7 +213,7 @@
         } catch (e) { logError(e, 'Utils.createStandardQuiz.renderSymbol'); }
       },
       renderButtonContent: function(choice) { return choice && choice[answerKey]; },
-      ariaLabelForChoice: function(choice) { return 'Answer: ' + (choice && choice[answerKey]); },
+      ariaLabelForChoice: function(choice) { return ((global && global.Utils && global.Utils.i18n && global.Utils.i18n.answerPrefix) || 'Answer: ') + (choice && choice[answerKey]); },
       isCorrect: function(choice, answer) { return (choice && choice[answerKey]) === (answer && answer[answerKey]); },
       onAnswered: function(ctx) {
         if (!examples) return;
@@ -247,9 +281,29 @@
       const english = String((params && params.english) || '');
       const thai = String((params && params.thai) || '');
       const emoji = String((params && params.emoji) || '');
-      const ariaPrefix = String((params && params.ariaPrefix) || 'English and Thai: ');
-      const emojiLine = emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '';
-      symbolEl.innerHTML = emojiLine + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+      const ariaPrefix = String((params && params.ariaPrefix) || ((global && global.Utils && global.Utils.i18n && global.Utils.i18n.labelEnglishThaiPrefix) || 'English and Thai: '));
+
+      // Clear previous content
+      while (symbolEl.firstChild) symbolEl.removeChild(symbolEl.firstChild);
+
+      if (emoji) {
+        const emojiLine = document.createElement('div');
+        emojiLine.className = 'emoji-line';
+        emojiLine.setAttribute('aria-hidden', 'true');
+        emojiLine.textContent = emoji;
+        symbolEl.appendChild(emojiLine);
+      }
+
+      // English text node
+      symbolEl.appendChild(document.createTextNode(english));
+
+      if (thai) {
+        const sep = document.createElement('span');
+        sep.className = 'secondary';
+        sep.textContent = thai;
+        symbolEl.appendChild(sep);
+      }
+
       symbolEl.setAttribute('aria-label', ariaPrefix + english + (thai ? ' — ' + thai : ''));
     } catch (e) { logError(e, 'Utils.renderEnglishThaiSymbol'); }
   }
@@ -257,9 +311,26 @@
   // Renders an example block into the feedback element
   function renderExample(feedbackEl, exampleText) {
     try {
-      feedbackEl.innerHTML = exampleText
-        ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + exampleText + '</div></div>'
-        : '';
+      // Clear previous content
+      while (feedbackEl.firstChild) feedbackEl.removeChild(feedbackEl.firstChild);
+
+      if (!exampleText) return;
+
+      const card = document.createElement('div');
+      card.className = 'example';
+      card.setAttribute('aria-label', 'Example sentence');
+
+      const label = document.createElement('span');
+      label.className = 'label';
+      label.textContent = ((global && global.Utils && global.Utils.i18n && global.Utils.i18n.exampleLabel) || 'Example');
+
+      const text = document.createElement('div');
+      text.className = 'text';
+      text.textContent = String(exampleText);
+
+      card.appendChild(label);
+      card.appendChild(text);
+      feedbackEl.appendChild(card);
     } catch (e) { logError(e, 'Utils.renderExample'); }
   }
 
@@ -303,9 +374,17 @@
       if (symbolAnchor && symbolAnchor.parentNode && !document.querySelector('.legend-chips')) {
         const legend = document.createElement('div');
         legend.className = 'legend legend-chips';
-        legend.innerHTML = '<span class="class-chip middle-class">Middle Class</span>' +
-                           '<span class="class-chip high-class">High Class</span>' +
-                           '<span class="class-chip low-class">Low Class</span>';
+        var chips = [
+          { text: 'Middle Class', cls: 'middle-class' },
+          { text: 'High Class', cls: 'high-class' },
+          { text: 'Low Class', cls: 'low-class' }
+        ];
+        chips.forEach(function(c){
+          var span = document.createElement('span');
+          span.className = 'class-chip ' + c.cls;
+          span.textContent = c.text;
+          legend.appendChild(span);
+        });
         symbolAnchor.parentNode.insertBefore(legend, symbolAnchor);
       }
     } catch (e) { logError(e, 'Utils.insertConsonantLegend'); }
@@ -319,6 +398,9 @@
       symbolEl.setAttribute('aria-label', 'Thai vowel symbol: ' + raw);
     } catch (e) { logError(e, 'Utils.renderVowelSymbol'); }
   }
+
+  // Provide a shared default elements config
+  var defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
 
   global.Utils = {
     fetchJSON: fetchJSON,
@@ -347,6 +429,11 @@
     loadEmojiGetter: loadEmojiGetter,
     insertProTip: insertProTip,
     insertConsonantLegend: insertConsonantLegend,
-    renderVowelSymbol: renderVowelSymbol
+    renderVowelSymbol: renderVowelSymbol,
+    // i18n and class map
+    i18n: i18n,
+    getBodyClass: getBodyClass,
+    // shared default elements
+    defaultElements: defaultElements
   };
 })(window);

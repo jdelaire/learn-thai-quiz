@@ -21,6 +21,9 @@
       return null;
     }
 
+    // Ensure options container is focusable for scoped keyboard events
+    try { if (!optionsEl.hasAttribute('tabindex')) optionsEl.setAttribute('tabindex', '0'); } catch (e) {}
+
     const state = {
       currentAnswer: null,
       questionsAnswered: 0,
@@ -35,6 +38,16 @@
       statsEl.textContent = `Questions: ${state.questionsAnswered} | Correct: ${state.correctAnswers} | Accuracy: ${accuracy}%`;
     }
 
+    function showNoDataMessage() {
+      try {
+        const msg = (global && global.Utils && global.Utils.i18n && global.Utils.i18n.noDataMessage) || 'No data available for this quiz.';
+        symbolEl.textContent = msg;
+        symbolEl.setAttribute('aria-label', msg);
+        optionsEl.innerHTML = '';
+        nextBtn.style.display = 'none';
+      } catch (_) {}
+    }
+
     function pickQuestion() {
       if (state.autoAdvanceTimerId != null) {
         clearTimeout(state.autoAdvanceTimerId);
@@ -46,12 +59,18 @@
 
       const round = (typeof config.pickRound === 'function') ? config.pickRound(state) : null;
       if (!round || !round.answer || !Array.isArray(round.choices)) {
+        showNoDataMessage();
         return;
       }
 
       const answer = round.answer;
       const choices = shuffle(round.choices.slice());
       state.currentAnswer = answer;
+
+      if (typeof config.onRoundStart === 'function') {
+        try { config.onRoundStart({ answer: answer, choices: choices, state: state }); }
+        catch (e) { try { global.Utils && global.Utils.logError && global.Utils.logError(e, 'quiz.js: onRoundStart'); } catch (_) {} }
+      }
 
       if (typeof config.renderSymbol === 'function') {
         config.renderSymbol(answer, { symbolEl, optionsEl, feedbackEl, nextBtn, statsEl }, state);
@@ -70,10 +89,11 @@
 
       choices.forEach((choice) => {
         const btn = document.createElement('button');
+        try { btn.type = 'button'; } catch (e) {}
         if (typeof config.renderButtonContent === 'function') {
           const content = config.renderButtonContent(choice, state);
-          if (typeof content === 'string' && /<[^>]+>/.test(content)) {
-            btn.innerHTML = content;
+          if (content && typeof content === 'object' && 'nodeType' in content) {
+            btn.appendChild(content);
           } else {
             btn.textContent = (content == null) ? '' : String(content);
           }
@@ -142,16 +162,19 @@
           updateStats();
 
           if (typeof config.onAnswered === 'function') {
-            try { config.onAnswered({ correct: isCorrect, choice, answer, state }); } catch (_) {}
+            try { config.onAnswered({ correct: isCorrect, choice, answer, state }); }
+            catch (e) { try { global.Utils && global.Utils.logError && global.Utils.logError(e, 'quiz.js: onAnswered'); } catch (_) {} }
           }
         };
 
         optionsEl.appendChild(btn);
       });
+
+      try { optionsEl.focus(); } catch (e) {}
     }
 
     if (config.enableKeyboard !== false) {
-      document.addEventListener('keydown', (e) => {
+      optionsEl.addEventListener('keydown', (e) => {
         if (/^[1-9]$/.test(e.key)) {
           const buttons = optionsEl.querySelectorAll('button');
           const index = parseInt(e.key, 10) - 1;
