@@ -68,7 +68,8 @@
       state.currentAnswer = answer;
 
       if (typeof config.onRoundStart === 'function') {
-        try { config.onRoundStart({ answer: answer, choices: choices, state: state }); } catch (_) {}
+        try { config.onRoundStart({ answer: answer, choices: choices, state: state }); }
+        catch (e) { try { global.Utils && global.Utils.logError && global.Utils.logError(e, 'quiz.js: onRoundStart'); } catch (_) {} }
       }
 
       if (typeof config.renderSymbol === 'function') {
@@ -88,6 +89,7 @@
 
       choices.forEach((choice) => {
         const btn = document.createElement('button');
+        try { btn.type = 'button'; } catch (e) {}
         if (typeof config.renderButtonContent === 'function') {
           const content = config.renderButtonContent(choice, state);
           if (content && typeof content === 'object' && 'nodeType' in content) {
@@ -160,12 +162,15 @@
           updateStats();
 
           if (typeof config.onAnswered === 'function') {
-            try { config.onAnswered({ correct: isCorrect, choice, answer, state }); } catch (_) {}
+            try { config.onAnswered({ correct: isCorrect, choice, answer, state }); }
+            catch (e) { try { global.Utils && global.Utils.logError && global.Utils.logError(e, 'quiz.js: onAnswered'); } catch (_) {} }
           }
         };
 
         optionsEl.appendChild(btn);
       });
+
+      try { optionsEl.focus(); } catch (e) {}
     }
 
     if (config.enableKeyboard !== false) {

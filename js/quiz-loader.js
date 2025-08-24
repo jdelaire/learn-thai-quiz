@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  const defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
+  const defaultElements = (typeof Utils !== 'undefined' && Utils.defaultElements) ? Utils.defaultElements : { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
 
   function handleDataLoadError(err) {
     const fb = document.getElementById('feedback');
@@ -132,7 +132,7 @@
       const data = results[0] || [];
       return {
         data: data,
-        labelPrefix: 'Number and Thai: ',
+        labelPrefix: (Utils && Utils.i18n && Utils.i18n.labelNumberThaiPrefix) || 'Number and Thai: ',
         buildSymbol: function(a){ return { english: String(a.number || ''), thai: a.thai || '' }; }
       };
     }),
@@ -153,7 +153,7 @@
       const data = results[0] || [];
       return {
         data: data,
-        labelPrefix: 'Class + Marker + Length: ',
+        labelPrefix: (Utils && Utils.i18n && Utils.i18n.labelClassMarkerLengthPrefix) || 'Class + Marker + Length: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
       };
     }),

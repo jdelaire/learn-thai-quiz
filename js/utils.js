@@ -374,9 +374,17 @@
       if (symbolAnchor && symbolAnchor.parentNode && !document.querySelector('.legend-chips')) {
         const legend = document.createElement('div');
         legend.className = 'legend legend-chips';
-        legend.innerHTML = '<span class="class-chip middle-class">Middle Class</span>' +
-                           '<span class="class-chip high-class">High Class</span>' +
-                           '<span class="class-chip low-class">Low Class</span>';
+        var chips = [
+          { text: 'Middle Class', cls: 'middle-class' },
+          { text: 'High Class', cls: 'high-class' },
+          { text: 'Low Class', cls: 'low-class' }
+        ];
+        chips.forEach(function(c){
+          var span = document.createElement('span');
+          span.className = 'class-chip ' + c.cls;
+          span.textContent = c.text;
+          legend.appendChild(span);
+        });
         symbolAnchor.parentNode.insertBefore(legend, symbolAnchor);
       }
     } catch (e) { logError(e, 'Utils.insertConsonantLegend'); }
@@ -390,6 +398,9 @@
       symbolEl.setAttribute('aria-label', 'Thai vowel symbol: ' + raw);
     } catch (e) { logError(e, 'Utils.renderVowelSymbol'); }
   }
+
+  // Provide a shared default elements config
+  var defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
 
   global.Utils = {
     fetchJSON: fetchJSON,
@@ -421,6 +432,8 @@
     renderVowelSymbol: renderVowelSymbol,
     // i18n and class map
     i18n: i18n,
-    getBodyClass: getBodyClass
+    getBodyClass: getBodyClass,
+    // shared default elements
+    defaultElements: defaultElements
   };
 })(window);

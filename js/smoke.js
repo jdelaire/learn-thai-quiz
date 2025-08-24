@@ -183,6 +183,46 @@
     }
   }
 
+  async function testKeyboardFocus(serverRoot, quizId) {
+    const name = 'Quiz "' + quizId + '" options focusable + 1-9 works';
+    const iframe = createFrame();
+    try {
+      const url = serverRoot + '/quiz.html?quiz=' + encodeURIComponent(quizId);
+      const nav = await withTimeout(navigateFrame(iframe, url), 6000, 'Quiz did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      const doc = nav.doc;
+      const win = nav.win;
+
+      const options = safeQuery(doc, '#options');
+      const stats = safeQuery(doc, '#stats');
+      if (!options || !stats) return { name: name, ok: false, details: 'Missing options or stats' };
+
+      try { options.focus(); } catch (_) {}
+      // Wait for focus to settle
+      await wait(50);
+      const focused = doc.activeElement === options;
+      if (!focused) return { name: name, ok: false, details: '#options not focusable' };
+
+      // Simulate pressing "1"
+      const evt = new win.KeyboardEvent('keydown', { key: '1', bubbles: true });
+      options.dispatchEvent(evt);
+
+      // Expect questions count to increment to 1 shortly
+      let start = Date.now();
+      while (Date.now() - start < 1500) {
+        if ((stats.textContent || '').indexOf('Questions: 1') !== -1) {
+          return { name: name, ok: true };
+        }
+        await wait(50);
+      }
+      return { name: name, ok: false, details: 'Keyboard 1 did not trigger click' };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      try { iframe.remove(); } catch (_) {}
+    }
+  }
+
   async function runAll() {
     const results = [];
     const root = (new URL('.', window.location.href)).href.replace(/\/$/, '');
@@ -191,6 +231,8 @@
     const quizIds = await discoverQuizIds(root);
     for (let i = 0; i < quizIds.length; i++) {
       results.push(await testQuiz(root, quizIds[i], { minChoices: 4 }));
+      // Add a focused keyboard test for the first discovered quiz only (fast)
+      if (i === 0) results.push(await testKeyboardFocus(root, quizIds[i]));
     }
 
     return results;
