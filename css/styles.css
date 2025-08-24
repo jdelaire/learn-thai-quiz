@@ -195,6 +195,10 @@ button:active {
   transform: translateY(0);
 }
 
+.options:focus {
+  outline: none;
+}
+
 #feedback {
   margin-top: 1em;
   font-size: 1.3em;
