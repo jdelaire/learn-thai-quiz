@@ -287,6 +287,19 @@
           return { english: eng, thai: (a && a.thai) || '', emoji: (a && a.emoji) || '' };
         }
       };
+    }),
+
+    // Body Parts in Thai — standard vocab quiz with emoji hints
+    'body-parts': makeStandardQuizBuilder(['data/emoji-rules/body-parts.json','data/body-parts.json'], function(results) {
+      const rules = results[0] || [];
+      const getEmoji = Utils.createEmojiGetter(rules);
+      const data = results[1] || [];
+      return {
+        data: data,
+        answerKey: 'phonetic',
+        labelPrefix: 'English and Thai: ',
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+      };
     })
   };
 
