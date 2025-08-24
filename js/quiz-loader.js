@@ -128,7 +128,6 @@
       const data = results[0] || [];
       return {
         data: data,
-        answerKey: 'phonetic',
         labelPrefix: 'Number and Thai: ',
         buildSymbol: function(a){ return { english: String(a.number || ''), thai: a.thai || '' }; }
       };
@@ -142,8 +141,6 @@
       const pool = keyWords.concat(timeFormats, examples);
       return {
         data: pool,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: englishOf(a), thai: a.thai || '' }; }
       };
     }),
@@ -152,7 +149,6 @@
       const data = results[0] || [];
       return {
         data: data,
-        answerKey: 'phonetic',
         labelPrefix: 'Class + Marker + Length: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
       };
@@ -163,9 +159,7 @@
       const examples = results[1] || {};
       return {
         data: data,
-        examples: examples,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: '
+        examples: examples
       };
     }),
 
@@ -177,8 +171,6 @@
       return {
         data: data,
         examples: examples,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -186,9 +178,7 @@
     family: makeStandardQuizBuilder('data/family.json', function(results) {
       const data = results[0] || [];
       return {
-        data: data,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: '
+        data: data
       };
     }),
 
@@ -200,8 +190,6 @@
       return {
         data: data,
         examples: examples,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -212,8 +200,6 @@
       const data = results[1] || [];
       return {
         data: data,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -227,8 +213,6 @@
         data: data,
         examples: examples,
         exampleKey: function(a){ return a.id || a.english; },
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -241,8 +225,6 @@
       return {
         data: data,
         examples: examples,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -256,8 +238,6 @@
         data: data,
         examples: examples,
         exampleKey: function(a){ return a.id || a.english; },
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -270,8 +250,6 @@
       return {
         data: data,
         examples: examples,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     }),
@@ -280,8 +258,6 @@
       const data = results[0] || [];
       return {
         data: data,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){
           var eng = (a && a.english) ? (a.english + (a.planet ? ' (' + a.planet + ')' : '')) : '';
           return { english: eng, thai: (a && a.thai) || '', emoji: (a && a.emoji) || '' };
@@ -296,8 +272,6 @@
       const data = results[1] || [];
       return {
         data: data,
-        answerKey: 'phonetic',
-        labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
       };
     })
@@ -387,9 +361,7 @@
               }
               try {
                 ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
-                  data: data,
-                  answerKey: 'phonetic',
-                  labelPrefix: 'English and Thai: '
+                  data: data
                 })));
               } catch (e) { handleDataLoadError(e); }
             }).catch(function(){
