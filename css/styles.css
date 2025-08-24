@@ -53,7 +53,7 @@ h1 {
 
 /* Modern app header */
 .app-header {
-  margin: 0 auto 2em;
+  margin: 0 auto 0;
   max-width: 920px;
   width: 100%;
   padding-top: calc(env(safe-area-inset-top, 0px) + 0.5em);
@@ -63,7 +63,7 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 0.8em;
-  padding: 0.75em 1em;
+  padding: 0;
   background: transparent;
   border: 0;
   border-radius: 0;
@@ -477,7 +477,7 @@ body.home .socials a.chip {
 }
 
 .today-heading {
-  font-size: 0.8em;
+  font-size: 0.7em;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   opacity: 0.9;
@@ -486,17 +486,17 @@ body.home .socials a.chip {
   align-items: center;
   gap: 0.4em;
 }
-.today-icon { font-size: 1.05em; line-height: 1; }
+.today-icon { font-size: 0.9em; line-height: 1; }
 .today-label { vertical-align: middle; }
 
 .today-thai {
-  font-size: clamp(1.35em, 4.2vw, 1.8em);
+  font-size: clamp(1.1em, 3.5vw, 1.5em);
   font-weight: 800;
   line-height: 1.15;
 }
 
 .today-phonetic {
-  font-size: clamp(0.95em, 2.4vw, 1.1em);
+  font-size: clamp(0.8em, 2vw, 0.95em);
   opacity: 0.95;
   font-weight: 600;
 }
