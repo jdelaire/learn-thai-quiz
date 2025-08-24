@@ -5,7 +5,7 @@
     "href": "quiz.html?quiz=consonants",
     "description": "Learn all 44 Thai consonants with pronunciation, meanings, and tone classes.",
     "bullets": ["Color-coded tone classes","Emoji associations","Progress tracking"],
-    "categories": ["Alphabet","Beginner"],
+    "categories": ["Alphabet","Reading","Beginner"],
     "bodyClass": "consonant-quiz"
   },
   {
@@ -14,7 +14,7 @@
     "href": "quiz.html?quiz=vowels",
     "description": "Practice 32 Thai vowels with sound patterns and example words.",
     "bullets": ["Vowel symbols","Sound patterns"],
-    "categories": ["Alphabet","Beginner"],
+    "categories": ["Alphabet","Reading","Beginner"],
     "bodyClass": "vowel-quiz"
   },
   {
@@ -23,7 +23,7 @@
     "href": "quiz.html?quiz=colors",
     "description": "Practice Thai colors including light/dark modifiers with phonetics.",
     "bullets": ["Base colors","Light/Dark modifiers"],
-    "categories": ["Vocabulary"],
+    "categories": ["Vocabulary","Beginner"],
     "bodyClass": "color-quiz"
   },
   {
@@ -37,42 +37,14 @@
     "proTip": "Insert a classifier after the number when counting. e.g., 2 bottles = <strong>สองขวด</strong> (<em>sɔ̌ɔŋ khùat</em>), 5 people = <strong>ห้าคน</strong> (<em>hâa khon</em>)."
   },
   {
-    "id": "time",
-    "title": "⏰ Time Quiz",
-    "href": "quiz.html?quiz=time",
-    "description": "Telling time in Thai: keywords, formats, and common phrases.",
-    "bullets": ["Key words (นาที, โมง, ทุ่ม, ครึ่ง, ตรง)","AM/PM patterns (ตี…, …โมงเช้า, …ทุ่ม)","Practical sentences"],
-    "categories": ["Phrases"],
-    "bodyClass": "time-quiz"
-  },
-  {
-    "id": "questions",
-    "title": "❓ Questions Quiz",
-    "href": "quiz.html?quiz=questions",
-    "description": "Asking questions in Thai: core words and common patterns.",
-    "bullets": ["Question words (อะไร, ใคร, ที่ไหน, เมื่อไหร่, ทำไม)","Patterns (…ไหม, …ได้ไหม, เคย…ไหม)","How much/how many"],
-    "categories": ["Phrases","Beginner"],
-    "bodyClass": "questions-quiz",
-    "proTip": "• Most yes/no questions end in “mái?”<br>• Add “khráp/khà” for politeness at the end<br>• Use “bâaŋ” after question words for ‘what kinds / which ones’"
-  },
-  {
-    "id": "tones",
-    "title": "⚡ Thai Tone Markers",
-    "href": "quiz.html?quiz=tones",
-    "description": "Practice Thai tone outcomes by consonant class, tone mark, and vowel length.",
-    "bullets": ["Middle/High/Low consonant classes","Tone marks ( ่ ้ ๊ ๋ ) and none","Long vs short vowels"],
-    "categories": ["Pronunciation","Beginner"],
-    "bodyClass": "questions-quiz"
-  },
-  {
-    "id": "verbs",
-    "title": "🚀 Common Action Verbs",
-    "href": "quiz.html?quiz=verbs",
-    "description": "Practice essential Thai action verbs with English, Thai, and phonetics.",
-    "bullets": ["Core everyday verbs","Examples after correct answers","Emoji hints"],
+    "id": "days",
+    "title": "📅 Days of the Week",
+    "href": "quiz.html?quiz=days",
+    "description": "Thai days with phonetics, planet, and color associations.",
+    "bullets": ["Thai + phonetic","Planet and color associations","Emoji hints"],
     "categories": ["Vocabulary","Beginner"],
     "bodyClass": "questions-quiz",
-    "proTip": "• Common combos: ‘tham ŋaan’ (work), ‘àap-náam’ (shower)<br>• Use ‘bpai/maa’ for go/come; add places with ‘thîi’ (at)"
+    "proTip": "• 'wan' = day, used before every day name<br>• Each day links to a planet and traditional color in Thai culture"
   },
   {
     "id": "family",
@@ -84,12 +56,50 @@
     "bodyClass": "family-quiz"
   },
   {
+    "id": "body-parts",
+    "title": "🧍‍♂️ Body Parts in Thai",
+    "href": "quiz.html?quiz=body-parts",
+    "description": "Practice common body parts with Thai script and phonetics.",
+    "bullets": ["English/Thai/phonetics","Emoji hints when available","Core anatomy words"],
+    "categories": ["Vocabulary","Beginner"],
+    "bodyClass": "questions-quiz"
+  },
+  {
+    "id": "time",
+    "title": "⏰ Time Quiz",
+    "href": "quiz.html?quiz=time",
+    "description": "Telling time in Thai: keywords, formats, and common phrases.",
+    "bullets": ["Key words (นาที, โมง, ทุ่ม, ครึ่ง, ตรง)","AM/PM patterns (ตี…, …โมงเช้า, …ทุ่ม)","Practical sentences"],
+    "categories": ["Phrases","Intermediate"],
+    "bodyClass": "time-quiz"
+  },
+  {
+    "id": "questions",
+    "title": "❓ Questions Quiz",
+    "href": "quiz.html?quiz=questions",
+    "description": "Asking questions in Thai: core words and common patterns.",
+    "bullets": ["Question words (อะไร, ใคร, ที่ไหน, เมื่อไหร่, ทำไม)","Patterns (…ไหม, …ได้ไหม, เคย…ไหม)","How much/how many"],
+    "categories": ["Phrases","Intermediate"],
+    "bodyClass": "questions-quiz",
+    "proTip": "• Most yes/no questions end in \"mái?\"<br>• Add \"khráp/khà\" for politeness at the end<br>• Use \"bâaŋ\" after question words for 'what kinds / which ones'"
+  },
+  {
+    "id": "verbs",
+    "title": "🚀 Common Action Verbs",
+    "href": "quiz.html?quiz=verbs",
+    "description": "Practice essential Thai action verbs with English, Thai, and phonetics.",
+    "bullets": ["Core everyday verbs","Examples after correct answers","Emoji hints"],
+    "categories": ["Vocabulary","Intermediate"],
+    "bodyClass": "questions-quiz",
+    "proTip": "• Common combos: 'tham ŋaan' (work), 'àap-náam' (shower)<br>• Use 'bpai/maa' for go/come; add places with 'thîi' (at)"
+  },
+  {
     "id": "months",
     "title": "📆 Months & Seasons",
     "href": "quiz.html?quiz=months",
     "description": "Practice Thai months and seasons with Thai script, phonetics, and examples.",
     "bullets": ["12 months","Thailand's seasons","Examples after correct answers"],
-    "categories": ["Vocabulary","Beginner"],
+    "categories": ["Vocabulary","Intermediate"],
     "bodyClass": "questions-quiz"
   },
   {
@@ -98,9 +108,9 @@
     "href": "quiz.html?quiz=classifiers",
     "description": "Practice essential Thai classifiers with English, Thai, and phonetics.",
     "bullets": ["Core classifiers","Food & drinks classifiers","Usage tips"],
-    "categories": ["Vocabulary","Beginner"],
+    "categories": ["Vocabulary","Intermediate"],
     "bodyClass": "classifiers-quiz",
-    "proTip": "Structure: <strong>[noun] + [number] + [classifier]</strong><br>‘nɯ̀ŋ’ (one) is often omitted in casual speech."
+    "proTip": "Structure: <strong>[noun] + [number] + [classifier]</strong><br>'nɯ̀ŋ' (one) is often omitted in casual speech."
   },
   {
     "id": "rooms",
@@ -108,9 +118,9 @@
     "href": "quiz.html?quiz=rooms",
     "description": "Learn Thai room and house vocabulary with phonetics and example sentences.",
     "bullets": ["Rooms & spaces","House types","Usage examples"],
-    "categories": ["Vocabulary","Beginner"],
+    "categories": ["Vocabulary","Intermediate"],
     "bodyClass": "rooms-quiz",
-    "proTip": "• Use ‘hɔ̂ɔŋ’ (room) before specific room names<br>• ‘nai’ means ‘in’ — phǒm yùu nai hɔ̂ɔŋ nɔɔn (I’m in the bedroom)<br>• ‘thîi’ means ‘at’ — rao nâŋ lên thîi rá-biiang (We sit on the balcony)"
+    "proTip": "• Use 'hɔ̂ɔŋ' (room) before specific room names<br>• 'nai' means 'in' — phǒm yùu nai hɔ̂ɔŋ nɔɔn (I'm in the bedroom)<br>• 'thîi' means 'at' — rao nâŋ lên thîi rá-biiang (We sit on the balcony)"
   },
   {
     "id": "jobs",
@@ -118,18 +128,8 @@
     "href": "quiz.html?quiz=jobs",
     "description": "Practice Thai job and occupation vocabulary with phonetics.",
     "bullets": ["Common professions","Thai script + phonetics","Emoji hints"],
-    "categories": ["Vocabulary","Beginner"],
+    "categories": ["Vocabulary","Intermediate"],
     "bodyClass": "jobs-quiz"
-  },
-  {
-    "id": "tenses",
-    "title": "⏱️ Thai Tense Markers",
-    "href": "quiz.html?quiz=tenses",
-    "description": "Practice Thai time markers and aspects: now, already, not yet, soon, often, never.",
-    "bullets": ["Time words & structures","English/Thai/phonetics","Examples after correct answers"],
-    "categories": ["Phrases","Beginner"],
-    "bodyClass": "questions-quiz",
-    "proTip": "Structure: <strong>[Subject] + [Time Marker] + [Verb] + [Particle]</strong>"
   },
   {
     "id": "foods",
@@ -137,26 +137,26 @@
     "href": "quiz.html?quiz=foods",
     "description": "Practice common Thai foods, fruits, and cooking methods with phonetics and examples.",
     "bullets": ["Foods, fruits, and methods","English/Thai/phonetic","Emoji hints + examples"],
-    "categories": ["Vocabulary","Beginner"],
+    "categories": ["Vocabulary","Intermediate"],
     "bodyClass": "foods-quiz"
   },
   {
-    "id": "days",
-    "title": "📅 Days of the Week",
-    "href": "quiz.html?quiz=days",
-    "description": "Thai days with phonetics, planet, and color associations.",
-    "bullets": ["Thai + phonetic","Planet and color associations","Emoji hints"],
-    "categories": ["Vocabulary","Beginner"],
-    "bodyClass": "questions-quiz",
-    "proTip": "• ‘wan’ = day, used before every day name<br>• Each day links to a planet and traditional color in Thai culture"
+    "id": "tones",
+    "title": "⚡ Thai Tone Markers",
+    "href": "quiz.html?quiz=tones",
+    "description": "Practice Thai tone outcomes by consonant class, tone mark, and vowel length.",
+    "bullets": ["Middle/High/Low consonant classes","Tone marks ( ่ ้ ๊ ๋ ) and none","Long vs short vowels"],
+    "categories": ["Pronunciation","Reading","Advanced"],
+    "bodyClass": "questions-quiz"
   },
   {
-    "id": "body-parts",
-    "title": "🧍‍♂️ Body Parts in Thai",
-    "href": "quiz.html?quiz=body-parts",
-    "description": "Practice common body parts with Thai script and phonetics.",
-    "bullets": ["English/Thai/phonetics","Emoji hints when available","Core anatomy words"],
-    "categories": ["Vocabulary","Beginner"],
-    "bodyClass": "questions-quiz"
+    "id": "tenses",
+    "title": "⏱️ Thai Tense Markers",
+    "href": "quiz.html?quiz=tenses",
+    "description": "Practice Thai time markers and aspects: now, already, not yet, soon, often, never.",
+    "bullets": ["Time words & structures","English/Thai/phonetics","Examples after correct answers"],
+    "categories": ["Phrases","Advanced"],
+    "bodyClass": "questions-quiz",
+    "proTip": "Structure: <strong>[Subject] + [Time Marker] + [Verb] + [Particle]</strong>"
   }
 ]
