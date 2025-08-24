@@ -72,8 +72,8 @@
         const btn = document.createElement('button');
         if (typeof config.renderButtonContent === 'function') {
           const content = config.renderButtonContent(choice, state);
-          if (typeof content === 'string' && /<[^>]+>/.test(content)) {
-            btn.innerHTML = content;
+          if (content && typeof content === 'object' && 'nodeType' in content) {
+            btn.appendChild(content);
           } else {
             btn.textContent = (content == null) ? '' : String(content);
           }

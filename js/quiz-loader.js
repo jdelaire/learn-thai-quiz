@@ -50,12 +50,16 @@
               els.symbolEl.textContent = answer.symbol;
               els.symbolEl.setAttribute('aria-label', 'Thai consonant symbol: ' + answer.symbol);
             },
-            renderButtonContent: function(choice, state) {
-              const hideEmojis = state.correctAnswers >= 50;
-              return hideEmojis ? ('' + choice.name) : ('<span class="emoji">' + choice.emoji + '</span> ' + choice.name);
-            },
+            renderButtonContent: function(choice) { return String(choice.name); },
             ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.name + ' (' + choice.meaning + ')'; },
-            decorateButton: function(btn, choice) { btn.classList.add(choice.class + '-class'); },
+            decorateButton: function(btn, choice, state) {
+              try { btn.classList.add(choice.class + '-class'); } catch (e) {}
+              if (state.correctAnswers >= 50) return;
+              const span = document.createElement('span');
+              span.className = 'emoji';
+              span.textContent = choice.emoji;
+              btn.insertBefore(span, btn.firstChild);
+            },
             isCorrect: function(choice, answer) { return choice.name === answer.name; }
           });
         };

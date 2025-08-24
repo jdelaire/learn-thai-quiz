@@ -248,8 +248,28 @@
       const thai = String((params && params.thai) || '');
       const emoji = String((params && params.emoji) || '');
       const ariaPrefix = String((params && params.ariaPrefix) || 'English and Thai: ');
-      const emojiLine = emoji ? '<div class="emoji-line" aria-hidden="true">' + emoji + '</div>' : '';
-      symbolEl.innerHTML = emojiLine + english + (thai ? '<span class="secondary">' + thai + '</span>' : '');
+
+      // Clear previous content
+      while (symbolEl.firstChild) symbolEl.removeChild(symbolEl.firstChild);
+
+      if (emoji) {
+        const emojiLine = document.createElement('div');
+        emojiLine.className = 'emoji-line';
+        emojiLine.setAttribute('aria-hidden', 'true');
+        emojiLine.textContent = emoji;
+        symbolEl.appendChild(emojiLine);
+      }
+
+      // English text node
+      symbolEl.appendChild(document.createTextNode(english));
+
+      if (thai) {
+        const sep = document.createElement('span');
+        sep.className = 'secondary';
+        sep.textContent = thai;
+        symbolEl.appendChild(sep);
+      }
+
       symbolEl.setAttribute('aria-label', ariaPrefix + english + (thai ? ' — ' + thai : ''));
     } catch (e) { logError(e, 'Utils.renderEnglishThaiSymbol'); }
   }
@@ -257,9 +277,26 @@
   // Renders an example block into the feedback element
   function renderExample(feedbackEl, exampleText) {
     try {
-      feedbackEl.innerHTML = exampleText
-        ? '<div class="example" aria-label="Example sentence"><span class="label">Example</span><div class="text">' + exampleText + '</div></div>'
-        : '';
+      // Clear previous content
+      while (feedbackEl.firstChild) feedbackEl.removeChild(feedbackEl.firstChild);
+
+      if (!exampleText) return;
+
+      const card = document.createElement('div');
+      card.className = 'example';
+      card.setAttribute('aria-label', 'Example sentence');
+
+      const label = document.createElement('span');
+      label.className = 'label';
+      label.textContent = 'Example';
+
+      const text = document.createElement('div');
+      text.className = 'text';
+      text.textContent = String(exampleText);
+
+      card.appendChild(label);
+      card.appendChild(text);
+      feedbackEl.appendChild(card);
     } catch (e) { logError(e, 'Utils.renderExample'); }
   }
 
