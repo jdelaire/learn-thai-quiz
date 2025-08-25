@@ -612,8 +612,8 @@ body.home .socials a.chip {
 @media (max-width: 560px) {
   .player-card { 
     padding: 0.9em 1em; 
-    margin: 0 0.5em 0.8em 0.5em;
-    width: calc(100% - 1em);
+    margin: 0 auto 0.8em;
+    width: 100%;
     box-sizing: border-box;
   }
   .player-avatar { width: 52px; height: 52px; }
@@ -916,8 +916,8 @@ body.questions-quiz .correct-line {
   
   .player-card { 
     padding: 0.8em 0.8em; 
-    margin: 0 0.3em 0.8em 0.3em;
-    width: calc(100% - 0.6em);
+    margin: 0 auto 0.8em;
+    width: 100%;
   }
   .player-metrics { 
     gap: 0.4em; 
