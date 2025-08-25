@@ -610,9 +610,33 @@ body.home .socials a.chip {
 }
 
 @media (max-width: 560px) {
-  .player-card { padding: 0.9em 1em; }
+  .player-card { 
+    padding: 0.9em 1em; 
+    margin: 0 0.5em 0.8em 0.5em;
+    width: calc(100% - 1em);
+    box-sizing: border-box;
+  }
   .player-avatar { width: 52px; height: 52px; }
-  .player-metrics { gap: 0.6em; }
+  .player-metrics { 
+    gap: 0.6em; 
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .metric {
+    padding: 0.5em 0.6em;
+    min-width: 0;
+  }
+  .metric-label {
+    font-size: 0.68em;
+  }
+  .metric-value {
+    font-size: 1em;
+  }
+  .xp-labels {
+    gap: 0.5em;
+  }
+  .xp-value {
+    font-size: 0.9em;
+  }
 }
 
 /* Consonant quiz */
@@ -889,6 +913,24 @@ body.questions-quiz .correct-line {
   body.consonant-quiz { --symbol-font-size: 6em; }
   body.consonant-quiz .legend { flex-direction: column; gap: 0.5em; }
   body.consonant-quiz button { font-size: 0.9em; padding: 0.6em; }
+  
+  .player-card { 
+    padding: 0.8em 0.8em; 
+    margin: 0 0.3em 0.8em 0.3em;
+    width: calc(100% - 0.6em);
+  }
+  .player-metrics { 
+    gap: 0.4em; 
+  }
+  .metric {
+    padding: 0.4em 0.5em;
+  }
+  .metric-label {
+    font-size: 0.65em;
+  }
+  .metric-value {
+    font-size: 0.95em;
+  }
   
   body.home .socials {
     padding: 0.5em;
