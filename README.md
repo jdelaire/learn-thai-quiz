@@ -13,11 +13,12 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Search and filter**: Find quizzes by keyword and category chips on the home page
 - **Accessibility**: ARIA labels, semantic roles, live regions, keyboard shortcuts (1–9 to select options)
 - **Auto‑advance**: Moves to the next question after a correct answer; tracks questions answered and accuracy
+- **Progressive difficulty**: Automatically increases challenge by adding more choices and removing hints as players improve
 - **JSON‑driven**: Easy to add or tweak data without changing runtime code
 
 ### Quizzes included
 
-- **Consonants**: All 44 Thai consonants with meanings and tone classes (color‑coded)
+- **Consonants**: All 44 Thai consonants with meanings and tone classes (color‑coded). Progressive difficulty increases choices from 4 to 5 to 6 and removes emoji hints after 50 correct answers.
 - **Vowels**: 32 Thai vowels, symbols and sounds. On some browsers a placeholder consonant ก ("goo gai") is shown to indicate where a vowel attaches; it's not part of the answer.
 - **Colors**: Base colors plus light/dark modifiers; renders Thai text in the color tone
 - **Numbers**: From 0 upward, with Thai script and phonetics; classifier tips included
@@ -182,6 +183,7 @@ QuizBuilders.myquiz = makeStandardQuizBuilder('data/myquiz.json', function(resul
     answerKey: 'phonetic',
     labelPrefix: 'English and Thai: ',
     buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
+    // Progressive difficulty enabled by default
   };
 });
 ```
@@ -195,11 +197,12 @@ Use this skeleton when you need full control. The loader resolves data first, th
 QuizBuilders.myquiz = function() {
   return Utils.fetchJSONCached('data/myquiz.json').then(function(items){
     return function init(){
-      ThaiQuiz.setupQuiz(Object.assign({ elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' } }, Utils.createStandardQuiz({
+      ThaiQuiz.setupQuiz(Object.assign({ elements: { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' } }, Utils.createQuizWithProgressiveDifficulty({
         data: items,
         answerKey: 'phonetic',
         labelPrefix: 'English and Thai: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
+        // Progressive difficulty enabled by default
       })));
     };
   });
@@ -260,6 +263,34 @@ Tone Markers (class + marker + length → resulting tone):
 ```json
 { "english": "Middle + none (long)", "thai": "กลาง + ไม่มีวรรณยุกต์ (สระยาว)", "phonetic": "Mid" }
 ```
+
+#### Progressive difficulty
+
+The quiz engine supports automatic difficulty progression based on player performance. **Progressive difficulty is enabled by default** for all quizzes using the standard builder.
+
+**Default configuration:**
+- 4→5→6 choices at 20/40 correct answers
+
+**Custom configuration:**
+```javascript
+// Disable progressive difficulty
+progressiveDifficulty: false
+
+// Custom thresholds
+progressiveDifficulty: {
+  choicesThresholds: [
+    { correctAnswers: 15, choices: 5 },
+    { correctAnswers: 30, choices: 6 }
+  ]
+}
+```
+
+**Available options:**
+- `choicesThresholds`: Array of `{ correctAnswers: number, choices: number }` to increase difficulty
+
+**Example implementations:**
+- **All quizzes**: 4→5→6 choices at 20/40 correct answers (default)
+- **Custom quizzes**: Can override thresholds as needed
 
 #### Quiz config skeleton (metadata‑driven)
 
