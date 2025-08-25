@@ -516,6 +516,105 @@ body.home .socials a.chip {
   .today-card { width: 100%; padding: 0; display: block; }
 }
 
+/* Player card */
+.player-card {
+  display: block;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto 0.8em;
+  text-align: left;
+  background: var(--color-bg);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 1em 1.2em;
+}
+
+.player-top {
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+}
+
+.player-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.player-identity { display: grid; gap: 0.15em; }
+.player-name {
+  font-weight: 800;
+  font-size: 1.15em;
+  color: var(--color-text);
+}
+.player-level {
+  font-weight: 700;
+  font-size: 0.95em;
+  color: var(--color-brand);
+}
+
+.player-xp { margin-top: 0.6em; }
+.xp-labels {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.4em;
+}
+.xp-title { font-weight: 800; letter-spacing: 0.02em; }
+.xp-value { font-weight: 600; opacity: 0.9; }
+
+.xp-bar {
+  position: relative;
+  height: 10px;
+  background: #f5f7fb;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+.xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent) 0%, #8f1328 100%);
+  border-radius: 9999px 0 0 9999px;
+  transition: width 300ms ease;
+}
+
+.player-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8em;
+  margin-top: 0.8em;
+}
+
+.metric {
+  background: #f7f7f7;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 0.6em 0.8em;
+  text-align: center;
+}
+.metric-label {
+  font-size: 0.72em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin-bottom: 0.2em;
+  font-weight: 700;
+}
+.metric-value {
+  font-size: 1.05em;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+@media (max-width: 560px) {
+  .player-card { padding: 0.9em 1em; }
+  .player-avatar { width: 52px; height: 52px; }
+  .player-metrics { gap: 0.6em; }
+}
+
 /* Consonant quiz */
 body.consonant-quiz h1 {
   margin-bottom: 0.5em;
