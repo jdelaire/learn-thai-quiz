@@ -178,7 +178,8 @@
       months: 'questions-quiz',
       tenses: 'questions-quiz',
       days: 'questions-quiz',
-      'body-parts': 'questions-quiz'
+      'body-parts': 'questions-quiz',
+      prepositions: 'questions-quiz'
     };
     return map[quizId] || null;
   }
