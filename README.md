@@ -37,31 +37,6 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
  - **Body Parts in Thai**: Common anatomy words with Thai script, phonetics, and emoji hints
 - **Essential Thai Prepositions**: Core place prepositions with phonetics and usage tip
 
-### Essential Thai Prepositions Reference
-
-| English           | Thai Word | Phonetic    |
-| ----------------- | --------- | ----------- |
-| in                | ใน        | nai         |
-| on                | บน        | bon         |
-| under             | ใต้        | dtâay       |
-| in front of       | ข้างหน้า   | khâaŋ-nâa   |
-| behind            | ข้างหลัง    | khâaŋ-lǎŋ   |
-| next to / beside  | ข้างๆ      | khâaŋ-khâaŋ |
-| between           | ระหว่าง    | rá-wàaŋ     |
-| near / close to   | ใกล้       | glâi        |
-| far from          | ไกล       | glai        |
-| inside            | ข้างใน     | khâaŋ-nai   |
-| outside           | ข้างนอก    | khâaŋ-nɔ̂ɔk  |
-| at / to (a place) | ที่         | thîi        |
-| there is / are    | มี         | mii         |
-
-🧠 Example Structure
-
-[Preposition] + [location] + mii + [object] + [number] + [classifier]
-
-- bon dtó mii nǎŋ-sɯ̌ɯ sɔ̌ɔŋ lêm → On the table, there are two books.
-- dtâay gâw-îi mii mɛɛw nɯ̀ŋ dtua → Under the chair, there’s one cat.
-
 ### Quick start (local)
 
 Because the app fetches JSON files, use a local web server (opening `index.html` via `file://` will block fetches).
