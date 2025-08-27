@@ -1,37 +1,212 @@
 [
-  { "english": "to go", "thai": "ไป", "phonetic": "bpai" },
-  { "english": "to come", "thai": "มา", "phonetic": "maa" },
-  { "english": "to eat", "thai": "กิน", "phonetic": "gin" },
-  { "english": "to drink", "thai": "ดื่ม", "phonetic": "dɯ̀ɯm" },
-  { "english": "to sleep", "thai": "นอน", "phonetic": "nɔɔn" },
-  { "english": "to wake up", "thai": "ตื่น", "phonetic": "dtɯ̀ɯn" },
-  { "english": "to study", "thai": "เรียน", "phonetic": "rian" },
-  { "english": "to read", "thai": "อ่าน", "phonetic": "àan" },
-  { "english": "to write", "thai": "เขียน", "phonetic": "khǐan" },
-  { "english": "to speak", "thai": "พูด", "phonetic": "phûut" },
-  { "english": "to listen", "thai": "ฟัง", "phonetic": "faŋ" },
-  { "english": "to see/watch", "thai": "ดู", "phonetic": "duu" },
-  { "english": "to buy", "thai": "ซื้อ", "phonetic": "sɯ́ɯ" },
-  { "english": "to sell", "thai": "ขาย", "phonetic": "khǎay" },
-  { "english": "to pay", "thai": "จ่าย", "phonetic": "jàay" },
-  { "english": "to work", "thai": "ทำงาน", "phonetic": "tham-ŋaan" },
-  { "english": "to make/do", "thai": "ทำ", "phonetic": "tham" },
-  { "english": "to take a shower", "thai": "อาบน้ำ", "phonetic": "àap-náam" },
-  { "english": "to exercise", "thai": "ออกกำลังกาย", "phonetic": "ɔ̀ɔk-gam-laŋ-gaay" },
-  { "english": "to walk", "thai": "เดิน", "phonetic": "dəən" },
-  { "english": "to run", "thai": "วิ่ง", "phonetic": "wîŋ" },
-  { "english": "to play", "thai": "เล่น", "phonetic": "lên" },
-  { "english": "to wait", "thai": "คอย", "phonetic": "kɔɔy" },
-  { "english": "to want", "thai": "อยาก", "phonetic": "yàak" },
-  { "english": "to love", "thai": "รัก", "phonetic": "rák" },
-  { "english": "to like", "thai": "ชอบ", "phonetic": "chɔ̂ɔp" },
-  { "english": "to hate", "thai": "เกลียด", "phonetic": "glìat" },
-  { "english": "to understand", "thai": "เข้าใจ", "phonetic": "khâo-jai" },
-  { "english": "to forget", "thai": "ลืม", "phonetic": "luuem" },
-  { "english": "to remember", "thai": "จำ", "phonetic": "jam" },
-  { "english": "to help", "thai": "ช่วย", "phonetic": "chûay" },
-  { "english": "to start/begin", "thai": "เริ่ม", "phonetic": "rɯ̂ɯm" },
-  { "english": "to finish/complete", "thai": "เสร็จ", "phonetic": "sèet" },
-  { "english": "to call (phone)", "thai": "โทร", "phonetic": "thoo" },
-  { "english": "to drive", "thai": "ขับรถ", "phonetic": "khàp-rót" }
+  {
+    "english": "to go",
+    "thai": "ไป",
+    "phonetic": "bpai",
+    "emoji": "🧭"
+  },
+  {
+    "english": "to come",
+    "thai": "มา",
+    "phonetic": "maa",
+    "emoji": "👣"
+  },
+  {
+    "english": "to eat",
+    "thai": "กิน",
+    "phonetic": "gin",
+    "emoji": "🍽️"
+  },
+  {
+    "english": "to drink",
+    "thai": "ดื่ม",
+    "phonetic": "dɯ̀ɯm",
+    "emoji": "🥤"
+  },
+  {
+    "english": "to sleep",
+    "thai": "นอน",
+    "phonetic": "nɔɔn",
+    "emoji": "😴"
+  },
+  {
+    "english": "to wake up",
+    "thai": "ตื่น",
+    "phonetic": "dtɯ̀ɯn",
+    "emoji": "⏰"
+  },
+  {
+    "english": "to study",
+    "thai": "เรียน",
+    "phonetic": "rian",
+    "emoji": "📖"
+  },
+  {
+    "english": "to read",
+    "thai": "อ่าน",
+    "phonetic": "àan",
+    "emoji": "📚"
+  },
+  {
+    "english": "to write",
+    "thai": "เขียน",
+    "phonetic": "khǐan",
+    "emoji": "✍️"
+  },
+  {
+    "english": "to speak",
+    "thai": "พูด",
+    "phonetic": "phûut",
+    "emoji": "🗣️"
+  },
+  {
+    "english": "to listen",
+    "thai": "ฟัง",
+    "phonetic": "faŋ",
+    "emoji": "👂"
+  },
+  {
+    "english": "to see/watch",
+    "thai": "ดู",
+    "phonetic": "duu",
+    "emoji": "👀"
+  },
+  {
+    "english": "to buy",
+    "thai": "ซื้อ",
+    "phonetic": "sɯ́ɯ",
+    "emoji": "🛒"
+  },
+  {
+    "english": "to sell",
+    "thai": "ขาย",
+    "phonetic": "khǎay",
+    "emoji": "💰"
+  },
+  {
+    "english": "to pay",
+    "thai": "จ่าย",
+    "phonetic": "jàay",
+    "emoji": "💳"
+  },
+  {
+    "english": "to work",
+    "thai": "ทำงาน",
+    "phonetic": "tham-ŋaan",
+    "emoji": "💼"
+  },
+  {
+    "english": "to make/do",
+    "thai": "ทำ",
+    "phonetic": "tham",
+    "emoji": "🛠️"
+  },
+  {
+    "english": "to take a shower",
+    "thai": "อาบน้ำ",
+    "phonetic": "àap-náam",
+    "emoji": "🚿"
+  },
+  {
+    "english": "to exercise",
+    "thai": "ออกกำลังกาย",
+    "phonetic": "ɔ̀ɔk-gam-laŋ-gaay",
+    "emoji": "🏋️"
+  },
+  {
+    "english": "to walk",
+    "thai": "เดิน",
+    "phonetic": "dəən",
+    "emoji": "🚶"
+  },
+  {
+    "english": "to run",
+    "thai": "วิ่ง",
+    "phonetic": "wîŋ",
+    "emoji": "🏃"
+  },
+  {
+    "english": "to play",
+    "thai": "เล่น",
+    "phonetic": "lên",
+    "emoji": "🎮"
+  },
+  {
+    "english": "to wait",
+    "thai": "คอย",
+    "phonetic": "kɔɔy",
+    "emoji": "⏳"
+  },
+  {
+    "english": "to want",
+    "thai": "อยาก",
+    "phonetic": "yàak",
+    "emoji": "💭"
+  },
+  {
+    "english": "to love",
+    "thai": "รัก",
+    "phonetic": "rák",
+    "emoji": "❤️"
+  },
+  {
+    "english": "to like",
+    "thai": "ชอบ",
+    "phonetic": "chɔ̂ɔp",
+    "emoji": "👍"
+  },
+  {
+    "english": "to hate",
+    "thai": "เกลียด",
+    "phonetic": "glìat",
+    "emoji": "💢"
+  },
+  {
+    "english": "to understand",
+    "thai": "เข้าใจ",
+    "phonetic": "khâo-jai",
+    "emoji": "💡"
+  },
+  {
+    "english": "to forget",
+    "thai": "ลืม",
+    "phonetic": "luuem",
+    "emoji": "🧠❌"
+  },
+  {
+    "english": "to remember",
+    "thai": "จำ",
+    "phonetic": "jam",
+    "emoji": "🧠"
+  },
+  {
+    "english": "to help",
+    "thai": "ช่วย",
+    "phonetic": "chûay",
+    "emoji": "🆘"
+  },
+  {
+    "english": "to start/begin",
+    "thai": "เริ่ม",
+    "phonetic": "rɯ̂ɯm",
+    "emoji": "▶️"
+  },
+  {
+    "english": "to finish/complete",
+    "thai": "เสร็จ",
+    "phonetic": "sèet",
+    "emoji": "✅"
+  },
+  {
+    "english": "to call (phone)",
+    "thai": "โทร",
+    "phonetic": "thoo",
+    "emoji": "📞"
+  },
+  {
+    "english": "to drive",
+    "thai": "ขับรถ",
+    "phonetic": "khàp-rót",
+    "emoji": "🚗"
+  }
 ]

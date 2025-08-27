@@ -178,13 +178,39 @@
       months: 'questions-quiz',
       tenses: 'questions-quiz',
       days: 'questions-quiz',
-      'body-parts': 'questions-quiz'
+      'body-parts': 'questions-quiz',
+      prepositions: 'questions-quiz'
     };
     return map[quizId] || null;
   }
 
+  // Default progressive difficulty configuration
+  const DEFAULT_PROGRESSIVE_DIFFICULTY = {
+    choicesThresholds: [
+      { correctAnswers: 20, choices: 5 },
+      { correctAnswers: 40, choices: 6 }
+    ]
+  };
+
+  // Helper to create progressive difficulty config with defaults
+  function createProgressiveDifficulty(config = {}) {
+    return Object.assign({}, DEFAULT_PROGRESSIVE_DIFFICULTY, config);
+  }
+
+  // Helper to create a quiz with progressive difficulty enabled by default
+  function createQuizWithProgressiveDifficulty(params) {
+    // Enable progressive difficulty by default unless explicitly disabled
+    const progressiveDifficulty = params.progressiveDifficulty === false ? null : 
+      (params.progressiveDifficulty || DEFAULT_PROGRESSIVE_DIFFICULTY);
+    
+    return createStandardQuiz({
+      ...params,
+      progressiveDifficulty
+    });
+  }
+
   // Creates a standard quiz configuration block for ThaiQuiz.setupQuiz
-  // params: { data, examples?, exampleKey?(answer)->string, answerKey='phonetic', buildSymbol(answer) -> { english, thai, emoji? }, choices=4, labelPrefix='English and Thai: ' }
+  // params: { data, examples?, exampleKey?(answer)->string, answerKey='phonetic', buildSymbol(answer) -> { english, thai, emoji? }, choices=4, labelPrefix='English and Thai: ', progressiveDifficulty? }
   function createStandardQuiz(params) {
     const data = params && params.data || [];
     const examples = params && params.examples || null;
@@ -193,17 +219,37 @@
     const buildSymbol = (params && params.buildSymbol) || function(a){ return { english: String(a && a.english || ''), thai: String(a && a.thai || '') }; };
     const choices = (params && params.choices) || 4;
     const labelPrefix = (params && params.labelPrefix) || ((global && global.Utils && global.Utils.i18n && global.Utils.i18n.labelEnglishThaiPrefix) || 'English and Thai: ');
+    const progressiveDifficulty = params && params.progressiveDifficulty ? createProgressiveDifficulty(params.progressiveDifficulty) : null;
 
     return {
-      pickRound: function() {
+      pickRound: function(state) {
         if (!Array.isArray(data) || data.length === 0) return null;
+        
+        // Apply progressive difficulty if configured
+        let currentChoices = choices;
+        if (progressiveDifficulty && state && state.correctAnswers !== undefined) {
+          const correctCount = state.correctAnswers;
+          
+          // Adjust number of choices based on performance
+          if (progressiveDifficulty.choicesThresholds) {
+            for (let i = progressiveDifficulty.choicesThresholds.length - 1; i >= 0; i--) {
+              const threshold = progressiveDifficulty.choicesThresholds[i];
+              if (correctCount >= threshold.correctAnswers) {
+                currentChoices = threshold.choices;
+                break;
+              }
+            }
+          }
+        }
+        
         const answer = pickRandom(data);
-        const uniqueChoices = pickUniqueChoices(data, choices, byProp(answerKey), answer);
+        const uniqueChoices = pickUniqueChoices(data, currentChoices, byProp(answerKey), answer);
         return { answer: answer, choices: uniqueChoices };
       },
-      renderSymbol: function(answer, els) {
+      renderSymbol: function(answer, els, state) {
         try {
           const sym = buildSymbol(answer) || {};
+          
           renderEnglishThaiSymbol(els.symbolEl, {
             english: String(sym.english || ''),
             thai: String(sym.thai || ''),
@@ -212,8 +258,16 @@
           });
         } catch (e) { logError(e, 'Utils.createStandardQuiz.renderSymbol'); }
       },
-      renderButtonContent: function(choice) { return choice && choice[answerKey]; },
-      ariaLabelForChoice: function(choice) { return ((global && global.Utils && global.Utils.i18n && global.Utils.i18n.answerPrefix) || 'Answer: ') + (choice && choice[answerKey]); },
+      renderButtonContent: function(choice, state) { 
+        return choice && choice[answerKey];
+      },
+      // Helper function to check if hints should be hidden based on progressive difficulty
+      shouldHideHints: function(state) {
+        return false; // Hints are always shown now
+      },
+      ariaLabelForChoice: function(choice, state) { 
+        return ((global && global.Utils && global.Utils.i18n && global.Utils.i18n.answerPrefix) || 'Answer: ') + (choice && choice[answerKey]);
+      },
       isCorrect: function(choice, answer) { return (choice && choice[answerKey]) === (answer && answer[answerKey]); },
       onAnswered: function(ctx) {
         if (!examples) return;
@@ -231,21 +285,8 @@
     };
   }
 
-  // Build a function that maps a text (usually English) to an emoji based on regex rules
-  function buildEmojiMatcher(rules) {
-    try {
-      const compiled = (rules || []).map(function(r){ return [new RegExp(r.pattern, 'i'), r.emoji]; });
-      return function toEmoji(text) {
-        const t = String(text || '').toLowerCase();
-        for (let i = 0; i < compiled.length; i++) {
-          if (compiled[i][0].test(t)) return compiled[i][1];
-        }
-        return '';
-      };
-    } catch (_) {
-      return function(){ return ''; };
-    }
-  }
+  // Deprecated: emoji rules have been migrated to per-item data (kept as no-ops for backward compatibility)
+  function buildEmojiMatcher() { return function(){ return ''; }; }
 
   // Simple validation helpers (console-only)
   function validateDataset(items, requiredKeys) {
@@ -335,26 +376,9 @@
   }
 
   // New helpers for data-driven configs and shared UI snippets
-  function createEmojiGetter(rules) {
-    try {
-      const matcher = buildEmojiMatcher(rules || []);
-      return function getEmojiForText(text) {
-        try { return matcher(String(text || '')); } catch (e) { return ''; }
-      };
-    } catch (e) {
-      logError(e, 'Utils.createEmojiGetter');
-      return function(){ return ''; };
-    }
-  }
+  function createEmojiGetter() { return function(){ return ''; }; }
 
-  function loadEmojiGetter(rulesUrl) {
-    try {
-      return fetchJSONCached(rulesUrl).then(function(rules){ return createEmojiGetter(rules); });
-    } catch (e) {
-      logError(e, 'Utils.loadEmojiGetter');
-      return Promise.resolve(function(){ return ''; });
-    }
-  }
+  function loadEmojiGetter() { return Promise.resolve(function(){ return ''; }); }
 
   function insertProTip(text) {
     try {
@@ -430,6 +454,10 @@
     insertProTip: insertProTip,
     insertConsonantLegend: insertConsonantLegend,
     renderVowelSymbol: renderVowelSymbol,
+    // Progressive difficulty helpers
+    createProgressiveDifficulty: createProgressiveDifficulty,
+    DEFAULT_PROGRESSIVE_DIFFICULTY: DEFAULT_PROGRESSIVE_DIFFICULTY,
+    createQuizWithProgressiveDifficulty: createQuizWithProgressiveDifficulty,
     // i18n and class map
     i18n: i18n,
     getBodyClass: getBodyClass,

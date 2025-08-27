@@ -1,26 +1,170 @@
 [
-  {"id":"people","english":"people","thai":"คน","phonetic":"khon"},
-  {"id":"animals-shirts-chairs","english":"animals, shirts, chairs","thai":"ตัว","phonetic":"dtua"},
-  {"id":"flat-objects","english":"flat objects (paper, CDs)","thai":"แผ่น","phonetic":"phɛ̀ɛn"},
-  {"id":"containers-cups-bags","english":"containers, cups, bags","thai":"ใบ","phonetic":"bai"},
-  {"id":"books-notebooks-knives","english":"books, notebooks, knives","thai":"เล่ม","phonetic":"lêm"},
-  {"id":"balls-fruits-round-items","english":"balls, fruits, round items","thai":"ลูก","phonetic":"lûuk"},
-  {"id":"vehicles-umbrellas","english":"vehicles, umbrellas","thai":"คัน","phonetic":"khan"},
-  {"id":"eggs","english":"eggs","thai":"ฟอง","phonetic":"fɔɔŋ"},
-  {"id":"seeds-pills-buttons","english":"seeds, pills, buttons","thai":"เม็ด","phonetic":"mét"},
-  {"id":"houses","english":"houses","thai":"หลัง","phonetic":"lǎŋ"},
-  {"id":"rooms","english":"rooms","thai":"ห้อง","phonetic":"hɔ̂ɔŋ"},
-  {"id":"machines-devices","english":"machines/devices","thai":"เครื่อง","phonetic":"khrɯ̂aŋ"},
-  {"id":"pairs","english":"pairs","thai":"คู่","phonetic":"khûu"},
-  {"id":"pieces-slices","english":"pieces/slices","thai":"ชิ้น","phonetic":"chín"},
-  {"id":"general-things","english":"general things","thai":"อัน","phonetic":"an"},
-  {"id":"places","english":"places","thai":"แห่ง / ที่","phonetic":"hɛ̀ɛŋ / thîi"},
-  {"id":"plates-of-food","english":"plates of food","thai":"จาน","phonetic":"jaan"},
-  {"id":"bowls-of-food","english":"bowls of food","thai":"ถ้วย","phonetic":"thûay"},
-  {"id":"boxes","english":"boxes (takeaway, carton)","thai":"กล่อง","phonetic":"glɔ̀ɔŋ"},
-  {"id":"plastic-bags","english":"plastic bags","thai":"ถุง","phonetic":"thǔŋ"},
-  {"id":"glasses-cups","english":"glasses/cups (drinkware)","thai":"แก้ว","phonetic":"gɛ̂ɛw"},
-  {"id":"bottles","english":"bottles (drinks)","thai":"ขวด","phonetic":"khùat"},
-  {"id":"cans-tins","english":"cans/tins","thai":"กระป๋อง","phonetic":"grà-bpɔ̌ɔŋ"},
-  {"id":"cartons","english":"cartons (boxed drinks)","thai":"กล่อง","phonetic":"glɔ̀ɔŋ"}
+  {
+    "id": "people",
+    "english": "people",
+    "thai": "คน",
+    "phonetic": "khon",
+    "emoji": "👥"
+  },
+  {
+    "id": "animals-shirts-chairs",
+    "english": "animals, shirts, chairs",
+    "thai": "ตัว",
+    "phonetic": "dtua",
+    "emoji": "🐾"
+  },
+  {
+    "id": "flat-objects",
+    "english": "flat objects (paper, CDs)",
+    "thai": "แผ่น",
+    "phonetic": "phɛ̀ɛn",
+    "emoji": "📄"
+  },
+  {
+    "id": "containers-cups-bags",
+    "english": "containers, cups, bags",
+    "thai": "ใบ",
+    "phonetic": "bai",
+    "emoji": "🧺"
+  },
+  {
+    "id": "books-notebooks-knives",
+    "english": "books, notebooks, knives",
+    "thai": "เล่ม",
+    "phonetic": "lêm",
+    "emoji": "📚"
+  },
+  {
+    "id": "balls-fruits-round-items",
+    "english": "balls, fruits, round items",
+    "thai": "ลูก",
+    "phonetic": "lûuk",
+    "emoji": "⚽"
+  },
+  {
+    "id": "vehicles-umbrellas",
+    "english": "vehicles, umbrellas",
+    "thai": "คัน",
+    "phonetic": "khan",
+    "emoji": "🚗"
+  },
+  {
+    "id": "eggs",
+    "english": "eggs",
+    "thai": "ฟอง",
+    "phonetic": "fɔɔŋ",
+    "emoji": "🥚"
+  },
+  {
+    "id": "seeds-pills-buttons",
+    "english": "seeds, pills, buttons",
+    "thai": "เม็ด",
+    "phonetic": "mét",
+    "emoji": "🌱"
+  },
+  {
+    "id": "houses",
+    "english": "houses",
+    "thai": "หลัง",
+    "phonetic": "lǎŋ",
+    "emoji": "🏠"
+  },
+  {
+    "id": "rooms",
+    "english": "rooms",
+    "thai": "ห้อง",
+    "phonetic": "hɔ̂ɔŋ",
+    "emoji": "🚪"
+  },
+  {
+    "id": "machines-devices",
+    "english": "machines/devices",
+    "thai": "เครื่อง",
+    "phonetic": "khrɯ̂aŋ",
+    "emoji": "🖥️"
+  },
+  {
+    "id": "pairs",
+    "english": "pairs",
+    "thai": "คู่",
+    "phonetic": "khûu",
+    "emoji": "👟"
+  },
+  {
+    "id": "pieces-slices",
+    "english": "pieces/slices",
+    "thai": "ชิ้น",
+    "phonetic": "chín",
+    "emoji": "🍰"
+  },
+  {
+    "id": "general-things",
+    "english": "general things",
+    "thai": "อัน",
+    "phonetic": "an",
+    "emoji": "📦"
+  },
+  {
+    "id": "places",
+    "english": "places",
+    "thai": "แห่ง / ที่",
+    "phonetic": "hɛ̀ɛŋ / thîi",
+    "emoji": "📍"
+  },
+  {
+    "id": "plates-of-food",
+    "english": "plates of food",
+    "thai": "จาน",
+    "phonetic": "jaan",
+    "emoji": "🍽️"
+  },
+  {
+    "id": "bowls-of-food",
+    "english": "bowls of food",
+    "thai": "ถ้วย",
+    "phonetic": "thûay",
+    "emoji": "🍜"
+  },
+  {
+    "id": "boxes",
+    "english": "boxes (takeaway, carton)",
+    "thai": "กล่อง",
+    "phonetic": "glɔ̀ɔŋ",
+    "emoji": "🚗"
+  },
+  {
+    "id": "plastic-bags",
+    "english": "plastic bags",
+    "thai": "ถุง",
+    "phonetic": "thǔŋ",
+    "emoji": "🧺"
+  },
+  {
+    "id": "glasses-cups",
+    "english": "glasses/cups (drinkware)",
+    "thai": "แก้ว",
+    "phonetic": "gɛ̂ɛw",
+    "emoji": "🥤"
+  },
+  {
+    "id": "bottles",
+    "english": "bottles (drinks)",
+    "thai": "ขวด",
+    "phonetic": "khùat",
+    "emoji": "🍼"
+  },
+  {
+    "id": "cans-tins",
+    "english": "cans/tins",
+    "thai": "กระป๋อง",
+    "phonetic": "grà-bpɔ̌ɔŋ",
+    "emoji": "🥫"
+  },
+  {
+    "id": "cartons",
+    "english": "cartons (boxed drinks)",
+    "thai": "กล่อง",
+    "phonetic": "glɔ̀ɔŋ",
+    "emoji": "🚗"
+  }
 ]

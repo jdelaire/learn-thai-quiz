@@ -1,9 +1,0 @@
-[
-  { "pattern": "^(january|february|march|april|may|june|july|august|september|october|november|december)$", "emoji": "📅" },
-  { "pattern": "^season$", "emoji": "🗓️" },
-  { "pattern": "summer", "emoji": "☀️" },
-  { "pattern": "rainy\\s*season|rain|monsoon", "emoji": "🌧️" },
-  { "pattern": "^winter$|cold", "emoji": "❄️" },
-  { "pattern": "^spring$|bloom|flower", "emoji": "🌸" },
-  { "pattern": "autumn|fall", "emoji": "🍂" }
-]

@@ -23,7 +23,7 @@
         return Utils.fetchJSONs(list).then(function(results){
           const params = (typeof transform === 'function') ? (transform(results) || {}) : {};
           return function init(){
-            ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz(params)));
+            ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createQuizWithProgressiveDifficulty(params)));
           };
         });
       } catch (e) {
@@ -42,8 +42,16 @@
             elements: defaultElements,
             pickRound: function(state) {
               const answer = data[Math.floor(Math.random() * data.length)];
-              const choicesCount = (state.correctAnswers >= 30 ? 6 : 4);
-              const choices = Utils.pickUniqueChoices(data, choicesCount, Utils.byProp('name'), answer);
+              
+              // Apply progressive difficulty
+              let currentChoices = 4;
+              if (state && state.correctAnswers !== undefined) {
+                const correctCount = state.correctAnswers;
+                if (correctCount >= 40) currentChoices = 6;
+                else if (correctCount >= 20) currentChoices = 5;
+              }
+              
+              const choices = Utils.pickUniqueChoices(data, currentChoices, Utils.byProp('name'), answer);
               return { answer: answer, choices: choices };
             },
             renderSymbol: function(answer, els) {
@@ -54,7 +62,6 @@
             ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.name + ' (' + choice.meaning + ')'; },
             decorateButton: function(btn, choice, state) {
               try { btn.classList.add(choice.class + '-class'); } catch (e) {}
-              if (state.correctAnswers >= 50) return;
               const span = document.createElement('span');
               span.className = 'emoji';
               span.textContent = choice.emoji;
@@ -71,9 +78,18 @@
         return function init(){
           ThaiQuiz.setupQuiz({
             elements: defaultElements,
-            pickRound: function() {
+            pickRound: function(state) {
               const answer = Utils.pickRandom(data);
-              const choices = Utils.pickUniqueChoices(data, 4, Utils.byProp('sound'), answer);
+              
+              // Apply progressive difficulty
+              let currentChoices = 4;
+              if (state && state.correctAnswers !== undefined) {
+                const correctCount = state.correctAnswers;
+                if (correctCount >= 40) currentChoices = 6;
+                else if (correctCount >= 20) currentChoices = 5;
+              }
+              
+              const choices = Utils.pickUniqueChoices(data, currentChoices, Utils.byProp('sound'), answer);
               return { answer: answer, choices: choices };
             },
             renderSymbol: function(answer, els) {
@@ -102,12 +118,21 @@
         return function init(){
           ThaiQuiz.setupQuiz({
             elements: defaultElements,
-            pickRound: function() {
+            pickRound: function(state) {
               const base = Utils.pickRandom(baseColors);
               const maybeModifier = Math.random() < 0.55 ? Utils.pickRandom(modifiers) : null;
               const answer = buildColorPhrase(base, maybeModifier);
+              
+              // Apply progressive difficulty
+              let currentChoices = 4;
+              if (state && state.correctAnswers !== undefined) {
+                const correctCount = state.correctAnswers;
+                if (correctCount >= 40) currentChoices = 6;
+                else if (correctCount >= 20) currentChoices = 5;
+              }
+              
               const choices = [answer];
-              while (choices.length < 4) {
+              while (choices.length < currentChoices) {
                 const b = Utils.pickRandom(baseColors);
                 const m = Math.random() < 0.45 ? Utils.pickRandom(modifiers) : null;
                 const choice = buildColorPhrase(b, m);
@@ -134,6 +159,7 @@
         data: data,
         labelPrefix: (Utils && Utils.i18n && Utils.i18n.labelNumberThaiPrefix) || 'Number and Thai: ',
         buildSymbol: function(a){ return { english: String(a.number || ''), thai: a.thai || '' }; }
+        // Progressive difficulty enabled by default
       };
     }),
 
@@ -145,7 +171,13 @@
       const pool = keyWords.concat(timeFormats, examples);
       return {
         data: pool,
-        buildSymbol: function(a){ return { english: englishOf(a), thai: a.thai || '' }; }
+        buildSymbol: function(a){ return { english: englishOf(a), thai: a.thai || '' }; },
+        progressiveDifficulty: {
+          choicesThresholds: [
+            { correctAnswers: 20, choices: 5 },
+            { correctAnswers: 40, choices: 6 }
+          ]
+        }
       };
     }),
 
@@ -155,6 +187,7 @@
         data: data,
         labelPrefix: (Utils && Utils.i18n && Utils.i18n.labelClassMarkerLengthPrefix) || 'Class + Marker + Length: ',
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
+        // Progressive difficulty enabled by default
       };
     }),
 
@@ -164,18 +197,18 @@
       return {
         data: data,
         examples: examples
+        // Progressive difficulty enabled by default
       };
     }),
 
-    verbs: makeStandardQuizBuilder(['data/emoji-rules/verbs.json','data/verbs.json','data/verbs-examples.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
-      const examples = results[2] || {};
+    verbs: makeStandardQuizBuilder(['data/verbs.json','data/verbs-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
       return {
         data: data,
         examples: examples,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
+        // Progressive difficulty enabled by default
       };
     }),
 
@@ -183,78 +216,79 @@
       const data = results[0] || [];
       return {
         data: data
+        // Progressive difficulty enabled by default
       };
     }),
 
-    classifiers: makeStandardQuizBuilder(['data/emoji-rules/classifiers.json','data/classifiers.json','data/classifiers-examples.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
-      const examples = results[2] || {};
+    classifiers: makeStandardQuizBuilder(['data/classifiers.json','data/classifiers-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
       return {
         data: data,
         examples: examples,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
+        // Progressive difficulty enabled by default
       };
     }),
 
-    jobs: makeStandardQuizBuilder(['data/emoji-rules/jobs.json','data/jobs.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
+    jobs: makeStandardQuizBuilder(['data/jobs.json'], function(results) {
+      const data = results[0] || [];
       return {
         data: data,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
+        // Progressive difficulty enabled by default
       };
     }),
 
-    foods: makeStandardQuizBuilder(['data/emoji-rules/foods.json','data/foods.json','data/foods-examples.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
-      const examples = results[2] || {};
+    foods: makeStandardQuizBuilder(['data/foods.json','data/foods-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
       return {
         data: data,
         examples: examples,
         exampleKey: function(a){ return a.id || a.english; },
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
+        // Progressive difficulty enabled by default
       };
     }),
 
-    months: makeStandardQuizBuilder(['data/emoji-rules/months-seasons.json','data/months-seasons.json','data/months-seasons-examples.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
-      const examples = results[2] || {};
+    months: makeStandardQuizBuilder(['data/months-seasons.json','data/months-seasons-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
       return {
         data: data,
         examples: examples,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; },
+        progressiveDifficulty: {
+          choicesThresholds: [
+            { correctAnswers: 20, choices: 5 },
+            { correctAnswers: 40, choices: 6 }
+          ],
+          hideEmojiThreshold: 50
+        }
       };
     }),
 
-    rooms: makeStandardQuizBuilder(['data/emoji-rules/rooms.json','data/rooms.json','data/rooms-examples.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
-      const examples = results[2] || {};
+    rooms: makeStandardQuizBuilder(['data/rooms.json','data/rooms-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
       return {
         data: data,
         examples: examples,
         exampleKey: function(a){ return a.id || a.english; },
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
+        // Progressive difficulty enabled by default
       };
     }),
 
-    tenses: makeStandardQuizBuilder(['data/emoji-rules/tenses.json','data/tenses.json','data/tenses-examples.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
-      const examples = results[2] || {};
+    tenses: makeStandardQuizBuilder(['data/tenses.json','data/tenses-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
       return {
         data: data,
         examples: examples,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
+        // Progressive difficulty enabled by default
       };
     }),
 
@@ -266,17 +300,26 @@
           var eng = (a && a.english) ? (a.english + (a.planet ? ' (' + a.planet + ')' : '')) : '';
           return { english: eng, thai: (a && a.thai) || '', emoji: (a && a.emoji) || '' };
         }
+        // Progressive difficulty enabled by default
+      };
+    }),
+
+    prepositions: makeStandardQuizBuilder(['data/prepositions.json'], function(results) {
+      const data = results[0] || [];
+      return {
+        data: data,
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
+        // Progressive difficulty enabled by default
       };
     }),
 
     // Body Parts in Thai — standard vocab quiz with emoji hints
-    'body-parts': makeStandardQuizBuilder(['data/emoji-rules/body-parts.json','data/body-parts.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
+    'body-parts': makeStandardQuizBuilder(['data/body-parts.json'], function(results) {
+      const data = results[0] || [];
       return {
         data: data,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
+        // Progressive difficulty enabled by default
       };
     })
   };
