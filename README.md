@@ -114,7 +114,6 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 - `css/`: Stylesheets
   - `styles.css`: Shared and per‑quiz styles
 - `data/*.json`: Quiz datasets and metadata
-- `data/emoji-rules/*.json`: Optional per-quiz emoji matcher rules (pattern → emoji)
   - Datasets may optionally include an `id` per item; when present, examples prefer `id` for lookups (falling back to `english`).
 - `asset/`: Images and icons used across the site
   - `asset/profile.jpg`: Avatar shown in the home page Socials card
@@ -332,8 +331,7 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
   - `examples` (object map) and optional `exampleKey(answer)` control example lookup; defaults to `answer.english` (use `answer.id || answer.english` if your data includes stable ids).
   - If `data` is empty, the engine renders a friendly "No data available" message.
 
-- `Utils.createEmojiGetter(rules)` / `Utils.loadEmojiGetter(url)`
-  - Build an emoji matcher from regex rules or load them from JSON and return a function mapping English text → emoji. Many quizzes derive an emoji line above the symbol using this.
+  - Items may include an optional `emoji` field which the quiz UI displays above the symbol.
 
 - `Utils.insertProTip(html)` / `Utils.insertConsonantLegend()`
   - Insert a pro‑tip into the quiz footer or a consonant legend before the symbol.
@@ -341,11 +339,9 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 - `Utils.renderVowelSymbol(symbolEl, symbol)`
   - Render vowel symbols with the shaping‑safe placeholder behavior (ko kai replacement) and set `aria-label`.
 
-#### Emoji rules (data-driven)
+#### Emoji data
 
-- Add a file like `data/emoji-rules/foods.json` with an ordered list of objects `{ "pattern": "regex", "emoji": "🧪" }`.
-- Quizzes that support emojis (foods/rooms/jobs/verbs/classifiers/tenses) will load these rules and match against the English text to show the emoji above the symbol.
-- If the file is missing or empty, the quiz still works (no emoji shown).
+- Add an `emoji` field directly to each item in your dataset when you want an emoji hint to display above the symbol.
 
 #### Homepage card entry (`data/quizzes.json`)
 

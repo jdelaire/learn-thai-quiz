@@ -1,44 +1,248 @@
 [
-  {"english":"job/occupation","thai":"อาชีพ","phonetic":"aa-chîip"},
-  {"english":"work (noun/verb)","thai":"งาน","phonetic":"ŋaan"},
-  {"english":"employee","thai":"พนักงาน","phonetic":"phá-nák-ŋaan"},
-  {"english":"boss","thai":"เจ้านาย","phonetic":"jâo-naai"},
-  {"english":"manager","thai":"ผู้จัดการ","phonetic":"phûu-jàt-gaan"},
-  {"english":"office worker","thai":"พนักงานออฟฟิศ","phonetic":"phá-nák-ŋaan ɔɔf-fít"},
-  {"english":"businessperson","thai":"นักธุรกิจ","phonetic":"nák-thú-rá-gìt"},
-  {"english":"doctor","thai":"หมอ","phonetic":"mɔɔ"},
-  {"english":"nurse","thai":"พยาบาล","phonetic":"phá-yaa-baan"},
-  {"english":"dentist","thai":"หมอฟัน","phonetic":"mɔɔ-fan"},
-  {"english":"pharmacist","thai":"เภสัชกร","phonetic":"phee-sàt-chá-gɔɔn"},
-  {"english":"teacher (school)","thai":"ครู","phonetic":"kruu"},
-  {"english":"lecturer (ajarn)","thai":"อาจารย์","phonetic":"aa-jaan"},
-  {"english":"professor","thai":"ศาสตราจารย์","phonetic":"sàat-dtraa-jaan"},
-  {"english":"student (school)","thai":"นักเรียน","phonetic":"nák-rian"},
-  {"english":"student (university)","thai":"นักศึกษา","phonetic":"nák-sʉ̀k-sǎa"},
-  {"english":"engineer","thai":"วิศวกร","phonetic":"wít-sà-wá-gɔɔn"},
-  {"english":"architect","thai":"สถาปนิก","phonetic":"sà-thǎa-pá-ník"},
-  {"english":"lawyer","thai":"ทนายความ","phonetic":"thá-naai khwaam"},
-  {"english":"judge","thai":"ผู้พิพากษา","phonetic":"phûu-phí-phâak-sǎa"},
-  {"english":"policeman","thai":"ตำรวจ","phonetic":"dtam-rùat"},
-  {"english":"soldier","thai":"ทหาร","phonetic":"thá-hǎan"},
-  {"english":"firefighter","thai":"นักดับเพลิง","phonetic":"nák-dàp-pləəŋ"},
-  {"english":"chef","thai":"พ่อครัว","phonetic":"phɔɔ-krua"},
-  {"english":"cook (female)","thai":"แม่ครัว","phonetic":"mɛɛ-krua"},
-  {"english":"waiter/waitress","thai":"บริกร","phonetic":"bɔɔ-rí-gon"},
-  {"english":"server","thai":"พนักงานเสิร์ฟ","phonetic":"phá-nák-ŋaan sɤɤp"},
-  {"english":"driver (taxi, bus, etc.)","thai":"คนขับรถ","phonetic":"khon khàp rót"},
-  {"english":"farmer","thai":"ชาวนา","phonetic":"chao-naa"},
-  {"english":"fisherman","thai":"ชาวประมง","phonetic":"chao bprà-moŋ"},
-  {"english":"tour guide","thai":"มัคคุเทศก์","phonetic":"mák-khá-thêek"},
-  {"english":"artist","thai":"ศิลปิน","phonetic":"sǐn-lá-bpin"},
-  {"english":"musician","thai":"นักดนตรี","phonetic":"nák-don-dtrii"},
-  {"english":"actor / actress","thai":"นักแสดง","phonetic":"nák-sà-dɛɛŋ"},
-  {"english":"writer","thai":"นักเขียน","phonetic":"nák-khǐan"},
-  {"english":"journalist","thai":"นักข่าว","phonetic":"nák-khàao"},
-  {"english":"photographer","thai":"ช่างภาพ","phonetic":"châŋ-phâap"},
-  {"english":"cleaner","thai":"คนทำความสะอาด","phonetic":"khon tham khwaam sà-àat"},
-  {"english":"housemaid","thai":"แม่บ้าน","phonetic":"mɛɛ-bâan"},
-  {"english":"security guard","thai":"ยาม","phonetic":"yaam"},
-  {"english":"retired person","thai":"ผู้เกษียณ","phonetic":"phûu-gà-sǐan"}
+  {
+    "english": "job/occupation",
+    "thai": "อาชีพ",
+    "phonetic": "aa-chîip",
+    "emoji": "💼"
+  },
+  {
+    "english": "work (noun/verb)",
+    "thai": "งาน",
+    "phonetic": "ŋaan",
+    "emoji": "💼"
+  },
+  {
+    "english": "employee",
+    "thai": "พนักงาน",
+    "phonetic": "phá-nák-ŋaan",
+    "emoji": "🧑‍💼"
+  },
+  {
+    "english": "boss",
+    "thai": "เจ้านาย",
+    "phonetic": "jâo-naai",
+    "emoji": "👔"
+  },
+  {
+    "english": "manager",
+    "thai": "ผู้จัดการ",
+    "phonetic": "phûu-jàt-gaan",
+    "emoji": "👔"
+  },
+  {
+    "english": "office worker",
+    "thai": "พนักงานออฟฟิศ",
+    "phonetic": "phá-nák-ŋaan ɔɔf-fít",
+    "emoji": "🧑‍💼"
+  },
+  {
+    "english": "businessperson",
+    "thai": "นักธุรกิจ",
+    "phonetic": "nák-thú-rá-gìt",
+    "emoji": "💼"
+  },
+  {
+    "english": "doctor",
+    "thai": "หมอ",
+    "phonetic": "mɔɔ",
+    "emoji": "🩺"
+  },
+  {
+    "english": "nurse",
+    "thai": "พยาบาล",
+    "phonetic": "phá-yaa-baan",
+    "emoji": "🧑‍⚕️"
+  },
+  {
+    "english": "dentist",
+    "thai": "หมอฟัน",
+    "phonetic": "mɔɔ-fan",
+    "emoji": "🦷"
+  },
+  {
+    "english": "pharmacist",
+    "thai": "เภสัชกร",
+    "phonetic": "phee-sàt-chá-gɔɔn",
+    "emoji": "💊"
+  },
+  {
+    "english": "teacher (school)",
+    "thai": "ครู",
+    "phonetic": "kruu",
+    "emoji": "🧑‍🏫"
+  },
+  {
+    "english": "lecturer (ajarn)",
+    "thai": "อาจารย์",
+    "phonetic": "aa-jaan",
+    "emoji": "🧑‍🏫"
+  },
+  {
+    "english": "professor",
+    "thai": "ศาสตราจารย์",
+    "phonetic": "sàat-dtraa-jaan",
+    "emoji": "🎓"
+  },
+  {
+    "english": "student (school)",
+    "thai": "นักเรียน",
+    "phonetic": "nák-rian",
+    "emoji": "🎒"
+  },
+  {
+    "english": "student (university)",
+    "thai": "นักศึกษา",
+    "phonetic": "nák-sʉ̀k-sǎa",
+    "emoji": "🎒"
+  },
+  {
+    "english": "engineer",
+    "thai": "วิศวกร",
+    "phonetic": "wít-sà-wá-gɔɔn",
+    "emoji": "⚙️"
+  },
+  {
+    "english": "architect",
+    "thai": "สถาปนิก",
+    "phonetic": "sà-thǎa-pá-ník",
+    "emoji": "📐"
+  },
+  {
+    "english": "lawyer",
+    "thai": "ทนายความ",
+    "phonetic": "thá-naai khwaam",
+    "emoji": "⚖️"
+  },
+  {
+    "english": "judge",
+    "thai": "ผู้พิพากษา",
+    "phonetic": "phûu-phí-phâak-sǎa",
+    "emoji": "🧑‍⚖️"
+  },
+  {
+    "english": "policeman",
+    "thai": "ตำรวจ",
+    "phonetic": "dtam-rùat",
+    "emoji": "👮"
+  },
+  {
+    "english": "soldier",
+    "thai": "ทหาร",
+    "phonetic": "thá-hǎan",
+    "emoji": "🪖"
+  },
+  {
+    "english": "firefighter",
+    "thai": "นักดับเพลิง",
+    "phonetic": "nák-dàp-pləəŋ",
+    "emoji": "🚒"
+  },
+  {
+    "english": "chef",
+    "thai": "พ่อครัว",
+    "phonetic": "phɔɔ-krua",
+    "emoji": "👩‍🍳"
+  },
+  {
+    "english": "cook (female)",
+    "thai": "แม่ครัว",
+    "phonetic": "mɛɛ-krua",
+    "emoji": "👩‍🍳"
+  },
+  {
+    "english": "waiter/waitress",
+    "thai": "บริกร",
+    "phonetic": "bɔɔ-rí-gon",
+    "emoji": "🍽️"
+  },
+  {
+    "english": "server",
+    "thai": "พนักงานเสิร์ฟ",
+    "phonetic": "phá-nák-ŋaan sɤɤp",
+    "emoji": "🍽️"
+  },
+  {
+    "english": "driver (taxi, bus, etc.)",
+    "thai": "คนขับรถ",
+    "phonetic": "khon khàp rót",
+    "emoji": "🚕"
+  },
+  {
+    "english": "farmer",
+    "thai": "ชาวนา",
+    "phonetic": "chao-naa",
+    "emoji": "🌾"
+  },
+  {
+    "english": "fisherman",
+    "thai": "ชาวประมง",
+    "phonetic": "chao bprà-moŋ",
+    "emoji": "🎣"
+  },
+  {
+    "english": "tour guide",
+    "thai": "มัคคุเทศก์",
+    "phonetic": "mák-khá-thêek",
+    "emoji": "🗺️"
+  },
+  {
+    "english": "artist",
+    "thai": "ศิลปิน",
+    "phonetic": "sǐn-lá-bpin",
+    "emoji": "🎨"
+  },
+  {
+    "english": "musician",
+    "thai": "นักดนตรี",
+    "phonetic": "nák-don-dtrii",
+    "emoji": "🎵"
+  },
+  {
+    "english": "actor / actress",
+    "thai": "นักแสดง",
+    "phonetic": "nák-sà-dɛɛŋ",
+    "emoji": "🎭"
+  },
+  {
+    "english": "writer",
+    "thai": "นักเขียน",
+    "phonetic": "nák-khǐan",
+    "emoji": "✍️"
+  },
+  {
+    "english": "journalist",
+    "thai": "นักข่าว",
+    "phonetic": "nák-khàao",
+    "emoji": "📰"
+  },
+  {
+    "english": "photographer",
+    "thai": "ช่างภาพ",
+    "phonetic": "châŋ-phâap",
+    "emoji": "📷"
+  },
+  {
+    "english": "cleaner",
+    "thai": "คนทำความสะอาด",
+    "phonetic": "khon tham khwaam sà-àat",
+    "emoji": "🧹"
+  },
+  {
+    "english": "housemaid",
+    "thai": "แม่บ้าน",
+    "phonetic": "mɛɛ-bâan",
+    "emoji": "🧹"
+  },
+  {
+    "english": "security guard",
+    "thai": "ยาม",
+    "phonetic": "yaam",
+    "emoji": "🛡️"
+  },
+  {
+    "english": "retired person",
+    "thai": "ผู้เกษียณ",
+    "phonetic": "phûu-gà-sǐan",
+    "emoji": ""
+  }
 ]
-

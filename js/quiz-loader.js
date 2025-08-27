@@ -201,15 +201,13 @@
       };
     }),
 
-    verbs: makeStandardQuizBuilder(['data/emoji-rules/verbs.json','data/verbs.json','data/verbs-examples.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
-      const examples = results[2] || {};
+    verbs: makeStandardQuizBuilder(['data/verbs.json','data/verbs-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
       return {
         data: data,
         examples: examples,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
         // Progressive difficulty enabled by default
       };
     }),
@@ -222,53 +220,45 @@
       };
     }),
 
-    classifiers: makeStandardQuizBuilder(['data/emoji-rules/classifiers.json','data/classifiers.json','data/classifiers-examples.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
-      const examples = results[2] || {};
+    classifiers: makeStandardQuizBuilder(['data/classifiers.json','data/classifiers-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
       return {
         data: data,
         examples: examples,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
         // Progressive difficulty enabled by default
       };
     }),
 
-    jobs: makeStandardQuizBuilder(['data/emoji-rules/jobs.json','data/jobs.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
+    jobs: makeStandardQuizBuilder(['data/jobs.json'], function(results) {
+      const data = results[0] || [];
       return {
         data: data,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
         // Progressive difficulty enabled by default
       };
     }),
 
-    foods: makeStandardQuizBuilder(['data/emoji-rules/foods.json','data/foods.json','data/foods-examples.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
-      const examples = results[2] || {};
+    foods: makeStandardQuizBuilder(['data/foods.json','data/foods-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
       return {
         data: data,
         examples: examples,
         exampleKey: function(a){ return a.id || a.english; },
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
         // Progressive difficulty enabled by default
       };
     }),
 
-    months: makeStandardQuizBuilder(['data/emoji-rules/months-seasons.json','data/months-seasons.json','data/months-seasons-examples.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
-      const examples = results[2] || {};
+    months: makeStandardQuizBuilder(['data/months-seasons.json','data/months-seasons-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
       return {
         data: data,
         examples: examples,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; },
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; },
         progressiveDifficulty: {
           choicesThresholds: [
             { correctAnswers: 20, choices: 5 },
@@ -279,29 +269,25 @@
       };
     }),
 
-    rooms: makeStandardQuizBuilder(['data/emoji-rules/rooms.json','data/rooms.json','data/rooms-examples.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
-      const examples = results[2] || {};
+    rooms: makeStandardQuizBuilder(['data/rooms.json','data/rooms-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
       return {
         data: data,
         examples: examples,
         exampleKey: function(a){ return a.id || a.english; },
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
         // Progressive difficulty enabled by default
       };
     }),
 
-    tenses: makeStandardQuizBuilder(['data/emoji-rules/tenses.json','data/tenses.json','data/tenses-examples.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
-      const examples = results[2] || {};
+    tenses: makeStandardQuizBuilder(['data/tenses.json','data/tenses-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
       return {
         data: data,
         examples: examples,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
         // Progressive difficulty enabled by default
       };
     }),
@@ -318,25 +304,21 @@
       };
     }),
 
-    prepositions: makeStandardQuizBuilder(['data/emoji-rules/prepositions.json','data/prepositions.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
+    prepositions: makeStandardQuizBuilder(['data/prepositions.json'], function(results) {
+      const data = results[0] || [];
       return {
         data: data,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
         // Progressive difficulty enabled by default
       };
     }),
 
     // Body Parts in Thai — standard vocab quiz with emoji hints
-    'body-parts': makeStandardQuizBuilder(['data/emoji-rules/body-parts.json','data/body-parts.json'], function(results) {
-      const rules = results[0] || [];
-      const getEmoji = Utils.createEmojiGetter(rules);
-      const data = results[1] || [];
+    'body-parts': makeStandardQuizBuilder(['data/body-parts.json'], function(results) {
+      const data = results[0] || [];
       return {
         data: data,
-        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: getEmoji(a && a.english) }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
         // Progressive difficulty enabled by default
       };
     })
