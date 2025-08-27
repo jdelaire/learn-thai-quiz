@@ -1,5 +1,66 @@
 (function() {
   'use strict';
+  
+  // Generate and set all player card data
+  try {
+    // Player ID
+    const playerID = Utils.generatePlayerID();
+    const playerNameEl = document.querySelector('.player-name');
+    if (playerNameEl) {
+      playerNameEl.textContent = playerID;
+    }
+
+    // Player Level
+    const playerLevel = Utils.getPlayerLevel();
+    const playerLevelEl = document.querySelector('.player-level');
+    if (playerLevelEl) {
+      playerLevelEl.textContent = `Level ${playerLevel}`;
+    }
+
+    // Player Avatar
+    const playerAvatar = Utils.getPlayerAvatar();
+    const playerAvatarEl = document.querySelector('.player-avatar');
+    if (playerAvatarEl) {
+      playerAvatarEl.src = playerAvatar;
+    }
+
+    // XP Data
+    const currentXP = Utils.getPlayerXP();
+    const maxXP = Utils.getPlayerMaxXP();
+    const xpValueEl = document.querySelector('.xp-value');
+    if (xpValueEl) {
+      xpValueEl.textContent = `${Utils.formatNumber(currentXP)} / ${Utils.formatNumber(maxXP)}`;
+    }
+
+    // XP Progress Bar
+    const xpProgress = Utils.getXPProgressPercentage();
+    const xpBarEl = document.querySelector('.xp-bar');
+    const xpFillEl = document.querySelector('.xp-fill');
+    if (xpBarEl && xpFillEl) {
+      xpBarEl.setAttribute('aria-valuenow', xpProgress);
+      xpFillEl.style.width = `${xpProgress}%`;
+    }
+
+    // Player Metrics
+    const accuracy = Utils.getPlayerAccuracy();
+    const quizzesCompleted = Utils.getQuizzesCompleted();
+    const totalXPEarned = Utils.getTotalXPEarned();
+
+    // Update all metrics by finding them in order
+    const metricValues = document.querySelectorAll('.metric-value');
+    if (metricValues.length >= 3) {
+      // Accuracy metric (first)
+      metricValues[0].textContent = `${accuracy}%`;
+      
+      // Quizzes completed metric (second)
+      metricValues[1].textContent = Utils.formatNumber(quizzesCompleted);
+      
+      // Total XP earned metric (third)
+      metricValues[2].textContent = Utils.formatNumber(totalXPEarned);
+    }
+
+  } catch (e) { try { Utils.logError(e, 'home.js: player card data population'); } catch (_) {} }
+  
   const thaiWeekdays = ['วันอาทิตย์','วันจันทร์','วันอังคาร','วันพุธ','วันพฤหัสบดี','วันศุกร์','วันเสาร์'];
   const phoneticWeekdays = ['wan aa-thít','wan jan','wan ang-khaan','wan phút','wan phá-rʉ́-hàt','wan sùk','wan sǎo'];
   try {
@@ -184,6 +245,10 @@
           quizzes.forEach(function(q){
             q._titleLower = (q.title || '').toLowerCase();
             q._descriptionLower = (q.description || '').toLowerCase();
+          });
+          // Sort quizzes alphabetically by title
+          quizzes.sort(function(a, b) {
+            return (a.title || '').localeCompare(b.title || '');
           });
           const categorySet = new Set();
           quizzes.forEach(q => (q.categories || []).forEach(c => categorySet.add(c)));
