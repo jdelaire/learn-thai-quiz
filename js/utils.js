@@ -285,21 +285,8 @@
     };
   }
 
-  // Build a function that maps a text (usually English) to an emoji based on regex rules
-  function buildEmojiMatcher(rules) {
-    try {
-      const compiled = (rules || []).map(function(r){ return [new RegExp(r.pattern, 'i'), r.emoji]; });
-      return function toEmoji(text) {
-        const t = String(text || '').toLowerCase();
-        for (let i = 0; i < compiled.length; i++) {
-          if (compiled[i][0].test(t)) return compiled[i][1];
-        }
-        return '';
-      };
-    } catch (_) {
-      return function(){ return ''; };
-    }
-  }
+  // Deprecated: emoji rules have been migrated to per-item data (kept as no-ops for backward compatibility)
+  function buildEmojiMatcher() { return function(){ return ''; }; }
 
   // Simple validation helpers (console-only)
   function validateDataset(items, requiredKeys) {
@@ -389,26 +376,9 @@
   }
 
   // New helpers for data-driven configs and shared UI snippets
-  function createEmojiGetter(rules) {
-    try {
-      const matcher = buildEmojiMatcher(rules || []);
-      return function getEmojiForText(text) {
-        try { return matcher(String(text || '')); } catch (e) { return ''; }
-      };
-    } catch (e) {
-      logError(e, 'Utils.createEmojiGetter');
-      return function(){ return ''; };
-    }
-  }
+  function createEmojiGetter() { return function(){ return ''; }; }
 
-  function loadEmojiGetter(rulesUrl) {
-    try {
-      return fetchJSONCached(rulesUrl).then(function(rules){ return createEmojiGetter(rules); });
-    } catch (e) {
-      logError(e, 'Utils.loadEmojiGetter');
-      return Promise.resolve(function(){ return ''; });
-    }
-  }
+  function loadEmojiGetter() { return Promise.resolve(function(){ return ''; }); }
 
   function insertProTip(text) {
     try {
