@@ -424,7 +424,7 @@ body.home .footer {
 /* Socials */
 body.home .socials {
   text-align: center;
-  margin: 2em 0 0 0;
+  margin: 0 0 0 0;
   padding: 1em;
 }
 
@@ -527,6 +527,39 @@ body.home .socials a.chip {
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 16px;
   padding: 1em 1.2em;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Disabled overlay for player card */
+.player-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(1px);
+  z-index: 10;
+  border-radius: 16px;
+}
+
+.player-card::after {
+  content: '🚧 In Development';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--color-brand);
+  color: white;
+  padding: 0.5em 1em;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9em;
+  z-index: 11;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.5px;
 }
 
 .player-top {
@@ -615,6 +648,13 @@ body.home .socials a.chip {
     margin: 0 auto 0.8em;
     width: 100%;
     box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .player-card::after {
+    font-size: 0.8em;
+    padding: 0.4em 0.8em;
   }
   .player-avatar { width: 52px; height: 52px; }
   .player-metrics { 
@@ -867,7 +907,7 @@ body.questions-quiz .correct-line {
   }
   body.home .socials {
     padding: 0.8em;
-    margin: 1.5em 0 0 0;
+    margin: 0;
   }
   body.home .socials .social-links {
     gap: 0.6em;
@@ -898,7 +938,7 @@ body.questions-quiz .correct-line {
   
   body.home .socials {
     padding: 0.6em;
-    margin: 1.2em 0 0 0;
+    margin: 0 0 0 0;
   }
   body.home .socials .social-links {
     gap: 0.5em;
@@ -934,7 +974,7 @@ body.questions-quiz .correct-line {
   
   body.home .socials {
     padding: 0.5em;
-    margin: 1em 0 0 0;
+    margin: 0 0 0 0;
   }
   body.home .socials .social-links {
     gap: 0.4em;

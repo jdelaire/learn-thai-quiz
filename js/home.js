@@ -246,6 +246,10 @@
             q._titleLower = (q.title || '').toLowerCase();
             q._descriptionLower = (q.description || '').toLowerCase();
           });
+          // Sort quizzes alphabetically by title
+          quizzes.sort(function(a, b) {
+            return (a.title || '').localeCompare(b.title || '');
+          });
           const categorySet = new Set();
           quizzes.forEach(q => (q.categories || []).forEach(c => categorySet.add(c)));
           categories = Array.from(categorySet).sort();
