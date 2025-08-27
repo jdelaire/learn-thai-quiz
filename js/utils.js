@@ -426,6 +426,141 @@
   // Provide a shared default elements config
   var defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
 
+  // Generate a unique PlayerID using browser fingerprinting and local storage
+  function generatePlayerID() {
+    try {
+      // Check if we already have a stored ID
+      let playerID = localStorage.getItem('thaiQuestPlayerID');
+      
+      if (!playerID) {
+        // Create a fingerprint from browser characteristics
+        const fingerprint = [
+          navigator.userAgent,
+          navigator.language,
+          screen.width + 'x' + screen.height,
+          new Date().getTimezoneOffset(),
+          navigator.hardwareConcurrency || 'unknown',
+          navigator.platform,
+          navigator.cookieEnabled ? 'cookies' : 'no-cookies'
+        ].join('|');
+        
+        // Generate a hash from the fingerprint
+        let hash = 0;
+        for (let i = 0; i < fingerprint.length; i++) {
+          const char = fingerprint.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash = hash & hash; // Convert to 32-bit integer
+        }
+        
+        // Create a readable ID (e.g., "Player_ABC123")
+        const hashStr = Math.abs(hash).toString(36).toUpperCase();
+        playerID = `Player_${hashStr}`;
+        
+        // Store it for future use
+        localStorage.setItem('thaiQuestPlayerID', playerID);
+      }
+      
+      return playerID;
+    } catch (e) {
+      logError(e, 'Utils.generatePlayerID');
+      // Fallback to a simple timestamp-based ID
+      return `Player_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+    }
+  }
+
+  // Player data functions - all return placeholder values for now
+  function getPlayerLevel() {
+    try {
+      const storedLevel = localStorage.getItem('thaiQuestPlayerLevel');
+      return storedLevel ? parseInt(storedLevel, 10) : 7;
+    } catch (e) {
+      logError(e, 'Utils.getPlayerLevel');
+      return 7;
+    }
+  }
+
+  function getPlayerXP() {
+    try {
+      const storedXP = localStorage.getItem('thaiQuestPlayerXP');
+      return storedXP ? parseInt(storedXP, 10) : 1450;
+    } catch (e) {
+      logError(e, 'Utils.getPlayerXP');
+      return 1450;
+    }
+  }
+
+  function getPlayerMaxXP() {
+    try {
+      const level = getPlayerLevel();
+      // Simple formula: each level requires more XP
+      return level * 400 + 400; // Level 7 = 3200 XP
+    } catch (e) {
+      logError(e, 'Utils.getPlayerMaxXP');
+      return 3200;
+    }
+  }
+
+  function getPlayerAccuracy() {
+    try {
+      const storedAccuracy = localStorage.getItem('thaiQuestPlayerAccuracy');
+      return storedAccuracy ? parseFloat(storedAccuracy) : 82.0;
+    } catch (e) {
+      logError(e, 'Utils.getPlayerAccuracy');
+      return 82.0;
+    }
+  }
+
+  function getQuizzesCompleted() {
+    try {
+      const storedCompleted = localStorage.getItem('thaiQuestQuizzesCompleted');
+      return storedCompleted ? parseInt(storedCompleted, 10) : 24;
+    } catch (e) {
+      logError(e, 'Utils.getQuizzesCompleted');
+      return 24;
+    }
+  }
+
+  function getTotalXPEarned() {
+    try {
+      const storedTotal = localStorage.getItem('thaiQuestTotalXPEarned');
+      return storedTotal ? parseInt(storedTotal, 10) : 1450;
+    } catch (e) {
+      logError(e, 'Utils.getTotalXPEarned');
+      return 1450;
+    }
+  }
+
+  function getPlayerAvatar() {
+    try {
+      const storedAvatar = localStorage.getItem('thaiQuestPlayerAvatar');
+      return storedAvatar || 'https://placehold.co/80x80/png';
+    } catch (e) {
+      logError(e, 'Utils.getPlayerAvatar');
+      return 'https://placehold.co/80x80/png';
+    }
+  }
+
+  // Helper function to format numbers with commas
+  function formatNumber(num) {
+    try {
+      return num.toLocaleString();
+    } catch (e) {
+      return String(num);
+    }
+  }
+
+  // Helper function to calculate XP progress percentage
+  function getXPProgressPercentage() {
+    try {
+      const currentXP = getPlayerXP();
+      const maxXP = getPlayerMaxXP();
+      return Math.min(100, Math.max(0, Math.round((currentXP / maxXP) * 100)));
+    } catch (e) {
+      logError(e, 'Utils.getXPProgressPercentage');
+      return 45;
+    }
+  }
+
   global.Utils = {
     fetchJSON: fetchJSON,
     fetchJSONCached: fetchJSONCached,
@@ -462,6 +597,18 @@
     i18n: i18n,
     getBodyClass: getBodyClass,
     // shared default elements
-    defaultElements: defaultElements
+    defaultElements: defaultElements,
+    // Player ID generation
+    generatePlayerID: generatePlayerID,
+    // Player data functions
+    getPlayerLevel: getPlayerLevel,
+    getPlayerXP: getPlayerXP,
+    getPlayerMaxXP: getPlayerMaxXP,
+    getPlayerAccuracy: getPlayerAccuracy,
+    getQuizzesCompleted: getQuizzesCompleted,
+    getTotalXPEarned: getTotalXPEarned,
+    getPlayerAvatar: getPlayerAvatar,
+    formatNumber: formatNumber,
+    getXPProgressPercentage: getXPProgressPercentage
   };
 })(window);
