@@ -35,6 +35,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Tense Markers**: Thai time words and structures; examples after correct answers
 - **Days of the Week**: Thai day names with phonetics, planet, and color associations
  - **Body Parts in Thai**: Common anatomy words with Thai script, phonetics, and emoji hints
+- **Essential Thai Prepositions**: Core place prepositions with phonetics and usage tip
 
 ### Quick start (local)
 

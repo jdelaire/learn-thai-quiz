@@ -1,0 +1,15 @@
+[
+  { "pattern": "^in$", "emoji": "📦" },
+  { "pattern": "^inside$", "emoji": "📦" },
+  { "pattern": "^outside$", "emoji": "🌤️" },
+  { "pattern": "^on$", "emoji": "📌" },
+  { "pattern": "^under$", "emoji": "⬇️" },
+  { "pattern": "^in front of$", "emoji": "👀" },
+  { "pattern": "^behind$", "emoji": "🔙" },
+  { "pattern": "^next to \/ beside$", "emoji": "↔️" },
+  { "pattern": "^between$", "emoji": "↔️" },
+  { "pattern": "^near \/ close to$", "emoji": "🤏" },
+  { "pattern": "^far from$", "emoji": "🏞️" },
+  { "pattern": "^at \/ to \\(a place\\)$", "emoji": "📍" },
+  { "pattern": "^there is \/ are$", "emoji": "✅" }
+]

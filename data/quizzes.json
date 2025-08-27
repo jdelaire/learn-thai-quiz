@@ -158,5 +158,15 @@
     "categories": ["Phrases","Advanced"],
     "bodyClass": "questions-quiz",
     "proTip": "Structure: <strong>[Subject] + [Time Marker] + [Verb] + [Particle]</strong>"
+  },
+  {
+    "id": "prepositions",
+    "title": "📍 Essential Thai Prepositions",
+    "href": "quiz.html?quiz=prepositions",
+    "description": "Practice essential Thai prepositions and existential ‘mii’ with Thai and phonetics.",
+    "bullets": ["Place prepositions","English/Thai/phonetics","Usage structure tip"],
+    "categories": ["Vocabulary","Beginner"],
+    "bodyClass": "questions-quiz",
+    "proTip": "Structure: <strong>[Preposition] + [location] + mii + [object] + [number] + [classifier]</strong><br>Examples: <em>bon dtó mii nǎŋ-sɯ̌ɯ sɔ̌ɔŋ lêm</em> — On the table, there are two books. <em>dtâay gâw-îi mii mɛɛw nɯ̀ŋ dtua</em> — Under the chair, there’s one cat."
   }
 ]
