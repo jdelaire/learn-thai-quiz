@@ -188,8 +188,13 @@
         try {
           const starsCount = (typeof Utils.getQuizStars === 'function') ? Utils.getQuizStars(q.id) : 0;
           const starsText = (typeof Utils.formatStars === 'function') ? Utils.formatStars(starsCount) : '';
-          starsWrap.textContent = starsText ? ('Stars: ' + starsText) : '';
-          if (starsText) starsWrap.setAttribute('aria-label', 'Completion stars: ' + starsText.replace(/\*/g, ''));
+          starsWrap.textContent = starsText || '';
+          if (starsText) {
+            starsWrap.setAttribute('aria-label', 'Completion stars');
+            if (typeof Utils.getStarRulesTooltip === 'function') {
+              starsWrap.title = Utils.getStarRulesTooltip();
+            }
+          }
         } catch (_) {}
 
         const features = document.createElement('ul');

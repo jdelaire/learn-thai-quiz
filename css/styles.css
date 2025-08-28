@@ -233,6 +233,18 @@ button:active {
   color: rgba(17, 17, 17, 0.7);
 }
 
+/* Larger star visuals for completion rating */
+.star-rating {
+  font-size: 1.4em;
+  line-height: 1;
+  margin: 0.25em 0 0.75em 0;
+}
+
+/* Stars appended inside stats line on quiz page */
+body.quiz-page .stats {
+  line-height: 1.4;
+}
+
 /* Shared example card styling */
 .example {
   margin-top: 0.5em;
@@ -388,6 +400,11 @@ body.home .quiz-card p {
 body.home .quiz-card .features {
   text-align: left;
   margin-bottom: 1.5em;
+}
+
+/* Larger stars on quiz cards */
+body.home .quiz-card .star-rating {
+  font-size: 1.6em;
 }
 
 body.home .quiz-card .features li {

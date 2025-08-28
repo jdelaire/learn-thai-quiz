@@ -638,6 +638,10 @@
     }
   }
 
+  function getStarRulesTooltip() {
+    return 'Star rules: 3★ = 100 right with 100% accuracy; 2★ = 100 right with ≥90% accuracy; 1★ = 100 right with ≥80% accuracy; 0★ otherwise.';
+  }
+
   global.Utils = {
     fetchJSON: fetchJSON,
     fetchJSONCached: fetchJSONCached,
@@ -693,6 +697,7 @@
     computeStarRating: computeStarRating,
     formatStars: formatStars,
     getQuizStars: getQuizStars,
-    resetAllProgress: resetAllProgress
+    resetAllProgress: resetAllProgress,
+    getStarRulesTooltip: getStarRulesTooltip
   };
 })(window);

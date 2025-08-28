@@ -41,14 +41,31 @@
       const accuracy = state.questionsAnswered > 0
         ? Math.round((state.correctAnswers / state.questionsAnswered) * 100)
         : 0;
-      let text = `Questions: ${state.questionsAnswered} | Correct: ${state.correctAnswers} | Accuracy: ${accuracy}%`;
+      const baseText = `Questions: ${state.questionsAnswered} | Correct: ${state.correctAnswers} | Accuracy: ${accuracy}%`;
+      let starsText = '';
       try {
         if (quizId && global && global.Utils && typeof global.Utils.computeStarRating === 'function' && typeof global.Utils.formatStars === 'function') {
           const stars = global.Utils.computeStarRating(state.correctAnswers, state.questionsAnswered);
-          text += ` | Stars: ${global.Utils.formatStars(stars)}`;
+          starsText = global.Utils.formatStars(stars) || '';
         }
       } catch (_) {}
-      statsEl.textContent = text;
+
+      // Reset content and compose with a dedicated span for larger stars + tooltip
+      try { while (statsEl.firstChild) statsEl.removeChild(statsEl.firstChild); } catch (e) {}
+      statsEl.appendChild(document.createTextNode(baseText));
+      if (starsText) {
+        statsEl.appendChild(document.createTextNode(' | '));
+        const span = document.createElement('span');
+        span.className = 'stats-stars';
+        span.textContent = starsText;
+        try {
+          if (global && global.Utils && typeof global.Utils.getStarRulesTooltip === 'function') {
+            span.title = global.Utils.getStarRulesTooltip();
+            span.setAttribute('aria-label', 'Completion stars');
+          }
+        } catch (_) {}
+        statsEl.appendChild(span);
+      }
     }
 
     function showNoDataMessage() {
