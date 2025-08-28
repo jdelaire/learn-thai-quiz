@@ -354,7 +354,12 @@
         var cls = (meta && meta.bodyClass) || (Utils && typeof Utils.getBodyClass === 'function' ? Utils.getBodyClass(quizId) : null);
         if (cls) document.body.classList.add(cls);
         // Always add a generic per-quiz class as a fallback (e.g., foods -> foods-quiz)
-        try { if (quizId) document.body.classList.add(quizId + '-quiz'); } catch (e) {}
+        try {
+          if (quizId) {
+            document.body.classList.add(quizId + '-quiz');
+            document.body.dataset.quizId = quizId;
+          }
+        } catch (e) {}
 
         // Add per-quiz pro tips, prefer metadata if provided
         try {
@@ -389,7 +394,7 @@
                 return;
               }
               try {
-                ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements }, Utils.createStandardQuiz({
+                ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: quizId }, Utils.createStandardQuiz({
                   data: data
                 })));
               } catch (e) { handleDataLoadError(e); }

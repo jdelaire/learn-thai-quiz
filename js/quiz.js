@@ -24,10 +24,16 @@
     // Ensure options container is focusable for scoped keyboard events
     try { if (!optionsEl.hasAttribute('tabindex')) optionsEl.setAttribute('tabindex', '0'); } catch (e) {}
 
+    const quizId = (config && config.quizId) || (document && document.body && document.body.dataset && document.body.dataset.quizId) || null;
+    // Initialize state from persisted progress when available
+    const initialProgress = (global && global.Utils && typeof global.Utils.getQuizProgress === 'function' && quizId)
+      ? global.Utils.getQuizProgress(quizId)
+      : { questionsAnswered: 0, correctAnswers: 0 };
+
     const state = {
       currentAnswer: null,
-      questionsAnswered: 0,
-      correctAnswers: 0,
+      questionsAnswered: initialProgress.questionsAnswered || 0,
+      correctAnswers: initialProgress.correctAnswers || 0,
       autoAdvanceTimerId: null
     };
 
@@ -35,7 +41,14 @@
       const accuracy = state.questionsAnswered > 0
         ? Math.round((state.correctAnswers / state.questionsAnswered) * 100)
         : 0;
-      statsEl.textContent = `Questions: ${state.questionsAnswered} | Correct: ${state.correctAnswers} | Accuracy: ${accuracy}%`;
+      let text = `Questions: ${state.questionsAnswered} | Correct: ${state.correctAnswers} | Accuracy: ${accuracy}%`;
+      try {
+        if (quizId && global && global.Utils && typeof global.Utils.computeStarRating === 'function' && typeof global.Utils.formatStars === 'function') {
+          const stars = global.Utils.computeStarRating(state.correctAnswers, state.questionsAnswered);
+          text += ` | Stars: ${global.Utils.formatStars(stars)}`;
+        }
+      } catch (_) {}
+      statsEl.textContent = text;
     }
 
     function showNoDataMessage() {
@@ -158,6 +171,16 @@
               btn.classList.remove('answer-wrong');
             }, { once: true });
           }
+
+          // Persist progress after each answer
+          try {
+            if (quizId && global && global.Utils && typeof global.Utils.saveQuizProgress === 'function') {
+              global.Utils.saveQuizProgress(quizId, {
+                questionsAnswered: state.questionsAnswered,
+                correctAnswers: state.correctAnswers
+              });
+            }
+          } catch (_) {}
 
           updateStats();
 

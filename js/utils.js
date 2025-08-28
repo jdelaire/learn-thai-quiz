@@ -561,6 +561,83 @@
     }
   }
 
+  // ---- Quiz progress persistence (localStorage) ----
+  function getQuizProgress(quizId) {
+    try {
+      if (!quizId) return { questionsAnswered: 0, correctAnswers: 0 };
+      const key = 'thaiQuest.progress.' + quizId;
+      const raw = localStorage.getItem(key);
+      if (!raw) return { questionsAnswered: 0, correctAnswers: 0 };
+      const data = JSON.parse(raw);
+      const qa = parseInt(data && data.questionsAnswered, 10) || 0;
+      const ca = parseInt(data && data.correctAnswers, 10) || 0;
+      return { questionsAnswered: qa, correctAnswers: ca };
+    } catch (e) {
+      logError(e, 'Utils.getQuizProgress');
+      return { questionsAnswered: 0, correctAnswers: 0 };
+    }
+  }
+
+  function saveQuizProgress(quizId, stateLike) {
+    try {
+      if (!quizId) return;
+      const key = 'thaiQuest.progress.' + quizId;
+      const payload = {
+        questionsAnswered: Math.max(0, parseInt(stateLike && stateLike.questionsAnswered, 10) || 0),
+        correctAnswers: Math.max(0, parseInt(stateLike && stateLike.correctAnswers, 10) || 0)
+      };
+      localStorage.setItem(key, JSON.stringify(payload));
+    } catch (e) {
+      logError(e, 'Utils.saveQuizProgress');
+    }
+  }
+
+  function computeStarRating(correctAnswers, questionsAnswered) {
+    try {
+      const c = Math.max(0, parseInt(correctAnswers, 10) || 0);
+      const q = Math.max(0, parseInt(questionsAnswered, 10) || 0);
+      if (c < 100) return 0;
+      const acc = q > 0 ? (c / q) * 100 : 0;
+      if (acc >= 100) return 3;
+      if (acc >= 90) return 2;
+      if (acc >= 80) return 1;
+      return 0;
+    } catch (e) {
+      logError(e, 'Utils.computeStarRating');
+      return 0;
+    }
+  }
+
+  function formatStars(stars) {
+    const n = Math.max(0, Math.min(3, parseInt(stars, 10) || 0));
+    const filled = '★'.repeat(n);
+    const empty = '☆'.repeat(3 - n);
+    return filled + empty;
+  }
+
+  function getQuizStars(quizId) {
+    try {
+      const p = getQuizProgress(quizId);
+      return computeStarRating(p.correctAnswers, p.questionsAnswered);
+    } catch (e) {
+      logError(e, 'Utils.getQuizStars');
+      return 0;
+    }
+  }
+
+  function resetAllProgress() {
+    try {
+      const toDelete = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.indexOf('thaiQuest.progress.') === 0) toDelete.push(key);
+      }
+      toDelete.forEach(function(k){ try { localStorage.removeItem(k); } catch (_) {} });
+    } catch (e) {
+      logError(e, 'Utils.resetAllProgress');
+    }
+  }
+
   global.Utils = {
     fetchJSON: fetchJSON,
     fetchJSONCached: fetchJSONCached,
@@ -609,6 +686,13 @@
     getTotalXPEarned: getTotalXPEarned,
     getPlayerAvatar: getPlayerAvatar,
     formatNumber: formatNumber,
-    getXPProgressPercentage: getXPProgressPercentage
+    getXPProgressPercentage: getXPProgressPercentage,
+    // Progress persistence exports
+    getQuizProgress: getQuizProgress,
+    saveQuizProgress: saveQuizProgress,
+    computeStarRating: computeStarRating,
+    formatStars: formatStars,
+    getQuizStars: getQuizStars,
+    resetAllProgress: resetAllProgress
   };
 })(window);

@@ -182,6 +182,16 @@
         const p = document.createElement('p');
         p.textContent = q.description;
 
+        // Star rating based on local progress (0-3 stars)
+        let starsWrap = document.createElement('div');
+        starsWrap.className = 'star-rating';
+        try {
+          const starsCount = (typeof Utils.getQuizStars === 'function') ? Utils.getQuizStars(q.id) : 0;
+          const starsText = (typeof Utils.formatStars === 'function') ? Utils.formatStars(starsCount) : '';
+          starsWrap.textContent = starsText ? ('Stars: ' + starsText) : '';
+          if (starsText) starsWrap.setAttribute('aria-label', 'Completion stars: ' + starsText.replace(/\*/g, ''));
+        } catch (_) {}
+
         const features = document.createElement('ul');
         features.className = 'features';
         q.bullets.forEach(b => {
@@ -197,6 +207,7 @@
 
         card.appendChild(h2);
         card.appendChild(p);
+        card.appendChild(starsWrap);
         card.appendChild(features);
         card.appendChild(a);
         frag.appendChild(card);
@@ -265,5 +276,19 @@
           try { Utils.logError(err, 'home.js: failed to load data/quizzes.json'); } catch (_) {}
         });
     })();
+
+    // Development-only: reset local quiz progress
+    try {
+      const resetBtn = document.getElementById('reset-progress');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', function(ev){
+          try { ev.preventDefault(); } catch (_) {}
+          try { Utils.resetAllProgress(); } catch (e) { try { Utils.logError(e, 'home.js: resetAllProgress'); } catch (_) {} }
+          // Re-render to reflect stars cleared
+          updateUI();
+          try { alert('Local quiz progress has been reset.'); } catch (_) {}
+        });
+      }
+    } catch (e) { try { Utils.logError(e, 'home.js: wire reset progress'); } catch (_) {} }
   } catch (e) { try { Utils.logError(e, 'home.js: init'); } catch (_) {} }
 })();

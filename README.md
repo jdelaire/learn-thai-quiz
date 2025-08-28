@@ -15,6 +15,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Auto‑advance**: Moves to the next question after a correct answer; tracks questions answered and accuracy
 - **Progressive difficulty**: Automatically increases challenge by adding more choices and removing hints as players improve
 - **JSON‑driven**: Easy to add or tweak data without changing runtime code
+ - **Per‑quiz progress & stars**: Progress is saved in localStorage; earn up to 3 stars per quiz based on accuracy when you reach 100 correct answers
 
 ### Quizzes included
 
@@ -128,6 +129,7 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 4. The loader invokes a per‑quiz builder. If no builder exists for the `id`, it falls back to running a standard quiz from `data/<id>.json` using `phonetic` as the answer key.
 5. Builders fetch JSON via `Utils.fetchJSONCached`/`Utils.fetchJSONs` and wire `ThaiQuiz.setupQuiz(...)` using `Utils.createStandardQuiz` plus small overrides (emoji, examples, symbol rendering).
 6. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
+7. Per‑quiz progress (questions answered and correct answers) is persisted to localStorage; the home page displays a 0–3 star rating for each quiz.
 
 ### Styling & overrides
 
@@ -292,6 +294,21 @@ progressiveDifficulty: {
 - **All quizzes**: 4→5→6 choices at 20/40 correct answers (default)
 - **Custom quizzes**: Can override thresholds as needed
 
+#### Quiz completion and star ranking
+
+- A quiz is considered eligible for ranking after you accumulate 100 correct answers on that quiz (across sessions; persisted in localStorage).
+- Star tiers (based on overall accuracy at the time you've reached 100 correct answers or beyond):
+  - 3★: 100 correct with 100% accuracy
+  - 2★: 100 correct with ≥90% accuracy
+  - 1★: 100 correct with ≥80% accuracy
+  - 0★: otherwise
+
+Implementation details:
+- Progress is stored under `localStorage["thaiQuest.progress.<quizId>"] = { questionsAnswered, correctAnswers }`.
+- The quiz engine initializes from stored progress and saves after every answer.
+- The stats line in `quiz.html` shows current counters plus a star preview (e.g., `Stars: ★☆★`).
+- The home page reads stars per quiz and shows them on each card.
+
 #### Quiz config skeleton (metadata‑driven)
 
 Add a `QuizBuilders.<id>` entry in `js/quiz-loader.js` that fetches data via cache and returns an initializer using `Utils.createStandardQuiz`:
@@ -383,6 +400,11 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 - Use number keys 1–9 to select answers quickly
 - After a correct answer, the app auto‑advances; the “Next” button remains hidden by design
 - Stats show Questions, Correct, and Accuracy
+ - Reset local progress for testing: on the home page bottom, click “Reset progress (local storage)”
+
+### Resetting local progress (testing)
+
+For quick manual testing, the home page (`index.html`) includes a temporary button at the very bottom labeled “Reset progress (local storage)”. Clicking it clears all keys prefixed with `thaiQuest.progress.` from localStorage and refreshes the displayed stars.
 
 ### Tech stack
 
