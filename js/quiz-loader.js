@@ -233,6 +233,18 @@
       };
     }),
 
+    adjectives: makeStandardQuizBuilder(['data/adjectives.json','data/adjectives-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
+      return {
+        data: data,
+        examples: examples,
+        exampleKey: function(a){ return a.id || a.english; },
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
+        // Progressive difficulty enabled by default
+      };
+    }),
+
     months: makeStandardQuizBuilder(['data/months-seasons.json','data/months-seasons-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
