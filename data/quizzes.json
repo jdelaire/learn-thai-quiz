@@ -9,6 +9,16 @@
     "bodyClass": "consonant-quiz"
   },
   {
+    "id": "greetings",
+    "title": "Thai Greetings 🙏",
+    "href": "quiz.html?quiz=greetings",
+    "description": "Core Thai greetings with Thai script, phonetics, and polite particles.",
+    "bullets": ["Hello/Thanks/Sorry","Never mind / It’s ok","How about you?"],
+    "categories": ["Phrases","Beginner"],
+    "bodyClass": "questions-quiz",
+    "proTip": "Add polite particles at the end: <strong>ครับ (khráp)</strong> for male speakers, <strong>ค่ะ (khâ)</strong> for female."
+  },
+  {
     "id": "vowels",
     "title": "Vowel Quiz 🔤",
     "href": "quiz.html?quiz=vowels",
