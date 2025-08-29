@@ -481,6 +481,47 @@
     }
   }
 
+  // Get the display name for the player (custom name or fallback to generated ID)
+  function getPlayerDisplayName() {
+    try {
+      const customName = localStorage.getItem('thaiQuestCustomName');
+      if (customName && customName.trim()) {
+        return customName.trim();
+      }
+      return generatePlayerID();
+    } catch (e) {
+      logError(e, 'Utils.getPlayerDisplayName');
+      return generatePlayerID();
+    }
+  }
+
+  // Set a custom player name
+  function setPlayerCustomName(name) {
+    try {
+      const trimmedName = (name || '').trim();
+      if (trimmedName) {
+        localStorage.setItem('thaiQuestCustomName', trimmedName);
+      } else {
+        localStorage.removeItem('thaiQuestCustomName');
+      }
+      return true;
+    } catch (e) {
+      logError(e, 'Utils.setPlayerCustomName');
+      return false;
+    }
+  }
+
+  // Get the custom player name (returns null if not set)
+  function getPlayerCustomName() {
+    try {
+      const customName = localStorage.getItem('thaiQuestCustomName');
+      return customName && customName.trim() ? customName.trim() : null;
+    } catch (e) {
+      logError(e, 'Utils.getPlayerCustomName');
+      return null;
+    }
+  }
+
   // ---- Leveling & XP from stars ----
   // Parameters for the power-law curve XP_total(L) = A * L^p (L is a non-negative integer level index)
   const XP_CURVE = { A: 80, p: 1.9 };
@@ -792,6 +833,9 @@
         if (key && key.indexOf('thaiQuest.progress.') === 0) toDelete.push(key);
       }
       toDelete.forEach(function(k){ try { localStorage.removeItem(k); } catch (_) {} });
+      
+      // Also clear custom player name
+      try { localStorage.removeItem('thaiQuestCustomName'); } catch (_) {}
     } catch (e) {
       logError(e, 'Utils.resetAllProgress');
     }
@@ -841,6 +885,10 @@
     defaultElements: defaultElements,
     // Player ID generation
     generatePlayerID: generatePlayerID,
+    // Player name management
+    getPlayerDisplayName: getPlayerDisplayName,
+    setPlayerCustomName: setPlayerCustomName,
+    getPlayerCustomName: getPlayerCustomName,
     // Player data functions
     getPlayerLevel: getPlayerLevel,
     getPlayerXP: getPlayerXP,

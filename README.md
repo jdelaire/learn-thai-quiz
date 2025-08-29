@@ -137,6 +137,7 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 
 The home page header includes a player profile card with:
 
+- **Custom player name**: Click on your player name to set a custom name (stored in localStorage). If no custom name is set, displays a computed ID based on browser fingerprinting.
 - **XP bar**: Shows current XP vs. max XP for your level. The XP bar remains visible and is independent of the star metrics.
 - **Avg accuracy**: Aggregated across all quizzes: round(Σ correct ÷ Σ answered × 100).
 - **Quizzes completed**: Count of quizzes with at least 100 correct answers.
@@ -365,7 +366,7 @@ QuizBuilders.myquiz = function() {
 
 Available hooks in the engine: `pickRound(state)`, `renderSymbol(answer, els, state)`, `renderButtonContent(choice, state)`, `ariaLabelForChoice(choice, state)`, `decorateButton(btn, choice, state)`, `isCorrect(choice, answer, state)`, `onRoundStart({ answer, choices, state })`, `onAnswered(ctx)`.
 
-Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `Utils.pickRandom`, `Utils.pickUniqueChoices(pool, count, keyFn, seed)`, `Utils.byProp('phonetic')`, `Utils.getDisplayHex(baseHex, modifier)`, `Utils.createStandardQuiz(params)`, `Utils.getBodyClass(id)`, and `Utils.i18n` for label prefixes and accessibility strings. Player metrics helpers: `Utils.getTotalStarsEarned()`, `Utils.getPlayerAccuracy()`, `Utils.getQuizzesCompleted()`, `Utils.aggregateGlobalStatsFromStorage()`, `Utils.getAllSavedProgress()`.
+Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `Utils.pickRandom`, `Utils.pickUniqueChoices(pool, count, keyFn, seed)`, `Utils.byProp('phonetic')`, `Utils.getDisplayHex(baseHex, modifier)`, `Utils.createStandardQuiz(params)`, `Utils.getBodyClass(id)`, and `Utils.i18n` for label prefixes and accessibility strings. Player metrics helpers: `Utils.getTotalStarsEarned()`, `Utils.getPlayerAccuracy()`, `Utils.getQuizzesCompleted()`, `Utils.aggregateGlobalStatsFromStorage()`, `Utils.getAllSavedProgress()`. Player name helpers: `Utils.getPlayerDisplayName()`, `Utils.setPlayerCustomName(name)`, `Utils.getPlayerCustomName()`.
 
 #### New utilities for faster quiz creation
 
@@ -389,6 +390,17 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 
 - `Utils.renderVowelSymbol(symbolEl, symbol)`
   - Render vowel symbols with the shaping‑safe placeholder behavior (ko kai replacement) and set `aria-label`.
+
+#### Player name management
+
+- `Utils.getPlayerDisplayName()`
+  - Returns the player's display name (custom name if set, otherwise computed ID).
+
+- `Utils.setPlayerCustomName(name)`
+  - Sets a custom player name in localStorage. Pass empty string to clear custom name.
+
+- `Utils.getPlayerCustomName()`
+  - Returns the custom player name or null if not set.
 
 #### Emoji data
 

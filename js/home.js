@@ -2,12 +2,130 @@
   'use strict';
   
   // Generate and set all player card data
+  // Function to handle player name editing (defined early for scope access)
+  function editPlayerName(nameElement) {
+    try {
+      const currentName = Utils.getPlayerDisplayName();
+      const customName = Utils.getPlayerCustomName();
+      
+      // Create input field
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = customName || currentName;
+      input.className = 'player-name-edit';
+      input.setAttribute('aria-label', 'Edit player name');
+      input.setAttribute('maxlength', '20');
+      
+      // Style the input to match the player name
+      const inputWidth = Math.max(nameElement.offsetWidth + 20, 150); // Minimum width of 150px
+      input.style.cssText = `
+        font-weight: 800;
+        font-size: 1.15em;
+        color: var(--color-text);
+        background: transparent;
+        border: 2px solid var(--color-accent);
+        border-radius: 6px;
+        padding: 2px 6px;
+        outline: none;
+        width: ${inputWidth}px;
+        font-family: inherit;
+      `;
+      
+      // Replace the text with input
+      nameElement.textContent = '';
+      nameElement.appendChild(input);
+      input.focus();
+      input.select();
+      
+      // Handle save on Enter or blur
+      function saveName() {
+        const newName = input.value.trim();
+        if (newName && newName !== customName) {
+          Utils.setPlayerCustomName(newName);
+          nameElement.textContent = newName;
+        } else if (!newName && customName) {
+          // If cleared and there was a custom name, remove it
+          Utils.setPlayerCustomName('');
+          nameElement.textContent = Utils.getPlayerDisplayName();
+        } else {
+          // Restore original display
+          nameElement.textContent = Utils.getPlayerDisplayName();
+        }
+        
+        // Restore click functionality
+        nameElement.style.cursor = 'pointer';
+        nameElement.setAttribute('title', 'Click to edit your name');
+        nameElement.setAttribute('role', 'button');
+        nameElement.setAttribute('tabindex', '0');
+        nameElement.setAttribute('aria-label', 'Player name - click to edit');
+      }
+      
+      function cancelEdit() {
+        nameElement.textContent = Utils.getPlayerDisplayName();
+        // Restore click functionality
+        nameElement.style.cursor = 'pointer';
+        nameElement.setAttribute('title', 'Click to edit your name');
+        nameElement.setAttribute('role', 'button');
+        nameElement.setAttribute('tabindex', '0');
+        nameElement.setAttribute('aria-label', 'Player name - click to edit');
+      }
+      
+      input.addEventListener('blur', saveName);
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          saveName();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          cancelEdit();
+        }
+      });
+      
+    } catch (e) {
+      try { Utils.logError(e, 'home.js: editPlayerName'); } catch (_) {}
+      console.error('Error in editPlayerName:', e); // Debug log
+      // Restore original display on error
+      nameElement.textContent = Utils.getPlayerDisplayName();
+    }
+  }
+
   try {
-    // Player ID
-    const playerID = Utils.generatePlayerID();
+    // Player Display Name
     const playerNameEl = document.querySelector('.player-name');
+    console.log('Player name element found:', playerNameEl); // Test log
     if (playerNameEl) {
-      playerNameEl.textContent = playerID;
+
+      playerNameEl.textContent = Utils.getPlayerDisplayName();
+      
+      // Add edit functionality
+      playerNameEl.style.cursor = 'pointer';
+      playerNameEl.setAttribute('title', 'Click to edit your name');
+      playerNameEl.setAttribute('role', 'button');
+      playerNameEl.setAttribute('tabindex', '0');
+      playerNameEl.setAttribute('aria-label', 'Player name - click to edit');
+      
+      // Add click event with multiple approaches to ensure it works
+      playerNameEl.onclick = function(e) {
+        console.log('Player name clicked (onclick)!'); // Test log
+        e.preventDefault();
+        e.stopPropagation();
+        editPlayerName(playerNameEl);
+        return false;
+      };
+      
+      playerNameEl.addEventListener('click', function(e) {
+        console.log('Player name clicked (addEventListener)!'); // Test log
+        e.preventDefault();
+        e.stopPropagation();
+        editPlayerName(playerNameEl);
+      });
+      
+      playerNameEl.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          editPlayerName(playerNameEl);
+        }
+      });
     }
 
     // Helper to refresh Level + XP header UI
@@ -297,6 +415,12 @@
           updateHeaderLevelAndXP();
           updateHeaderMetrics();
           updateUI();
+          
+          // Refresh player name display (in case custom name was cleared)
+          const playerNameEl = document.querySelector('.player-name');
+          if (playerNameEl) {
+            playerNameEl.textContent = Utils.getPlayerDisplayName();
+          }
           try { alert('Local quiz progress has been reset.'); } catch (_) {}
         });
       }
