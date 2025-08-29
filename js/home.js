@@ -82,8 +82,7 @@
       });
       
     } catch (e) {
-      try { Utils.logError(e, 'home.js: editPlayerName'); } catch (_) {}
-      console.error('Error in editPlayerName:', e); // Debug log
+      Utils.logError(e, 'home.js: editPlayerName');
       // Restore original display on error
       nameElement.textContent = Utils.getPlayerDisplayName();
     }
@@ -92,7 +91,6 @@
   try {
     // Player Display Name
     const playerNameEl = document.querySelector('.player-name');
-    console.log('Player name element found:', playerNameEl); // Test log
     if (playerNameEl) {
 
       playerNameEl.textContent = Utils.getPlayerDisplayName();
@@ -106,7 +104,6 @@
       
       // Add click event with multiple approaches to ensure it works
       playerNameEl.onclick = function(e) {
-        console.log('Player name clicked (onclick)!'); // Test log
         e.preventDefault();
         e.stopPropagation();
         editPlayerName(playerNameEl);
@@ -114,7 +111,6 @@
       };
       
       playerNameEl.addEventListener('click', function(e) {
-        console.log('Player name clicked (addEventListener)!'); // Test log
         e.preventDefault();
         e.stopPropagation();
         editPlayerName(playerNameEl);
@@ -151,7 +147,7 @@
           xpBarEl.setAttribute('aria-valuenow', xpProgress);
           xpFillEl.style.width = `${xpProgress}%`;
         }
-      } catch (e) { try { Utils.logError(e, 'home.js: updateHeaderLevelAndXP'); } catch (_) {} }
+      } catch (e) { Utils.logError(e, 'home.js: updateHeaderLevelAndXP'); }
     }
 
     // Player Avatar
@@ -176,12 +172,12 @@
           metricValues[1].textContent = Utils.formatNumber(quizzesCompleted);
           metricValues[2].textContent = Utils.formatNumber(totalStars);
         }
-      } catch (e) { try { Utils.logError(e, 'home.js: updateHeaderMetrics'); } catch (_) {} }
+      } catch (e) { Utils.logError(e, 'home.js: updateHeaderMetrics'); }
     }
 
     updateHeaderMetrics();
 
-  } catch (e) { try { Utils.logError(e, 'home.js: player card data population'); } catch (_) {} }
+  } catch (e) { Utils.logError(e, 'home.js: player card data population'); }
   
   const thaiWeekdays = ['วันอาทิตย์','วันจันทร์','วันอังคาร','วันพุธ','วันพฤหัสบดี','วันศุกร์','วันเสาร์'];
   const phoneticWeekdays = ['wan aa-thít','wan jan','wan ang-khaan','wan phút','wan phá-rʉ́-hàt','wan sùk','wan sǎo'];
@@ -202,7 +198,7 @@
       phonEl.style.color = accent;
 
       function hexToRgba(hex, alpha) {
-        try { return Utils.hexToRgba(hex, alpha); } catch(e) { return hex; }
+        return Utils.ErrorHandler.safe(Utils.hexToRgba, hex)(hex, alpha);
       }
 
       const todayCard = document.querySelector('.today-card');
@@ -223,7 +219,7 @@
       monthThaiEl.textContent = thaiMonths[month];
       monthPhonEl.textContent = phoneticMonths[month];
     }
-  } catch (e) { try { Utils.logError(e, 'home.js: today/month widgets'); } catch (_) {} }
+  } catch (e) { Utils.logError(e, 'home.js: today/month widgets'); }
 
   try {
     const quizListEl = document.getElementById('quiz-list');
@@ -400,7 +396,7 @@
           error.className = 'empty';
           error.textContent = 'Failed to load quizzes.';
           quizListEl.appendChild(error);
-          try { Utils.logError(err, 'home.js: failed to load data/quizzes.json'); } catch (_) {}
+          Utils.logError(err, 'home.js: failed to load data/quizzes.json');
         });
     })();
 
@@ -409,8 +405,8 @@
       const resetBtn = document.getElementById('reset-progress');
       if (resetBtn) {
         resetBtn.addEventListener('click', function(ev){
-          try { ev.preventDefault(); } catch (_) {}
-          try { Utils.resetAllProgress(); } catch (e) { try { Utils.logError(e, 'home.js: resetAllProgress'); } catch (_) {} }
+          Utils.ErrorHandler.safe(function() { ev.preventDefault(); })();
+          Utils.ErrorHandler.wrap(Utils.resetAllProgress, 'home.js: resetAllProgress')();
           // Recompute header level/XP, metrics and re-render to reflect stars cleared
           updateHeaderLevelAndXP();
           updateHeaderMetrics();
@@ -421,9 +417,9 @@
           if (playerNameEl) {
             playerNameEl.textContent = Utils.getPlayerDisplayName();
           }
-          try { alert('Local quiz progress has been reset.'); } catch (_) {}
+          Utils.ErrorHandler.safe(function() { alert('Local quiz progress has been reset.'); })();
         });
       }
-    } catch (e) { try { Utils.logError(e, 'home.js: wire reset progress'); } catch (_) {} }
-  } catch (e) { try { Utils.logError(e, 'home.js: init'); } catch (_) {} }
+    } catch (e) { Utils.logError(e, 'home.js: wire reset progress'); }
+  } catch (e) { Utils.logError(e, 'home.js: init'); }
 })();

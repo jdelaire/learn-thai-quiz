@@ -22,7 +22,9 @@
     }
 
     // Ensure options container is focusable for scoped keyboard events
-    try { if (!optionsEl.hasAttribute('tabindex')) optionsEl.setAttribute('tabindex', '0'); } catch (e) {}
+    Utils.ErrorHandler.safeDOM(function() {
+      if (!optionsEl.hasAttribute('tabindex')) optionsEl.setAttribute('tabindex', '0');
+    })();
 
     const quizId = (config && config.quizId) || (document && document.body && document.body.dataset && document.body.dataset.quizId) || null;
     // Initialize state from persisted progress when available
@@ -51,7 +53,9 @@
       } catch (_) {}
 
       // Reset content and compose with a dedicated span for larger stars + tooltip
-      try { while (statsEl.firstChild) statsEl.removeChild(statsEl.firstChild); } catch (e) {}
+      Utils.ErrorHandler.safeDOM(function() {
+        while (statsEl.firstChild) statsEl.removeChild(statsEl.firstChild);
+      })();
       statsEl.appendChild(document.createTextNode(baseText));
       if (starsText) {
         statsEl.appendChild(document.createTextNode(' | '));
@@ -98,8 +102,7 @@
       state.currentAnswer = answer;
 
       if (typeof config.onRoundStart === 'function') {
-        try { config.onRoundStart({ answer: answer, choices: choices, state: state }); }
-        catch (e) { try { global.Utils && global.Utils.logError && global.Utils.logError(e, 'quiz.js: onRoundStart'); } catch (_) {} }
+        Utils.ErrorHandler.wrap(config.onRoundStart, 'quiz.js: onRoundStart')({ answer: answer, choices: choices, state: state });
       }
 
       if (typeof config.renderSymbol === 'function') {
@@ -119,7 +122,9 @@
 
       choices.forEach((choice) => {
         const btn = document.createElement('button');
-        try { btn.type = 'button'; } catch (e) {}
+        Utils.ErrorHandler.safeDOM(function() {
+          btn.type = 'button';
+        })();
         if (typeof config.renderButtonContent === 'function') {
           const content = config.renderButtonContent(choice, state);
           if (content && typeof content === 'object' && 'nodeType' in content) {
@@ -157,18 +162,24 @@
               btn.classList.remove('answer-correct');
             }, { once: true });
             // Disable other options until next question
-            try {
+            Utils.ErrorHandler.safeDOM(function() {
               const buttons = optionsEl.querySelectorAll('button');
               buttons.forEach(function(b) {
                 if (b !== btn) {
                   b.disabled = true;
-                  try { b.setAttribute('aria-disabled', 'true'); } catch (e) {}
-                  try { b.tabIndex = -1; } catch (e) {}
+                  Utils.ErrorHandler.safeDOM(function() {
+                    b.setAttribute('aria-disabled', 'true');
+                  })();
+                  Utils.ErrorHandler.safeDOM(function() {
+                    b.tabIndex = -1;
+                  })();
                 }
               });
-            } catch (e) {}
+            })();
             // Also prevent re-clicks on the correct button during the delay
-            try { btn.onclick = null; } catch (e) {}
+            Utils.ErrorHandler.safeDOM(function() {
+              btn.onclick = null;
+            })();
             // Don't show next button - auto-advance only
             nextBtn.style.display = 'none';
 
@@ -190,27 +201,28 @@
           }
 
           // Persist progress after each answer
-          try {
+          Utils.ErrorHandler.safe(function() {
             if (quizId && global && global.Utils && typeof global.Utils.saveQuizProgress === 'function') {
               global.Utils.saveQuizProgress(quizId, {
                 questionsAnswered: state.questionsAnswered,
                 correctAnswers: state.correctAnswers
               });
             }
-          } catch (_) {}
+          })();
 
           updateStats();
 
           if (typeof config.onAnswered === 'function') {
-            try { config.onAnswered({ correct: isCorrect, choice, answer, state }); }
-            catch (e) { try { global.Utils && global.Utils.logError && global.Utils.logError(e, 'quiz.js: onAnswered'); } catch (_) {} }
+            Utils.ErrorHandler.wrap(config.onAnswered, 'quiz.js: onAnswered')({ correct: isCorrect, choice, answer, state });
           }
         };
 
         optionsEl.appendChild(btn);
       });
 
-      try { optionsEl.focus(); } catch (e) {}
+      Utils.ErrorHandler.safeDOM(function() {
+        optionsEl.focus();
+      })();
     }
 
     if (config.enableKeyboard !== false) {

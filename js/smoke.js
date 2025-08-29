@@ -64,10 +64,12 @@
   }
 
   function safeQuery(doc, sel) {
-    try { return doc.querySelector(sel); } catch (_) { return null; }
+    return Utils.ErrorHandler.safe(function() { return doc.querySelector(sel); }, null)();
   }
 
-  function click(el) { try { el.click(); } catch (_) {} }
+  function click(el) { 
+    Utils.ErrorHandler.safe(function() { el.click(); })();
+  }
 
   function wait(ms) { return new Promise(function(r){ setTimeout(r, ms); }); }
 
@@ -100,11 +102,11 @@
         const fromHome = Object.keys(set);
         if (fromHome.length) return fromHome;
       }
-    } catch (_) {
-      // ignore
-    } finally {
-      try { iframe.remove(); } catch (_) {}
-    }
+          } catch (_) {
+        // ignore
+      } finally {
+        Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+      }
 
     // 3) Last resort: minimal baseline
     return ['consonants','vowels','numbers'];
@@ -121,7 +123,7 @@
     } catch (e) {
       return { name: name, ok: false, details: String(e && e.message || e) };
     } finally {
-      try { iframe.remove(); } catch (_) {}
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
     }
   }
 
@@ -179,7 +181,7 @@
     } catch (e) {
       return { name: name, ok: false, details: String(e && e.message || e) };
     } finally {
-      try { iframe.remove(); } catch (_) {}
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
     }
   }
 
@@ -197,7 +199,7 @@
       const stats = safeQuery(doc, '#stats');
       if (!options || !stats) return { name: name, ok: false, details: 'Missing options or stats' };
 
-      try { options.focus(); } catch (_) {}
+      Utils.ErrorHandler.safe(function() { options.focus(); })();
       // Wait for focus to settle
       await wait(50);
       const focused = doc.activeElement === options;
@@ -219,7 +221,7 @@
     } catch (e) {
       return { name: name, ok: false, details: String(e && e.message || e) };
     } finally {
-      try { iframe.remove(); } catch (_) {}
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
     }
   }
 

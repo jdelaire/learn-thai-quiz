@@ -36,9 +36,9 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Months & Seasons**: 12 months and Thailand’s seasons with Thai script, phonetics, and example sentences
 - **Tense Markers**: Thai time words and structures; examples after correct answers
 - **Days of the Week**: Thai day names with phonetics, planet, and color associations
- - **Body Parts in Thai**: Common anatomy words with Thai script, phonetics, and emoji hints
+- **Body Parts in Thai**: Common anatomy words with Thai script, phonetics, and emoji hints
 - **Essential Thai Prepositions**: Core place prepositions with phonetics and usage tip
- - **Thai Greetings**: Core greetings with Thai script, phonetics, examples, and polite particles
+- **Thai Greetings**: Core greetings with Thai script, phonetics, examples, and polite particles
 
 ### Quick start (local)
 
@@ -366,7 +366,7 @@ QuizBuilders.myquiz = function() {
 
 Available hooks in the engine: `pickRound(state)`, `renderSymbol(answer, els, state)`, `renderButtonContent(choice, state)`, `ariaLabelForChoice(choice, state)`, `decorateButton(btn, choice, state)`, `isCorrect(choice, answer, state)`, `onRoundStart({ answer, choices, state })`, `onAnswered(ctx)`.
 
-Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `Utils.pickRandom`, `Utils.pickUniqueChoices(pool, count, keyFn, seed)`, `Utils.byProp('phonetic')`, `Utils.getDisplayHex(baseHex, modifier)`, `Utils.createStandardQuiz(params)`, `Utils.getBodyClass(id)`, and `Utils.i18n` for label prefixes and accessibility strings. Player metrics helpers: `Utils.getTotalStarsEarned()`, `Utils.getPlayerAccuracy()`, `Utils.getQuizzesCompleted()`, `Utils.aggregateGlobalStatsFromStorage()`, `Utils.getAllSavedProgress()`. Player name helpers: `Utils.getPlayerDisplayName()`, `Utils.setPlayerCustomName(name)`, `Utils.getPlayerCustomName()`.
+Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `Utils.pickRandom`, `Utils.pickUniqueChoices(pool, count, keyFn, seed)`, `Utils.byProp('phonetic')`, `Utils.getDisplayHex(baseHex, modifier)`, `Utils.createStandardQuiz(params)`, `Utils.getBodyClass(id)`, and `Utils.i18n` for label prefixes and accessibility strings. Error handling: `Utils.ErrorHandler` for centralized error management. Player metrics helpers: `Utils.getTotalStarsEarned()`, `Utils.getPlayerAccuracy()`, `Utils.getQuizzesCompleted()`, `Utils.aggregateGlobalStatsFromStorage()`, `Utils.getAllSavedProgress()`. Player name helpers: `Utils.getPlayerDisplayName()`, `Utils.setPlayerCustomName(name)`, `Utils.getPlayerCustomName()`.
 
 #### New utilities for faster quiz creation
 
@@ -457,6 +457,79 @@ For quick manual testing, the home page (`index.html`) includes a temporary butt
 
 - Vanilla **HTML/CSS/JavaScript** (ES2015+). The codebase prefers `const`/`let` over `var`, arrow functions only where they do not change `this` semantics, and simple modules via script tags without bundlers.
 - No frameworks, no bundlers
+
+### Error handling
+
+The codebase uses a centralized error handling system via `Utils.ErrorHandler` to reduce defensive programming overhead and improve maintainability.
+
+#### ErrorHandler utilities
+
+```javascript
+// Wrap a function with error handling and logging
+Utils.ErrorHandler.wrap(fn, context, fallback)
+
+// Safe execution with fallback value (no logging)
+Utils.ErrorHandler.safe(fn, fallback)
+
+// Async-safe wrapper for promises
+Utils.ErrorHandler.wrapAsync(fn, context)
+
+// Safe DOM operations
+Utils.ErrorHandler.safeDOM(operation, fallback)
+```
+
+#### Usage examples
+
+**Replacing try-catch blocks:**
+```javascript
+// Before
+try {
+  element.classList.add('active');
+} catch (e) {
+  console.error('Failed to add class:', e);
+}
+
+// After
+Utils.ErrorHandler.safeDOM(function() {
+  element.classList.add('active');
+})();
+```
+
+**Function wrapping:**
+```javascript
+// Before
+try {
+  return someFunction(data);
+} catch (e) {
+  logError(e, 'context');
+  return null;
+}
+
+// After
+return Utils.ErrorHandler.wrap(someFunction, 'context', null)(data);
+```
+
+**Safe operations with fallbacks:**
+```javascript
+// Before
+try {
+  return JSON.parse(data);
+} catch {
+  return {};
+}
+
+// After
+return Utils.ErrorHandler.safe(JSON.parse, {})(data);
+```
+
+#### Best practices
+
+- Use `ErrorHandler.safe()` for operations where you want a fallback but don't need logging
+- Use `ErrorHandler.wrap()` for operations where you want both error logging and fallback handling
+- Use `ErrorHandler.safeDOM()` for DOM manipulations that might fail
+- Use `ErrorHandler.wrapAsync()` for promise-based operations
+- Always provide meaningful context strings for better debugging
+- Prefer these utilities over inline try-catch blocks for consistency
 
 ### License
 

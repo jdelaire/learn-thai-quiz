@@ -12,7 +12,7 @@
       }
       fb.textContent = msg;
     }
-    try { console.error('Data load error:', err); } catch (e) {}
+    Utils.logError(err, 'quiz-loader.js: handleDataLoadError');
   }
 
   // Helper to build standard data-driven quizzes with minimal duplication
@@ -35,7 +35,7 @@
   // Data-driven configs: per-quiz builder functions
   const QuizBuilders = {
     consonants: function() {
-      try { Utils.insertConsonantLegend(); } catch (e) {}
+      Utils.ErrorHandler.safe(Utils.insertConsonantLegend)();
       return Utils.fetchJSONCached('data/consonants.json').then(function(data){
         return function init(){
           try {
@@ -53,7 +53,9 @@
                 return prefix + choice.name + ' (' + choice.meaning + ')';
               },
               decorateButton: function(btn, choice) {
-                try { btn.classList.add(choice.class + '-class'); } catch (e) {}
+                Utils.ErrorHandler.safeDOM(function() {
+                  btn.classList.add(choice.class + '-class');
+                })();
                 var span = document.createElement('span');
                 span.className = 'emoji';
                 span.textContent = choice.emoji;
@@ -76,7 +78,7 @@
             });
             ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: 'vowels' }, base, {
               renderSymbol: function(answer, els) {
-                try { Utils.renderVowelSymbol(els.symbolEl, answer.symbol); } catch (e) {}
+                Utils.ErrorHandler.safe(Utils.renderVowelSymbol)(els.symbolEl, answer.symbol);
               }
             }));
           } catch (e) { handleDataLoadError(e); }
@@ -318,7 +320,7 @@
   };
 
   function setText(id, text) {
-    try { Utils.setText(id, text); } catch (e) {}
+    Utils.ErrorHandler.safe(Utils.setText)(id, text);
   }
 
   function initFromQuery() {
@@ -402,7 +404,7 @@
           return;
         }
         builder().then(function(initFn){
-          try { initFn(); } catch (e) { handleDataLoadError(e); }
+          Utils.ErrorHandler.wrap(initFn, 'quiz-loader.js: initFn', null)();
         }).catch(function(err){ handleDataLoadError(err); });
       }).catch(function(err){ handleDataLoadError(err); });
     } catch (e) {

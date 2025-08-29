@@ -1,6 +1,53 @@
 (function(global) {
   'use strict';
 
+  // Centralized error handling system
+  const ErrorHandler = {
+    // Wrap a function with error handling and logging
+    wrap: function(fn, context, fallback = null) {
+      return function(...args) {
+        try {
+          return fn.apply(this, args);
+        } catch (error) {
+          logError(error, context);
+          return fallback;
+        }
+      };
+    },
+
+    // Safe execution with fallback value
+    safe: function(fn, fallback = null) {
+      return function(...args) {
+        try {
+          return fn.apply(this, args);
+        } catch {
+          return fallback;
+        }
+      };
+    },
+
+    // Async-safe wrapper for promises
+    wrapAsync: function(fn, context) {
+      return function(...args) {
+        return fn.apply(this, args).catch(function(error) {
+          logError(error, context);
+          throw error;
+        });
+      };
+    },
+
+    // Safe DOM operations
+    safeDOM: function(operation, fallback = null) {
+      return function(...args) {
+        try {
+          return operation.apply(this, args);
+        } catch {
+          return fallback;
+        }
+      };
+    }
+  };
+
   function logError(error, context) {
     try {
       if (context) {
@@ -39,16 +86,19 @@
 
     if (seed != null) {
       choices.push(seed);
-      try { usedKeys.add(String(keyFn(seed))); } catch (e) { logError(e, 'Utils.pickUniqueChoices keyFn(seed)'); }
+      const seedKey = ErrorHandler.safe(keyFn, null)(seed);
+      if (seedKey != null) {
+        usedKeys.add(String(seedKey));
+      }
     }
 
     while (choices.length < count && choices.length < pool.length) {
       const candidate = pickRandom(pool);
-      let key = null;
-      try { key = String(keyFn(candidate)); } catch (e) { logError(e, 'Utils.pickUniqueChoices keyFn(candidate)'); }
+      const key = ErrorHandler.safe(keyFn, null)(candidate);
       if (key == null) continue;
-      if (!usedKeys.has(key)) {
-        usedKeys.add(key);
+      const keyStr = String(key);
+      if (!usedKeys.has(keyStr)) {
+        usedKeys.add(keyStr);
         choices.push(candidate);
       }
     }
@@ -286,14 +336,13 @@
         if (!examples) return;
         const correct = ctx && ctx.correct;
         if (!correct) return;
-        try {
+        ErrorHandler.wrap(function() {
           const fb = document.getElementById('feedback');
           const ans = ctx && ctx.answer || {};
-          let key = null;
-          try { key = exampleKeyFn ? exampleKeyFn(ans) : ans.english; } catch (_) { key = ans.english; }
+          const key = ErrorHandler.safe(exampleKeyFn, ans.english)(ans);
           const ex = examples[key];
           renderExample(fb, ex);
-        } catch (e) { logError(e, 'Utils.createStandardQuiz.onAnswered'); }
+        }, 'Utils.createStandardQuiz.onAnswered')();
       }
     };
   }
@@ -826,19 +875,19 @@
   }
 
   function resetAllProgress() {
-    try {
+    ErrorHandler.wrap(function() {
       const toDelete = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && key.indexOf('thaiQuest.progress.') === 0) toDelete.push(key);
       }
-      toDelete.forEach(function(k){ try { localStorage.removeItem(k); } catch (_) {} });
+      toDelete.forEach(function(k){ 
+        ErrorHandler.safe(function() { localStorage.removeItem(k); })();
+      });
       
       // Also clear custom player name
-      try { localStorage.removeItem('thaiQuestCustomName'); } catch (_) {}
-    } catch (e) {
-      logError(e, 'Utils.resetAllProgress');
-    }
+      ErrorHandler.safe(function() { localStorage.removeItem('thaiQuestCustomName'); })();
+    }, 'Utils.resetAllProgress')();
   }
 
   function getStarRulesTooltip() {
@@ -867,6 +916,8 @@
     renderEnglishThaiSymbol: renderEnglishThaiSymbol,
     renderExample: renderExample,
     logError: logError,
+    // Error handling system
+    ErrorHandler: ErrorHandler,
     // New helpers
     createEmojiGetter: createEmojiGetter,
     loadEmojiGetter: loadEmojiGetter,
