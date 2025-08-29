@@ -333,9 +333,9 @@ progressiveDifficulty: {
 
 - A quiz is considered eligible for ranking after you accumulate 100 correct answers on that quiz (across sessions; persisted in localStorage).
 - Star tiers (based on overall accuracy at the time you've reached 100 correct answers or beyond):
-  - 3★: 100 correct with 100% accuracy
-  - 2★: 100 correct with ≥90% accuracy
-  - 1★: 100 correct with ≥80% accuracy
+  - 3★: 100 correct with >95% accuracy
+  - 2★: 100 correct with >85% accuracy
+  - 1★: 100 correct with >75% accuracy
   - 0★: otherwise
 
 Implementation details:
