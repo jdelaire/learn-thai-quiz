@@ -147,6 +147,23 @@ Implementation details:
 - Public helpers: `Utils.getTotalStarsEarned()`, `Utils.getPlayerAccuracy()`, `Utils.getQuizzesCompleted()`, and low‑level `Utils.aggregateGlobalStatsFromStorage()` / `Utils.getAllSavedProgress()`.
 - Star tiers: see the table below; totals are computed by summing stars across all quizzes.
 
+### Leveling and XP
+
+We convert stars to XP and level up using a power‑law curve:
+
+- **Star → XP**: 1★ = 10 XP, 2★ = 20 XP, 3★ = 40 XP (0★ = 0 XP).
+- **Total XP**: Sum XP across all quizzes based on each quiz’s current star rating.
+- **Level curve**: XP_total(L) = A · L^p, with A = 80 and p = 1.9.
+- **XP to next level**: ΔXP(L) = XP_total(L+1) − XP_total(L).
+- **Displayed level**: `floor(((TotalXP / A)^(1/p))) + 1`.
+- **XP bar**: Shows `TotalXP − XP_total(L_current)` over `ΔXP(L_current)`.
+
+Runtime helpers:
+
+- Curve: `Utils.XP_CURVE`, `Utils.xpTotalForLevel(L)`, `Utils.xpDeltaForLevel(L)`.
+- Star XP: `Utils.getXPForStars(stars)`, totals: `Utils.getTotalXPFromStars()`.
+- Player‑facing: `Utils.getPlayerLevel()`, `Utils.getPlayerXP()` (in‑level), `Utils.getPlayerMaxXP()` (to next level).
+
 ### Styling & overrides
 
 The default styling for all quizzes is defined in `css/styles.css` under `body.quiz-page` using CSS variables. Prefer overriding these variables per quiz instead of duplicating CSS rules.
@@ -420,7 +437,7 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 
 ### Resetting local progress (testing)
 
-For quick manual testing, the home page (`index.html`) includes a temporary button at the very bottom labeled “Reset progress (local storage)”. Clicking it clears all keys prefixed with `thaiQuest.progress.` from localStorage and refreshes the displayed stars and header metrics.
+For quick manual testing, the home page (`index.html`) includes a temporary button at the very bottom labeled “Reset progress (local storage)”. Clicking it clears all keys prefixed with `thaiQuest.progress.` from localStorage and refreshes the displayed stars, header metrics, and level/XP bar.
 
 ### Tech stack
 

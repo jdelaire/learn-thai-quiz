@@ -10,11 +10,30 @@
       playerNameEl.textContent = playerID;
     }
 
-    // Player Level
-    const playerLevel = Utils.getPlayerLevel();
-    const playerLevelEl = document.querySelector('.player-level');
-    if (playerLevelEl) {
-      playerLevelEl.textContent = `Level ${playerLevel}`;
+    // Helper to refresh Level + XP header UI
+    function updateHeaderLevelAndXP() {
+      try {
+        const playerLevel = Utils.getPlayerLevel();
+        const playerLevelEl = document.querySelector('.player-level');
+        if (playerLevelEl) {
+          playerLevelEl.textContent = `Level ${playerLevel}`;
+        }
+
+        const currentXP = Utils.getPlayerXP();
+        const maxXP = Utils.getPlayerMaxXP();
+        const xpValueEl = document.querySelector('.xp-value');
+        if (xpValueEl) {
+          xpValueEl.textContent = `${Utils.formatNumber(currentXP)} / ${Utils.formatNumber(maxXP)}`;
+        }
+
+        const xpProgress = Utils.getXPProgressPercentage();
+        const xpBarEl = document.querySelector('.xp-bar');
+        const xpFillEl = document.querySelector('.xp-fill');
+        if (xpBarEl && xpFillEl) {
+          xpBarEl.setAttribute('aria-valuenow', xpProgress);
+          xpFillEl.style.width = `${xpProgress}%`;
+        }
+      } catch (e) { try { Utils.logError(e, 'home.js: updateHeaderLevelAndXP'); } catch (_) {} }
     }
 
     // Player Avatar
@@ -24,22 +43,7 @@
       playerAvatarEl.src = playerAvatar;
     }
 
-    // XP Data
-    const currentXP = Utils.getPlayerXP();
-    const maxXP = Utils.getPlayerMaxXP();
-    const xpValueEl = document.querySelector('.xp-value');
-    if (xpValueEl) {
-      xpValueEl.textContent = `${Utils.formatNumber(currentXP)} / ${Utils.formatNumber(maxXP)}`;
-    }
-
-    // XP Progress Bar
-    const xpProgress = Utils.getXPProgressPercentage();
-    const xpBarEl = document.querySelector('.xp-bar');
-    const xpFillEl = document.querySelector('.xp-fill');
-    if (xpBarEl && xpFillEl) {
-      xpBarEl.setAttribute('aria-valuenow', xpProgress);
-      xpFillEl.style.width = `${xpProgress}%`;
-    }
+    updateHeaderLevelAndXP();
 
     // Player Metrics updater
     function updateHeaderMetrics() {
@@ -289,7 +293,8 @@
         resetBtn.addEventListener('click', function(ev){
           try { ev.preventDefault(); } catch (_) {}
           try { Utils.resetAllProgress(); } catch (e) { try { Utils.logError(e, 'home.js: resetAllProgress'); } catch (_) {} }
-          // Recompute header metrics and re-render to reflect stars cleared
+          // Recompute header level/XP, metrics and re-render to reflect stars cleared
+          updateHeaderLevelAndXP();
           updateHeaderMetrics();
           updateUI();
           try { alert('Local quiz progress has been reset.'); } catch (_) {}
