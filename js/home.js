@@ -10,11 +10,30 @@
       playerNameEl.textContent = playerID;
     }
 
-    // Player Level
-    const playerLevel = Utils.getPlayerLevel();
-    const playerLevelEl = document.querySelector('.player-level');
-    if (playerLevelEl) {
-      playerLevelEl.textContent = `Level ${playerLevel}`;
+    // Helper to refresh Level + XP header UI
+    function updateHeaderLevelAndXP() {
+      try {
+        const playerLevel = Utils.getPlayerLevel();
+        const playerLevelEl = document.querySelector('.player-level');
+        if (playerLevelEl) {
+          playerLevelEl.textContent = `Level ${playerLevel}`;
+        }
+
+        const currentXP = Utils.getPlayerXP();
+        const maxXP = Utils.getPlayerMaxXP();
+        const xpValueEl = document.querySelector('.xp-value');
+        if (xpValueEl) {
+          xpValueEl.textContent = `${Utils.formatNumber(currentXP)} / ${Utils.formatNumber(maxXP)}`;
+        }
+
+        const xpProgress = Utils.getXPProgressPercentage();
+        const xpBarEl = document.querySelector('.xp-bar');
+        const xpFillEl = document.querySelector('.xp-fill');
+        if (xpBarEl && xpFillEl) {
+          xpBarEl.setAttribute('aria-valuenow', xpProgress);
+          xpFillEl.style.width = `${xpProgress}%`;
+        }
+      } catch (e) { try { Utils.logError(e, 'home.js: updateHeaderLevelAndXP'); } catch (_) {} }
     }
 
     // Player Avatar
@@ -24,40 +43,25 @@
       playerAvatarEl.src = playerAvatar;
     }
 
-    // XP Data
-    const currentXP = Utils.getPlayerXP();
-    const maxXP = Utils.getPlayerMaxXP();
-    const xpValueEl = document.querySelector('.xp-value');
-    if (xpValueEl) {
-      xpValueEl.textContent = `${Utils.formatNumber(currentXP)} / ${Utils.formatNumber(maxXP)}`;
+    updateHeaderLevelAndXP();
+
+    // Player Metrics updater
+    function updateHeaderMetrics() {
+      try {
+        const accuracy = Utils.getPlayerAccuracy();
+        const quizzesCompleted = Utils.getQuizzesCompleted();
+        const totalStars = Utils.getTotalStarsEarned();
+
+        const metricValues = document.querySelectorAll('.metric-value');
+        if (metricValues.length >= 3) {
+          metricValues[0].textContent = `${accuracy}%`;
+          metricValues[1].textContent = Utils.formatNumber(quizzesCompleted);
+          metricValues[2].textContent = Utils.formatNumber(totalStars);
+        }
+      } catch (e) { try { Utils.logError(e, 'home.js: updateHeaderMetrics'); } catch (_) {} }
     }
 
-    // XP Progress Bar
-    const xpProgress = Utils.getXPProgressPercentage();
-    const xpBarEl = document.querySelector('.xp-bar');
-    const xpFillEl = document.querySelector('.xp-fill');
-    if (xpBarEl && xpFillEl) {
-      xpBarEl.setAttribute('aria-valuenow', xpProgress);
-      xpFillEl.style.width = `${xpProgress}%`;
-    }
-
-    // Player Metrics
-    const accuracy = Utils.getPlayerAccuracy();
-    const quizzesCompleted = Utils.getQuizzesCompleted();
-    const totalXPEarned = Utils.getTotalXPEarned();
-
-    // Update all metrics by finding them in order
-    const metricValues = document.querySelectorAll('.metric-value');
-    if (metricValues.length >= 3) {
-      // Accuracy metric (first)
-      metricValues[0].textContent = `${accuracy}%`;
-      
-      // Quizzes completed metric (second)
-      metricValues[1].textContent = Utils.formatNumber(quizzesCompleted);
-      
-      // Total XP earned metric (third)
-      metricValues[2].textContent = Utils.formatNumber(totalXPEarned);
-    }
+    updateHeaderMetrics();
 
   } catch (e) { try { Utils.logError(e, 'home.js: player card data population'); } catch (_) {} }
   
@@ -289,7 +293,9 @@
         resetBtn.addEventListener('click', function(ev){
           try { ev.preventDefault(); } catch (_) {}
           try { Utils.resetAllProgress(); } catch (e) { try { Utils.logError(e, 'home.js: resetAllProgress'); } catch (_) {} }
-          // Re-render to reflect stars cleared
+          // Recompute header level/XP, metrics and re-render to reflect stars cleared
+          updateHeaderLevelAndXP();
+          updateHeaderMetrics();
           updateUI();
           try { alert('Local quiz progress has been reset.'); } catch (_) {}
         });

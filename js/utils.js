@@ -470,55 +470,181 @@
     }
   }
 
-  // Player data functions - all return placeholder values for now
+  // ---- Leveling & XP from stars ----
+  // Parameters for the power-law curve XP_total(L) = A * L^p (L is a non-negative integer level index)
+  const XP_CURVE = { A: 80, p: 1.9 };
+
+  function xpTotalForLevel(levelIndex) {
+    try {
+      const L = Math.max(0, parseInt(levelIndex, 10) || 0);
+      return XP_CURVE.A * Math.pow(L, XP_CURVE.p);
+    } catch (e) {
+      logError(e, 'Utils.xpTotalForLevel');
+      return 0;
+    }
+  }
+
+  function xpDeltaForLevel(levelIndex) {
+    try {
+      const L = Math.max(0, parseInt(levelIndex, 10) || 0);
+      return xpTotalForLevel(L + 1) - xpTotalForLevel(L);
+    } catch (e) {
+      logError(e, 'Utils.xpDeltaForLevel');
+      return XP_CURVE.A;
+    }
+  }
+
+  function getXPForStars(stars) {
+    try {
+      const n = Math.max(0, Math.min(3, parseInt(stars, 10) || 0));
+      if (n === 3) return 40;
+      if (n === 2) return 20;
+      if (n === 1) return 10;
+      return 0;
+    } catch (e) {
+      logError(e, 'Utils.getXPForStars');
+      return 0;
+    }
+  }
+
+  function getTotalXPFromStars() {
+    try {
+      // Prefer aggregated cache to avoid recomputation
+      const agg = aggregateGlobalStatsFromStorage();
+      return agg.totalXPFromStars;
+    } catch (e) {
+      logError(e, 'Utils.getTotalXPFromStars');
+      return 0;
+    }
+  }
+
+  function getLevelIndexFromTotalXP(totalXP) {
+    try {
+      const x = Math.max(0, Number(totalXP) || 0);
+      const L = Math.floor(Math.pow(x / XP_CURVE.A, 1 / XP_CURVE.p));
+      return Math.max(0, L);
+    } catch (e) {
+      logError(e, 'Utils.getLevelIndexFromTotalXP');
+      return 0;
+    }
+  }
+
+  // Player-facing values derived from stars and the XP curve
   function getPlayerLevel() {
     try {
-      const storedLevel = localStorage.getItem('thaiQuestPlayerLevel');
-      return storedLevel ? parseInt(storedLevel, 10) : 7;
+      const totalXP = getTotalXPFromStars();
+      const levelIndex = getLevelIndexFromTotalXP(totalXP);
+      // Display levels start at 1
+      return levelIndex + 1;
     } catch (e) {
       logError(e, 'Utils.getPlayerLevel');
-      return 7;
+      return 1;
     }
   }
 
   function getPlayerXP() {
     try {
-      const storedXP = localStorage.getItem('thaiQuestPlayerXP');
-      return storedXP ? parseInt(storedXP, 10) : 1450;
+      const totalXP = getTotalXPFromStars();
+      const levelIndex = getLevelIndexFromTotalXP(totalXP);
+      const base = xpTotalForLevel(levelIndex);
+      const inLevel = Math.max(0, Math.round(totalXP - base));
+      return inLevel;
     } catch (e) {
       logError(e, 'Utils.getPlayerXP');
-      return 1450;
+      return 0;
     }
   }
 
   function getPlayerMaxXP() {
     try {
-      const level = getPlayerLevel();
-      // Simple formula: each level requires more XP
-      return level * 400 + 400; // Level 7 = 3200 XP
+      const totalXP = getTotalXPFromStars();
+      const levelIndex = getLevelIndexFromTotalXP(totalXP);
+      return Math.max(1, Math.round(xpDeltaForLevel(levelIndex)));
     } catch (e) {
       logError(e, 'Utils.getPlayerMaxXP');
-      return 3200;
+      return Math.max(1, Math.round(XP_CURVE.A));
+    }
+  }
+
+  // ---- Aggregated global stats derived from per-quiz progress ----
+  function getAllSavedProgress() {
+    try {
+      const entries = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key || key.indexOf('thaiQuest.progress.') !== 0) continue;
+        const quizId = key.substring('thaiQuest.progress.'.length);
+        try {
+          const raw = localStorage.getItem(key);
+          const data = JSON.parse(raw || '{}');
+          const questionsAnswered = Math.max(0, parseInt(data && data.questionsAnswered, 10) || 0);
+          const correctAnswers = Math.max(0, parseInt(data && data.correctAnswers, 10) || 0);
+          entries.push({ quizId: quizId, questionsAnswered: questionsAnswered, correctAnswers: correctAnswers });
+        } catch (_) {}
+      }
+      return entries;
+    } catch (e) {
+      logError(e, 'Utils.getAllSavedProgress');
+      return [];
+    }
+  }
+
+  function aggregateGlobalStatsFromStorage() {
+    try {
+      const progressEntries = getAllSavedProgress();
+      let totalQuestionsAnswered = 0;
+      let totalCorrectAnswers = 0;
+      let quizzesCompleted = 0;
+      let totalStarsEarned = 0;
+      let totalXPFromStars = 0;
+
+      for (let i = 0; i < progressEntries.length; i++) {
+        const p = progressEntries[i];
+        totalQuestionsAnswered += p.questionsAnswered;
+        totalCorrectAnswers += p.correctAnswers;
+        if (p.correctAnswers >= 100) quizzesCompleted += 1;
+        try {
+          const s = computeStarRating(p.correctAnswers, p.questionsAnswered);
+          totalStarsEarned += s;
+          totalXPFromStars += getXPForStars(s);
+        } catch (_) {}
+      }
+
+      const totalAccuracy = totalQuestionsAnswered > 0
+        ? Math.round((totalCorrectAnswers / totalQuestionsAnswered) * 100)
+        : 0;
+
+      return {
+        totalQuestionsAnswered: totalQuestionsAnswered,
+        totalCorrectAnswers: totalCorrectAnswers,
+        totalAccuracy: totalAccuracy,
+        quizzesCompleted: quizzesCompleted,
+        totalStarsEarned: totalStarsEarned,
+        totalXPFromStars: totalXPFromStars
+      };
+    } catch (e) {
+      logError(e, 'Utils.aggregateGlobalStatsFromStorage');
+      return { totalQuestionsAnswered: 0, totalCorrectAnswers: 0, totalAccuracy: 0, quizzesCompleted: 0, totalStarsEarned: 0, totalXPFromStars: 0 };
     }
   }
 
   function getPlayerAccuracy() {
     try {
-      const storedAccuracy = localStorage.getItem('thaiQuestPlayerAccuracy');
-      return storedAccuracy ? parseFloat(storedAccuracy) : 82.0;
+      const agg = aggregateGlobalStatsFromStorage();
+      return agg.totalAccuracy;
     } catch (e) {
       logError(e, 'Utils.getPlayerAccuracy');
-      return 82.0;
+      return 0;
     }
   }
 
   function getQuizzesCompleted() {
     try {
-      const storedCompleted = localStorage.getItem('thaiQuestQuizzesCompleted');
-      return storedCompleted ? parseInt(storedCompleted, 10) : 24;
+      const agg = aggregateGlobalStatsFromStorage();
+      return agg.quizzesCompleted;
     } catch (e) {
       logError(e, 'Utils.getQuizzesCompleted');
-      return 24;
+      return 0;
     }
   }
 
@@ -529,6 +655,26 @@
     } catch (e) {
       logError(e, 'Utils.getTotalXPEarned');
       return 1450;
+    }
+  }
+
+  function getTotalStarsEarned() {
+    try {
+      const agg = aggregateGlobalStatsFromStorage();
+      return agg.totalStarsEarned;
+    } catch (e) {
+      logError(e, 'Utils.getTotalStarsEarned');
+      return 0;
+    }
+  }
+
+  function getTotalXPFromStarsCached() {
+    try {
+      const agg = aggregateGlobalStatsFromStorage();
+      return agg.totalXPFromStars;
+    } catch (e) {
+      logError(e, 'Utils.getTotalXPFromStarsCached');
+      return 0;
     }
   }
 
@@ -687,13 +833,23 @@
     getPlayerLevel: getPlayerLevel,
     getPlayerXP: getPlayerXP,
     getPlayerMaxXP: getPlayerMaxXP,
+    // XP curve & stars → XP
+    XP_CURVE: XP_CURVE,
+    xpTotalForLevel: xpTotalForLevel,
+    xpDeltaForLevel: xpDeltaForLevel,
+    getXPForStars: getXPForStars,
+    getTotalXPFromStars: getTotalXPFromStars,
+    getTotalXPFromStarsCached: getTotalXPFromStarsCached,
     getPlayerAccuracy: getPlayerAccuracy,
     getQuizzesCompleted: getQuizzesCompleted,
     getTotalXPEarned: getTotalXPEarned,
+    getTotalStarsEarned: getTotalStarsEarned,
     getPlayerAvatar: getPlayerAvatar,
     formatNumber: formatNumber,
     getXPProgressPercentage: getXPProgressPercentage,
     // Progress persistence exports
+    getAllSavedProgress: getAllSavedProgress,
+    aggregateGlobalStatsFromStorage: aggregateGlobalStatsFromStorage,
     getQuizProgress: getQuizProgress,
     saveQuizProgress: saveQuizProgress,
     computeStarRating: computeStarRating,
