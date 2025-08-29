@@ -58,6 +58,21 @@
     } catch (_) {}
   }
   
+  // Centralized storage alias (falls back to localStorage if StorageService is unavailable)
+  const Storage = (global && global.StorageService) || (function(){
+    function safe(fn, fallback) { try { return fn(); } catch (e) { try { console.error('[ThaiQuest]', 'StorageFallback', e); } catch (_) {} return fallback; } }
+    return {
+      getItem: function(key){ return safe(function(){ return localStorage.getItem(key); }, null); },
+      setItem: function(key, value){ return safe(function(){ localStorage.setItem(key, String(value == null ? '' : value)); return true; }, false); },
+      removeItem: function(key){ return safe(function(){ localStorage.removeItem(key); return true; }, false); },
+      getJSON: function(key, fallback){ return safe(function(){ var raw = localStorage.getItem(key); if (!raw) return (fallback == null) ? null : fallback; return JSON.parse(raw); }, (fallback == null) ? null : fallback); },
+      setJSON: function(key, value){ return safe(function(){ localStorage.setItem(key, JSON.stringify(value == null ? {} : value)); return true; }, false); },
+      keys: function(prefix){ return safe(function(){ var out = []; for (var i = 0; i < localStorage.length; i++){ var k = localStorage.key(i); if (!k) continue; if (!prefix || k.indexOf(prefix) === 0) out.push(k); } return out; }, []); },
+      clearPrefix: function(prefix){ var ks = this.keys(prefix); for (var i = 0; i < ks.length; i++){ this.removeItem(ks[i]); } },
+      validate: { ensureProgressShape: function(value){ var v = value || {}; var qa = parseInt(v.questionsAnswered, 10); var ca = parseInt(v.correctAnswers, 10); if (!isFinite(qa) || qa < 0) qa = 0; if (!isFinite(ca) || ca < 0) ca = 0; return { questionsAnswered: qa, correctAnswers: ca }; } }
+    };
+  })();
+  
   function fetchJSON(url) {
     return fetch(url).then(function(r) { if (!r.ok) { throw new Error('HTTP ' + r.status + ' for ' + url); } return r.json(); });
   }
@@ -492,7 +507,7 @@
   function generatePlayerID() {
     try {
       // Check if we already have a stored ID
-      let playerID = localStorage.getItem('thaiQuestPlayerID');
+      let playerID = Storage.getItem('thaiQuestPlayerID');
       
       if (!playerID) {
         // Create a fingerprint from browser characteristics
@@ -519,7 +534,7 @@
         playerID = `Player_${hashStr}`;
         
         // Store it for future use
-        localStorage.setItem('thaiQuestPlayerID', playerID);
+        Storage.setItem('thaiQuestPlayerID', playerID);
       }
       
       return playerID;
@@ -533,7 +548,7 @@
   // Get the display name for the player (custom name or fallback to generated ID)
   function getPlayerDisplayName() {
     try {
-      const customName = localStorage.getItem('thaiQuestCustomName');
+      const customName = Storage.getItem('thaiQuestCustomName');
       if (customName && customName.trim()) {
         return customName.trim();
       }
@@ -549,9 +564,9 @@
     try {
       const trimmedName = (name || '').trim();
       if (trimmedName) {
-        localStorage.setItem('thaiQuestCustomName', trimmedName);
+        Storage.setItem('thaiQuestCustomName', trimmedName);
       } else {
-        localStorage.removeItem('thaiQuestCustomName');
+        Storage.removeItem('thaiQuestCustomName');
       }
       return true;
     } catch (e) {
@@ -563,7 +578,7 @@
   // Get the custom player name (returns null if not set)
   function getPlayerCustomName() {
     try {
-      const customName = localStorage.getItem('thaiQuestCustomName');
+      const customName = Storage.getItem('thaiQuestCustomName');
       return customName && customName.trim() ? customName.trim() : null;
     } catch (e) {
       logError(e, 'Utils.getPlayerCustomName');
@@ -671,15 +686,15 @@
   function getAllSavedProgress() {
     try {
       const entries = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (!key || key.indexOf('thaiQuest.progress.') !== 0) continue;
+      const keys = Storage.keys('thaiQuest.progress.');
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
         const quizId = key.substring('thaiQuest.progress.'.length);
         try {
-          const raw = localStorage.getItem(key);
-          const data = JSON.parse(raw || '{}');
-          const questionsAnswered = Math.max(0, parseInt(data && data.questionsAnswered, 10) || 0);
-          const correctAnswers = Math.max(0, parseInt(data && data.correctAnswers, 10) || 0);
+          const data = Storage.getJSON(key, {});
+          const norm = (Storage.validate && Storage.validate.ensureProgressShape) ? Storage.validate.ensureProgressShape(data) : { questionsAnswered: 0, correctAnswers: 0 };
+          const questionsAnswered = Math.max(0, parseInt(norm && norm.questionsAnswered, 10) || 0);
+          const correctAnswers = Math.max(0, parseInt(norm && norm.correctAnswers, 10) || 0);
           entries.push({ quizId: quizId, questionsAnswered: questionsAnswered, correctAnswers: correctAnswers });
         } catch (_) {}
       }
@@ -751,7 +766,7 @@
 
   function getTotalXPEarned() {
     try {
-      const storedTotal = localStorage.getItem('thaiQuestTotalXPEarned');
+      const storedTotal = Storage.getItem('thaiQuestTotalXPEarned');
       return storedTotal ? parseInt(storedTotal, 10) : 1450;
     } catch (e) {
       logError(e, 'Utils.getTotalXPEarned');
@@ -781,7 +796,7 @@
 
   function getPlayerAvatar() {
     try {
-      const storedAvatar = localStorage.getItem('thaiQuestPlayerAvatar');
+      const storedAvatar = Storage.getItem('thaiQuestPlayerAvatar');
       return storedAvatar || 'https://placehold.co/80x80/png';
     } catch (e) {
       logError(e, 'Utils.getPlayerAvatar');
@@ -815,11 +830,10 @@
     try {
       if (!quizId) return { questionsAnswered: 0, correctAnswers: 0 };
       const key = 'thaiQuest.progress.' + quizId;
-      const raw = localStorage.getItem(key);
-      if (!raw) return { questionsAnswered: 0, correctAnswers: 0 };
-      const data = JSON.parse(raw);
-      const qa = parseInt(data && data.questionsAnswered, 10) || 0;
-      const ca = parseInt(data && data.correctAnswers, 10) || 0;
+      const data = Storage.getJSON(key, { questionsAnswered: 0, correctAnswers: 0 }) || { questionsAnswered: 0, correctAnswers: 0 };
+      const norm = (Storage.validate && Storage.validate.ensureProgressShape) ? Storage.validate.ensureProgressShape(data) : data;
+      const qa = parseInt(norm && norm.questionsAnswered, 10) || 0;
+      const ca = parseInt(norm && norm.correctAnswers, 10) || 0;
       return { questionsAnswered: qa, correctAnswers: ca };
     } catch (e) {
       logError(e, 'Utils.getQuizProgress');
@@ -835,7 +849,7 @@
         questionsAnswered: Math.max(0, parseInt(stateLike && stateLike.questionsAnswered, 10) || 0),
         correctAnswers: Math.max(0, parseInt(stateLike && stateLike.correctAnswers, 10) || 0)
       };
-      localStorage.setItem(key, JSON.stringify(payload));
+      Storage.setJSON(key, payload);
     } catch (e) {
       logError(e, 'Utils.saveQuizProgress');
     }
@@ -876,17 +890,13 @@
 
   function resetAllProgress() {
     ErrorHandler.wrap(function() {
-      const toDelete = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.indexOf('thaiQuest.progress.') === 0) toDelete.push(key);
-      }
+      const toDelete = Storage.keys('thaiQuest.progress.');
       toDelete.forEach(function(k){ 
-        ErrorHandler.safe(function() { localStorage.removeItem(k); })();
+        ErrorHandler.safe(function() { Storage.removeItem(k); })();
       });
       
       // Also clear custom player name
-      ErrorHandler.safe(function() { localStorage.removeItem('thaiQuestCustomName'); })();
+      ErrorHandler.safe(function() { Storage.removeItem('thaiQuestCustomName'); })();
     }, 'Utils.resetAllProgress')();
   }
 

@@ -15,7 +15,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Auto‑advance**: Moves to the next question after a correct answer; tracks questions answered and accuracy
 - **Progressive difficulty**: Automatically increases challenge by adding more choices and removing hints as players improve
 - **JSON‑driven**: Easy to add or tweak data without changing runtime code
- - **Per‑quiz progress & stars**: Progress is saved in localStorage; earn up to 3 stars per quiz based on accuracy when you reach 100 correct answers
+- **Per‑quiz progress & stars**: Progress is saved via a storage service (localStorage under the hood); earn up to 3 stars per quiz based on accuracy when you reach 100 correct answers
  - **Player profile card**: Enabled on the home page; shows Level and XP bar, plus aggregated metrics: Avg accuracy, Quizzes completed, and Total stars earned
 
 ### Quizzes included
@@ -131,13 +131,13 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 4. The loader invokes a per‑quiz builder. If no builder exists for the `id`, it falls back to running a standard quiz from `data/<id>.json` using `phonetic` as the answer key.
 5. Builders fetch JSON via `Utils.fetchJSONCached`/`Utils.fetchJSONs` and wire `ThaiQuiz.setupQuiz(...)` using `Utils.createStandardQuiz` plus small overrides (emoji, examples, symbol rendering).
 6. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
-7. Per‑quiz progress (questions answered and correct answers) is persisted to localStorage; the home page displays a 0–3 star rating for each quiz.
+7. Per‑quiz progress (questions answered and correct answers) is persisted through the storage service (backed by localStorage); the home page displays a 0–3 star rating for each quiz.
 
 ### Player profile & metrics
 
 The home page header includes a player profile card with:
 
-- **Custom player name**: Click on your player name to set a custom name (stored in localStorage). If no custom name is set, displays a computed ID based on browser fingerprinting.
+- **Custom player name**: Click on your player name to set a custom name (stored via the storage service). If no custom name is set, displays a computed ID based on browser fingerprinting.
 - **XP bar**: Shows current XP vs. max XP for your level. The XP bar remains visible and is independent of the star metrics.
 - **Avg accuracy**: Aggregated across all quizzes: round(Σ correct ÷ Σ answered × 100).
 - **Quizzes completed**: Count of quizzes with at least 100 correct answers.
@@ -145,7 +145,7 @@ The home page header includes a player profile card with:
 
 Implementation details:
 
-- Aggregation is computed from per‑quiz progress stored at `localStorage["thaiQuest.progress.<quizId>"]`.
+- Aggregation is computed from per‑quiz progress stored under the key `thaiQuest.progress.<quizId>` via the storage service.
 - Public helpers: `Utils.getTotalStarsEarned()`, `Utils.getPlayerAccuracy()`, `Utils.getQuizzesCompleted()`, and low‑level `Utils.aggregateGlobalStatsFromStorage()` / `Utils.getAllSavedProgress()`.
 - Star tiers: see the table below; totals are computed by summing stars across all quizzes.
 
@@ -331,7 +331,7 @@ progressiveDifficulty: {
 
 #### Quiz completion and star ranking
 
-- A quiz is considered eligible for ranking after you accumulate 100 correct answers on that quiz (across sessions; persisted in localStorage).
+- A quiz is considered eligible for ranking after you accumulate 100 correct answers on that quiz (across sessions; persisted via the storage service).
 - Star tiers (based on overall accuracy at the time you've reached 100 correct answers or beyond):
   - 3★: 100 correct with >95% accuracy
   - 2★: 100 correct with >85% accuracy
@@ -339,8 +339,8 @@ progressiveDifficulty: {
   - 0★: otherwise
 
 Implementation details:
-- Progress is stored under `localStorage["thaiQuest.progress.<quizId>"] = { questionsAnswered, correctAnswers }`.
-- The quiz engine initializes from stored progress and saves after every answer.
+- Progress is stored under the key `thaiQuest.progress.<quizId>` via the storage service as a JSON object `{ questionsAnswered, correctAnswers }`.
+- The quiz engine initializes from stored progress and saves after every answer through the storage service.
 - The stats line in `quiz.html` shows current counters plus a star preview (e.g., `Stars: ★☆★`).
 - The home page reads stars per quiz and shows them on each card.
 
@@ -397,7 +397,7 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
   - Returns the player's display name (custom name if set, otherwise computed ID).
 
 - `Utils.setPlayerCustomName(name)`
-  - Sets a custom player name in localStorage. Pass empty string to clear custom name.
+  - Sets a custom player name via the storage service. Pass empty string to clear custom name.
 
 - `Utils.getPlayerCustomName()`
   - Returns the custom player name or null if not set.
@@ -451,7 +451,7 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 
 ### Resetting local progress (testing)
 
-For quick manual testing, the home page (`index.html`) includes a temporary button at the very bottom labeled “Reset progress (local storage)”. Clicking it clears all keys prefixed with `thaiQuest.progress.` from localStorage and refreshes the displayed stars, header metrics, and level/XP bar.
+For quick manual testing, the home page (`index.html`) includes a temporary button at the very bottom labeled “Reset progress (local storage)”. Clicking it clears all keys prefixed with `thaiQuest.progress.` via the storage service and refreshes the displayed stars, header metrics, and level/XP bar.
 
 ### Tech stack
 
@@ -530,6 +530,60 @@ return Utils.ErrorHandler.safe(JSON.parse, {})(data);
 - Use `ErrorHandler.wrapAsync()` for promise-based operations
 - Always provide meaningful context strings for better debugging
 - Prefer these utilities over inline try-catch blocks for consistency
+
+### Storage service (localStorage abstraction)
+
+All access to browser storage is centralized in `js/storage.js` and exposed globally as `StorageService`. This improves data consistency, error handling, and testability.
+
+Benefits:
+- Safer operations with try/catch and graceful fallback to an in‑memory store when `localStorage` is unavailable
+- JSON helpers avoid repeated parsing/stringifying in feature code
+- Prefix utilities to list/clear groups of keys
+- Basic validation helpers for common shapes (e.g., quiz progress)
+
+Load order:
+- `storage.js` is included before `utils.js` in both `index.html` and `quiz.html`.
+
+Public API:
+
+```javascript
+// Strings and numbers
+StorageService.getItem(key)        // -> string|null
+StorageService.setItem(key, value) // -> boolean
+StorageService.removeItem(key)     // -> boolean
+StorageService.getNumber(key, fallback) // -> number
+StorageService.setNumber(key, num)      // -> boolean
+
+// JSON convenience
+StorageService.getJSON(key, fallback)   // -> object|null
+StorageService.setJSON(key, value)      // -> boolean
+
+// Key management
+StorageService.keys(prefix)        // -> array of keys, optionally filtered by prefix
+StorageService.clearPrefix(prefix) // remove all keys that start with prefix
+
+// Validation helpers
+StorageService.validate.ensureProgressShape(obj) // -> { questionsAnswered, correctAnswers }
+```
+
+Usage examples:
+
+```javascript
+// Save and read per‑quiz progress
+const key = 'thaiQuest.progress.colors';
+StorageService.setJSON(key, { questionsAnswered: 10, correctAnswers: 8 });
+const progress = StorageService.validate.ensureProgressShape(
+  StorageService.getJSON(key, { questionsAnswered: 0, correctAnswers: 0 })
+);
+
+// Clear all progress (used by the Reset button on the home page)
+StorageService.clearPrefix('thaiQuest.progress.');
+```
+
+Migration guide:
+- Replace direct `localStorage.getItem/setItem/removeItem` calls with `StorageService`.
+- Prefer `getJSON/setJSON` for structured data.
+- Avoid parsing or stringifying JSON directly in feature code.
 
 ### License
 
