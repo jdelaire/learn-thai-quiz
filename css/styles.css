@@ -228,7 +228,6 @@ button:active {
 }
 
 .stats {
-  margin-top: 2em;
   font-size: 0.9em;
   color: rgba(17, 17, 17, 0.7);
 }
@@ -915,7 +914,7 @@ body.questions-quiz .correct-line {
   body.consonant-quiz button .emoji { font-size: 1.3em; }
   body.consonant-quiz #feedback { font-size: 1.2em; margin-top: 0.8em; }
   body.consonant-quiz #nextBtn { margin-top: 1.5em; padding: 0.7em 1.5em; }
-  body.consonant-quiz .stats { margin-top: 1.5em; font-size: 0.8em; }
+  body.consonant-quiz .stats { font-size: 0.8em; }
 
   
   body.rooms-quiz { --symbol-font-size: 3.6em; }
