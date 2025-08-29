@@ -32,7 +32,7 @@
     "title": "Color Quiz 🎨",
     "href": "quiz.html?quiz=colors",
     "description": "Practice Thai colors including light/dark modifiers with phonetics.",
-    "bullets": ["Base colors","Light/Dark modifiers"],
+    "bullets": ["Base colors","Light/Dark modifiers", "Dynamic colors"],
     "categories": ["Vocabulary","Beginner"],
     "bodyClass": "color-quiz"
   },

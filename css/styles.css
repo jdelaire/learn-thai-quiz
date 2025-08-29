@@ -236,7 +236,7 @@ button:active {
 .star-rating {
   font-size: 1.4em;
   line-height: 1;
-  margin: 0.25em 0 0.75em 0;
+  margin-top: 0.25em;
 }
 
 /* Stars appended inside stats line on quiz page */
@@ -391,7 +391,7 @@ body.home .quiz-card h2 {
 }
 
 body.home .quiz-card p {
-  margin: 0 0 1.5em 0;
+  margin: 0 0 0 0;
   opacity: 0.9;
   line-height: 1.6;
 }
@@ -403,7 +403,7 @@ body.home .quiz-card .features {
 
 /* Larger stars on quiz cards */
 body.home .quiz-card .star-rating {
-  font-size: 1.6em;
+  font-size: 3em;
 }
 
 body.home .quiz-card .features li {
