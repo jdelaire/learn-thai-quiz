@@ -16,6 +16,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Progressive difficulty**: Automatically increases challenge by adding more choices and removing hints as players improve
 - **JSON‑driven**: Easy to add or tweak data without changing runtime code
  - **Per‑quiz progress & stars**: Progress is saved in localStorage; earn up to 3 stars per quiz based on accuracy when you reach 100 correct answers
+ - **Player profile card**: Enabled on the home page; shows Level and XP bar, plus aggregated metrics: Avg accuracy, Quizzes completed, and Total stars earned
 
 ### Quizzes included
 
@@ -130,6 +131,21 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 5. Builders fetch JSON via `Utils.fetchJSONCached`/`Utils.fetchJSONs` and wire `ThaiQuiz.setupQuiz(...)` using `Utils.createStandardQuiz` plus small overrides (emoji, examples, symbol rendering).
 6. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
 7. Per‑quiz progress (questions answered and correct answers) is persisted to localStorage; the home page displays a 0–3 star rating for each quiz.
+
+### Player profile & metrics
+
+The home page header includes a player profile card with:
+
+- **XP bar**: Shows current XP vs. max XP for your level. The XP bar remains visible and is independent of the star metrics.
+- **Avg accuracy**: Aggregated across all quizzes: round(Σ correct ÷ Σ answered × 100).
+- **Quizzes completed**: Count of quizzes with at least 100 correct answers.
+- **Total stars earned**: Sum of each quiz’s star rating (0–3) based on accuracy thresholds.
+
+Implementation details:
+
+- Aggregation is computed from per‑quiz progress stored at `localStorage["thaiQuest.progress.<quizId>"]`.
+- Public helpers: `Utils.getTotalStarsEarned()`, `Utils.getPlayerAccuracy()`, `Utils.getQuizzesCompleted()`, and low‑level `Utils.aggregateGlobalStatsFromStorage()` / `Utils.getAllSavedProgress()`.
+- Star tiers: see the table below; totals are computed by summing stars across all quizzes.
 
 ### Styling & overrides
 
@@ -331,7 +347,7 @@ QuizBuilders.myquiz = function() {
 
 Available hooks in the engine: `pickRound(state)`, `renderSymbol(answer, els, state)`, `renderButtonContent(choice, state)`, `ariaLabelForChoice(choice, state)`, `decorateButton(btn, choice, state)`, `isCorrect(choice, answer, state)`, `onRoundStart({ answer, choices, state })`, `onAnswered(ctx)`.
 
-Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `Utils.pickRandom`, `Utils.pickUniqueChoices(pool, count, keyFn, seed)`, `Utils.byProp('phonetic')`, `Utils.getDisplayHex(baseHex, modifier)`, `Utils.createStandardQuiz(params)`, `Utils.getBodyClass(id)`, and `Utils.i18n` for label prefixes and accessibility strings.
+Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `Utils.pickRandom`, `Utils.pickUniqueChoices(pool, count, keyFn, seed)`, `Utils.byProp('phonetic')`, `Utils.getDisplayHex(baseHex, modifier)`, `Utils.createStandardQuiz(params)`, `Utils.getBodyClass(id)`, and `Utils.i18n` for label prefixes and accessibility strings. Player metrics helpers: `Utils.getTotalStarsEarned()`, `Utils.getPlayerAccuracy()`, `Utils.getQuizzesCompleted()`, `Utils.aggregateGlobalStatsFromStorage()`, `Utils.getAllSavedProgress()`.
 
 #### New utilities for faster quiz creation
 
@@ -404,7 +420,7 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 
 ### Resetting local progress (testing)
 
-For quick manual testing, the home page (`index.html`) includes a temporary button at the very bottom labeled “Reset progress (local storage)”. Clicking it clears all keys prefixed with `thaiQuest.progress.` from localStorage and refreshes the displayed stars.
+For quick manual testing, the home page (`index.html`) includes a temporary button at the very bottom labeled “Reset progress (local storage)”. Clicking it clears all keys prefixed with `thaiQuest.progress.` from localStorage and refreshes the displayed stars and header metrics.
 
 ### Tech stack
 
