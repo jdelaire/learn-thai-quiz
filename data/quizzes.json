@@ -178,5 +178,15 @@
     "categories": ["Vocabulary","Beginner"],
     "bodyClass": "questions-quiz",
     "proTip": "Structure: <strong>[Preposition] + [location] + mii + [object] + [number] + [classifier]</strong><br>Examples: <em>bon dtó mii nǎŋ-sɯ̌ɯ sɔ̌ɔŋ lêm</em> — On the table, there are two books. <em>dtâay gâw-îi mii mɛɛw nɯ̀ŋ dtua</em> — Under the chair, there’s one cat."
+  },
+  {
+    "id": "adjectives",
+    "title": "Thai Adjectives 🛠️",
+    "href": "quiz.html?quiz=adjectives",
+    "description": "Practice Thai adjectives with Thai script, phonetics, and comparison examples.",
+    "bullets": ["English/Thai/phonetics","Comparative and superlative examples","Emoji hints"],
+    "categories": ["Vocabulary","Beginner"],
+    "bodyClass": "questions-quiz",
+    "proTip": "Comparatives use \"gwàa\"; superlatives often use \"thîi-sùt\"."
   }
 ]
