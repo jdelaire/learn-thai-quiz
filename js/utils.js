@@ -847,9 +847,9 @@
       const q = Math.max(0, parseInt(questionsAnswered, 10) || 0);
       if (c < 100) return 0;
       const acc = q > 0 ? (c / q) * 100 : 0;
-      if (acc >= 100) return 3;
-      if (acc >= 90) return 2;
-      if (acc >= 80) return 1;
+      if (acc > 95) return 3;
+      if (acc > 85) return 2;
+      if (acc > 75) return 1;
       return 0;
     } catch (e) {
       logError(e, 'Utils.computeStarRating');
@@ -891,7 +891,7 @@
   }
 
   function getStarRulesTooltip() {
-    return 'Star rules: 3★ = 100 right with 100% accuracy; 2★ = 100 right with ≥90% accuracy; 1★ = 100 right with ≥80% accuracy; 0★ otherwise.';
+    return 'Star rules: 3★ = 100 right with >95% accuracy; 2★ = 100 right with >85% accuracy; 1★ = 100 right with >75% accuracy; 0★ otherwise.';
   }
 
   global.Utils = {
