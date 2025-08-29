@@ -38,7 +38,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Days of the Week**: Thai day names with phonetics, planet, and color associations
  - **Body Parts in Thai**: Common anatomy words with Thai script, phonetics, and emoji hints
 - **Essential Thai Prepositions**: Core place prepositions with phonetics and usage tip
- - **Thai Greetings Cheat Sheet**: Core greetings with Thai script, phonetics, examples, and polite particles
+ - **Thai Greetings**: Core greetings with Thai script, phonetics, examples, and polite particles
 
 ### Quick start (local)
 

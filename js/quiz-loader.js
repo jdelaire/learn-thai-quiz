@@ -294,7 +294,7 @@
       };
     }),
 
-    // Thai Greetings Cheat Sheet — basic phrases with examples and emoji hints
+    // Thai Greetings — basic phrases with examples and emoji hints
     greetings: makeStandardQuizBuilder(['data/greetings.json','data/greetings-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
