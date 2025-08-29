@@ -409,12 +409,6 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 }
 ```
 
-#### Thai Greetings Cheat Sheet Notes
-
-- Add polite particles at the end:
-  - **ครับ (khráp)** = polite particle (male speaker)
-  - **ค่ะ (khâ)** = polite particle (female speaker)
-- These particles make your greetings sound natural and respectful.
 
 - `bodyClass` and `proTip` are optional. If omitted, the loader picks a sensible default class and no tip is shown (some quizzes still add inline notes, e.g., the vowel placement hint).
 
