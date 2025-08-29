@@ -41,23 +41,23 @@
       xpFillEl.style.width = `${xpProgress}%`;
     }
 
-    // Player Metrics
-    const accuracy = Utils.getPlayerAccuracy();
-    const quizzesCompleted = Utils.getQuizzesCompleted();
-    const totalXPEarned = Utils.getTotalXPEarned();
+    // Player Metrics updater
+    function updateHeaderMetrics() {
+      try {
+        const accuracy = Utils.getPlayerAccuracy();
+        const quizzesCompleted = Utils.getQuizzesCompleted();
+        const totalStars = Utils.getTotalStarsEarned();
 
-    // Update all metrics by finding them in order
-    const metricValues = document.querySelectorAll('.metric-value');
-    if (metricValues.length >= 3) {
-      // Accuracy metric (first)
-      metricValues[0].textContent = `${accuracy}%`;
-      
-      // Quizzes completed metric (second)
-      metricValues[1].textContent = Utils.formatNumber(quizzesCompleted);
-      
-      // Total XP earned metric (third)
-      metricValues[2].textContent = Utils.formatNumber(totalXPEarned);
+        const metricValues = document.querySelectorAll('.metric-value');
+        if (metricValues.length >= 3) {
+          metricValues[0].textContent = `${accuracy}%`;
+          metricValues[1].textContent = Utils.formatNumber(quizzesCompleted);
+          metricValues[2].textContent = Utils.formatNumber(totalStars);
+        }
+      } catch (e) { try { Utils.logError(e, 'home.js: updateHeaderMetrics'); } catch (_) {} }
     }
+
+    updateHeaderMetrics();
 
   } catch (e) { try { Utils.logError(e, 'home.js: player card data population'); } catch (_) {} }
   
@@ -289,7 +289,8 @@
         resetBtn.addEventListener('click', function(ev){
           try { ev.preventDefault(); } catch (_) {}
           try { Utils.resetAllProgress(); } catch (e) { try { Utils.logError(e, 'home.js: resetAllProgress'); } catch (_) {} }
-          // Re-render to reflect stars cleared
+          // Recompute header metrics and re-render to reflect stars cleared
+          updateHeaderMetrics();
           updateUI();
           try { alert('Local quiz progress has been reset.'); } catch (_) {}
         });

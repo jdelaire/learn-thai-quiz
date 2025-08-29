@@ -502,23 +502,79 @@
     }
   }
 
+  // ---- Aggregated global stats derived from per-quiz progress ----
+  function getAllSavedProgress() {
+    try {
+      const entries = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key || key.indexOf('thaiQuest.progress.') !== 0) continue;
+        const quizId = key.substring('thaiQuest.progress.'.length);
+        try {
+          const raw = localStorage.getItem(key);
+          const data = JSON.parse(raw || '{}');
+          const questionsAnswered = Math.max(0, parseInt(data && data.questionsAnswered, 10) || 0);
+          const correctAnswers = Math.max(0, parseInt(data && data.correctAnswers, 10) || 0);
+          entries.push({ quizId: quizId, questionsAnswered: questionsAnswered, correctAnswers: correctAnswers });
+        } catch (_) {}
+      }
+      return entries;
+    } catch (e) {
+      logError(e, 'Utils.getAllSavedProgress');
+      return [];
+    }
+  }
+
+  function aggregateGlobalStatsFromStorage() {
+    try {
+      const progressEntries = getAllSavedProgress();
+      let totalQuestionsAnswered = 0;
+      let totalCorrectAnswers = 0;
+      let quizzesCompleted = 0;
+      let totalStarsEarned = 0;
+
+      for (let i = 0; i < progressEntries.length; i++) {
+        const p = progressEntries[i];
+        totalQuestionsAnswered += p.questionsAnswered;
+        totalCorrectAnswers += p.correctAnswers;
+        if (p.correctAnswers >= 100) quizzesCompleted += 1;
+        try { totalStarsEarned += computeStarRating(p.correctAnswers, p.questionsAnswered); } catch (_) {}
+      }
+
+      const totalAccuracy = totalQuestionsAnswered > 0
+        ? Math.round((totalCorrectAnswers / totalQuestionsAnswered) * 100)
+        : 0;
+
+      return {
+        totalQuestionsAnswered: totalQuestionsAnswered,
+        totalCorrectAnswers: totalCorrectAnswers,
+        totalAccuracy: totalAccuracy,
+        quizzesCompleted: quizzesCompleted,
+        totalStarsEarned: totalStarsEarned
+      };
+    } catch (e) {
+      logError(e, 'Utils.aggregateGlobalStatsFromStorage');
+      return { totalQuestionsAnswered: 0, totalCorrectAnswers: 0, totalAccuracy: 0, quizzesCompleted: 0, totalStarsEarned: 0 };
+    }
+  }
+
   function getPlayerAccuracy() {
     try {
-      const storedAccuracy = localStorage.getItem('thaiQuestPlayerAccuracy');
-      return storedAccuracy ? parseFloat(storedAccuracy) : 82.0;
+      const agg = aggregateGlobalStatsFromStorage();
+      return agg.totalAccuracy;
     } catch (e) {
       logError(e, 'Utils.getPlayerAccuracy');
-      return 82.0;
+      return 0;
     }
   }
 
   function getQuizzesCompleted() {
     try {
-      const storedCompleted = localStorage.getItem('thaiQuestQuizzesCompleted');
-      return storedCompleted ? parseInt(storedCompleted, 10) : 24;
+      const agg = aggregateGlobalStatsFromStorage();
+      return agg.quizzesCompleted;
     } catch (e) {
       logError(e, 'Utils.getQuizzesCompleted');
-      return 24;
+      return 0;
     }
   }
 
@@ -529,6 +585,16 @@
     } catch (e) {
       logError(e, 'Utils.getTotalXPEarned');
       return 1450;
+    }
+  }
+
+  function getTotalStarsEarned() {
+    try {
+      const agg = aggregateGlobalStatsFromStorage();
+      return agg.totalStarsEarned;
+    } catch (e) {
+      logError(e, 'Utils.getTotalStarsEarned');
+      return 0;
     }
   }
 
@@ -690,10 +756,13 @@
     getPlayerAccuracy: getPlayerAccuracy,
     getQuizzesCompleted: getQuizzesCompleted,
     getTotalXPEarned: getTotalXPEarned,
+    getTotalStarsEarned: getTotalStarsEarned,
     getPlayerAvatar: getPlayerAvatar,
     formatNumber: formatNumber,
     getXPProgressPercentage: getXPProgressPercentage,
     // Progress persistence exports
+    getAllSavedProgress: getAllSavedProgress,
+    aggregateGlobalStatsFromStorage: aggregateGlobalStatsFromStorage,
     getQuizProgress: getQuizProgress,
     saveQuizProgress: saveQuizProgress,
     computeStarRating: computeStarRating,
