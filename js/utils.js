@@ -184,11 +184,13 @@
     return map[quizId] || null;
   }
 
-  // Default progressive difficulty configuration (align with README: 4→5→6 at 20/40)
+  // Default progressive difficulty configuration (4→5→6→7→8 at 20/40/60/80)
   const DEFAULT_PROGRESSIVE_DIFFICULTY = {
     choicesThresholds: [
       { correctAnswers: 20, choices: 5 },
-      { correctAnswers: 40, choices: 6 }
+      { correctAnswers: 40, choices: 6 },
+      { correctAnswers: 60, choices: 7 },
+      { correctAnswers: 80, choices: 8 }
     ]
   };
 
