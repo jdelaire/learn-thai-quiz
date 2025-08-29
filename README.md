@@ -38,6 +38,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Days of the Week**: Thai day names with phonetics, planet, and color associations
  - **Body Parts in Thai**: Common anatomy words with Thai script, phonetics, and emoji hints
 - **Essential Thai Prepositions**: Core place prepositions with phonetics and usage tip
+ - **Thai Greetings Cheat Sheet**: Core greetings with Thai script, phonetics, examples, and polite particles
 
 ### Quick start (local)
 
@@ -407,6 +408,13 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
   "proTip": "Optional HTML snippet shown in the quiz footer with helpful hints."
 }
 ```
+
+#### Thai Greetings Cheat Sheet Notes
+
+- Add polite particles at the end:
+  - **ครับ (khráp)** = polite particle (male speaker)
+  - **ค่ะ (khâ)** = polite particle (female speaker)
+- These particles make your greetings sound natural and respectful.
 
 - `bodyClass` and `proTip` are optional. If omitted, the loader picks a sensible default class and no tip is shown (some quizzes still add inline notes, e.g., the vowel placement hint).
 

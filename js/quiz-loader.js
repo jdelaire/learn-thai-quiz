@@ -294,6 +294,18 @@
       };
     }),
 
+    // Thai Greetings Cheat Sheet — basic phrases with examples and emoji hints
+    greetings: makeStandardQuizBuilder(['data/greetings.json','data/greetings-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
+      return {
+        data: data,
+        examples: examples,
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
+        // Progressive difficulty enabled by default
+      };
+    }),
+
     // Body Parts in Thai — standard vocab quiz with emoji hints
     'body-parts': makeStandardQuizBuilder(['data/body-parts.json'], function(results) {
       const data = results[0] || [];

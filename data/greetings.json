@@ -1,0 +1,9 @@
+[
+  { "english": "hello", "thai": "สวัสดี", "phonetic": "sà-wàt-dii", "emoji": "👋" },
+  { "english": "thank you", "thai": "ขอบคุณ", "phonetic": "khɔ̀ɔp-khun", "emoji": "🙏" },
+  { "english": "never mind / it’s ok", "thai": "ไม่เป็นไร", "phonetic": "mâi-bpen-rai", "emoji": "🙂" },
+  { "english": "sorry / excuse me", "thai": "ขอโทษ", "phonetic": "khɔ̌ɔ-thôot", "emoji": "😔" },
+  { "english": "nice to meet you", "thai": "ยินดีที่ได้รู้จัก", "phonetic": "yin-dii thîi dâai rúu-jàk", "emoji": "🤝" },
+  { "english": "how about you?", "thai": "แล้วคุณล่ะ", "phonetic": "lɛ́ɛo-khun-là", "emoji": "🤔" }
+]
+
