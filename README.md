@@ -304,7 +304,7 @@ Tone Markers (class + marker + length → resulting tone):
 The quiz engine supports automatic difficulty progression based on player performance. **Progressive difficulty is enabled by default** for all quizzes using the standard builder.
 
 **Default configuration:**
-- 4→5→6 choices at 20/40 correct answers
+- 4→5→6→7→8 choices at 20/40/60/80 correct answers
 
 **Custom configuration:**
 ```javascript
@@ -324,7 +324,7 @@ progressiveDifficulty: {
 - `choicesThresholds`: Array of `{ correctAnswers: number, choices: number }` to increase difficulty
 
 **Example implementations:**
-- **All quizzes**: 4→5→6 choices at 20/40 correct answers (default)
+- **All quizzes**: 4→5→6→7→8 choices at 20/40/60/80 correct answers (default)
 - **Custom quizzes**: Can override thresholds as needed
 
 #### Quiz completion and star ranking

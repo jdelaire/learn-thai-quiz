@@ -38,39 +38,30 @@
       try { Utils.insertConsonantLegend(); } catch (e) {}
       return Utils.fetchJSONCached('data/consonants.json').then(function(data){
         return function init(){
-          ThaiQuiz.setupQuiz({
-            elements: defaultElements,
-            pickRound: function(state) {
-              const answer = data[Math.floor(Math.random() * data.length)];
-              
-              // Apply progressive difficulty
-              let currentChoices = 4;
-              if (state && state.correctAnswers !== undefined) {
-                const correctCount = state.correctAnswers;
-                if (correctCount >= 80) currentChoices = 8;
-                else if (correctCount >= 60) currentChoices = 7;
-                else if (correctCount >= 40) currentChoices = 6;
-                else if (correctCount >= 20) currentChoices = 5;
+          try {
+            var base = Utils.createQuizWithProgressiveDifficulty({
+              data: data,
+              answerKey: 'name'
+            });
+            ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: 'consonants' }, base, {
+              renderSymbol: function(answer, els) {
+                els.symbolEl.textContent = answer.symbol;
+                els.symbolEl.setAttribute('aria-label', 'Thai consonant symbol: ' + answer.symbol);
+              },
+              ariaLabelForChoice: function(choice) {
+                var prefix = (Utils && Utils.i18n && Utils.i18n.answerPrefix) || 'Answer: ';
+                return prefix + choice.name + ' (' + choice.meaning + ')';
+              },
+              decorateButton: function(btn, choice) {
+                try { btn.classList.add(choice.class + '-class'); } catch (e) {}
+                var span = document.createElement('span');
+                span.className = 'emoji';
+                span.textContent = choice.emoji;
+                btn.insertBefore(span, btn.firstChild);
               }
-              
-              const choices = Utils.pickUniqueChoices(data, currentChoices, Utils.byProp('name'), answer);
-              return { answer: answer, choices: choices };
-            },
-            renderSymbol: function(answer, els) {
-              els.symbolEl.textContent = answer.symbol;
-              els.symbolEl.setAttribute('aria-label', 'Thai consonant symbol: ' + answer.symbol);
-            },
-            renderButtonContent: function(choice) { return String(choice.name); },
-            ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.name + ' (' + choice.meaning + ')'; },
-            decorateButton: function(btn, choice, state) {
-              try { btn.classList.add(choice.class + '-class'); } catch (e) {}
-              const span = document.createElement('span');
-              span.className = 'emoji';
-              span.textContent = choice.emoji;
-              btn.insertBefore(span, btn.firstChild);
-            },
-            isCorrect: function(choice, answer) { return choice.name === answer.name; }
-          });
+              // isCorrect uses answerKey default
+            }));
+          } catch (e) { handleDataLoadError(e); }
         };
       });
     },
@@ -78,30 +69,17 @@
     vowels: function() {
       return Utils.fetchJSONCached('data/vowels.json').then(function(data){
         return function init(){
-          ThaiQuiz.setupQuiz({
-            elements: defaultElements,
-            pickRound: function(state) {
-              const answer = Utils.pickRandom(data);
-              
-              // Apply progressive difficulty
-              let currentChoices = 4;
-              if (state && state.correctAnswers !== undefined) {
-                const correctCount = state.correctAnswers;
-                if (correctCount >= 80) currentChoices = 8;
-                else if (correctCount >= 60) currentChoices = 7;
-                else if (correctCount >= 40) currentChoices = 6;
-                else if (correctCount >= 20) currentChoices = 5;
+          try {
+            var base = Utils.createQuizWithProgressiveDifficulty({
+              data: data,
+              answerKey: 'sound'
+            });
+            ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: 'vowels' }, base, {
+              renderSymbol: function(answer, els) {
+                try { Utils.renderVowelSymbol(els.symbolEl, answer.symbol); } catch (e) {}
               }
-              
-              const choices = Utils.pickUniqueChoices(data, currentChoices, Utils.byProp('sound'), answer);
-              return { answer: answer, choices: choices };
-            },
-            renderSymbol: function(answer, els) {
-              try { Utils.renderVowelSymbol(els.symbolEl, answer.symbol); } catch (e) {}
-            },
-            renderButtonContent: function(choice) { return choice.sound; },
-            isCorrect: function(choice, answer) { return choice.sound === answer.sound; }
-          });
+            }));
+          } catch (e) { handleDataLoadError(e); }
         };
       });
     },
@@ -126,16 +104,9 @@
               const base = Utils.pickRandom(baseColors);
               const maybeModifier = Math.random() < 0.55 ? Utils.pickRandom(modifiers) : null;
               const answer = buildColorPhrase(base, maybeModifier);
-              
-              // Apply progressive difficulty
-              let currentChoices = 4;
-              if (state && state.correctAnswers !== undefined) {
-                const correctCount = state.correctAnswers;
-                if (correctCount >= 80) currentChoices = 8;
-                else if (correctCount >= 60) currentChoices = 7;
-                else if (correctCount >= 40) currentChoices = 6;
-                else if (correctCount >= 20) currentChoices = 5;
-              }
+              const currentChoices = (Utils && typeof Utils.getChoicesCountForState === 'function')
+                ? Utils.getChoicesCountForState(state, undefined, 4)
+                : 4;
               
               const choices = [answer];
               while (choices.length < currentChoices) {
@@ -152,7 +123,7 @@
               };
             },
             renderButtonContent: function(choice) { return choice.phonetic; },
-            ariaLabelForChoice: function(choice) { return 'Answer: ' + choice.phonetic; },
+            ariaLabelForChoice: function(choice) { var prefix = (Utils && Utils.i18n && Utils.i18n.answerPrefix) || 'Answer: '; return prefix + choice.phonetic; },
             isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
           });
         };

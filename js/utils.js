@@ -184,7 +184,7 @@
     return map[quizId] || null;
   }
 
-  // Default progressive difficulty configuration
+  // Default progressive difficulty configuration (4→5→6→7→8 at 20/40/60/80)
   const DEFAULT_PROGRESSIVE_DIFFICULTY = {
     choicesThresholds: [
       { correctAnswers: 20, choices: 5 },
@@ -197,6 +197,34 @@
   // Helper to create progressive difficulty config with defaults
   function createProgressiveDifficulty(config = {}) {
     return Object.assign({}, DEFAULT_PROGRESSIVE_DIFFICULTY, config);
+  }
+
+  // Compute number of choices based on state and progressiveDifficulty (falls back to defaults)
+  function getChoicesCountForState(state, progressiveDifficulty, baseChoices) {
+    try {
+      var currentChoices = (typeof baseChoices === 'number' && baseChoices > 0) ? baseChoices : 4;
+      // If explicitly disabled, keep base choices
+      if (progressiveDifficulty === false || progressiveDifficulty === null) return currentChoices;
+      // Normalize PD (undefined → defaults, object → merged with defaults)
+      var pd = (progressiveDifficulty === undefined)
+        ? DEFAULT_PROGRESSIVE_DIFFICULTY
+        : createProgressiveDifficulty(progressiveDifficulty || {});
+
+      if (pd && state && typeof state.correctAnswers === 'number' && Array.isArray(pd.choicesThresholds)) {
+        var correctCount = state.correctAnswers;
+        for (var i = pd.choicesThresholds.length - 1; i >= 0; i--) {
+          var threshold = pd.choicesThresholds[i];
+          if (correctCount >= threshold.correctAnswers) {
+            currentChoices = threshold.choices;
+            break;
+          }
+        }
+      }
+      return currentChoices;
+    } catch (e) {
+      logError(e, 'Utils.getChoicesCountForState');
+      return (typeof baseChoices === 'number' && baseChoices > 0) ? baseChoices : 4;
+    }
   }
 
   // Helper to create a quiz with progressive difficulty enabled by default
@@ -226,24 +254,7 @@
     return {
       pickRound: function(state) {
         if (!Array.isArray(data) || data.length === 0) return null;
-        
-        // Apply progressive difficulty if configured
-        let currentChoices = choices;
-        if (progressiveDifficulty && state && state.correctAnswers !== undefined) {
-          const correctCount = state.correctAnswers;
-          
-          // Adjust number of choices based on performance
-          if (progressiveDifficulty.choicesThresholds) {
-            for (let i = progressiveDifficulty.choicesThresholds.length - 1; i >= 0; i--) {
-              const threshold = progressiveDifficulty.choicesThresholds[i];
-              if (correctCount >= threshold.correctAnswers) {
-                currentChoices = threshold.choices;
-                break;
-              }
-            }
-          }
-        }
-        
+        const currentChoices = getChoicesCountForState(state, progressiveDifficulty, choices);
         const answer = pickRandom(data);
         const uniqueChoices = pickUniqueChoices(data, currentChoices, byProp(answerKey), answer);
         return { answer: answer, choices: uniqueChoices };
@@ -821,6 +832,7 @@
     // Progressive difficulty helpers
     createProgressiveDifficulty: createProgressiveDifficulty,
     DEFAULT_PROGRESSIVE_DIFFICULTY: DEFAULT_PROGRESSIVE_DIFFICULTY,
+    getChoicesCountForState: getChoicesCountForState,
     createQuizWithProgressiveDifficulty: createQuizWithProgressiveDifficulty,
     // i18n and class map
     i18n: i18n,
