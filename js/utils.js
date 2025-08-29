@@ -188,7 +188,9 @@
   const DEFAULT_PROGRESSIVE_DIFFICULTY = {
     choicesThresholds: [
       { correctAnswers: 20, choices: 5 },
-      { correctAnswers: 40, choices: 6 }
+      { correctAnswers: 40, choices: 6 },
+      { correctAnswers: 60, choices: 7 },
+      { correctAnswers: 80, choices: 8 }
     ]
   };
 
