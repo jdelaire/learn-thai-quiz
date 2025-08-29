@@ -39,7 +39,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Body Parts in Thai**: Common anatomy words with Thai script, phonetics, and emoji hints
 - **Essential Thai Prepositions**: Core place prepositions with phonetics and usage tip
 - **Thai Greetings**: Core greetings with Thai script, phonetics, examples, and polite particles
-- **Thai Adjectives Cheat Sheet**: Common adjectives with Thai script, phonetics, emoji hints, and comparison examples
+- **Thai Adjectives**: Common adjectives with Thai script, phonetics, emoji hints, and comparison examples
 
 ### Quick start (local)
 
