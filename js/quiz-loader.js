@@ -47,7 +47,9 @@
               let currentChoices = 4;
               if (state && state.correctAnswers !== undefined) {
                 const correctCount = state.correctAnswers;
-                if (correctCount >= 40) currentChoices = 6;
+                if (correctCount >= 80) currentChoices = 8;
+                else if (correctCount >= 60) currentChoices = 7;
+                else if (correctCount >= 40) currentChoices = 6;
                 else if (correctCount >= 20) currentChoices = 5;
               }
               
@@ -85,7 +87,9 @@
               let currentChoices = 4;
               if (state && state.correctAnswers !== undefined) {
                 const correctCount = state.correctAnswers;
-                if (correctCount >= 40) currentChoices = 6;
+                if (correctCount >= 80) currentChoices = 8;
+                else if (correctCount >= 60) currentChoices = 7;
+                else if (correctCount >= 40) currentChoices = 6;
                 else if (correctCount >= 20) currentChoices = 5;
               }
               
@@ -127,7 +131,9 @@
               let currentChoices = 4;
               if (state && state.correctAnswers !== undefined) {
                 const correctCount = state.correctAnswers;
-                if (correctCount >= 40) currentChoices = 6;
+                if (correctCount >= 80) currentChoices = 8;
+                else if (correctCount >= 60) currentChoices = 7;
+                else if (correctCount >= 40) currentChoices = 6;
                 else if (correctCount >= 20) currentChoices = 5;
               }
               
@@ -175,7 +181,9 @@
         progressiveDifficulty: {
           choicesThresholds: [
             { correctAnswers: 20, choices: 5 },
-            { correctAnswers: 40, choices: 6 }
+            { correctAnswers: 40, choices: 6 },
+            { correctAnswers: 60, choices: 7 },
+            { correctAnswers: 80, choices: 8 }
           ]
         }
       };
@@ -262,7 +270,9 @@
         progressiveDifficulty: {
           choicesThresholds: [
             { correctAnswers: 20, choices: 5 },
-            { correctAnswers: 40, choices: 6 }
+            { correctAnswers: 40, choices: 6 },
+            { correctAnswers: 60, choices: 7 },
+            { correctAnswers: 80, choices: 8 }
           ],
           hideEmojiThreshold: 50
         }
@@ -394,7 +404,7 @@
                 return;
               }
               try {
-                ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: quizId }, Utils.createStandardQuiz({
+                ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: quizId }, Utils.createQuizWithProgressiveDifficulty({
                   data: data
                 })));
               } catch (e) { handleDataLoadError(e); }
