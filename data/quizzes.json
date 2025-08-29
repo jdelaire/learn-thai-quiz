@@ -38,7 +38,7 @@
   },
   {
     "id": "numbers",
-    "title": "Numbers Quiz 🔢",
+    "title": "Numbers 🔢",
     "href": "quiz.html?quiz=numbers",
     "description": "Practice Thai numbers with phonetics, from 0 to the millions.",
     "bullets": ["Basic 0–10","Teens and Tens","Hundreds & Thousands"],
