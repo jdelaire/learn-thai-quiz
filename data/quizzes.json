@@ -1,7 +1,7 @@
 [
   {
     "id": "consonants",
-    "title": "Consonant Quiz 🔤",
+    "title": "Consonants 🔤",
     "href": "quiz.html?quiz=consonants",
     "description": "Learn all 44 Thai consonants with pronunciation, meanings, and tone classes.",
     "bullets": ["Color-coded tone classes","Emoji associations","Progress tracking"],
@@ -10,7 +10,7 @@
   },
   {
     "id": "greetings",
-    "title": "Thai Greetings 🙏",
+    "title": "Greetings 🙏",
     "href": "quiz.html?quiz=greetings",
     "description": "Core Thai greetings with Thai script, phonetics, and polite particles.",
     "bullets": ["Hello/Thanks/Sorry","Never mind / It’s ok","How about you?"],
@@ -20,7 +20,7 @@
   },
   {
     "id": "vowels",
-    "title": "Vowel Quiz 🔤",
+    "title": "Vowels 🔤",
     "href": "quiz.html?quiz=vowels",
     "description": "Practice 32 Thai vowels with sound patterns and example words.",
     "bullets": ["Vowel symbols","Sound patterns"],
@@ -29,7 +29,7 @@
   },
   {
     "id": "colors",
-    "title": "Color Quiz 🎨",
+    "title": "Colors 🎨",
     "href": "quiz.html?quiz=colors",
     "description": "Practice Thai colors including light/dark modifiers with phonetics.",
     "bullets": ["Base colors","Light/Dark modifiers", "Dynamic colors"],
@@ -58,7 +58,7 @@
   },
   {
     "id": "family",
-    "title": "Thai Family Quiz 🧑‍🧑‍🧒‍🧒",
+    "title": "Family 🧑‍🧑‍🧒‍🧒",
     "href": "quiz.html?quiz=family",
     "description": "Learn Thai family members with Thai script and phonetics.",
     "bullets": ["Parents & siblings","Extended family (aunts/uncles, grandparents)","Phonetics practice"],
@@ -67,7 +67,7 @@
   },
   {
     "id": "body-parts",
-    "title": "Body Parts in Thai 🧍‍♂️",
+    "title": "Body Parts 🧍‍♂️",
     "href": "quiz.html?quiz=body-parts",
     "description": "Practice common body parts with Thai script and phonetics.",
     "bullets": ["English/Thai/phonetics","Emoji hints when available","Core anatomy words"],
@@ -76,7 +76,7 @@
   },
   {
     "id": "time",
-    "title": "Time Quiz ⏰",
+    "title": "Time ⏰",
     "href": "quiz.html?quiz=time",
     "description": "Telling time in Thai: keywords, formats, and common phrases.",
     "bullets": ["Key words (นาที, โมง, ทุ่ม, ครึ่ง, ตรง)","AM/PM patterns (ตี…, …โมงเช้า, …ทุ่ม)","Practical sentences"],
@@ -85,7 +85,7 @@
   },
   {
     "id": "questions",
-    "title": "Questions Quiz ❓",
+    "title": "Questions ❓",
     "href": "quiz.html?quiz=questions",
     "description": "Asking questions in Thai: core words and common patterns.",
     "bullets": ["Question words (อะไร, ใคร, ที่ไหน, เมื่อไหร่, ทำไม)","Patterns (…ไหม, …ได้ไหม, เคย…ไหม)","How much/how many"],
@@ -124,7 +124,7 @@
   },
   {
     "id": "rooms",
-    "title": "Rooms Quiz 🏠",
+    "title": "Rooms 🏠",
     "href": "quiz.html?quiz=rooms",
     "description": "Learn Thai room and house vocabulary with phonetics and example sentences.",
     "bullets": ["Rooms & spaces","House types","Usage examples"],
@@ -134,7 +134,7 @@
   },
   {
     "id": "jobs",
-    "title": "Thai Jobs Quiz 🕵🏻‍♂️👨‍💼",
+    "title": "Jobs 🕵🏻‍♂️👨‍💼",
     "href": "quiz.html?quiz=jobs",
     "description": "Practice Thai job and occupation vocabulary with phonetics.",
     "bullets": ["Common professions","Thai script + phonetics","Emoji hints"],
@@ -152,7 +152,7 @@
   },
   {
     "id": "tones",
-    "title": "Thai Tone Markers ⚡",
+    "title": "Tone Markers ⚡",
     "href": "quiz.html?quiz=tones",
     "description": "Practice Thai tone outcomes by consonant class, tone mark, and vowel length.",
     "bullets": ["Middle/High/Low consonant classes","Tone marks ( ่ ้ ๊ ๋ ) and none","Long vs short vowels"],
@@ -161,7 +161,7 @@
   },
   {
     "id": "tenses",
-    "title": "Thai Tense Markers ⏱️",
+    "title": "Tense Markers ⏱️",
     "href": "quiz.html?quiz=tenses",
     "description": "Practice Thai time markers and aspects: now, already, not yet, soon, often, never.",
     "bullets": ["Time words & structures","English/Thai/phonetics","Examples after correct answers"],
@@ -171,7 +171,7 @@
   },
   {
     "id": "prepositions",
-    "title": "Essential Thai Prepositions 📍",
+    "title": "Essential Prepositions 📍",
     "href": "quiz.html?quiz=prepositions",
     "description": "Practice essential Thai prepositions and existential ‘mii’ with Thai and phonetics.",
     "bullets": ["Place prepositions","English/Thai/phonetics","Usage structure tip"],
@@ -181,7 +181,7 @@
   },
   {
     "id": "adjectives",
-    "title": "Thai Adjectives 🛠️",
+    "title": "Adjectives 🛠️",
     "href": "quiz.html?quiz=adjectives",
     "description": "Practice Thai adjectives with Thai script, phonetics, and comparison examples.",
     "bullets": ["English/Thai/phonetics","Comparative and superlative examples","Emoji hints"],
