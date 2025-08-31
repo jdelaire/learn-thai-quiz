@@ -370,6 +370,15 @@
         document.title = (meta.title || 'ThaiQuest') + ' — ThaiQuest';
         setText('page-title', meta.title || 'ThaiQuest');
         setText('page-subtitle', meta.description || '');
+        try {
+          var metaDesc = document.querySelector('meta[name="description"]');
+          if (!metaDesc) {
+            metaDesc = document.createElement('meta');
+            metaDesc.setAttribute('name', 'description');
+            document.head.appendChild(metaDesc);
+          }
+          metaDesc.setAttribute('content', meta.description || 'ThaiQuest quiz: practice Thai with interactive, accessible quizzes.');
+        } catch (e) {}
         // Map categories to a default body class; allow overrides via metadata
         var cls = (meta && meta.bodyClass) || (Utils && typeof Utils.getBodyClass === 'function' ? Utils.getBodyClass(quizId) : null);
         if (cls) document.body.classList.add(cls);
