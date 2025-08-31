@@ -38,8 +38,8 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Days of the Week**: Thai day names with phonetics, planet, and color associations
 - **Body Parts in Thai**: Common anatomy words with Thai script, phonetics, and emoji hints
 - **Essential Thai Prepositions**: Core place prepositions with phonetics and usage tip
-- **Thai Greetings**: Core greetings with Thai script, phonetics, examples, and polite particles
-- **Thai Adjectives**: Common adjectives with Thai script, phonetics, emoji hints, and comparison examples
+- **Greetings**: Core greetings with Thai script, phonetics, examples, and polite particles
+- **Adjectives**: Common adjectives with Thai script, phonetics, emoji hints, and comparison examples
  - **Countries**: Country names with Thai script, phonetics, and flag emoji hints; example sentences on correct answers
 
 ### Quick start (local)
@@ -120,6 +120,7 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
   - `styles.css`: Shared and per‑quiz styles
 - `data/*.json`: Quiz datasets and metadata
   - Datasets may optionally include an `id` per item; when present, examples prefer `id` for lookups (falling back to `english`).
+-  - `data/changelog.json`: Entries powering the home page “What’s New” popover. Each entry links a quiz `id` to a `date`. Dates should be ISO‑8601 UTC (e.g., `2025-08-20T10:00:00Z`). Epoch milliseconds are also accepted. The popover shows the latest 10 by date.
 - `asset/`: Images and icons used across the site
   - `asset/profile.jpg`: Avatar shown in the home page Socials card
   - `asset/thai-quest-logo.png`: App logo used in the header
@@ -208,6 +209,33 @@ body.color-quiz {
    - If you don’t need custom logic, you can skip a builder. The loader will automatically run a standard quiz from `data/<id>.json` using `phonetic` as the answer key.
    - If you need custom behavior (emoji rules, multiple datasets, special symbol rendering, examples), add a builder using the helper `makeStandardQuizBuilder(urls, transform)` or write a manual builder.
 4. **Style (optional)**: Add CSS rules in `styles.css` using `body.<id>-quiz` (e.g., `body.foods-quiz`) or the mapped class (e.g., `body.questions-quiz`). The loader ensures both exist.
+
+### Update the “What’s New” changelog when adding a quiz
+
+The discreet bell popover on the home page lists the latest quizzes. To surface a new quiz there:
+
+1. Open `data/changelog.json`.
+2. Append an entry with the quiz `id` and a `date` in ISO‑8601 UTC (or epoch ms):
+
+```json
+{
+  "entries": [
+    { "id": "your-quiz-id", "date": "2025-08-28T09:00:00Z" }
+  ]
+}
+```
+
+- The `id` must exactly match the quiz `id` in `data/quizzes.json`.
+- Order does not matter; the UI sorts by `date` descending and shows up to the latest 10.
+- The red dot on the bell appears when there are entries newer than the locally stored `thaiQuest.lastSeenChangelogAt`.
+
+Reset the seen‑state locally (for testing):
+
+```javascript
+localStorage.removeItem('thaiQuest.lastSeenChangelogAt');
+```
+
+Then refresh the home page and open the popover to verify your entry appears.
 
 #### Loader helper (recommended)
 

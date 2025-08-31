@@ -179,6 +179,192 @@
 
   } catch (e) { Utils.logError(e, 'home.js: player card data population'); }
   
+  // What's New (changelog) popover
+  try {
+    const wnButton = document.getElementById('wn-button');
+    const wnPopover = document.getElementById('wn-popover');
+    const wnDot = wnButton && wnButton.querySelector('.wn-dot');
+    const wnList = wnPopover && wnPopover.querySelector('.wn-list');
+    const wnLoading = wnPopover && wnPopover.querySelector('.loading');
+    const wnClose = wnPopover && wnPopover.querySelector('.wn-close');
+    const wnMarkSeen = wnPopover && wnPopover.querySelector('.wn-mark-seen');
+
+    if (wnButton && wnPopover && wnList) {
+      const STORAGE_KEY = 'thaiQuest.lastSeenChangelogAt';
+      let lastSeen = (window.StorageService && window.StorageService.getItem(STORAGE_KEY)) || '';
+      let entries = [];
+      let newestEntryMs = 0;
+
+      function parseDateMs(iso) {
+        const s = String(iso == null ? '' : iso).trim();
+        if (!s) return 0;
+        // Handle millisecond epoch strings explicitly for robustness
+        if (/^\d{8,}$/.test(s)) {
+          const n = parseInt(s, 10);
+          return isFinite(n) ? n : 0;
+        }
+        const t = Date.parse(s);
+        return isFinite(t) ? t : 0;
+      }
+
+      function formatRelative(ms) {
+        try {
+          const rtf = (typeof Intl !== 'undefined' && Intl.RelativeTimeFormat)
+            ? new Intl.RelativeTimeFormat(navigator.language || 'en', { numeric: 'auto' })
+            : null;
+          const now = Date.now();
+          const diffSec = Math.round((ms - now) / 1000);
+          const absSec = Math.abs(diffSec);
+          if (!rtf) {
+            if (absSec < 60) return 'just now';
+            const absMin = Math.round(absSec / 60);
+            if (absMin < 60) return absMin + ' min ago';
+            const absHr = Math.round(absMin / 60);
+            if (absHr < 24) return absHr + ' hr ago';
+            const absDay = Math.round(absHr / 24);
+            return absDay + ' d ago';
+          }
+          if (absSec < 60) return 'just now';
+          const minutes = Math.round(diffSec / 60);
+          const absMin = Math.abs(minutes);
+          if (absMin < 60) return rtf.format(minutes, 'minute');
+          const hours = Math.round(minutes / 60);
+          const absHr = Math.abs(hours);
+          if (absHr < 24) return rtf.format(hours, 'hour');
+          const days = Math.round(hours / 24);
+          const absDay = Math.abs(days);
+          if (absDay < 7) return rtf.format(days, 'day');
+          const weeks = Math.round(days / 7);
+          if (Math.abs(weeks) < 5) return rtf.format(weeks, 'week');
+          const months = Math.round(days / 30);
+          return rtf.format(months, 'month');
+        } catch (_) { return ''; }
+      }
+
+      function closePopover() {
+        wnPopover.hidden = true;
+        wnButton.setAttribute('aria-expanded', 'false');
+      }
+
+      function openPopover() {
+        wnPopover.hidden = false;
+        wnButton.setAttribute('aria-expanded', 'true');
+        // Focus close for keyboard accessibility if available
+        if (wnClose && typeof wnClose.focus === 'function') {
+          try { wnClose.focus(); } catch (_) {}
+        }
+      }
+
+      function render(entriesSorted, quizMap) {
+        // Clear
+        while (wnList.firstChild) wnList.removeChild(wnList.firstChild);
+
+        if (!Array.isArray(entriesSorted) || entriesSorted.length === 0) {
+          const li = document.createElement('li');
+          li.className = 'wn-item';
+          li.textContent = 'All caught up!';
+          wnList.appendChild(li);
+          return;
+        }
+
+        const limit = 10;
+        entriesSorted.slice(0, limit).forEach(function(entry){
+          const li = document.createElement('li');
+          li.className = 'wn-item';
+          const metaWrap = document.createElement('div');
+          metaWrap.className = 'meta';
+          const dateMs = parseDateMs(entry.date);
+          metaWrap.textContent = formatRelative(dateMs);
+
+          const quiz = quizMap[entry.id] || {};
+          const a = document.createElement('a');
+          a.href = quiz.href || '#';
+          a.textContent = quiz.title || entry.id;
+          a.addEventListener('click', function(){
+            // Mark seen on click-through
+            try {
+              if (window.StorageService) window.StorageService.setItem(STORAGE_KEY, String(newestEntryMs));
+              if (wnDot) wnDot.hidden = true;
+            } catch (_) {}
+          });
+
+          li.appendChild(a);
+          li.appendChild(metaWrap);
+          wnList.appendChild(li);
+        });
+      }
+
+      function computeDot() {
+        try {
+          const last = parseDateMs(lastSeen);
+          const hasNew = entries.some(function(e){ return parseDateMs(e.date) > last; });
+          if (wnDot) wnDot.hidden = !hasNew;
+        } catch (_) {}
+      }
+
+      // Wire events
+      wnButton.addEventListener('click', function(){
+        const isOpen = !wnPopover.hidden;
+        if (isOpen) { closePopover(); } else { openPopover(); }
+      });
+
+      if (wnClose) {
+        wnClose.addEventListener('click', function(){ closePopover(); });
+      }
+
+      if (wnMarkSeen) {
+        wnMarkSeen.addEventListener('click', function(){
+          try {
+            if (newestEntryMs > 0 && window.StorageService) {
+              window.StorageService.setItem(STORAGE_KEY, String(newestEntryMs));
+            }
+            lastSeen = String(newestEntryMs);
+            if (wnDot) wnDot.hidden = true;
+          } catch (e) { Utils.logError(e, 'home.js: wn mark seen'); }
+        });
+      }
+
+      // Close on outside click / Escape
+      document.addEventListener('click', function(ev){
+        try {
+          if (!wnPopover.hidden) {
+            const target = ev.target;
+            if (target instanceof Element) {
+              const within = target.closest('#wn-popover') || target.closest('#wn-button');
+              if (!within) closePopover();
+            }
+          }
+        } catch (_) {}
+      });
+      document.addEventListener('keydown', function(ev){
+        if (ev.key === 'Escape' && !wnPopover.hidden) closePopover();
+      });
+
+      // Load data and render
+      Utils.fetchJSONs(['data/quizzes.json', 'data/changelog.json'])
+        .then(function(arr){
+          const quizList = Array.isArray(arr[0]) ? arr[0] : [];
+          const cl = (arr[1] && Array.isArray(arr[1].entries)) ? arr[1].entries : [];
+
+          const quizMap = Object.create(null);
+          quizList.forEach(function(q){ quizMap[q.id] = q; });
+
+          entries = cl.slice().sort(function(a, b){ return parseDateMs(b.date) - parseDateMs(a.date); });
+          newestEntryMs = entries.length ? parseDateMs(entries[0].date) : 0;
+
+          // Hide loading indicator once data has been resolved
+          if (wnLoading) { try { wnLoading.style.display = 'none'; } catch (_) {} }
+          render(entries, quizMap);
+          computeDot();
+        })
+        .catch(function(err){
+          // Hide loading indicator even on error
+          if (wnLoading) { try { wnLoading.style.display = 'none'; } catch (_) {} }
+          Utils.logError(err, 'home.js: wn load changelog');
+        });
+    }
+  } catch (e) { Utils.logError(e, 'home.js: whats-new setup'); }
+  
   const thaiWeekdays = ['วันอาทิตย์','วันจันทร์','วันอังคาร','วันพุธ','วันพฤหัสบดี','วันศุกร์','วันเสาร์'];
   const phoneticWeekdays = ['wan aa-thít','wan jan','wan ang-khaan','wan phút','wan phá-rʉ́-hàt','wan sùk','wan sǎo'];
   try {
