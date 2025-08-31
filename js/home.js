@@ -185,6 +185,7 @@
     const wnPopover = document.getElementById('wn-popover');
     const wnDot = wnButton && wnButton.querySelector('.wn-dot');
     const wnList = wnPopover && wnPopover.querySelector('.wn-list');
+    const wnLoading = wnPopover && wnPopover.querySelector('.loading');
     const wnClose = wnPopover && wnPopover.querySelector('.wn-close');
     const wnMarkSeen = wnPopover && wnPopover.querySelector('.wn-mark-seen');
 
@@ -351,10 +352,16 @@
           entries = cl.slice().sort(function(a, b){ return parseDateMs(b.date) - parseDateMs(a.date); });
           newestEntryMs = entries.length ? parseDateMs(entries[0].date) : 0;
 
+          // Hide loading indicator once data has been resolved
+          if (wnLoading) { try { wnLoading.style.display = 'none'; } catch (_) {} }
           render(entries, quizMap);
           computeDot();
         })
-        .catch(function(err){ Utils.logError(err, 'home.js: wn load changelog'); });
+        .catch(function(err){
+          // Hide loading indicator even on error
+          if (wnLoading) { try { wnLoading.style.display = 'none'; } catch (_) {} }
+          Utils.logError(err, 'home.js: wn load changelog');
+        });
     }
   } catch (e) { Utils.logError(e, 'home.js: whats-new setup'); }
   
