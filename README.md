@@ -38,8 +38,8 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Days of the Week**: Thai day names with phonetics, planet, and color associations
 - **Body Parts in Thai**: Common anatomy words with Thai script, phonetics, and emoji hints
 - **Essential Thai Prepositions**: Core place prepositions with phonetics and usage tip
-- **Thai Greetings**: Core greetings with Thai script, phonetics, examples, and polite particles
-- **Thai Adjectives**: Common adjectives with Thai script, phonetics, emoji hints, and comparison examples
+- **Greetings**: Core greetings with Thai script, phonetics, examples, and polite particles
+- **Adjectives**: Common adjectives with Thai script, phonetics, emoji hints, and comparison examples
  - **Countries**: Country names with Thai script, phonetics, and flag emoji hints; example sentences on correct answers
 
 ### Quick start (local)
