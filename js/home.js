@@ -195,7 +195,14 @@
       let newestEntryMs = 0;
 
       function parseDateMs(iso) {
-        const t = Date.parse(String(iso || ''));
+        const s = String(iso == null ? '' : iso).trim();
+        if (!s) return 0;
+        // Handle millisecond epoch strings explicitly for robustness
+        if (/^\d{8,}$/.test(s)) {
+          const n = parseInt(s, 10);
+          return isFinite(n) ? n : 0;
+        }
+        const t = Date.parse(s);
         return isFinite(t) ? t : 0;
       }
 
