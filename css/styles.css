@@ -71,6 +71,78 @@ h1 {
   box-shadow: none;
   margin-bottom: 2em;
 }
+.wn-root { position: absolute; top: 16px; right: 16px; }
+.wn-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: var(--color-bg);
+  cursor: pointer;
+}
+.wn-button:hover { background: #f5f7fb; box-shadow: 0 6px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
+.wn-icon { font-size: 18px; line-height: 1; }
+.wn-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background: var(--color-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--color-bg);
+}
+.wn-popover {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: min(360px, 90vw);
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.16);
+  text-align: left;
+  z-index: 1000;
+}
+.wn-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.wn-title { font-weight: 800; }
+.wn-close {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.wn-close:hover { background: #f5f7fb; }
+.wn-content { max-height: 320px; overflow: auto; padding: 8px 12px; }
+.wn-content .loading { padding: 8px 0; }
+.wn-list { list-style: none; margin: 0; padding: 0; }
+.wn-item { padding: 8px 4px; display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+.wn-item + .wn-item { border-top: 1px dashed rgba(0,0,0,0.06); }
+.wn-item a { text-decoration: none; color: var(--color-text); font-weight: 700; }
+.wn-item a:hover { color: var(--color-brand); }
+.wn-item .meta { font-size: 12px; opacity: 0.7; }
+.wn-footer { padding: 8px 12px 12px; border-top: 1px solid rgba(0,0,0,0.06); text-align: right; }
+.wn-footer .chip { font-size: 0.9em; padding: 0.4em 0.8em; }
+
+@media (max-width: 480px) {
+  .wn-root { top: 12px; right: 12px; }
+  .wn-button { width: 36px; height: 36px; }
+  .wn-popover { top: 44px; }
+}
 .brand {
   display: flex;
   flex-direction: column;

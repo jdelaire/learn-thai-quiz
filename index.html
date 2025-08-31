@@ -39,6 +39,26 @@
           <p class="brand-subtitle subtitle">Farm quizzes, level-up your Thai!</p>
         </div>
       </div>
+      <div class="wn-root" aria-live="polite">
+        <button id="wn-button" type="button" class="wn-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="wn-popover" title="What's new">
+          <span class="wn-icon" aria-hidden="true">🔔</span>
+          <span class="wn-dot" hidden></span>
+          <span class="visually-hidden">What's new</span>
+        </button>
+        <div id="wn-popover" class="wn-popover" role="dialog" aria-modal="false" aria-label="What's new" hidden>
+          <div class="wn-header">
+            <span class="wn-title">What’s new</span>
+            <button type="button" class="wn-close" aria-label="Close">✕</button>
+          </div>
+          <div class="wn-content">
+            <div class="loading"><span class="spinner"></span> Loading…</div>
+            <ul class="wn-list"></ul>
+          </div>
+          <div class="wn-footer">
+            <button type="button" class="chip wn-mark-seen">Mark all as seen</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="player-card" role="region" aria-label="Player profile">
