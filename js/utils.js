@@ -244,7 +244,8 @@
       tenses: 'questions-quiz',
       days: 'questions-quiz',
       'body-parts': 'questions-quiz',
-      prepositions: 'questions-quiz'
+      prepositions: 'questions-quiz',
+      countries: 'questions-quiz'
     };
     return map[quizId] || null;
   }

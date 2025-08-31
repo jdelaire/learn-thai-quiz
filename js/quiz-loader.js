@@ -308,6 +308,19 @@
       };
     }),
 
+    // Countries — English/Thai/phonetic with optional flag emoji
+    countries: makeStandardQuizBuilder(['data/countries.json','data/countries-examples.json'], function(results) {
+      const data = results[0] || [];
+      const examples = results[1] || {};
+      return {
+        data: data,
+        examples: examples,
+        exampleKey: function(a){ return a.english; },
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
+        // Progressive difficulty enabled by default
+      };
+    }),
+
     // Thai Greetings — basic phrases with examples and emoji hints
     greetings: makeStandardQuizBuilder(['data/greetings.json','data/greetings-examples.json'], function(results) {
       const data = results[0] || [];

@@ -40,6 +40,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Essential Thai Prepositions**: Core place prepositions with phonetics and usage tip
 - **Thai Greetings**: Core greetings with Thai script, phonetics, examples, and polite particles
 - **Thai Adjectives**: Common adjectives with Thai script, phonetics, emoji hints, and comparison examples
+ - **Countries**: Country names with Thai script, phonetics, and flag emoji hints; example sentences on correct answers
 
 ### Quick start (local)
 
