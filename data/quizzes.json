@@ -1,5 +1,15 @@
 [
   {
+    "id": "countries",
+    "title": "Countries 🌍",
+    "href": "quiz.html?quiz=countries",
+    "description": "Practice country names: English, Thai script, and phonetics.",
+    "bullets": ["English/Thai/phonetics","Flag emoji hints","Example sentences"],
+    "categories": ["Vocabulary","Beginner"],
+    "bodyClass": "questions-quiz",
+    "proTip": "Structure: <strong>ฉัน/ผม + มาจาก + ประเทศ + [country]</strong> — I come from [country]."
+  },
+  {
     "id": "consonants",
     "title": "Consonants 🔤",
     "href": "quiz.html?quiz=consonants",
