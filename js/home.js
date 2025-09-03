@@ -405,6 +405,21 @@
       monthThaiEl.textContent = thaiMonths[month];
       monthPhonEl.textContent = phoneticMonths[month];
     }
+
+    // Populate discreet today info inside player card (no accent colors)
+    const pWeekThaiEl = document.getElementById('player-weekday-thai');
+    const pWeekPhonEl = document.getElementById('player-weekday-phonetic');
+    if (pWeekThaiEl && pWeekPhonEl) {
+      pWeekThaiEl.textContent = thaiWeekdays[day];
+      pWeekPhonEl.textContent = phoneticWeekdays[day];
+    }
+
+    const pMonthThaiEl = document.getElementById('player-month-thai');
+    const pMonthPhonEl = document.getElementById('player-month-phonetic');
+    if (pMonthThaiEl && pMonthPhonEl) {
+      pMonthThaiEl.textContent = thaiMonths[month];
+      pMonthPhonEl.textContent = phoneticMonths[month];
+    }
   } catch (e) { Utils.logError(e, 'home.js: today/month widgets'); }
 
   try {

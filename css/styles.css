@@ -738,6 +738,38 @@ body.home .socials a.chip {
   color: var(--color-text);
 }
 
+.player-today {
+  margin-top: 0.8em;
+  background: #fafafa;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  padding: 0.6em 0.7em;
+}
+
+.pt-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.6em;
+}
+
+.pt-col { min-width: 0; }
+.pt-sep {
+  width: 1px;
+  height: 28px;
+  background: rgba(0,0,0,0.1);
+}
+.pt-thai {
+  font-size: clamp(1em, 3vw, 1.25em);
+  font-weight: 800;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+.pt-phonetic {
+  font-size: clamp(0.75em, 2vw, 0.9em);
+  opacity: 0.9;
+}
+
 @media (max-width: 560px) {
   .player-card { 
     padding: 0.9em 1em; 
@@ -770,6 +802,10 @@ body.home .socials a.chip {
   .xp-value {
     font-size: 0.9em;
   }
+
+  .player-today { padding: 0.55em 0.6em; }
+  .pt-grid { grid-template-columns: 1fr; gap: 0.4em; }
+  .pt-sep { display: none; }
 }
 
 /* Consonant quiz */
