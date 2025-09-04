@@ -32,7 +32,7 @@
     };
   }
 
-  // Data-driven configs: per-quiz builder functions
+  // Data-driven configs moved to window.QuizBuilders in js/builders/index.js
   const QuizBuilders = {
     consonants: function() {
       Utils.ErrorHandler.safe(Utils.insertConsonantLegend)();
