@@ -225,11 +225,7 @@
         return { name: name, ok: false, details: 'Missing required quiz elements' };
       }
 
-      // Basic chrome/accessibility assertions
-      try {
-        const hasBodyClass = (doc && doc.body && doc.body.classList && doc.body.classList.contains(quizId + '-quiz'));
-        if (!hasBodyClass) return { name: name, ok: false, details: 'Missing body class ' + quizId + '-quiz' };
-      } catch (_) {}
+      // Basic chrome/accessibility assertions (some depend on loader; check others later)
       try {
         const ariaLabel = symbol.getAttribute('aria-label');
         if (!ariaLabel) return { name: name, ok: false, details: 'Symbol aria-label missing' };
@@ -248,6 +244,18 @@
       if (!options.children || options.children.length === 0) {
         return { name: name, ok: false, details: 'No answer buttons rendered' };
       }
+
+      // Ensure generic per-quiz body class is applied by loader (poll briefly)
+      try {
+        let t0 = Date.now();
+        let hasBodyClass = false;
+        while (Date.now() - t0 < 2000) {
+          hasBodyClass = !!(doc && doc.body && doc.body.classList && doc.body.classList.contains(quizId + '-quiz'));
+          if (hasBodyClass) break;
+          await wait(50);
+        }
+        if (!hasBodyClass) return { name: name, ok: false, details: 'Missing body class ' + quizId + '-quiz' };
+      } catch (_) {}
 
       // Baseline stats value
       const baselineQuestions = extractQuestionsAnswered(stats);
