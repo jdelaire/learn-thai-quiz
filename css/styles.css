@@ -744,6 +744,14 @@ body.home .socials a.chip {
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 12px;
   padding: 0.6em 0.7em;
+  text-align: center;
+}
+
+.pt-line {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pt-grid {
