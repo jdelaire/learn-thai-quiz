@@ -58,20 +58,8 @@
     } catch (_) {}
   }
   
-  // Centralized storage alias (falls back to localStorage if StorageService is unavailable)
-  const Storage = (global && global.StorageService) || (function(){
-    function safe(fn, fallback) { try { return fn(); } catch (e) { try { console.error('[ThaiQuest]', 'StorageFallback', e); } catch (_) {} return fallback; } }
-    return {
-      getItem: function(key){ return safe(function(){ return localStorage.getItem(key); }, null); },
-      setItem: function(key, value){ return safe(function(){ localStorage.setItem(key, String(value == null ? '' : value)); return true; }, false); },
-      removeItem: function(key){ return safe(function(){ localStorage.removeItem(key); return true; }, false); },
-      getJSON: function(key, fallback){ return safe(function(){ var raw = localStorage.getItem(key); if (!raw) return (fallback == null) ? null : fallback; return JSON.parse(raw); }, (fallback == null) ? null : fallback); },
-      setJSON: function(key, value){ return safe(function(){ localStorage.setItem(key, JSON.stringify(value == null ? {} : value)); return true; }, false); },
-      keys: function(prefix){ return safe(function(){ var out = []; for (var i = 0; i < localStorage.length; i++){ var k = localStorage.key(i); if (!k) continue; if (!prefix || k.indexOf(prefix) === 0) out.push(k); } return out; }, []); },
-      clearPrefix: function(prefix){ var ks = this.keys(prefix); for (var i = 0; i < ks.length; i++){ this.removeItem(ks[i]); } },
-      validate: { ensureProgressShape: function(value){ var v = value || {}; var qa = parseInt(v.questionsAnswered, 10); var ca = parseInt(v.correctAnswers, 10); if (!isFinite(qa) || qa < 0) qa = 0; if (!isFinite(ca) || ca < 0) ca = 0; return { questionsAnswered: qa, correctAnswers: ca }; } }
-    };
-  })();
+  // Reference to centralized storage service
+  const Storage = (global && global.StorageService);
   
   function fetchJSON(url) {
     return fetch(url).then(function(r) { if (!r.ok) { throw new Error('HTTP ' + r.status + ' for ' + url); } return r.json(); });
@@ -906,6 +894,8 @@
   }
 
   global.Utils = {
+    // Storage service re-export
+    Storage: Storage || null,
     fetchJSON: fetchJSON,
     fetchJSONCached: fetchJSONCached,
     fetchJSONs: fetchJSONs,
