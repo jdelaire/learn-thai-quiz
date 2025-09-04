@@ -498,14 +498,12 @@
         let starsWrap = document.createElement('div');
         starsWrap.className = 'star-rating';
         try {
-          const starsCount = (typeof Utils.getQuizStars === 'function') ? Utils.getQuizStars(q.id) : 0;
-          const starsText = (typeof Utils.formatStars === 'function') ? Utils.formatStars(starsCount) : '';
+          const starsCount = Utils.getQuizStars(q.id);
+          const starsText = Utils.formatStars(starsCount);
           starsWrap.textContent = starsText || '';
           if (starsText) {
             starsWrap.setAttribute('aria-label', 'Completion stars');
-            if (typeof Utils.getStarRulesTooltip === 'function') {
-              starsWrap.title = Utils.getStarRulesTooltip();
-            }
+            starsWrap.title = Utils.getStarRulesTooltip();
           }
         } catch (_) {}
 

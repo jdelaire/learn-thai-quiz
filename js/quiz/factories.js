@@ -21,7 +21,7 @@
     const answerKey = (params && params.answerKey) || 'phonetic';
     const buildSymbol = (params && params.buildSymbol) || function(a){ return { english: String(a && a.english || ''), thai: String(a && a.thai || '') }; };
     const choices = (params && params.choices) || 4;
-    const labelPrefix = (params && params.labelPrefix) || (common.i18n && common.i18n.labelEnglishThaiPrefix) || 'English and Thai: ';
+    const labelPrefix = (params && params.labelPrefix) || common.i18n.labelEnglishThaiPrefix;
     const progressiveDifficulty = params && params.progressiveDifficulty ? prog.createProgressiveDifficulty(params.progressiveDifficulty) : null;
 
     return {
@@ -45,7 +45,7 @@
       },
       renderButtonContent: function(choice){ return choice && choice[answerKey]; },
       shouldHideHints: function(){ return false; },
-      ariaLabelForChoice: function(choice){ return ((common.i18n && common.i18n.answerPrefix) || 'Answer: ') + (choice && choice[answerKey]); },
+      ariaLabelForChoice: function(choice){ return common.i18n.answerPrefix + (choice && choice[answerKey]); },
       isCorrect: function(choice, answer){ return (choice && choice[answerKey]) === (answer && answer[answerKey]); },
       onAnswered: function(ctx){
         if (!examples) return;

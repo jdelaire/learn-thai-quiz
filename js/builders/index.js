@@ -3,7 +3,7 @@
 
   function makeStandardQuizBuilder(urls, transform) {
     const Utils = global.Utils;
-    const defaultElements = (Utils && Utils.defaultElements) ? Utils.defaultElements : { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
+    const defaultElements = Utils.defaultElements;
     return function() {
       try {
         const list = Array.isArray(urls) ? urls : [urls];
@@ -20,7 +20,7 @@
   }
 
   const Utils = global.Utils;
-  const defaultElements = (Utils && Utils.defaultElements) ? Utils.defaultElements : { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
+  const defaultElements = Utils.defaultElements;
 
   const QuizBuilders = {
     consonants: function() {
@@ -34,8 +34,7 @@
               els.symbolEl.setAttribute('aria-label', 'Thai consonant symbol: ' + answer.symbol);
             },
             ariaLabelForChoice: function(choice) {
-              var prefix = (Utils && Utils.i18n && Utils.i18n.answerPrefix) || 'Answer: ';
-              return prefix + choice.name + ' (' + choice.meaning + ')';
+              return Utils.i18n.answerPrefix + choice.name + ' (' + choice.meaning + ')';
             },
             decorateButton: function(btn, choice) {
               Utils.ErrorHandler.safeDOM(function() { btn.classList.add(choice.class + '-class'); })();
@@ -80,7 +79,7 @@
               const base = Utils.pickRandom(baseColors);
               const maybeModifier = Math.random() < 0.55 ? Utils.pickRandom(modifiers) : null;
               const answer = buildColorPhrase(base, maybeModifier);
-              const currentChoices = (Utils && typeof Utils.getChoicesCountForState === 'function') ? Utils.getChoicesCountForState(state, undefined, 4) : 4;
+              const currentChoices = Utils.getChoicesCountForState(state, undefined, 4);
               const choices = [answer];
               while (choices.length < currentChoices) {
                 const b = Utils.pickRandom(baseColors);
@@ -91,7 +90,7 @@
               return { answer: answer, choices: choices, symbolText: answer.thai, symbolStyle: { color: answer.hex }, symbolAriaLabel: 'Thai color phrase: ' + answer.thai };
             },
             renderButtonContent: function(choice) { return choice.phonetic; },
-            ariaLabelForChoice: function(choice) { var prefix = (Utils && Utils.i18n && Utils.i18n.answerPrefix) || 'Answer: '; return prefix + choice.phonetic; },
+            ariaLabelForChoice: function(choice) { return Utils.i18n.answerPrefix + choice.phonetic; },
             isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
           });
         };

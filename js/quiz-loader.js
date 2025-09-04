@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  const defaultElements = (typeof Utils !== 'undefined' && Utils.defaultElements) ? Utils.defaultElements : { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
+  const defaultElements = Utils.defaultElements;
 
   function handleDataLoadError(err) {
     const fb = document.getElementById('feedback');
@@ -380,7 +380,7 @@
           metaDesc.setAttribute('content', meta.description || 'ThaiQuest quiz: practice Thai with interactive, accessible quizzes.');
         } catch (e) {}
         // Map categories to a default body class; allow overrides via metadata
-        var cls = (meta && meta.bodyClass) || (Utils && typeof Utils.getBodyClass === 'function' ? Utils.getBodyClass(quizId) : null);
+        var cls = (meta && meta.bodyClass) || Utils.getBodyClass(quizId);
         if (cls) document.body.classList.add(cls);
         // Always add a generic per-quiz class as a fallback (e.g., foods -> foods-quiz)
         try {

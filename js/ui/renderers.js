@@ -10,7 +10,7 @@
       const english = String((params && params.english) || '');
       const thai = String((params && params.thai) || '');
       const emoji = String((params && params.emoji) || '');
-      const ariaPrefix = String((params && params.ariaPrefix) || 'English and Thai: ');
+      const ariaPrefix = String((params && params.ariaPrefix) || (global.Utils && global.Utils.i18n && global.Utils.i18n.labelEnglishThaiPrefix) || 'English and Thai: ');
       while (symbolEl.firstChild) symbolEl.removeChild(symbolEl.firstChild);
       if (emoji) {
         const emojiLine = document.createElement('div');
