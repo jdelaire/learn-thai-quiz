@@ -110,10 +110,16 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 - `index.html`: Home page with search and category filters, renders quiz cards from `data/quizzes.json`
 - `quiz.html`: Quiz runner page; loads a specific quiz via `?quiz=<id>`
 - `smoke.html`: Browser-based smoke tests for end-to-end validation
-- `js/`: JavaScript modules
+- `js/`: JavaScript modules (modularized)
+  - `prelude.js`: Early asserts for critical globals (e.g., `StorageService`) for fail-fast dev
+  - `core/`: error and fetch utilities (`error.js`, `fetch.js`)
+  - `util/`: common helpers and color utilities (`common.js`, `color.js`)
+  - `ui/`: DOM renderers (`renderers.js`)
+  - `quiz/`: progressive difficulty, factories, and player metrics (`progressive.js`, `factories.js`, `player.js`)
+  - `builders/index.js`: all `QuizBuilders` (moved out of loader)
+  - `utils-agg.js`: aggregator exposing stable `window.Utils` API
   - `quiz.js`: Quiz engine (rendering, answer handling, auto‑advance, stats)
-  - `quiz-loader.js`: Metadata‑driven loader with per‑quiz builder functions keyed by id (`QuizBuilders.<id>()`). It reads `data/quizzes.json` for title/subtitle, applies `meta.bodyClass` when present (otherwise a sensible default), always adds a generic `<id>-quiz` class (e.g., `foods-quiz`), and inserts `meta.proTip` when provided. Includes a `makeStandardQuizBuilder(urls, transform)` helper to wire standard quizzes with minimal code, and a fallback that runs a standard quiz from `data/<id>.json` when no custom builder exists.
-  - `utils.js`: Shared helpers (fetch JSON, caching, random selection, color utilities, DOM helpers). Includes `createStandardQuiz`, `renderEnglishThaiSymbol`, `renderExample`, `createEmojiGetter`/`loadEmojiGetter`, `insertProTip`, `insertConsonantLegend`, and `renderVowelSymbol`
+  - `quiz-loader.js`: Thin loader: reads metadata, applies classes/proTip, resolves `QuizBuilders[quizId]`, and falls back to `data/<id>.json` when needed
   - `home.js`: Home page logic (filters, chips, card rendering, Today/Month widgets)
   - `smoke.js`: Smoke test runner for automated validation
 - `css/`: Stylesheets
@@ -131,7 +137,7 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 1. The home page (`index.html`) loads `data/quizzes.json`, renders cards, and provides search/category filters.
 2. Clicking a card navigates to `quiz.html?quiz=<id>`.
 3. `js/quiz-loader.js` reads the `id` and metadata from `data/quizzes.json`, sets page title/subtitle, applies `meta.bodyClass` when present (else a default mapping via `Utils.getBodyClass(id)`) and also adds a generic `<id>-quiz` class. If `meta.proTip` is present, it is inserted into the quiz footer.
-4. The loader invokes a per‑quiz builder. If no builder exists for the `id`, it falls back to running a standard quiz from `data/<id>.json` using `phonetic` as the answer key.
+4. The loader invokes a per‑quiz builder from `js/builders/index.js`. If no builder exists for the `id`, it falls back to running a standard quiz from `data/<id>.json` using `phonetic` as the answer key.
 5. Builders fetch JSON via `Utils.fetchJSONCached`/`Utils.fetchJSONs` and wire `ThaiQuiz.setupQuiz(...)` using `Utils.createStandardQuiz` plus small overrides (emoji, examples, symbol rendering).
 6. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
 7. Per‑quiz progress (questions answered and correct answers) is persisted through the storage service (backed by localStorage); the home page displays a 0–3 star rating for each quiz.
