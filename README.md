@@ -67,16 +67,28 @@ python3 -m http.server 8000
 
 2. Open `http://localhost:8000/smoke.html` and click “Run Smoke Tests”.
 
-What it does:
-- Loads `index.html` in a hidden iframe and verifies it loads successfully.
-- Auto-discovers all quizzes from `data/quizzes.json` (fallback: parses links on the home page) and runs each via `quiz.html?quiz=<id>`.
-- Ensures options render, clicks an option, verifies stats update, and catches runtime errors.
-- Reports pass/fail per check; no external dependencies.
+What it does now:
+- Validates `data/quizzes.json` (unique `id`s and `href` consistency).
+- Loads `index.html` and confirms quiz cards render from metadata.
+- Auto-discovers quizzes from `data/quizzes.json` (fallback: parses links on the home page) and runs each via `quiz.html?quiz=<id>`.
+- For each quiz, asserts basic accessibility/chrome: per‑quiz body class `<id>-quiz`, `#symbol` has an `aria-label`, `#options` has `role="group"`.
+- Ensures options render, clicks an option, and verifies stats increment robustly (compares current vs. baseline rather than a fixed value).
+- Catches runtime errors and reports pass/fail per check; no external dependencies.
+
+Run options (URL query params):
+- `autorun=1` — auto‑start the suite on page load.
+- `limit=N` — run at most N quizzes (useful for quick checks).
+- `quiz=a,b,c` — only run specified quiz ids.
+- `keepProgress=1` — do not clear local progress; by default the suite clears `thaiQuest.progress.*` to avoid interference.
 
 #### Extending smoke tests when you add a quiz
 
-- When you create a new quiz (add an entry in `data/quizzes.json` and, if needed, a builder in `js/quiz-loader.js`), the smoke tests will pick it up automatically from metadata.
+- When you create a new quiz (add an entry in `data/quizzes.json` and, if needed, a builder in `js/builders/index.js`), the smoke tests will pick it up automatically from metadata.
 - You usually don’t need to update `smoke.js` when adding a quiz, because it auto‑discovers quizzes from `data/quizzes.json`.
+
+Examples:
+- Quick run of first 4 quizzes: `http://localhost:8000/smoke.html?autorun=1&limit=4`
+- Targeted run with preserved progress: `http://localhost:8000/smoke.html?quiz=colors,verbs&autorun=1&keepProgress=1`
 
 Example: verify that the Color quiz sets an accessible aria‑label on the symbol.
 

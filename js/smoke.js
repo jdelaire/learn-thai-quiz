@@ -1,6 +1,15 @@
 (function(){
   'use strict';
 
+  function getParams() {
+    try { return new URLSearchParams(window.location.search); } catch (_) { return new URLSearchParams(''); }
+  }
+
+  function parseListParam(value) {
+    if (!value) return [];
+    return String(value).split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+  }
+
   function log(message, cls) {
     const el = document.getElementById('log');
     const div = document.createElement('div');
@@ -73,6 +82,28 @@
 
   function wait(ms) { return new Promise(function(r){ setTimeout(r, ms); }); }
 
+  function extractQuestionsAnswered(statsEl) {
+    try {
+      const text = String(statsEl && statsEl.textContent || '');
+      const m = text.match(/Questions:\s*(\d+)/i);
+      if (m) return parseInt(m[1], 10) || 0;
+    } catch (_) {}
+    return 0;
+  }
+
+  function maybeResetProgressForAll() {
+    try {
+      const params = getParams();
+      const keep = params.get('keepProgress');
+      if (keep === '1' || keep === 'true') return false;
+      if (window.StorageService && typeof window.StorageService.clearPrefix === 'function') {
+        window.StorageService.clearPrefix('thaiQuest.progress.');
+        return true;
+      }
+    } catch (_) {}
+    return false;
+  }
+
   async function discoverQuizIds(serverRoot) {
     // 1) Preferred: read data/quizzes.json
     try {
@@ -127,6 +158,53 @@
     }
   }
 
+  async function testHomeContent(serverRoot) {
+    const name = 'Home renders quiz cards from metadata';
+    const iframe = createFrame();
+    try {
+      const nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      const doc = nav.doc;
+      // Wait for list to populate
+      let start = Date.now();
+      while (Date.now() - start < 5000) {
+        const anchors = doc.querySelectorAll('#quiz-list a[href*="quiz.html?quiz="]');
+        if (anchors && anchors.length > 0) {
+          return { name: name, ok: true };
+        }
+        await wait(100);
+      }
+      return { name: name, ok: false, details: 'No quiz cards rendered' };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+    }
+  }
+
+  async function validateQuizzesMetadata(serverRoot) {
+    const name = 'Validate quizzes metadata (ids unique, href matches)';
+    try {
+      const res = await withTimeout(fetch(serverRoot + '/data/quizzes.json', { cache: 'no-cache' }), 5000, 'Could not fetch quizzes.json');
+      if (!res || !res.ok) return { name: name, ok: false, details: 'Fetch failed' };
+      const list = await res.json();
+      const ids = Object.create(null);
+      for (let i = 0; i < (Array.isArray(list) ? list.length : 0); i++) {
+        const it = list[i];
+        if (!it || !it.id) return { name: name, ok: false, details: 'Missing id at index ' + i };
+        if (ids[it.id]) return { name: name, ok: false, details: 'Duplicate id: ' + it.id };
+        ids[it.id] = true;
+        const expected = 'quiz.html?quiz=' + encodeURIComponent(it.id);
+        if (!it.href || it.href.indexOf(expected) === -1) {
+          return { name: name, ok: false, details: 'href mismatch for ' + it.id };
+        }
+      }
+      return { name: name, ok: true };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    }
+  }
+
   async function testQuiz(serverRoot, quizId, expectations) {
     const name = 'Quiz "' + quizId + '" basic flow';
     const iframe = createFrame();
@@ -147,6 +225,20 @@
         return { name: name, ok: false, details: 'Missing required quiz elements' };
       }
 
+      // Basic chrome/accessibility assertions
+      try {
+        const hasBodyClass = (doc && doc.body && doc.body.classList && doc.body.classList.contains(quizId + '-quiz'));
+        if (!hasBodyClass) return { name: name, ok: false, details: 'Missing body class ' + quizId + '-quiz' };
+      } catch (_) {}
+      try {
+        const ariaLabel = symbol.getAttribute('aria-label');
+        if (!ariaLabel) return { name: name, ok: false, details: 'Symbol aria-label missing' };
+      } catch (_) {}
+      try {
+        const role = options.getAttribute('role');
+        if (role !== 'group') return { name: name, ok: false, details: 'Options role not set to group' };
+      } catch (_) {}
+
       // Wait for first question to render
       let start = Date.now();
       while (Date.now() - start < 5000) {
@@ -157,6 +249,9 @@
         return { name: name, ok: false, details: 'No answer buttons rendered' };
       }
 
+      // Baseline stats value
+      const baselineQuestions = extractQuestionsAnswered(stats);
+
       // Click first button
       click(options.querySelector('button'));
 
@@ -164,7 +259,8 @@
       start = Date.now();
       let updated = false;
       while (Date.now() - start < 2000) {
-        if ((stats.textContent || '').indexOf('Questions: 1') !== -1) { updated = true; break; }
+        const current = extractQuestionsAnswered(stats);
+        if (current === baselineQuestions + 1) { updated = true; break; }
         await wait(100);
       }
       if (!updated) return { name: name, ok: false, details: 'Stats did not update after click' };
@@ -212,7 +308,8 @@
       // Expect questions count to increment to 1 shortly
       let start = Date.now();
       while (Date.now() - start < 1500) {
-        if ((stats.textContent || '').indexOf('Questions: 1') !== -1) {
+        const current = extractQuestionsAnswered(stats);
+        if (current >= 1) {
           return { name: name, ok: true };
         }
         await wait(50);
@@ -229,8 +326,25 @@
     const results = [];
     const root = (new URL('.', window.location.href)).href.replace(/\/$/, '');
 
+    // Optional reset to stabilize tests
+    const didReset = maybeResetProgressForAll();
+    if (didReset) log('Progress reset for smoke run (thaiQuest.progress.*)', 'muted');
+
+    // Metadata validation (quick, no frames)
+    results.push(await validateQuizzesMetadata(root));
+
+    // Home page tests
     results.push(await testHome(root));
-    const quizIds = await discoverQuizIds(root);
+    results.push(await testHomeContent(root));
+
+    // Discover subset of quizzes to run
+    let quizIds = await discoverQuizIds(root);
+    const params = getParams();
+    const onlyList = parseListParam(params.get('quiz'));
+    if (onlyList.length) quizIds = quizIds.filter(function(id){ return onlyList.indexOf(id) !== -1; });
+    const limit = parseInt(params.get('limit'), 10);
+    if (isFinite(limit) && limit > 0) quizIds = quizIds.slice(0, limit);
+
     for (let i = 0; i < quizIds.length; i++) {
       results.push(await testQuiz(root, quizIds[i], { minChoices: 4 }));
       // Add a focused keyboard test for the first discovered quiz only (fast)
@@ -273,6 +387,14 @@
       }
     };
     ensureServerWarning();
+    try {
+      const params = getParams();
+      const autorun = params.get('autorun');
+      if (autorun === '1' || autorun === 'true') {
+        // Delay slightly to allow layout
+        setTimeout(function(){ btn.click(); }, 0);
+      }
+    } catch (_) {}
   }
 
   wire();
