@@ -106,9 +106,7 @@
               const base = Utils.pickRandom(baseColors);
               const maybeModifier = Math.random() < 0.55 ? Utils.pickRandom(modifiers) : null;
               const answer = buildColorPhrase(base, maybeModifier);
-              const currentChoices = (Utils && typeof Utils.getChoicesCountForState === 'function')
-                ? Utils.getChoicesCountForState(state, undefined, 4)
-                : 4;
+              const currentChoices = Utils.getChoicesCountForState(state, undefined, 4);
               
               const choices = [answer];
               while (choices.length < currentChoices) {
@@ -125,7 +123,7 @@
               };
             },
             renderButtonContent: function(choice) { return choice.phonetic; },
-            ariaLabelForChoice: function(choice) { var prefix = (Utils && Utils.i18n && Utils.i18n.answerPrefix) || 'Answer: '; return prefix + choice.phonetic; },
+            ariaLabelForChoice: function(choice) { return Utils.i18n.answerPrefix + choice.phonetic; },
             isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
           });
         };
@@ -136,7 +134,7 @@
       const data = results[0] || [];
       return {
         data: data,
-        labelPrefix: (Utils && Utils.i18n && Utils.i18n.labelNumberThaiPrefix) || 'Number and Thai: ',
+        labelPrefix: Utils.i18n.labelNumberThaiPrefix,
         buildSymbol: function(a){ return { english: String(a.number || ''), thai: a.thai || '' }; }
         // Progressive difficulty enabled by default
       };
@@ -166,7 +164,7 @@
       const data = results[0] || [];
       return {
         data: data,
-        labelPrefix: (Utils && Utils.i18n && Utils.i18n.labelClassMarkerLengthPrefix) || 'Class + Marker + Length: ',
+        labelPrefix: Utils.i18n.labelClassMarkerLengthPrefix,
         buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; }
         // Progressive difficulty enabled by default
       };

@@ -302,7 +302,7 @@
     const answerKey = (params && params.answerKey) || 'phonetic';
     const buildSymbol = (params && params.buildSymbol) || function(a){ return { english: String(a && a.english || ''), thai: String(a && a.thai || '') }; };
     const choices = (params && params.choices) || 4;
-    const labelPrefix = (params && params.labelPrefix) || ((global && global.Utils && global.Utils.i18n && global.Utils.i18n.labelEnglishThaiPrefix) || 'English and Thai: ');
+    const labelPrefix = (params && params.labelPrefix) || (global && global.Utils && global.Utils.i18n && global.Utils.i18n.labelEnglishThaiPrefix) || 'English and Thai: ';
     const progressiveDifficulty = params && params.progressiveDifficulty ? createProgressiveDifficulty(params.progressiveDifficulty) : null;
 
     return {

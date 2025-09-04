@@ -99,7 +99,7 @@
 
     numbers: makeStandardQuizBuilder('data/numbers.json', function(results) {
       const data = results[0] || [];
-      return { data: data, labelPrefix: (Utils && Utils.i18n && Utils.i18n.labelNumberThaiPrefix) || 'Number and Thai: ', buildSymbol: function(a){ return { english: String(a.number || ''), thai: a.thai || '' }; } };
+      return { data: data, labelPrefix: Utils.i18n.labelNumberThaiPrefix, buildSymbol: function(a){ return { english: String(a.number || ''), thai: a.thai || '' }; } };
     }),
 
     time: makeStandardQuizBuilder(['data/time-keywords.json','data/time-formats.json','data/time-examples.json'], function(results) {
@@ -113,7 +113,7 @@
 
     tones: makeStandardQuizBuilder('data/tones.json', function(results) {
       const data = results[0] || [];
-      return { data: data, labelPrefix: (Utils && Utils.i18n && Utils.i18n.labelClassMarkerLengthPrefix) || 'Class + Marker + Length: ', buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; } };
+      return { data: data, labelPrefix: Utils.i18n.labelClassMarkerLengthPrefix, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '' }; } };
     }),
 
     questions: makeStandardQuizBuilder(['data/questions.json','data/questions-examples.json'], function(results) {
