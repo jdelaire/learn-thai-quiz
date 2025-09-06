@@ -188,6 +188,35 @@
 
     updateHeaderMetrics();
 
+    // Refresh player card when returning to the page or when progress/name changes
+    (function wirePlayerCardRefreshers(){
+      try {
+        function rerenderHeader() {
+          updateHeaderLevelAndXP();
+          updateHeaderMetrics();
+        }
+
+        // Fires on bfcache restore and normal navigation back to this page
+        window.addEventListener('pageshow', function(){ rerenderHeader(); });
+
+        // When tab regains focus
+        window.addEventListener('focus', function(){ rerenderHeader(); });
+
+        // When page becomes visible again
+        document.addEventListener('visibilitychange', function(){ if (!document.hidden) rerenderHeader(); });
+
+        // Cross-tab updates to localStorage (progress or custom name)
+        window.addEventListener('storage', function(ev){
+          try {
+            var key = (ev && ev.key) || '';
+            if (!key || key.indexOf('thaiQuest.progress.') === 0 || key === 'thaiQuestCustomName') {
+              rerenderHeader();
+            }
+          } catch (_) { rerenderHeader(); }
+        });
+      } catch (e) { Utils.logError(e, 'home.js: wire player card refreshers'); }
+    })();
+
   } catch (e) { Utils.logError(e, 'home.js: player card data population'); }
   
   // What's New (changelog) popover
