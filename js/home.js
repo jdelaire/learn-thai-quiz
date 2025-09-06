@@ -59,17 +59,12 @@
         nameElement.setAttribute('tabindex', '0');
         nameElement.setAttribute('aria-label', 'Player name - click to edit');
 
-        // Refresh avatars to reflect new initial
+        // Refresh avatar to reflect new initial (player card only)
         try {
           const playerAvatarEl = document.querySelector('.player-avatar');
           if (playerAvatarEl) {
             const newAvatar = Utils.getPlayerAvatar();
             if (newAvatar) playerAvatarEl.src = newAvatar;
-          }
-          const socialsAvatarEl = document.querySelector('.socials .avatar');
-          if (socialsAvatarEl) {
-            const newAvatar2 = Utils.getPlayerAvatar();
-            if (newAvatar2) socialsAvatarEl.src = newAvatar2;
           }
         } catch (e) { Utils.logError(e, 'home.js: refresh avatar after name edit'); }
       }
@@ -169,11 +164,7 @@
           playerAvatarEl.src = avatarURI;
           try { playerAvatarEl.alt = `Player avatar`; } catch (_) {}
         }
-        const socialsAvatarEl = document.querySelector('.socials .avatar');
-        if (socialsAvatarEl && avatarURI) {
-          socialsAvatarEl.src = avatarURI;
-          try { socialsAvatarEl.alt = `Player avatar`; } catch (_) {}
-        }
+        // Footer/socials avatar remains static by design
       } catch (e) { Utils.logError(e, 'home.js: updateHeaderLevelAndXP'); }
     }
 
