@@ -105,7 +105,64 @@
   function getPlayerAccuracy() { try { const agg = aggregateGlobalStatsFromStorage(); return agg.totalAccuracy; } catch (e) { logError(e, 'quiz.player.getPlayerAccuracy'); return 0; } }
   function getQuizzesCompleted() { try { const agg = aggregateGlobalStatsFromStorage(); return agg.quizzesCompleted; } catch (e) { logError(e, 'quiz.player.getQuizzesCompleted'); return 0; } }
   function getTotalStarsEarned() { try { const agg = aggregateGlobalStatsFromStorage(); return agg.totalStarsEarned; } catch (e) { logError(e, 'quiz.player.getTotalStarsEarned'); return 0; } }
-  function getPlayerAvatar() { try { const storedAvatar = StorageService && StorageService.getItem('thaiQuestPlayerAvatar'); return storedAvatar || 'https://placehold.co/80x80/png'; } catch (e) { logError(e, 'quiz.player.getPlayerAvatar'); return 'https://placehold.co/80x80/png'; } }
+
+  // Generate a dynamic SVG avatar that evolves with level and XP progress
+  function generateDynamicAvatarDataURI(level, progressPercent, displayName) {
+    try {
+      var L = Math.max(1, parseInt(level, 10) || 1);
+      var progress = Math.min(100, Math.max(0, parseInt(progressPercent, 10) || 0));
+      var name = (displayName || '').trim();
+      var initial = name ? (name.charAt(0) || '?') : 'P';
+      // Color scheme derived from level
+      var hue = (L * 47) % 360;
+      var bgHue = (hue + 180) % 360;
+      var ringColor = 'hsl(' + hue + ', 72%, 48%)';
+      var bgColor = 'hsl(' + bgHue + ', 70%, 92%)';
+      var textColor = '#111111';
+
+      var size = 80; // px
+      var cx = 40;
+      var cy = 40;
+      var r = 32; // inner circle radius
+      var ringR = 36; // ring radius
+      var ringWidth = 6;
+      var circumference = 2 * Math.PI * ringR;
+      var dash = Math.max(0.01, (progress / 100) * circumference);
+
+      var tier = Math.min(5, Math.floor((L - 1) / 5));
+      var shieldOpacity = (0.15 + tier * 0.07).toFixed(2);
+
+      var svg = '' +
+        '<svg xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size + '" viewBox="0 0 80 80" role="img" aria-label="Player avatar level ' + L + '">' +
+        '  <defs>' +
+        '    <linearGradient id="g' + hue + '" x1="0" y1="0" x2="1" y2="1">' +
+        '      <stop offset="0%" stop-color="' + bgColor + '" />' +
+        '      <stop offset="100%" stop-color="white" />' +
+        '    </linearGradient>' +
+        '  </defs>' +
+        '  <circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="url(#g' + hue + ')" />' +
+        '  <circle cx="' + cx + '" cy="' + cy + '" r="' + ringR + '" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="' + ringWidth + '" />' +
+        '  <g transform="rotate(-90 ' + cx + ' ' + cy + ')">' +
+        '    <circle cx="' + cx + '" cy="' + cy + '" r="' + ringR + '" fill="none" stroke="' + ringColor + '" stroke-linecap="round" stroke-width="' + ringWidth + '" stroke-dasharray="' + dash + ' ' + circumference + '" />' +
+        '  </g>' +
+        '  <g opacity="' + shieldOpacity + '">' +
+        '    <path d="M40 18 L52 28 L52 44 C52 52 46 58 40 62 C34 58 28 52 28 44 L28 28 Z" fill="' + ringColor + '" />' +
+        '  </g>' +
+        '  <text x="40" y="45" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="28" font-weight="800" fill="' + textColor + '">' + (initial.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')) + '</text>' +
+        '  <g aria-hidden="true" opacity="0.92">' +
+        '    <rect x="54" y="54" rx="6" ry="6" width="20" height="16" fill="' + ringColor + '" />' +
+        '    <text x="64" y="66" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="10" font-weight="800" fill="white">' + L + '</text>' +
+        '  </g>' +
+        '</svg>';
+
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    } catch (e) {
+      logError(e, 'quiz.player.generateDynamicAvatarDataURI');
+      return 'https://placehold.co/80x80/png';
+    }
+  }
+
+  function getPlayerAvatar() { try { var level = getPlayerLevel(); var progress = getXPProgressPercentage(); var name = getPlayerDisplayName(); return generateDynamicAvatarDataURI(level, progress, name); } catch (e) { logError(e, 'quiz.player.getPlayerAvatar'); return 'https://placehold.co/80x80/png'; } }
   function formatNumber(num) { try { return num.toLocaleString(); } catch (_) { return String(num); } }
   function getXPProgressPercentage() { try { const currentXP = getPlayerXP(); const maxXP = getPlayerMaxXP(); return Math.min(100, Math.max(0, Math.round((currentXP / maxXP) * 100))); } catch (e) { logError(e, 'quiz.player.getXPProgressPercentage'); return 45; } }
 

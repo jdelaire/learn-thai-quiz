@@ -58,6 +58,20 @@
         nameElement.setAttribute('role', 'button');
         nameElement.setAttribute('tabindex', '0');
         nameElement.setAttribute('aria-label', 'Player name - click to edit');
+
+        // Refresh avatars to reflect new initial
+        try {
+          const playerAvatarEl = document.querySelector('.player-avatar');
+          if (playerAvatarEl) {
+            const newAvatar = Utils.getPlayerAvatar();
+            if (newAvatar) playerAvatarEl.src = newAvatar;
+          }
+          const socialsAvatarEl = document.querySelector('.socials .avatar');
+          if (socialsAvatarEl) {
+            const newAvatar2 = Utils.getPlayerAvatar();
+            if (newAvatar2) socialsAvatarEl.src = newAvatar2;
+          }
+        } catch (e) { Utils.logError(e, 'home.js: refresh avatar after name edit'); }
       }
       
       function cancelEdit() {
@@ -147,14 +161,20 @@
           xpBarEl.setAttribute('aria-valuenow', xpProgress);
           xpFillEl.style.width = `${xpProgress}%`;
         }
-      } catch (e) { Utils.logError(e, 'home.js: updateHeaderLevelAndXP'); }
-    }
 
-    // Player Avatar
-    const playerAvatar = Utils.getPlayerAvatar();
-    const playerAvatarEl = document.querySelector('.player-avatar');
-    if (playerAvatarEl) {
-      playerAvatarEl.src = playerAvatar;
+        // Update avatars so visuals evolve with level/XP
+        const avatarURI = Utils.getPlayerAvatar();
+        const playerAvatarEl = document.querySelector('.player-avatar');
+        if (playerAvatarEl && avatarURI) {
+          playerAvatarEl.src = avatarURI;
+          try { playerAvatarEl.alt = `Player avatar`; } catch (_) {}
+        }
+        const socialsAvatarEl = document.querySelector('.socials .avatar');
+        if (socialsAvatarEl && avatarURI) {
+          socialsAvatarEl.src = avatarURI;
+          try { socialsAvatarEl.alt = `Player avatar`; } catch (_) {}
+        }
+      } catch (e) { Utils.logError(e, 'home.js: updateHeaderLevelAndXP'); }
     }
 
     updateHeaderLevelAndXP();
