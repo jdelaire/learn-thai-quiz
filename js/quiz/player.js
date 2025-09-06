@@ -106,56 +106,121 @@
   function getQuizzesCompleted() { try { const agg = aggregateGlobalStatsFromStorage(); return agg.quizzesCompleted; } catch (e) { logError(e, 'quiz.player.getQuizzesCompleted'); return 0; } }
   function getTotalStarsEarned() { try { const agg = aggregateGlobalStatsFromStorage(); return agg.totalStarsEarned; } catch (e) { logError(e, 'quiz.player.getTotalStarsEarned'); return 0; } }
 
-  // Generate a dynamic SVG avatar that evolves with level and XP progress
+  // Generate a Thai-themed 16-bit pixel avatar that evolves with level
   function generateDynamicAvatarDataURI(level, progressPercent, displayName) {
     try {
       var L = Math.max(1, parseInt(level, 10) || 1);
       var progress = Math.min(100, Math.max(0, parseInt(progressPercent, 10) || 0));
       var name = (displayName || '').trim();
-      var initial = name ? (name.charAt(0) || '?') : 'P';
-      // Color scheme derived from level
-      var hue = (L * 47) % 360;
-      var bgHue = (hue + 180) % 360;
-      var ringColor = 'hsl(' + hue + ', 72%, 48%)';
-      var bgColor = 'hsl(' + bgHue + ', 70%, 92%)';
-      var textColor = '#111111';
 
-      var size = 80; // px
-      var cx = 40;
-      var cy = 40;
-      var r = 32; // inner circle radius
-      var ringR = 36; // ring radius
-      var ringWidth = 6;
-      var circumference = 2 * Math.PI * ringR;
-      var dash = Math.max(0.01, (progress / 100) * circumference);
+      // Tiering every 5 levels
+      var tier = Math.min(4, Math.floor((L - 1) / 5)); // 0..4
 
-      var tier = Math.min(5, Math.floor((L - 1) / 5));
-      var shieldOpacity = (0.15 + tier * 0.07).toFixed(2);
+      // Thai palette (flag + accents)
+      var colors = {
+        H: '#3b2f2f',       // hair
+        S: '#f8d3b0',       // skin
+        E: '#111111',       // eyes
+        R: '#A51931',       // red (Thai flag)
+        U: '#00247D',       // blue (Thai flag)
+        W: '#ffffff',       // white
+        O: '#A51931',       // headband (red)
+        G: '#00247D',       // gloves (blue)
+        M: '#ffd54f',       // floor/accent gold
+        A: 'rgba(255,215,0,0.7)' // aura for high tiers
+      };
 
-      var svg = '' +
-        '<svg xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size + '" viewBox="0 0 80 80" role="img" aria-label="Player avatar level ' + L + '">' +
-        '  <defs>' +
-        '    <linearGradient id="g' + hue + '" x1="0" y1="0" x2="1" y2="1">' +
-        '      <stop offset="0%" stop-color="' + bgColor + '" />' +
-        '      <stop offset="100%" stop-color="white" />' +
-        '    </linearGradient>' +
-        '  </defs>' +
-        '  <circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="url(#g' + hue + ')" />' +
-        '  <circle cx="' + cx + '" cy="' + cy + '" r="' + ringR + '" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="' + ringWidth + '" />' +
-        '  <g transform="rotate(-90 ' + cx + ' ' + cy + ')">' +
-        '    <circle cx="' + cx + '" cy="' + cy + '" r="' + ringR + '" fill="none" stroke="' + ringColor + '" stroke-linecap="round" stroke-width="' + ringWidth + '" stroke-dasharray="' + dash + ' ' + circumference + '" />' +
-        '  </g>' +
-        '  <g opacity="' + shieldOpacity + '">' +
-        '    <path d="M40 18 L52 28 L52 44 C52 52 46 58 40 62 C34 58 28 52 28 44 L28 28 Z" fill="' + ringColor + '" />' +
-        '  </g>' +
-        '  <text x="40" y="45" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="28" font-weight="800" fill="' + textColor + '">' + (initial.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')) + '</text>' +
-        '  <g aria-hidden="true" opacity="0.92">' +
-        '    <rect x="54" y="54" rx="6" ry="6" width="20" height="16" fill="' + ringColor + '" />' +
-        '    <text x="64" y="66" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="10" font-weight="800" fill="white">' + L + '</text>' +
-        '  </g>' +
-        '</svg>';
+      // Base 16x16 sprite rows ('.' = transparent)
+      var rows = [
+        '................',
+        '......HHHH......',
+        '.....HHHHHH.....',
+        '....HSSSSSH.....',
+        '....SSESSSS.....',
+        '....SSSSSS......',
+        '.....SSSS.......',
+        '....SSSSSS......',
+        '...SSRRRRSS.....',
+        '...SUUUUUSS.....',
+        '..SSS..SSS......',
+        '..SS....SS......',
+        '..SS....SS......',
+        '..SS....SS......',
+        '..MM....MM......',
+        '................'
+      ];
 
-      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+      // Feature overlays based on tier
+      function setChar(y, x, c) {
+        if (y < 0 || y >= rows.length) return;
+        var row = rows[y];
+        if (!row || x < 0 || x >= row.length) return;
+        rows[y] = row.substring(0, x) + c + row.substring(x + 1);
+      }
+
+      // Tier 1+: headband (mongkol)
+      if (tier >= 1) {
+        for (var x = 5; x <= 10; x++) setChar(3, x, 'O');
+      }
+
+      // Tier 2+: gloves (prajioud vibe) at hands
+      if (tier >= 2) {
+        setChar(10, 2, 'G');
+        setChar(10, 13, 'G');
+      }
+
+      // Tier 3+: white waistband stripe
+      if (tier >= 3) {
+        for (var x2 = 6; x2 <= 9; x2++) setChar(8, x2, 'W');
+      }
+
+      // Tier 4+: aura pixels around character (simple cross)
+      if (tier >= 4) {
+        [['A',1,6],[ 'A',1,9],[ 'A',4,2],[ 'A',4,13],[ 'A',12,2],[ 'A',12,13],[ 'A',6,1],[ 'A',6,14]].forEach(function(p){ setChar(p[2], p[1], p[0]); });
+      }
+
+      // Encode rows into SVG rects (pixel grid)
+      var parts = [];
+      parts.push('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 16 16" shape-rendering="crispEdges" role="img" aria-label="Thai 16-bit avatar level ' + L + '">');
+
+      // Background tiles: faint Thai flag diagonal based on progress
+      var progCols = Math.max(0, Math.min(16, Math.round((progress / 100) * 16)));
+      for (var yy = 0; yy < 16; yy++) {
+        for (var xx = 0; xx < progCols; xx++) {
+          var band = (yy % 5);
+          var fill;
+          if (band === 0) fill = colors.R; else if (band === 1) fill = colors.W; else if (band === 2) fill = colors.U; else if (band === 3) fill = colors.W; else fill = colors.R;
+          parts.push('<rect x="' + xx + '" y="' + yy + '" width="1" height="1" fill="' + fill + '" opacity="0.08"/>');
+        }
+      }
+
+      for (var y = 0; y < rows.length; y++) {
+        var rowStr = rows[y];
+        for (var x3 = 0; x3 < rowStr.length; x3++) {
+          var ch = rowStr.charAt(x3);
+          var col = colors[ch];
+          if (!col) continue;
+          parts.push('<rect x="' + x3 + '" y="' + y + '" width="1" height="1" fill="' + col + '"/>');
+        }
+      }
+
+      // Optional tiny level badge in corner (pixel style)
+      var badge = String(Math.min(99, Math.max(1, L)));
+      parts.push('<rect x="12" y="12" width="4" height="3" fill="#111" opacity="0.85"/>');
+      parts.push('<rect x="12" y="12" width="4" height="1" fill="' + colors.R + '" opacity="0.9"/>');
+      parts.push('<rect x="12" y="13" width="4" height="1" fill="' + colors.W + '" opacity="0.9"/>');
+      parts.push('<rect x="12" y="14" width="4" height="1" fill="' + colors.U + '" opacity="0.9"/>');
+      // Draw level as simple 1-2 digit pixels (very tiny): we only render a small dot pattern for 1..9
+      if (badge.length === 1) {
+        // one pixel number centered in the badge area
+        parts.push('<rect x="14" y="13" width="1" height="1" fill="#fff"/>');
+      } else {
+        parts.push('<rect x="13" y="13" width="1" height="1" fill="#fff"/>');
+        parts.push('<rect x="15" y="13" width="1" height="1" fill="#fff"/>');
+      }
+
+      parts.push('</svg>');
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(parts.join(''));
     } catch (e) {
       logError(e, 'quiz.player.generateDynamicAvatarDataURI');
       return 'https://placehold.co/80x80/png';
