@@ -58,6 +58,15 @@
         nameElement.setAttribute('role', 'button');
         nameElement.setAttribute('tabindex', '0');
         nameElement.setAttribute('aria-label', 'Player name - click to edit');
+
+        // Refresh avatar to reflect new initial (player card only)
+        try {
+          const playerAvatarEl = document.querySelector('.player-avatar');
+          if (playerAvatarEl) {
+            const newAvatar = Utils.getPlayerAvatar();
+            if (newAvatar) playerAvatarEl.src = newAvatar;
+          }
+        } catch (e) { Utils.logError(e, 'home.js: refresh avatar after name edit'); }
       }
       
       function cancelEdit() {
@@ -147,14 +156,16 @@
           xpBarEl.setAttribute('aria-valuenow', xpProgress);
           xpFillEl.style.width = `${xpProgress}%`;
         }
-      } catch (e) { Utils.logError(e, 'home.js: updateHeaderLevelAndXP'); }
-    }
 
-    // Player Avatar
-    const playerAvatar = Utils.getPlayerAvatar();
-    const playerAvatarEl = document.querySelector('.player-avatar');
-    if (playerAvatarEl) {
-      playerAvatarEl.src = playerAvatar;
+        // Update avatars so visuals evolve with level/XP
+        const avatarURI = Utils.getPlayerAvatar();
+        const playerAvatarEl = document.querySelector('.player-avatar');
+        if (playerAvatarEl && avatarURI) {
+          playerAvatarEl.src = avatarURI;
+          try { playerAvatarEl.alt = `Player avatar`; } catch (_) {}
+        }
+        // Footer/socials avatar remains static by design
+      } catch (e) { Utils.logError(e, 'home.js: updateHeaderLevelAndXP'); }
     }
 
     updateHeaderLevelAndXP();
