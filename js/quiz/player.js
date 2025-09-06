@@ -112,6 +112,8 @@
       var L = Math.max(1, parseInt(level, 10) || 1);
       var progress = Math.min(100, Math.max(0, parseInt(progressPercent, 10) || 0));
       var name = (displayName || '').trim();
+      var GRID = 20; // total grid size
+      var PAD = 2;   // 2px padding around central 16x16 sprite
 
       // Tiering every 5 levels
       var tier = Math.min(4, Math.floor((L - 1) / 5)); // 0..4
@@ -181,11 +183,11 @@
 
       // Encode rows into SVG rects (pixel grid)
       var parts = [];
-      parts.push('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 16 16" shape-rendering="crispEdges" role="img" aria-label="Thai 16-bit avatar level ' + L + '">');
+      parts.push('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 ' + GRID + ' ' + GRID + '" shape-rendering="crispEdges" role="img" aria-label="Thai 16-bit avatar level ' + L + '">');
 
       // Background tiles: faint Thai flag diagonal based on progress
-      var progCols = Math.max(0, Math.min(16, Math.round((progress / 100) * 16)));
-      for (var yy = 0; yy < 16; yy++) {
+      var progCols = Math.max(0, Math.min(GRID, Math.round((progress / 100) * GRID)));
+      for (var yy = 0; yy < GRID; yy++) {
         for (var xx = 0; xx < progCols; xx++) {
           var band = (yy % 5);
           var fill;
@@ -200,23 +202,24 @@
           var ch = rowStr.charAt(x3);
           var col = colors[ch];
           if (!col) continue;
-          parts.push('<rect x="' + x3 + '" y="' + y + '" width="1" height="1" fill="' + col + '"/>');
+          parts.push('<rect x="' + (PAD + x3) + '" y="' + (PAD + y) + '" width="1" height="1" fill="' + col + '"/>');
         }
       }
 
       // Optional tiny level badge in corner (pixel style)
       var badge = String(Math.min(99, Math.max(1, L)));
-      parts.push('<rect x="12" y="12" width="4" height="3" fill="#111" opacity="0.85"/>');
-      parts.push('<rect x="12" y="12" width="4" height="1" fill="' + colors.R + '" opacity="0.9"/>');
-      parts.push('<rect x="12" y="13" width="4" height="1" fill="' + colors.W + '" opacity="0.9"/>');
-      parts.push('<rect x="12" y="14" width="4" height="1" fill="' + colors.U + '" opacity="0.9"/>');
-      // Draw level as simple 1-2 digit pixels (very tiny): we only render a small dot pattern for 1..9
+      var bx = GRID - 5;
+      var by = GRID - 5;
+      parts.push('<rect x="' + bx + '" y="' + by + '" width="4" height="3" fill="#111" opacity="0.85"/>');
+      parts.push('<rect x="' + bx + '" y="' + by + '" width="4" height="1" fill="' + colors.R + '" opacity="0.9"/>');
+      parts.push('<rect x="' + bx + '" y="' + (by + 1) + '" width="4" height="1" fill="' + colors.W + '" opacity="0.9"/>');
+      parts.push('<rect x="' + bx + '" y="' + (by + 2) + '" width="4" height="1" fill="' + colors.U + '" opacity="0.9"/>');
+      // Draw level as simple 1-2 digit pixels (very tiny)
       if (badge.length === 1) {
-        // one pixel number centered in the badge area
-        parts.push('<rect x="14" y="13" width="1" height="1" fill="#fff"/>');
+        parts.push('<rect x="' + (bx + 2) + '" y="' + (by + 1) + '" width="1" height="1" fill="#fff"/>');
       } else {
-        parts.push('<rect x="13" y="13" width="1" height="1" fill="#fff"/>');
-        parts.push('<rect x="15" y="13" width="1" height="1" fill="#fff"/>');
+        parts.push('<rect x="' + (bx + 1) + '" y="' + (by + 1) + '" width="1" height="1" fill="#fff"/>');
+        parts.push('<rect x="' + (bx + 3) + '" y="' + (by + 1) + '" width="1" height="1" fill="#fff"/>');
       }
 
       parts.push('</svg>');
