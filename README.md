@@ -41,6 +41,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Greetings**: Core greetings with Thai script, phonetics, examples, and polite particles
 - **Adjectives**: Common adjectives with Thai script, phonetics, emoji hints, and comparison examples
  - **Countries**: Country names with Thai script, phonetics, and flag emoji hints; example sentences on correct answers
+ - **Vowels That Change Form**: Thai vowels that change their writing form between consonants; English/Thai/phonetics with examples and a quick reference table.
 
 ### Quick start (local)
 

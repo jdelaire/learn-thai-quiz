@@ -38,6 +38,16 @@
     "bodyClass": "vowel-quiz"
   },
   {
+    "id": "vowel-changes",
+    "title": "Vowels That Change Form ✍️",
+    "href": "quiz.html?quiz=vowel-changes",
+    "description": "Thai vowels that change their writing form between consonants (closed syllables).",
+    "bullets": ["Base vs new form","Between consonant + final","English/Thai/phonetics"],
+    "categories": ["Alphabet","Reading","Beginner"],
+    "bodyClass": "questions-quiz",
+    "proTip": "<strong>✍️ Vowels That Change Form</strong><br><small>Some Thai vowels change their writing form when they appear in the middle of a syllable (between consonants).</small><br><table style=\"margin-top:0.4em\"><thead><tr><th>No.</th><th>Base</th><th>Forming</th><th>New</th><th>Phonetic</th></tr></thead><tbody><tr><td>1</td><td>-ะ</td><td>ก + ะ + น</td><td>กัน</td><td>gan</td></tr><tr><td>2</td><td>-อ</td><td>ก + อะ + น</td><td>กิน</td><td>gin</td></tr><tr><td>3</td><td>เ-ะ</td><td>ก + เ-ะ + น</td><td>เก็น</td><td>gèn</td></tr><tr><td>4</td><td>แ-ะ</td><td>ก + แ-ะ + น</td><td>แก็น</td><td>gɛ̀n</td></tr><tr><td>5</td><td>โ-ะ</td><td>ก + โ-ะ + น</td><td>กน</td><td>gon</td></tr><tr><td>6</td><td>เ-าะ</td><td>ก + เ-าะ + น</td><td>ก็น</td><td>gɔ̀n</td></tr><tr><td>7</td><td>เ-อะ</td><td>ก + เ-อะ + น</td><td>เกิน</td><td>gəən</td></tr><tr><td>8</td><td>-ัวะ</td><td>ก + -ัวะ + น</td><td>กวน</td><td>guan</td></tr></tbody></table><br><em>Key notes:</em> • These vowels look different when placed between a consonant + final consonant. • Recognizing them improves reading fluency. • Common in short words (กิน, กัน, เกิน, กวน).<br><em>Examples:</em> ฉันกินข้าว (chǎn gin khâaw), เราจะเจอกัน (rao jà jəə gan), มันเกินไป (man gəən bpai), เขากวนมาก (kháw guan mâak)"
+  },
+  {
     "id": "colors",
     "title": "Colors 🎨",
     "href": "quiz.html?quiz=colors",

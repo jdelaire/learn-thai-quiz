@@ -199,6 +199,24 @@
     'body-parts': makeStandardQuizBuilder(['data/body-parts.json'], function(results) {
       const data = results[0] || [];
       return { data: data, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+    }),
+
+    'vowel-changes': makeStandardQuizBuilder(['data/vowel-changes.json'], function(results) {
+      const data = results[0] || [];
+      return {
+        data: data,
+        examples: {
+          "Base -ะ": "เราจะเจอกัน – rao jà jəə gan → We will meet each other",
+          "Base -อ": "ฉันกินข้าว – chǎn gin khâaw → I eat rice",
+          "Base เ-ะ": "ไม่มีตัวอย่างเฉพาะ – Common in short words",
+          "Base แ-ะ": "ไม่มีตัวอย่างเฉพาะ – Common in short words",
+          "Base โ-ะ": "ไม่มีตัวอย่างเฉพาะ – Common in short words",
+          "Base เ-าะ": "ไม่มีตัวอย่างเฉพาะ – Common in short words",
+          "Base เ-อะ": "มันเกินไป – man gəən bpai → It’s too much",
+          "Base -ัวะ": "เขากวนมาก – kháw guan mâak → He is very annoying"
+        },
+        buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }
+      };
     })
   };
 
