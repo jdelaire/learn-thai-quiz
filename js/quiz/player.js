@@ -348,6 +348,8 @@
     getPlayerAvatar: getPlayerAvatar,
     formatNumber: formatNumber,
     getXPProgressPercentage: getXPProgressPercentage,
+    // dev helpers for previews
+    generateAvatar: generateDynamicAvatarDataURI,
     // latest attempt
     getLatestAttempt: getLatestAttempt
   };
