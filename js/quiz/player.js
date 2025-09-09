@@ -106,122 +106,153 @@
   function getQuizzesCompleted() { try { const agg = aggregateGlobalStatsFromStorage(); return agg.quizzesCompleted; } catch (e) { logError(e, 'quiz.player.getQuizzesCompleted'); return 0; } }
   function getTotalStarsEarned() { try { const agg = aggregateGlobalStatsFromStorage(); return agg.totalStarsEarned; } catch (e) { logError(e, 'quiz.player.getTotalStarsEarned'); return 0; } }
 
-  // Generate a Thai-themed 16-bit pixel avatar that evolves with level
+  // Generate a Thai temple SVG avatar that grows in scale and detail with level
   function generateDynamicAvatarDataURI(level, progressPercent, displayName) {
     try {
       var L = Math.max(1, parseInt(level, 10) || 1);
       var progress = Math.min(100, Math.max(0, parseInt(progressPercent, 10) || 0));
-      var name = (displayName || '').trim();
-      var GRID = 20; // total grid size
-      var PAD = 2;   // 2px padding around central 16x16 sprite
-
-      // Tiering every 5 levels
-      var tier = Math.min(4, Math.floor((L - 1) / 5)); // 0..4
-
-      // Thai palette (flag + accents)
-      var colors = {
-        H: '#3b2f2f',       // hair
-        S: '#f8d3b0',       // skin
-        E: '#111111',       // eyes
-        R: '#A51931',       // red (Thai flag)
-        U: '#00247D',       // blue (Thai flag)
-        W: '#ffffff',       // white
-        O: '#A51931',       // headband (red)
-        G: '#00247D',       // gloves (blue)
-        M: '#ffd54f',       // floor/accent gold
-        A: 'rgba(255,215,0,0.7)' // aura for high tiers
-      };
-
-      // Base 16x16 sprite rows ('.' = transparent)
-      var rows = [
-        '................',
-        '......HHHH......',
-        '.....HHHHHH.....',
-        '....HSSSSSH.....',
-        '....SSESSSS.....',
-        '....SSSSSS......',
-        '.....SSSS.......',
-        '....SSSSSS......',
-        '...SSRRRRSS.....',
-        '...SUUUUUSS.....',
-        '..SSS..SSS......',
-        '..SS....SS......',
-        '..SS....SS......',
-        '..SS....SS......',
-        '..MM....MM......',
-        '................'
-      ];
-
-      // Feature overlays based on tier
-      function setChar(y, x, c) {
-        if (y < 0 || y >= rows.length) return;
-        var row = rows[y];
-        if (!row || x < 0 || x >= row.length) return;
-        rows[y] = row.substring(0, x) + c + row.substring(x + 1);
-      }
-
-      // Tier 1+: headband (mongkol)
-      if (tier >= 1) {
-        for (var x = 5; x <= 10; x++) setChar(3, x, 'O');
-      }
-
-      // Tier 2+: gloves (prajioud vibe) at hands
-      if (tier >= 2) {
-        setChar(10, 2, 'G');
-        setChar(10, 13, 'G');
-      }
-
-      // Tier 3+: white waistband stripe
-      if (tier >= 3) {
-        for (var x2 = 6; x2 <= 9; x2++) setChar(8, x2, 'W');
-      }
-
-      // Tier 4+: aura pixels around character (simple cross)
-      if (tier >= 4) {
-        [['A',1,6],[ 'A',1,9],[ 'A',4,2],[ 'A',4,13],[ 'A',12,2],[ 'A',12,13],[ 'A',6,1],[ 'A',6,14]].forEach(function(p){ setChar(p[2], p[1], p[0]); });
-      }
-
-      // Encode rows into SVG rects (pixel grid)
       var parts = [];
-      parts.push('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 ' + GRID + ' ' + GRID + '" shape-rendering="crispEdges" role="img" aria-label="Thai 16-bit avatar level ' + L + '">');
 
-      // Background tiles: faint Thai flag diagonal based on progress
-      var progCols = Math.max(0, Math.min(GRID, Math.round((progress / 100) * GRID)));
-      for (var yy = 0; yy < GRID; yy++) {
-        for (var xx = 0; xx < progCols; xx++) {
-          var band = (yy % 5);
-          var fill;
-          if (band === 0) fill = colors.R; else if (band === 1) fill = colors.W; else if (band === 2) fill = colors.U; else if (band === 3) fill = colors.W; else fill = colors.R;
-          parts.push('<rect x="' + xx + '" y="' + yy + '" width="1" height="1" fill="' + fill + '" opacity="0.08"/>');
+      // Derived values
+      var detail = Math.min(1, (L - 1) / 50); // 0..1
+      var tiers = Math.min(6, 1 + Math.floor((L - 1) / 5));
+      var steps = Math.min(4, 1 + Math.floor(L / 10));
+      var scale = 0.85 + 0.35 * Math.min(1, L / 50);
+
+      // Colors
+      var GOLD = '#FFD54F';
+      var GOLD_DARK = '#C9A131';
+      var RED = '#A51931';
+      var RED_DARK = '#7F1526';
+      var WHITE = '#ffffff';
+      var STONE = '#f2efe6';
+      var STONE_DARK = '#d9d2c0';
+      var SKY_TOP = '#e7f3ff';
+      var SKY_BOTTOM = '#ffffff';
+      var GREEN = '#e6f3ea';
+
+      parts.push('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 100 100" role="img" aria-label="Thai temple avatar level ' + L + '">');
+      parts.push('<defs>');
+      parts.push('<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">');
+      parts.push('<stop offset="0%" stop-color="' + SKY_TOP + '"/>');
+      parts.push('<stop offset="100%" stop-color="' + SKY_BOTTOM + '"/>');
+      parts.push('</linearGradient>');
+      parts.push('<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">');
+      parts.push('<stop offset="0%" stop-color="' + GOLD + '"/>');
+      parts.push('<stop offset="100%" stop-color="' + GOLD_DARK + '"/>');
+      parts.push('</linearGradient>');
+      parts.push('</defs>');
+
+      // Background sky and subtle sun that grows with XP progress
+      parts.push('<rect x="0" y="0" width="100" height="100" fill="url(#sky)"/>');
+      var sunR = 6 + Math.round(10 * (progress / 100));
+      parts.push('<circle cx="82" cy="18" r="' + sunR + '" fill="' + GOLD + '" opacity="' + (0.35 + 0.25 * detail) + '"/>');
+
+      // Ground
+      parts.push('<rect x="0" y="86" width="100" height="14" fill="' + GREEN + '"/>');
+
+      // Temple group scales with level
+      parts.push('<g transform="translate(50,86) scale(' + scale + ') translate(-50,-86)">');
+
+      // Platform steps (stone)
+      for (var si = 0; si < steps; si++) {
+        var sw = 64 + si * 10;
+        var sy = 86 + si * 3;
+        var sx = 50 - sw / 2;
+        parts.push('<rect x="' + sx + '" y="' + sy + '" width="' + sw + '" height="3" fill="' + STONE + '" stroke="' + STONE_DARK + '" stroke-width="0.5"/>');
+      }
+
+      // Base podium
+      var podiumW = 58;
+      var podiumH = 10;
+      parts.push('<rect x="' + (50 - podiumW / 2) + '" y="' + (86 - podiumH) + '" width="' + podiumW + '" height="' + podiumH + '" rx="1.2" fill="' + WHITE + '" stroke="' + STONE_DARK + '" stroke-width="0.6"/>');
+
+      // Columned hall (ubosot-like)
+      var hallW = 52;
+      var hallH = 18 + Math.round(6 * detail);
+      var hallX = 50 - hallW / 2;
+      var hallY = 86 - podiumH - hallH;
+      parts.push('<rect x="' + hallX + '" y="' + hallY + '" width="' + hallW + '" height="' + hallH + '" fill="' + WHITE + '" stroke="#c9c1ae" stroke-width="0.6"/>');
+
+      // Columns increase with level
+      var colCount = Math.min(6, 2 + Math.floor(L / 8));
+      for (var ci = 0; ci < colCount; ci++) {
+        var cx = hallX + 6 + (ci * (hallW - 12)) / (colCount - 1);
+        parts.push('<rect x="' + (cx - 1.2) + '" y="' + (hallY + 2) + '" width="2.4" height="' + (hallH - 4) + '" fill="' + WHITE + '" stroke="#d5ccb7" stroke-width="0.6"/>');
+        if (detail > 0.35) {
+          parts.push('<rect x="' + (cx - 2.2) + '" y="' + (hallY + 1) + '" width="4.4" height="1.6" fill="url(#gold)" opacity="0.9"/>');
+          parts.push('<rect x="' + (cx - 2.2) + '" y="' + (hallY + hallH - 2.6) + '" width="4.4" height="1.6" fill="url(#gold)" opacity="0.9"/>');
         }
       }
 
-      for (var y = 0; y < rows.length; y++) {
-        var rowStr = rows[y];
-        for (var x3 = 0; x3 < rowStr.length; x3++) {
-          var ch = rowStr.charAt(x3);
-          var col = colors[ch];
-          if (!col) continue;
-          parts.push('<rect x="' + (PAD + x3) + '" y="' + (PAD + y) + '" width="1" height="1" fill="' + col + '"/>');
+      // Windows (appear gradually)
+      var winRows = detail > 0.65 ? 2 : 1;
+      var winsPerRow = Math.min(5, 2 + Math.floor(L / 12));
+      for (var wr = 0; wr < winRows; wr++) {
+        for (var wi = 0; wi < winsPerRow; wi++) {
+          var wx = hallX + 8 + (wi * (hallW - 16)) / (winsPerRow - 1);
+          var wy = hallY + 4 + wr * 6;
+          parts.push('<rect x="' + (wx - 1.5) + '" y="' + wy + '" width="3" height="5" rx="0.6" fill="#f7e7c5" stroke="#caa94c" stroke-width="0.5" opacity="' + (0.45 + 0.35 * detail) + '"/>');
         }
       }
 
-      // Optional tiny level badge in corner (pixel style)
+      // Roof tiers (red with golden eaves)
+      var roofBaseY = hallY - 2;
+      for (var r = 0; r < tiers; r++) {
+        var rw = 66 - r * 8;
+        var rh = 6;
+        var rx = 50 - rw / 2;
+        var ry = roofBaseY - r * 7;
+        parts.push('<rect x="' + rx + '" y="' + ry + '" width="' + rw + '" height="' + rh + '" fill="' + RED + '" stroke="' + RED_DARK + '" stroke-width="0.7"/>');
+        parts.push('<rect x="' + (rx + 2) + '" y="' + (ry + rh - 2) + '" width="' + (rw - 4) + '" height="2" fill="url(#gold)" opacity="0.95"/>');
+
+        // Subtle gable highlight
+        if (r === tiers - 1) {
+          parts.push('<polygon points="' + 50 + ',' + (ry - 4) + ' ' + (rx + 5) + ',' + (ry + 1) + ' ' + (rx + rw - 5) + ',' + (ry + 1) + '" fill="url(#gold)" opacity="' + (0.6 + 0.3 * detail) + '"/>');
+        }
+
+        // Chofah-like tips (appear at higher detail)
+        if (detail > 0.5) {
+          parts.push('<polygon points="' + (rx - 3) + ',' + (ry + 2) + ' ' + (rx + 2) + ',' + (ry + 1) + ' ' + (rx + 2) + ',' + (ry + 3) + '" fill="url(#gold)"/>');
+          parts.push('<polygon points="' + (rx + rw + 3) + ',' + (ry + 2) + ' ' + (rx + rw - 2) + ',' + (ry + 1) + ' ' + (rx + rw - 2) + ',' + (ry + 3) + '" fill="url(#gold)"/>');
+        }
+      }
+
+      // Central spire grows with level
+      var topY = roofBaseY - (tiers - 1) * 7;
+      var spireH = 8 + Math.round(16 * detail);
+      parts.push('<polygon points="' + 50 + ',' + (topY - spireH) + ' ' + 46 + ',' + (topY + 1) + ' ' + 54 + ',' + (topY + 1) + '" fill="url(#gold)" stroke="' + GOLD_DARK + '" stroke-width="0.6"/>');
+      if (detail > 0.75) {
+        parts.push('<circle cx="50" cy="' + (topY - spireH - 2) + '" r="1.5" fill="url(#gold)"/>');
+      }
+
+      // Side shrines appear later
+      if (detail > 0.4) {
+        var sW = 12;
+        var sH = 10;
+        var sY = hallY + 4;
+        parts.push('<rect x="' + (hallX - sW - 2) + '" y="' + sY + '" width="' + sW + '" height="' + sH + '" fill="' + WHITE + '" stroke="#c9c1ae" stroke-width="0.6"/>');
+        parts.push('<rect x="' + (hallX + hallW + 2) + '" y="' + sY + '" width="' + sW + '" height="' + sH + '" fill="' + WHITE + '" stroke="#c9c1ae" stroke-width="0.6"/>');
+        parts.push('<rect x="' + (hallX - sW - 1) + '" y="' + (sY - 3) + '" width="' + (sW + 2) + '" height="3" fill="' + RED + '"/>');
+        parts.push('<rect x="' + (hallX + hallW - 1) + '" y="' + (sY - 3) + '" width="' + (sW + 2) + '" height="3" fill="' + RED + '"/>');
+      }
+
+      // Level badge (subtle) in the corner
       var badge = String(Math.min(99, Math.max(1, L)));
-      var bx = GRID - 5;
-      var by = GRID - 5;
-      parts.push('<rect x="' + bx + '" y="' + by + '" width="4" height="3" fill="#111" opacity="0.85"/>');
-      parts.push('<rect x="' + bx + '" y="' + by + '" width="4" height="1" fill="' + colors.R + '" opacity="0.9"/>');
-      parts.push('<rect x="' + bx + '" y="' + (by + 1) + '" width="4" height="1" fill="' + colors.W + '" opacity="0.9"/>');
-      parts.push('<rect x="' + bx + '" y="' + (by + 2) + '" width="4" height="1" fill="' + colors.U + '" opacity="0.9"/>');
-      // Draw level as simple 1-2 digit pixels (very tiny)
+      parts.push('<g transform="translate(72,74)">');
+      parts.push('<rect x="0" y="0" width="20" height="12" rx="2" fill="#111" opacity="0.7"/>');
+      parts.push('<rect x="1.5" y="1.5" width="17" height="2.5" fill="' + RED + '" opacity="0.9"/>');
+      parts.push('<rect x="1.5" y="4.5" width="17" height="2.5" fill="' + WHITE + '" opacity="0.9"/>');
+      parts.push('<rect x="1.5" y="7.5" width="17" height="2.5" fill="#00247D" opacity="0.9"/>');
       if (badge.length === 1) {
-        parts.push('<rect x="' + (bx + 2) + '" y="' + (by + 1) + '" width="1" height="1" fill="#fff"/>');
+        parts.push('<circle cx="10" cy="6" r="2" fill="#fff"/>');
       } else {
-        parts.push('<rect x="' + (bx + 1) + '" y="' + (by + 1) + '" width="1" height="1" fill="#fff"/>');
-        parts.push('<rect x="' + (bx + 3) + '" y="' + (by + 1) + '" width="1" height="1" fill="#fff"/>');
+        parts.push('<rect x="6.5" y="5" width="2" height="2" fill="#fff"/>');
+        parts.push('<rect x="11.5" y="5" width="2" height="2" fill="#fff"/>');
       }
+      parts.push('</g>');
 
+      parts.push('</g>'); // end scaled temple group
       parts.push('</svg>');
       return 'data:image/svg+xml;utf8,' + encodeURIComponent(parts.join(''));
     } catch (e) {

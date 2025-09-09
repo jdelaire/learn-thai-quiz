@@ -634,8 +634,6 @@ body.home .socials a.chip {
   object-fit: cover;
   border: 3px solid rgba(0, 0, 0, 0.12);
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
 }
 
 .player-identity { display: grid; gap: 0.15em; }
