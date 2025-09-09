@@ -204,7 +204,14 @@
     'vowel-changes': makeStandardQuizBuilder(['data/vowel-changes.json','data/vowel-changes-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
-      return { data: data, examples: examples, exampleKey: function(a){ return a.english || a.thai; }, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      // Use Thai forms as the answer choices and hide Thai in the prompt
+      return {
+        data: data,
+        examples: examples,
+        answerKey: 'thai',
+        exampleKey: function(a){ return a.english || a.thai; },
+        buildSymbol: function(a){ return { english: a.english || '', thai: '', emoji: (a && a.emoji) || '' }; }
+      };
     })
   };
 
