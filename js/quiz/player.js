@@ -250,6 +250,7 @@
       const key = 'thaiQuest.progress.' + quizId;
       const payload = { questionsAnswered: Math.max(0, parseInt(stateLike && stateLike.questionsAnswered, 10) || 0), correctAnswers: Math.max(0, parseInt(stateLike && stateLike.correctAnswers, 10) || 0) };
       StorageService.setJSON(key, payload);
+      try { StorageService.setNumber('thaiQuest.lastAttempt.' + quizId, Date.now()); } catch (_) {}
     } catch (e) { logError(e, 'quiz.player.saveQuizProgress'); }
   }
 
@@ -275,12 +276,45 @@
       if (!StorageService) return;
       const toDelete = StorageService.keys('thaiQuest.progress.');
       toDelete.forEach(function(k){ try { StorageService.removeItem(k); } catch (_) {} });
+      try {
+        const lastKeys = StorageService.keys('thaiQuest.lastAttempt.');
+        lastKeys.forEach(function(k){ try { StorageService.removeItem(k); } catch (_) {} });
+      } catch (_) {}
       try { StorageService.removeItem('thaiQuestCustomName'); } catch (_) {}
     } catch (e) { logError(e, 'quiz.player.resetAllProgress'); }
   }
 
   function getStarRulesTooltip() {
     return 'Star rules: 3★ = 100 right with >95% accuracy; 2★ = 100 right with >85% accuracy; 1★ = 100 right with >75% accuracy; 0★ otherwise.';
+  }
+
+  function getLatestAttempt() {
+    try {
+      const prefix = 'thaiQuest.lastAttempt.';
+      const keys = (StorageService && StorageService.keys && StorageService.keys(prefix)) || [];
+      let bestQuizId = null;
+      let bestMs = 0;
+      for (let i = 0; i < keys.length; i++) {
+        const k = keys[i];
+        const qid = k.substring(prefix.length);
+        try {
+          const ms = StorageService.getNumber(k, 0);
+          if (ms > bestMs) { bestMs = ms; bestQuizId = qid; }
+        } catch (_) {}
+      }
+      if (bestQuizId) return { quizId: bestQuizId, lastAttemptMs: bestMs };
+
+      // Fallback: if no timestamps yet, pick any quiz with progress, highest questionsAnswered
+      try {
+        const progress = getAllSavedProgress();
+        const withProgress = progress.filter(function(p){ return (p && p.questionsAnswered) > 0; });
+        if (withProgress.length) {
+          withProgress.sort(function(a, b){ return (b.questionsAnswered || 0) - (a.questionsAnswered || 0); });
+          return { quizId: withProgress[0].quizId, lastAttemptMs: 0 };
+        }
+      } catch (_) {}
+      return null;
+    } catch (e) { logError(e, 'quiz.player.getLatestAttempt'); return null; }
   }
 
   NS.quiz.player = {
@@ -313,7 +347,9 @@
     // misc ui helpers
     getPlayerAvatar: getPlayerAvatar,
     formatNumber: formatNumber,
-    getXPProgressPercentage: getXPProgressPercentage
+    getXPProgressPercentage: getXPProgressPercentage,
+    // latest attempt
+    getLatestAttempt: getLatestAttempt
   };
 })(window);
 

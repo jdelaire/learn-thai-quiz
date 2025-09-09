@@ -749,6 +749,37 @@ body.home .socials a.chip {
   text-align: center;
 }
 
+.player-resume {
+  margin-top: 0.6em;
+  background: #fafafa;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  padding: 0.6em 0.7em;
+  text-align: center;
+}
+.player-resume .resume-label {
+  font-size: 0.72em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin-bottom: 0.2em;
+  font-weight: 700;
+}
+.player-resume .resume-link {
+  display: inline-block;
+  margin: 0.1em 0;
+  font-weight: 800;
+  color: var(--color-brand);
+  text-decoration: none;
+}
+.player-resume .resume-link:hover {
+  color: var(--color-accent);
+}
+.player-resume .resume-sub {
+  font-size: 0.85em;
+  opacity: 0.9;
+}
+
 .pt-line {
   display: block;
   white-space: nowrap;
