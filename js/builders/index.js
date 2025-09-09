@@ -210,7 +210,7 @@
         examples: examples,
         answerKey: 'thai',
         exampleKey: function(a){ return a.english || a.thai; },
-        buildSymbol: function(a){ return { english: a.english || '', thai: '', emoji: (a && a.emoji) || '' }; }
+        buildSymbol: function(a){ return { english: a.english || '', thai: '', emoji: '' }; }
       };
     })
   };
