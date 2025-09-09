@@ -181,12 +181,84 @@
 
     updateHeaderMetrics();
 
+    // Render resume quick link (below today card, above metrics)
+    function renderResumeQuickLink() {
+      try {
+        const playerCard = document.querySelector('.player-card');
+        if (!playerCard) return;
+        const todayEl = playerCard.querySelector('.player-today');
+        const metricsEl = playerCard.querySelector('.player-metrics');
+        if (!metricsEl) return;
+
+        let resumeEl = playerCard.querySelector('.player-resume');
+        if (!resumeEl) {
+          resumeEl = document.createElement('div');
+          resumeEl.className = 'player-resume';
+          // Insert after todayEl when present, otherwise before metrics
+          if (todayEl && todayEl.nextSibling) {
+            playerCard.insertBefore(resumeEl, todayEl.nextSibling);
+          } else {
+            playerCard.insertBefore(resumeEl, metricsEl);
+          }
+        }
+
+        const latest = (Utils && typeof Utils.getLatestAttempt === 'function') ? Utils.getLatestAttempt() : null;
+        if (!latest || !latest.quizId) {
+          resumeEl.hidden = true;
+          Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(resumeEl); })();
+          return;
+        }
+
+        // Resolve quiz metadata (title and href)
+        Utils.fetchJSONCached('data/quizzes.json')
+          .then(function(list){
+            const quizzes = Array.isArray(list) ? list : [];
+            const meta = quizzes.find(function(q){ return q && q.id === latest.quizId; }) || { id: latest.quizId, title: latest.quizId, href: 'quiz.html?quiz=' + latest.quizId };
+
+            Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(resumeEl); })();
+
+            const label = document.createElement('div');
+            label.className = 'resume-label';
+            label.textContent = 'Resume your quiz';
+
+            const a = document.createElement('a');
+            a.className = 'resume-link';
+            a.href = meta.href || ('quiz.html?quiz=' + latest.quizId);
+            a.textContent = meta.title || latest.quizId;
+            a.setAttribute('aria-label', 'Resume your quiz ' + (meta.title || latest.quizId));
+
+            const sub = document.createElement('div');
+            sub.className = 'resume-sub';
+            sub.textContent = 'Continue where you left off';
+
+            resumeEl.appendChild(label);
+            resumeEl.appendChild(a);
+            resumeEl.appendChild(sub);
+            resumeEl.hidden = false;
+          })
+          .catch(function(err){
+            // Fallback to link without nice title
+            try {
+              Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(resumeEl); })();
+              const a = document.createElement('a');
+              a.className = 'resume-link';
+              a.href = 'quiz.html?quiz=' + latest.quizId;
+              a.textContent = 'Resume ' + latest.quizId;
+              resumeEl.appendChild(a);
+              resumeEl.hidden = false;
+            } catch (_) {}
+            Utils.logError(err, 'home.js: renderResumeQuickLink fetch quizzes');
+          });
+      } catch (e) { Utils.logError(e, 'home.js: renderResumeQuickLink'); }
+    }
+
     // Refresh player card when returning to the page or when progress/name changes
     (function wirePlayerCardRefreshers(){
       try {
         function rerenderHeader() {
           updateHeaderLevelAndXP();
           updateHeaderMetrics();
+          renderResumeQuickLink();
         }
 
         // Fires on bfcache restore and normal navigation back to this page
@@ -209,6 +281,9 @@
         });
       } catch (e) { Utils.logError(e, 'home.js: wire player card refreshers'); }
     })();
+
+    // Initial render of resume quick link
+    renderResumeQuickLink();
 
   } catch (e) { Utils.logError(e, 'home.js: player card data population'); }
   
@@ -635,6 +710,7 @@
           // Recompute header level/XP, metrics and re-render to reflect stars cleared
           updateHeaderLevelAndXP();
           updateHeaderMetrics();
+          try { (typeof renderResumeQuickLink === 'function') && renderResumeQuickLink(); } catch (_) {}
           updateUI();
           
           // Refresh player name display (in case custom name was cleared)

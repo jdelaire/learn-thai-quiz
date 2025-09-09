@@ -85,6 +85,9 @@
     getPlayerAvatar: player.getPlayerAvatar,
     formatNumber: player.formatNumber,
     getXPProgressPercentage: player.getXPProgressPercentage
+    ,
+    // latest attempt
+    getLatestAttempt: player.getLatestAttempt
   };
 })(window);
 
