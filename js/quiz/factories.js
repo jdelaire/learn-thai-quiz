@@ -28,7 +28,15 @@
       pickRound: function(state){
         if (!Array.isArray(data) || data.length === 0) return null;
         const currentChoices = prog.getChoicesCountForState(state, progressiveDifficulty, choices);
-        const answer = common.pickRandom(data);
+        // Avoid repeating the immediately previous question (by answerKey)
+        var prev = state && state.currentAnswer;
+        var prevKey = prev && prev[answerKey];
+        var candidatePool = data;
+        if (prevKey != null && data.length > 1) {
+          candidatePool = data.filter(function(it){ return it && it[answerKey] !== prevKey; });
+          if (candidatePool.length === 0) candidatePool = data;
+        }
+        const answer = common.pickRandom(candidatePool);
         const uniqueChoices = common.pickUniqueChoices(data, currentChoices, common.byProp(answerKey), answer);
         return { answer: answer, choices: uniqueChoices };
       },

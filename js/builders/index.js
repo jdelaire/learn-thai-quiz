@@ -78,9 +78,18 @@
           ThaiQuiz.setupQuiz({
             elements: defaultElements,
             pickRound: function(state) {
-              const base = Utils.pickRandom(baseColors);
-              const maybeModifier = Math.random() < 0.55 ? Utils.pickRandom(modifiers) : null;
-              const answer = buildColorPhrase(base, maybeModifier);
+              // Avoid repeating the previous phonetic answer
+              var prevPhonetic = state && state.currentAnswer && state.currentAnswer.phonetic;
+              var attempt = 0;
+              var answer;
+              while (attempt < 10) {
+                const base = Utils.pickRandom(baseColors);
+                const maybeModifier = Math.random() < 0.55 ? Utils.pickRandom(modifiers) : null;
+                const candidate = buildColorPhrase(base, maybeModifier);
+                if (!prevPhonetic || candidate.phonetic !== prevPhonetic) { answer = candidate; break; }
+                attempt++;
+                if (attempt >= 10) { answer = candidate; break; }
+              }
               const currentChoices = Utils.getChoicesCountForState(state, undefined, 4);
               const choices = [answer];
               while (choices.length < currentChoices) {
