@@ -212,7 +212,7 @@
         buildSymbol: function(a){
           var eng = (a && a.english) || '';
           var placeholder = String(eng).replace(/^Base\s+/, '').replace(/-/g, '\u0E01');
-          return { english: eng, thai: placeholder, emoji: '' };
+          return { english: placeholder, thai: '', emoji: '' };
         }
       };
     })

@@ -44,7 +44,7 @@
     "description": "Thai vowels that change their writing form between consonants (closed syllables).",
     "bullets": ["Base vs new form","Between consonant + final","English/Thai/phonetics"],
     "categories": ["Alphabet","Reading","Beginner"],
-    "bodyClass": "questions-quiz",
+    "bodyClass": "vowel-quiz",
     "proTip": "<strong>✍️ Vowels That Change Form</strong><br><small>Some Thai vowels change their writing form when they appear in the middle of a syllable (between consonants).</small><br><em>Key notes:</em> • These vowels look different when placed between a consonant + final consonant. • Recognizing them improves reading fluency. • Common in short words (กิน, กัน, เกิน, กวน).<br><em>Examples:</em> ฉันกินข้าว (chǎn gin khâaw), เราจะเจอกัน (rao jà jəə gan), มันเกินไป (man gəən bpai), เขากวนมาก (kháw guan mâak)"
   },
   {
