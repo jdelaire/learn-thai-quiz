@@ -20,7 +20,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 
 ### Quizzes included
 
-- **Consonants**: All 44 Thai consonants with meanings and tone classes (color‑coded). Progressive difficulty increases choices from 4 to 5 to 6 and removes emoji hints after 50 correct answers.
+- **Consonants**: All 44 Thai consonants with meanings and tone classes (color‑coded). Progressive difficulty increases choices from 4→5→6→7→8.
 - **Vowels**: 32 Thai vowels, symbols and sounds. On some browsers a placeholder consonant ก ("goo gai") is shown to indicate where a vowel attaches; it's not part of the answer.
 - **Colors**: Base colors plus light/dark modifiers; renders Thai text in the color tone
 - **Numbers**: From 0 upward, with Thai script and phonetics; classifier tips included
@@ -41,6 +41,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Greetings**: Core greetings with Thai script, phonetics, examples, and polite particles
 - **Adjectives**: Common adjectives with Thai script, phonetics, emoji hints, and comparison examples
  - **Countries**: Country names with Thai script, phonetics, and flag emoji hints; example sentences on correct answers
+ - **Vowels That Change Form**: Thai vowels that change their writing form between consonants; English/Thai/phonetics with examples and a quick reference table.
 
 ### Quick start (local)
 
@@ -260,7 +261,7 @@ Then refresh the home page and open the popover to verify your entry appears.
 Use `makeStandardQuizBuilder` to wire a data-driven quiz with minimal code.
 
 ```javascript
-// js/quiz-loader.js
+// js/builders/index.js
 QuizBuilders.myquiz = makeStandardQuizBuilder('data/myquiz.json', function(results) {
   const data = results[0] || [];
   return {
@@ -278,7 +279,7 @@ QuizBuilders.myquiz = makeStandardQuizBuilder('data/myquiz.json', function(resul
 Use this skeleton when you need full control. The loader resolves data first, then returns an initializer that calls `ThaiQuiz.setupQuiz` with a config from `Utils.createStandardQuiz`.
 
 ```javascript
-// js/quiz-loader.js
+// js/builders/index.js
 QuizBuilders.myquiz = function() {
   return Utils.fetchJSONCached('data/myquiz.json').then(function(items){
     return function init(){
@@ -394,9 +395,9 @@ Implementation details:
 
 #### Quiz config skeleton (metadata‑driven)
 
-Add a `QuizBuilders.<id>` entry in `js/quiz-loader.js` that fetches data via cache and returns an initializer using `Utils.createStandardQuiz`:
+Add a `QuizBuilders.<id>` entry in `js/builders/index.js` that fetches data via cache and returns an initializer using `Utils.createStandardQuiz`:
 ```javascript
-// js/quiz-loader.js
+// js/builders/index.js
 QuizBuilders.myquiz = function() {
   return Utils.fetchJSONCached('data/myquiz.json').then(function(data){
     return function init(){
@@ -495,11 +496,11 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 - Use number keys 1–9 to select answers quickly
 - After a correct answer, the app auto‑advances; the “Next” button remains hidden by design
 - Stats show Questions, Correct, and Accuracy
- - Reset local progress for testing: on the home page bottom, click “Reset progress (local storage)”
+ - Reset local progress for testing: on the home page bottom, click “Reset progression”
 
 ### Resetting local progress (testing)
 
-For quick manual testing, the home page (`index.html`) includes a temporary button at the very bottom labeled “Reset progress (local storage)”. Clicking it clears all keys prefixed with `thaiQuest.progress.` via the storage service and refreshes the displayed stars, header metrics, and level/XP bar.
+For quick manual testing, the home page (`index.html`) includes a temporary button at the very bottom labeled “Reset progression”. Clicking it clears all keys prefixed with `thaiQuest.progress.` and the custom player name via the storage service and refreshes the displayed stars, header metrics, and level/XP bar.
 
 ### Tech stack
 
@@ -590,7 +591,7 @@ Benefits:
 - Basic validation helpers for common shapes (e.g., quiz progress)
 
 Load order:
-- `storage.js` is included before `utils.js` in both `index.html` and `quiz.html`.
+- `storage.js` is included before `utils-agg.js` in both `index.html` and `quiz.html`.
 
 Public API:
 
