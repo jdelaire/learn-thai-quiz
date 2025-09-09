@@ -31,7 +31,9 @@
           ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: 'consonants' }, base, {
             renderSymbol: function(answer, els) {
               els.symbolEl.textContent = answer.symbol;
-              els.symbolEl.setAttribute('aria-label', 'Thai consonant symbol: ' + answer.symbol);
+              try {
+                els.symbolEl.setAttribute('aria-label', (Utils.i18n.labelConsonantSymbolPrefix || 'Thai consonant symbol: ') + answer.symbol);
+              } catch (_) {}
             },
             ariaLabelForChoice: function(choice) {
               return Utils.i18n.answerPrefix + choice.name + ' (' + choice.meaning + ')';
@@ -87,7 +89,7 @@
                 const choice = buildColorPhrase(b, m);
                 if (!choices.find(function(c) { return c.phonetic === choice.phonetic; })) choices.push(choice);
               }
-              return { answer: answer, choices: choices, symbolText: answer.thai, symbolStyle: { color: answer.hex }, symbolAriaLabel: 'Thai color phrase: ' + answer.thai };
+              return { answer: answer, choices: choices, symbolText: answer.thai, symbolStyle: { color: answer.hex }, symbolAriaLabel: (Utils.i18n.labelColorPhrasePrefix || 'Thai color phrase: ') + answer.thai };
             },
             renderButtonContent: function(choice) { return choice.phonetic; },
             ariaLabelForChoice: function(choice) { return Utils.i18n.answerPrefix + choice.phonetic; },

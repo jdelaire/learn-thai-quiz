@@ -423,6 +423,9 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
   - Renders a standardized "English + Thai" symbol block, optionally with an emoji line, and sets an accessible `aria-label`. Uses DOM nodes (no innerHTML).
 
 - `Utils.renderExample(feedbackEl, exampleText)`
+- `Utils.clearChildren(parent)`
+  - Removes all children safely from a DOM node. Use instead of setting `innerHTML = ''`.
+
   - Renders a small Example card into the feedback area when `exampleText` is provided, or clears it if falsy. Uses DOM nodes (no innerHTML).
 
 - `Utils.createStandardQuiz({ data, examples?, exampleKey?, answerKey='phonetic', buildSymbol?, choices=4, labelPrefix='English and Thai: ' })`
@@ -481,6 +484,12 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 - Support keyboard 1–9 for selecting options (scoped to the options container; engine wires a keydown handler on `#options`)
 - Do not rely on the “Next” button; auto‑advance on correct answers is built‑in
 - The engine uses text/DOM nodes and avoids `innerHTML`. If you intentionally render HTML, prefer creating DOM nodes or return a Node from `renderButtonContent`.
+
+I18n label keys available:
+- `i18n.labelVowelSymbolPrefix`: Prefix for vowel symbol aria-label
+- `i18n.labelConsonantSymbolPrefix`: Prefix for consonant aria-label
+- `i18n.labelColorPhrasePrefix`: Prefix for color phrase aria-label
+- `i18n.statsStarsAriaLabel`: Label for stats stars element
 - Maintain readable contrast; follow existing CSS patterns and body classes. The loader always applies both a mapped class and `<id>-quiz` (e.g., `foods-quiz`).
 
 #### Quick test checklist

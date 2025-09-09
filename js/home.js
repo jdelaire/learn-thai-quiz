@@ -463,7 +463,7 @@
 
     function renderCategoryChips() {
       if (!categoryFilters) return;
-      while (categoryFilters.firstChild) categoryFilters.removeChild(categoryFilters.firstChild);
+      Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(categoryFilters); })();
 
       // Count quizzes in each category
       const categoryCounts = {};
@@ -506,7 +506,7 @@
     }
 
     function renderQuizCards(items) {
-      while (quizListEl.firstChild) quizListEl.removeChild(quizListEl.firstChild);
+      Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(quizListEl); })();
       if (!items.length) {
         const empty = document.createElement('div');
         empty.className = 'empty';

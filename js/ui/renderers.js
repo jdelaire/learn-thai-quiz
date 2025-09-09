@@ -133,7 +133,10 @@
       const raw = String(symbol || '');
       const out = raw.replace(/-/g, '\u0E01');
       symbolEl.textContent = out;
-      symbolEl.setAttribute('aria-label', 'Thai vowel symbol: ' + raw);
+      try {
+        var prefix = (global.Utils && global.Utils.i18n && global.Utils.i18n.labelVowelSymbolPrefix) || 'Thai vowel symbol: ';
+        symbolEl.setAttribute('aria-label', prefix + raw);
+      } catch (_) {}
     } catch (e) { logError(e, 'ui.renderers.renderVowelSymbol'); }
   }
 

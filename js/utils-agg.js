@@ -28,6 +28,7 @@
     i18n: common.i18n,
     getBodyClass: common.getBodyClass,
     defaultElements: common.defaultElements,
+    clearChildren: common.clearChildren,
 
     // color
     hexToRgb: color.hexToRgb,
