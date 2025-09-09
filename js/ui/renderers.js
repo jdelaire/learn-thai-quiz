@@ -36,10 +36,11 @@
       if (!exampleText) return;
       const card = document.createElement('div');
       card.className = 'example';
-      card.setAttribute('aria-label', 'Example sentence');
+      var exampleLabel = (global.Utils && global.Utils.i18n && global.Utils.i18n.exampleLabel) || 'Example';
+      card.setAttribute('aria-label', exampleLabel);
       const label = document.createElement('span');
       label.className = 'label';
-      label.textContent = 'Example';
+      label.textContent = exampleLabel;
       const text = document.createElement('div');
       text.className = 'text';
       text.textContent = String(exampleText);
@@ -55,7 +56,51 @@
       if (footer && text) {
         const tip = document.createElement('div');
         tip.className = 'pro-tip';
-        tip.innerHTML = '<small>' + text + '</small>';
+        var small = document.createElement('small');
+        // Minimal sanitizer that preserves a tiny whitelist of tags and strips attributes
+        function sanitizeHTML(html) {
+          try {
+            var allowed = { BR: true, STRONG: true, EM: true, SMALL: true };
+            var tpl = document.createElement('template');
+            tpl.innerHTML = String(html);
+            function cleanse(node) {
+              if (node.nodeType === Node.TEXT_NODE) {
+                return document.createTextNode(node.nodeValue || '');
+              }
+              if (node.nodeType === Node.ELEMENT_NODE) {
+                var tag = String(node.tagName || '').toUpperCase();
+                if (!allowed[tag]) {
+                  // Flatten disallowed elements by returning their children sanitized
+                  var frag = document.createDocumentFragment();
+                  var child = node.firstChild;
+                  while (child) {
+                    frag.appendChild(cleanse(child));
+                    child = child.nextSibling;
+                  }
+                  return frag;
+                }
+                var el = document.createElement(tag.toLowerCase());
+                var c = node.firstChild;
+                while (c) { el.appendChild(cleanse(c)); c = c.nextSibling; }
+                return el;
+              }
+              return document.createTextNode('');
+            }
+            var out = document.createDocumentFragment();
+            var n = tpl.content.firstChild;
+            while (n) { out.appendChild(cleanse(n)); n = n.nextSibling; }
+            return out;
+          } catch (_) {
+            var fallback = document.createDocumentFragment();
+            fallback.appendChild(document.createTextNode(String(html)));
+            return fallback;
+          }
+        }
+        // If the text contains markup, sanitize it; otherwise set as text
+        var hasMarkup = /<\/?[a-z][\s\S]*>/i.test(String(text));
+        if (hasMarkup) { small.appendChild(sanitizeHTML(text)); }
+        else { small.textContent = String(text); }
+        tip.appendChild(small);
         footer.appendChild(tip);
       }
     } catch (e) { logError(e, 'ui.renderers.insertProTip'); }

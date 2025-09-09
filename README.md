@@ -434,8 +434,9 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 
   - Items may include an optional `emoji` field which the quiz UI displays above the symbol.
 
-- `Utils.insertProTip(html)` / `Utils.insertConsonantLegend()`
+- `Utils.insertProTip(content)` / `Utils.insertConsonantLegend()`
   - Insert a pro‑tip into the quiz footer or a consonant legend before the symbol.
+  - `insertProTip` accepts either plain text or a very small subset of sanitized HTML (`<strong>`, `<em>`, `<br>`, `<small>`). Attributes are stripped. Prefer plain text.
 
 - `Utils.renderVowelSymbol(symbolEl, symbol)`
   - Render vowel symbols with the shaping‑safe placeholder behavior (ko kai replacement) and set `aria-label`.
@@ -579,6 +580,15 @@ return Utils.ErrorHandler.safe(JSON.parse, {})(data);
 - Use `ErrorHandler.wrapAsync()` for promise-based operations
 - Always provide meaningful context strings for better debugging
 - Prefer these utilities over inline try-catch blocks for consistency
+
+### Refactors and hardening (latest)
+
+- Replaced innerHTML-based DOM updates with safe node creation/removal in key paths:
+  - `js/ui/renderers.js`: `insertProTip` now sanitizes a tiny whitelist of tags; `renderExample` uses i18n for its label and avoids raw HTML.
+  - `js/quiz.js`: clearing options uses child removal instead of `innerHTML = ''`.
+  - `js/home.js`: removed duplicate player-name click handler and replaced `innerHTML = ''` clears with safe child removal for category chips and quiz list.
+
+- Behavior is unchanged; changes reduce XSS risk and improve consistency with the codebase’s “no innerHTML” guidance.
 
 ### Storage service (localStorage abstraction)
 

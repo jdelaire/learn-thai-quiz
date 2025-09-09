@@ -77,7 +77,7 @@
         const msg = (global && global.Utils && global.Utils.i18n && global.Utils.i18n.noDataMessage) || 'No data available for this quiz.';
         symbolEl.textContent = msg;
         symbolEl.setAttribute('aria-label', msg);
-        optionsEl.innerHTML = '';
+        Utils.ErrorHandler.safeDOM(function(){ while (optionsEl.firstChild) optionsEl.removeChild(optionsEl.firstChild); })();
         nextBtn.style.display = 'none';
       } catch (_) {}
     }
@@ -89,7 +89,7 @@
       }
       feedbackEl.textContent = '';
       nextBtn.style.display = 'none';
-      optionsEl.innerHTML = '';
+      Utils.ErrorHandler.safeDOM(function(){ while (optionsEl.firstChild) optionsEl.removeChild(optionsEl.firstChild); })();
 
       const round = (typeof config.pickRound === 'function') ? config.pickRound(state) : null;
       if (!round || !round.answer || !Array.isArray(round.choices)) {
