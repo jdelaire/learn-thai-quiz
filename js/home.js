@@ -706,6 +706,13 @@
       if (resetBtn) {
         resetBtn.addEventListener('click', function(ev){
           Utils.ErrorHandler.safe(function() { ev.preventDefault(); })();
+          let confirmed = true;
+          try {
+            confirmed = window.confirm('Are you sure you want to reset your progression? All XP and stars will be lost.');
+          } catch (_) { confirmed = true; }
+          if (!confirmed) {
+            return;
+          }
           Utils.ErrorHandler.wrap(Utils.resetAllProgress, 'home.js: resetAllProgress')();
           // Recompute header level/XP, metrics and re-render to reflect stars cleared
           updateHeaderLevelAndXP();
