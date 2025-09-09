@@ -25,6 +25,10 @@
     labelEnglishThaiPrefix: 'English and Thai: ',
     labelNumberThaiPrefix: 'Number and Thai: ',
     labelClassMarkerLengthPrefix: 'Class + Marker + Length: ',
+    labelVowelSymbolPrefix: 'Thai vowel symbol: ',
+    labelConsonantSymbolPrefix: 'Thai consonant symbol: ',
+    labelColorPhrasePrefix: 'Thai color phrase: ',
+    statsStarsAriaLabel: 'Completion stars',
     noDataMessage: 'No data available for this quiz.'
   };
 
@@ -78,6 +82,13 @@
 
   var defaultElements = { symbol: 'symbol', options: 'options', feedback: 'feedback', nextBtn: 'nextBtn', stats: 'stats' };
 
+  function clearChildren(parent) {
+    try {
+      if (!parent) return;
+      while (parent.firstChild) parent.removeChild(parent.firstChild);
+    } catch (_) {}
+  }
+
   NS.util.common = {
     byProp: byProp,
     setText: setText,
@@ -85,7 +96,8 @@
     getBodyClass: getBodyClass,
     pickRandom: pickRandom,
     pickUniqueChoices: pickUniqueChoices,
-    defaultElements: defaultElements
+    defaultElements: defaultElements,
+    clearChildren: clearChildren
   };
 })(window);
 

@@ -65,7 +65,10 @@
         try {
           if (global && global.Utils && typeof global.Utils.getStarRulesTooltip === 'function') {
             span.title = global.Utils.getStarRulesTooltip();
-            span.setAttribute('aria-label', 'Completion stars');
+            try {
+              var label = (global.Utils && global.Utils.i18n && global.Utils.i18n.statsStarsAriaLabel) || 'Completion stars';
+              span.setAttribute('aria-label', label);
+            } catch (_) {}
           }
         } catch (_) {}
         statsEl.appendChild(span);
@@ -77,7 +80,7 @@
         const msg = (global && global.Utils && global.Utils.i18n && global.Utils.i18n.noDataMessage) || 'No data available for this quiz.';
         symbolEl.textContent = msg;
         symbolEl.setAttribute('aria-label', msg);
-        optionsEl.innerHTML = '';
+        Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(optionsEl); })();
         nextBtn.style.display = 'none';
       } catch (_) {}
     }
@@ -89,7 +92,7 @@
       }
       feedbackEl.textContent = '';
       nextBtn.style.display = 'none';
-      optionsEl.innerHTML = '';
+      Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(optionsEl); })();
 
       const round = (typeof config.pickRound === 'function') ? config.pickRound(state) : null;
       if (!round || !round.answer || !Array.isArray(round.choices)) {

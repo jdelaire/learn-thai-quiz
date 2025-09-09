@@ -111,14 +111,7 @@
       playerNameEl.setAttribute('tabindex', '0');
       playerNameEl.setAttribute('aria-label', 'Player name - click to edit');
       
-      // Add click event with multiple approaches to ensure it works
-      playerNameEl.onclick = function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        editPlayerName(playerNameEl);
-        return false;
-      };
-      
+      // Single click handler
       playerNameEl.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -470,7 +463,7 @@
 
     function renderCategoryChips() {
       if (!categoryFilters) return;
-      categoryFilters.innerHTML = '';
+      Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(categoryFilters); })();
 
       // Count quizzes in each category
       const categoryCounts = {};
@@ -513,7 +506,7 @@
     }
 
     function renderQuizCards(items) {
-      quizListEl.innerHTML = '';
+      Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(quizListEl); })();
       if (!items.length) {
         const empty = document.createElement('div');
         empty.className = 'empty';
