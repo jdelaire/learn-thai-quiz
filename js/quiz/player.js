@@ -143,14 +143,20 @@
       parts.push('</linearGradient>');
       parts.push('</defs>');
 
-      // Background sky and subtle sun that grows with XP progress
+      // Background sky and an XP bar that fills upward with progress
       parts.push('<rect x="0" y="0" width="100" height="100" fill="url(#sky)"/>');
-      var sunR = 6 + Math.round(10 * (progress / 100));
-      parts.push('<circle cx="82" cy="18" r="' + sunR + '" fill="' + GOLD + '" opacity="' + (0.35 + 0.25 * detail) + '"/>');
+      var trackY = 12;
+      var trackH = 74; // up to ground at y=86
+      var barX = 94;
+      var xpH = Math.max(0, Math.min(trackH, Math.round(trackH * (progress / 100))));
+      // Track
+      parts.push('<rect x="' + barX + '" y="' + trackY + '" width="4" height="' + trackH + '" fill="#e5e5e5" opacity="0.55"/>');
+      // Fill (from bottom up)
+      parts.push('<rect x="' + barX + '" y="' + (trackY + trackH - xpH) + '" width="4" height="' + xpH + '" fill="url(#gold)" opacity="' + (0.65 + 0.3 * detail) + '"/>');
 
-      // Fireworks: vary with level
+      // Fireworks: vary with level and are larger for better visibility
       if (L >= 2) {
-        var fwCount = Math.min(6, 2 + ((L - 2) % 5));
+        var fwCount = Math.min(8, 2 + ((L - 2) % 7));
         var fwPositions = [
           { x: 20, y: 18 }, { x: 14, y: 32 }, { x: 30, y: 10 },
           { x: 78, y: 22 }, { x: 66, y: 12 }, { x: 86, y: 30 }
@@ -158,20 +164,23 @@
         for (var f = 0; f < fwCount; f++) {
           var pos = fwPositions[f] || fwPositions[fwPositions.length - 1];
           var rays = 8 + (L % 6);
-          var radius = 4 + Math.round((L % 7) * 0.8);
+          var radius = 10 + Math.round(L * 0.9);
+          var inner = Math.max(3, radius - Math.min(6, Math.round(2 + L * 0.1)));
+          var outer = radius + Math.min(12, Math.round(6 + L * 0.2));
+          var strokeW = (1.8 + Math.min(2.0, L * 0.06)).toFixed(1);
           var angOffset = ((L * 23) % 360) * Math.PI / 180;
           var strokeColor = (f % 3 === 0) ? GOLD : ((f % 3 === 1) ? '#ffffff' : '#4A90E2');
           var fwOpacity = 0.25 + 0.35 * detail;
           parts.push('<g opacity="' + fwOpacity + '">');
           for (var k = 0; k < rays; k++) {
             var ang = (Math.PI * 2 * k) / rays + angOffset;
-            var x1 = pos.x + Math.cos(ang) * (radius - 2);
-            var y1 = pos.y + Math.sin(ang) * (radius - 2);
-            var x2 = pos.x + Math.cos(ang) * (radius + 2);
-            var y2 = pos.y + Math.sin(ang) * (radius + 2);
-            parts.push('<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="' + strokeColor + '" stroke-width="1.2" stroke-linecap="round"/>');
+            var x1 = pos.x + Math.cos(ang) * inner;
+            var y1 = pos.y + Math.sin(ang) * inner;
+            var x2 = pos.x + Math.cos(ang) * outer;
+            var y2 = pos.y + Math.sin(ang) * outer;
+            parts.push('<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="' + strokeColor + '" stroke-width="' + strokeW + '" stroke-linecap="round"/>');
           }
-          parts.push('<circle cx="' + pos.x + '" cy="' + pos.y + '" r="' + Math.max(1, Math.round(radius / 4)) + '" fill="' + strokeColor + '"/>');
+          parts.push('<circle cx="' + pos.x + '" cy="' + pos.y + '" r="' + Math.max(2, Math.round(radius / 3)) + '" fill="' + strokeColor + '" opacity="0.85"/>');
           parts.push('</g>');
         }
       }
@@ -296,20 +305,7 @@
         parts.push('<rect x="' + (hallX + hallW - 1) + '" y="' + (sY - 3) + '" width="' + (sW + 2) + '" height="3" fill="' + RED + '"/>');
       }
 
-      // Level badge (subtle) in the corner
-      var badge = String(Math.min(99, Math.max(1, L)));
-      parts.push('<g transform="translate(72,74)">');
-      parts.push('<rect x="0" y="0" width="20" height="12" rx="2" fill="#111" opacity="0.7"/>');
-      parts.push('<rect x="1.5" y="1.5" width="17" height="2.5" fill="' + RED + '" opacity="0.9"/>');
-      parts.push('<rect x="1.5" y="4.5" width="17" height="2.5" fill="' + WHITE + '" opacity="0.9"/>');
-      parts.push('<rect x="1.5" y="7.5" width="17" height="2.5" fill="#00247D" opacity="0.9"/>');
-      if (badge.length === 1) {
-        parts.push('<circle cx="10" cy="6" r="2" fill="#fff"/>');
-      } else {
-        parts.push('<rect x="6.5" y="5" width="2" height="2" fill="#fff"/>');
-        parts.push('<rect x="11.5" y="5" width="2" height="2" fill="#fff"/>');
-      }
-      parts.push('</g>');
+      // Removed flag-like level badge for a cleaner look
 
       parts.push('</g>'); // end scaled temple group
       parts.push('</svg>');
