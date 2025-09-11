@@ -116,7 +116,7 @@
       // Derived values
       var detail = Math.min(1, (L - 1) / 50); // 0..1
       var tiers = Math.min(6, 1 + Math.floor((L - 1) / 5));
-      var steps = Math.min(4, 1 + Math.floor(L / 10));
+      var steps = 1 + ((L - 1) % 4);
       var scale = 0.85 + 0.35 * Math.min(1, L / 50);
 
       // Colors
@@ -148,22 +148,23 @@
       var sunR = 6 + Math.round(10 * (progress / 100));
       parts.push('<circle cx="82" cy="18" r="' + sunR + '" fill="' + GOLD + '" opacity="' + (0.35 + 0.25 * detail) + '"/>');
 
-      // Fireworks: appear at higher levels and increase with level
-      if (L >= 5) {
-        var fwCount = Math.min(6, 1 + Math.floor(L / 5));
+      // Fireworks: vary with level
+      if (L >= 2) {
+        var fwCount = Math.min(6, 2 + ((L - 2) % 5));
         var fwPositions = [
           { x: 20, y: 18 }, { x: 14, y: 32 }, { x: 30, y: 10 },
           { x: 78, y: 22 }, { x: 66, y: 12 }, { x: 86, y: 30 }
         ];
         for (var f = 0; f < fwCount; f++) {
           var pos = fwPositions[f] || fwPositions[fwPositions.length - 1];
-          var rays = 8 + Math.floor(4 * detail);
-          var radius = 4 + Math.round(6 * detail);
+          var rays = 8 + (L % 6);
+          var radius = 4 + Math.round((L % 7) * 0.8);
+          var angOffset = ((L * 23) % 360) * Math.PI / 180;
           var strokeColor = (f % 3 === 0) ? GOLD : ((f % 3 === 1) ? '#ffffff' : '#4A90E2');
           var fwOpacity = 0.25 + 0.35 * detail;
           parts.push('<g opacity="' + fwOpacity + '">');
           for (var k = 0; k < rays; k++) {
-            var ang = (Math.PI * 2 * k) / rays;
+            var ang = (Math.PI * 2 * k) / rays + angOffset;
             var x1 = pos.x + Math.cos(ang) * (radius - 2);
             var y1 = pos.y + Math.sin(ang) * (radius - 2);
             var x2 = pos.x + Math.cos(ang) * (radius + 2);
@@ -214,13 +215,22 @@
 
       // Windows (appear gradually)
       var winRows = detail > 0.65 ? 2 : 1;
-      var winsPerRow = Math.min(5, 2 + Math.floor(L / 12));
+      var winsPerRow = Math.min(5, 2 + ((L - 1) % 4));
       for (var wr = 0; wr < winRows; wr++) {
         for (var wi = 0; wi < winsPerRow; wi++) {
           var wx = hallX + 8 + (wi * (hallW - 16)) / (winsPerRow - 1);
           var wy = hallY + 4 + wr * 6;
           parts.push('<rect x="' + (wx - 1.5) + '" y="' + wy + '" width="3" height="5" rx="0.6" fill="#f7e7c5" stroke="#caa94c" stroke-width="0.5" opacity="' + (0.45 + 0.35 * detail) + '"/>');
         }
+      }
+
+      // Lantern garland that varies every level
+      var lanterns = 3 + (L % 4);
+      var garlandY = hallY - 4 - (L % 3);
+      for (var li = 0; li < lanterns; li++) {
+        var lx = hallX + 6 + (li * (hallW - 12)) / (lanterns - 1);
+        var lc = ((li + L) % 3 === 0) ? 'url(#gold)' : (((li + L) % 3 === 1) ? '#ffffff' : '#A51931');
+        parts.push('<circle cx="' + lx.toFixed(1) + '" cy="' + garlandY + '" r="1.6" fill="' + lc + '" opacity="' + (0.5 + 0.4 * detail) + '"/>');
       }
 
       // Roof tiers (red with golden eaves)
