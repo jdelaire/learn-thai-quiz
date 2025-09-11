@@ -179,6 +179,28 @@
       // Ground
       parts.push('<rect x="0" y="86" width="100" height="14" fill="' + GREEN + '"/>');
 
+      // People near the temple: add at least one per level
+      var peopleCount = Math.min(30, Math.max(1, L));
+      var baseY = 88;
+      for (var pi = 0; pi < peopleCount; pi++) {
+        var frac = peopleCount > 1 ? (pi / (peopleCount - 1)) : 0.5;
+        var px = 8 + frac * 84;
+        var jitter = ((pi * 13 + L * 7) % 3) - 1; // -1,0,1
+        var pscale = 0.6 + ((pi + L) % 5) * 0.06; // 0.6..0.84
+        var headR = 0.9 * pscale;
+        var bodyH = 3.2 * pscale;
+        var bodyW = 1.4 * pscale;
+        var py = baseY + jitter;
+        var coat = (pi + L) % 3 === 0 ? RED : ((pi + L) % 3 === 1 ? '#1f6f54' : '#3b4d8f');
+        // Head
+        parts.push('<circle cx="' + px.toFixed(1) + '" cy="' + (py - bodyH - headR).toFixed(1) + '" r="' + headR.toFixed(2) + '" fill="#2a2a2a" opacity="0.9"/>');
+        // Body
+        parts.push('<rect x="' + (px - bodyW / 2).toFixed(1) + '" y="' + (py - bodyH).toFixed(1) + '" width="' + bodyW.toFixed(2) + '" height="' + bodyH.toFixed(2) + '" rx="' + (0.3 * pscale).toFixed(2) + '" fill="' + coat + '" opacity="0.9"/>');
+        // Legs
+        parts.push('<rect x="' + (px - bodyW * 0.35).toFixed(1) + '" y="' + py.toFixed(1) + '" width="' + (0.3 * pscale).toFixed(2) + '" height="' + (1.8 * pscale).toFixed(2) + '" fill="#333" opacity="0.9"/>');
+        parts.push('<rect x="' + (px + bodyW * 0.05).toFixed(1) + '" y="' + py.toFixed(1) + '" width="' + (0.3 * pscale).toFixed(2) + '" height="' + (1.8 * pscale).toFixed(2) + '" fill="#333" opacity="0.9"/>');
+      }
+
       // Temple group scales with level
       parts.push('<g transform="translate(50,86) scale(' + scale + ') translate(-50,-86)">');
 
