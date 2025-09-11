@@ -177,7 +177,7 @@ We convert stars to XP and level up using a power‑law curve:
 
 - **Star → XP**: 1★ = 10 XP, 2★ = 20 XP, 3★ = 40 XP (0★ = 0 XP).
 - **Total XP**: Sum XP across all quizzes based on each quiz’s current star rating.
-- **Level curve**: XP_total(L) = A · L^p, with A = 80 and p = 1.9.
+- **Level curve**: XP_total(L) = A · L^p, with A ≈ 2.09933 and p = 1.9.
 - **XP to next level**: ΔXP(L) = XP_total(L+1) − XP_total(L).
 - **Displayed level**: `floor(((TotalXP / A)^(1/p))) + 1`.
 - **XP bar**: Shows `TotalXP − XP_total(L_current)` over `ΔXP(L_current)`.
