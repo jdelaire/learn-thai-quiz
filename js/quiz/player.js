@@ -148,6 +148,33 @@
       var sunR = 6 + Math.round(10 * (progress / 100));
       parts.push('<circle cx="82" cy="18" r="' + sunR + '" fill="' + GOLD + '" opacity="' + (0.35 + 0.25 * detail) + '"/>');
 
+      // Fireworks: appear at higher levels and increase with level
+      if (L >= 5) {
+        var fwCount = Math.min(6, 1 + Math.floor(L / 5));
+        var fwPositions = [
+          { x: 20, y: 18 }, { x: 14, y: 32 }, { x: 30, y: 10 },
+          { x: 78, y: 22 }, { x: 66, y: 12 }, { x: 86, y: 30 }
+        ];
+        for (var f = 0; f < fwCount; f++) {
+          var pos = fwPositions[f] || fwPositions[fwPositions.length - 1];
+          var rays = 8 + Math.floor(4 * detail);
+          var radius = 4 + Math.round(6 * detail);
+          var strokeColor = (f % 3 === 0) ? GOLD : ((f % 3 === 1) ? '#ffffff' : '#4A90E2');
+          var fwOpacity = 0.25 + 0.35 * detail;
+          parts.push('<g opacity="' + fwOpacity + '">');
+          for (var k = 0; k < rays; k++) {
+            var ang = (Math.PI * 2 * k) / rays;
+            var x1 = pos.x + Math.cos(ang) * (radius - 2);
+            var y1 = pos.y + Math.sin(ang) * (radius - 2);
+            var x2 = pos.x + Math.cos(ang) * (radius + 2);
+            var y2 = pos.y + Math.sin(ang) * (radius + 2);
+            parts.push('<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="' + strokeColor + '" stroke-width="1.2" stroke-linecap="round"/>');
+          }
+          parts.push('<circle cx="' + pos.x + '" cy="' + pos.y + '" r="' + Math.max(1, Math.round(radius / 4)) + '" fill="' + strokeColor + '"/>');
+          parts.push('</g>');
+        }
+      }
+
       // Ground
       parts.push('<rect x="0" y="86" width="100" height="14" fill="' + GREEN + '"/>');
 
