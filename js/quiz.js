@@ -90,6 +90,11 @@
         clearTimeout(state.autoAdvanceTimerId);
         state.autoAdvanceTimerId = null;
       }
+      // Ensure any lingering example overlay is removed before rendering a new question
+      Utils.ErrorHandler.safeDOM(function(){
+        var existing = document.querySelector('.example-overlay');
+        if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+      })();
       feedbackEl.textContent = '';
       nextBtn.style.display = 'none';
       Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(optionsEl); })();

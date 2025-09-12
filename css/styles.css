@@ -328,6 +328,60 @@ body.quiz-page .stats {
   border-radius: 10px;
 }
 
+/* Full-screen example overlay shown after correct answers */
+.example-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+  animation: overlayFadeIn 200ms ease;
+}
+
+.example-overlay .overlay-card {
+  max-width: min(820px, 92vw);
+  width: auto;
+  margin: 0 1em;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid rgba(0, 36, 125, 0.2);
+  border-radius: 14px;
+  padding: clamp(1em, 4vw, 1.4em) clamp(1.1em, 5vw, 1.6em);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+  transform: scale(0.96);
+  animation: cardPopIn 200ms ease forwards;
+}
+
+.example-overlay .overlay-card .label {
+  display: inline-block;
+  opacity: 0.95;
+  font-size: clamp(0.9em, 1.8vw, 1em);
+  padding: 0.2em 0.6em;
+  margin-right: 0.6em;
+  border-radius: 8px;
+  background: rgba(0, 36, 125, 0.9);
+  color: #ffffff;
+}
+
+.example-overlay .overlay-card .text {
+  display: block;
+  margin-top: 0.6em;
+  font-weight: 800;
+  font-size: clamp(1.25em, 4.2vw, 2.2em);
+  line-height: 1.25;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes cardPopIn {
+  from { transform: scale(0.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
 .example .label {
   display: inline-block;
   opacity: 0.95;
