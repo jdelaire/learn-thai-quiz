@@ -230,50 +230,7 @@ body.color-quiz {
    - If you need custom behavior (emoji rules, multiple datasets, special symbol rendering, examples), add a builder using the helper `makeStandardQuizBuilder(urls, transform)` or write a manual builder.
 4. **Style (optional)**: Add CSS rules in `styles.css` using `body.<id>-quiz` (e.g., `body.foods-quiz`) or the mapped class (e.g., `body.questions-quiz`). The loader ensures both exist.
 
-#### Phonetic transcription rules: Consonants in Final Position
-
-Use the following mapping when preparing phonetics and examples for the quiz “Consonants in Final Position (Individually)”. These reflect Thai final consonant sound reductions. Render these in Markdown when documenting or curating data.
-
-```
-📜 Consonants in Final Position (Individually)
-
-Consonant  Final Sound  Example (Thai)  Phonetic
-ก  k  ปาก  bpàak (mouth)
-ข  k  ผัก  phàk (vegetable)
-ค  k  เอก  èek (first)
-ฆ  k  นก  nók (bird)
-ด  t  ปิด  bpìt (to close)
-ต  t  เล็ด  lét (to leak)
-ฎ  t  ชฎา (archaic use)  chà-daa
-ฏ  t  กฎ  gòt (rule)
-จ  t  จัด  jàt (arrange)
-ช  t  ชัด  chát (clear)
-ซ  t  ลด  lót (reduce)
-ศ  t  เศษ  sèet (scrap)
-ษ  t  กษัตริย์  gà-sàt (king)
-ส  t  ปราสาท  bpraa-sàat (palace)
-ฐ  t  ฐาน  thǎan (base)
-ฑ  t  มณฑป  mon-dòp (pavilion)
-ฒ  t  วิฑูรย์  wí-thuun (proper name)
-บ  p  พบ  phóp (to meet)
-ป  p  จับ  jàp (catch)
-พ  p  ลาพ  laap (farewell)
-ภ  p  ภาพ  phâap (picture)
-ฟ  p  ลอฟ (lofp, loanword)  lɔ́p
-ม  m  ทำ  tham (do)
-น  n  ดิน  din (soil)
-ณ  n  พจน  phót-jan (dictionary, part)
-ญ  n  กาญจน์  gaan (province name)
-ร  n  กร  gɔɔn (prefix, syllable-final n)
-ล  n  ผล  phǒn (result)
-ฬ  n  กีฬา  gii-laa (sport)
-ง  ŋ  กาง  gaaŋ (spread)
-ว  w  ดาว  daaw (star)
-ย  y  ไทย  thai (Thai)
-ห  — (silent)  —  —
-ฮ  — (silent)  —  —
-อ  — (silent / vowel carrier)  —  —
-```
+ 
 
 ### Update the “What’s New” changelog when adding a quiz
 
