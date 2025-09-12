@@ -5,6 +5,19 @@
   NS.ui = NS.ui || {};
   var logError = (NS.core && NS.core.error && NS.core.error.logError) || function(){};
 
+  // Manage lifecycle for the example overlay so only one is visible at a time
+  var exampleOverlayTimerId = null;
+  function removeExistingExampleOverlay() {
+    try {
+      if (exampleOverlayTimerId != null) {
+        clearTimeout(exampleOverlayTimerId);
+        exampleOverlayTimerId = null;
+      }
+      var existing = document.querySelector('.example-overlay');
+      if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+    } catch (_) {}
+  }
+
   function renderEnglishThaiSymbol(symbolEl, params) {
     try {
       const english = String((params && params.english) || '');
@@ -32,21 +45,40 @@
 
   function renderExample(feedbackEl, exampleText) {
     try {
+      // Clear any inline feedback content and remove previous overlays
       while (feedbackEl.firstChild) feedbackEl.removeChild(feedbackEl.firstChild);
+      removeExistingExampleOverlay();
       if (!exampleText) return;
-      const card = document.createElement('div');
-      card.className = 'example';
+
       var exampleLabel = (global.Utils && global.Utils.i18n && global.Utils.i18n.exampleLabel) || 'Example';
-      card.setAttribute('aria-label', exampleLabel);
-      const label = document.createElement('span');
+
+      // Build a full-screen overlay to showcase the example prominently
+      var overlay = document.createElement('div');
+      overlay.className = 'example-overlay';
+      try { overlay.setAttribute('role', 'dialog'); } catch (_) {}
+      try { overlay.setAttribute('aria-modal', 'true'); } catch (_) {}
+      try { overlay.setAttribute('aria-label', exampleLabel); } catch (_) {}
+
+      var card = document.createElement('div');
+      card.className = 'overlay-card';
+
+      var label = document.createElement('span');
       label.className = 'label';
       label.textContent = exampleLabel;
-      const text = document.createElement('div');
+
+      var text = document.createElement('div');
       text.className = 'text';
       text.textContent = String(exampleText);
+
       card.appendChild(label);
       card.appendChild(text);
-      feedbackEl.appendChild(card);
+      overlay.appendChild(card);
+
+      // Insert overlay at the end of body so it sits above the quiz
+      document.body.appendChild(overlay);
+
+      // Auto-dismiss shortly before auto-advance to the next question
+      exampleOverlayTimerId = setTimeout(function(){ removeExistingExampleOverlay(); }, 2600);
     } catch (e) { logError(e, 'ui.renderers.renderExample'); }
   }
 
