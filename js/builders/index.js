@@ -23,6 +23,38 @@
   const defaultElements = Utils.defaultElements;
 
   const QuizBuilders = {
+    'final-consonants': function() {
+      return Utils.fetchJSONCached('data/final-consonants.json').then(function(data){
+        return function init(){
+          var base = Utils.createQuizWithProgressiveDifficulty({ data: data, answerKey: 'final' });
+          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: 'final-consonants' }, base, {
+            renderSymbol: function(answer, els) {
+              els.symbolEl.textContent = answer.symbol;
+              try {
+                els.symbolEl.setAttribute('aria-label', (Utils.i18n.labelConsonantSymbolPrefix || 'Thai consonant symbol: ') + answer.symbol);
+              } catch (_) {}
+            },
+            ariaLabelForChoice: function(choice) {
+              return Utils.i18n.answerPrefix + choice.final;
+            },
+            onAnswered: function(ctx) {
+              if (!ctx || !ctx.correct) return;
+              try {
+                var ans = ctx.answer || {};
+                var line = '';
+                if (ans.exampleThai) {
+                  line = ans.exampleThai;
+                  if (ans.phonetic) line += ' — ' + ans.phonetic;
+                } else if (ans.phonetic) {
+                  line = ans.phonetic;
+                }
+                Utils.renderExample(document.getElementById('feedback'), line);
+              } catch (e) { Utils.logError && Utils.logError(e, 'final-consonants.onAnswered'); }
+            }
+          }));
+        };
+      });
+    },
     consonants: function() {
       Utils.ErrorHandler.safe(Utils.insertConsonantLegend)();
       return Utils.fetchJSONCached('data/consonants.json').then(function(data){

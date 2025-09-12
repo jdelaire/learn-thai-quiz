@@ -52,7 +52,8 @@
       days: 'questions-quiz',
       'body-parts': 'questions-quiz',
       prepositions: 'questions-quiz',
-      countries: 'questions-quiz'
+      countries: 'questions-quiz',
+      'final-consonants': 'questions-quiz'
     };
     return map[quizId] || null;
   }
