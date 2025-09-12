@@ -1,5 +1,15 @@
 [
   {
+    "id": "final-consonants",
+    "title": "Consonants in Final Position 📜",
+    "href": "quiz.html?quiz=final-consonants",
+    "description": "Practice Thai consonants in final position and their resulting sounds.",
+    "bullets": ["Final sound rules","English/Thai/phonetics examples","Emoji hints"],
+    "categories": ["Alphabet","Reading","Pronunciation"],
+    "bodyClass": "questions-quiz",
+    "proTip": "In final position, many Thai consonants collapse to <strong>k</strong>, <strong>t</strong>, or <strong>p</strong>. Nasals keep their sound (m, n, ŋ)."
+  },
+  {
     "id": "countries",
     "title": "Countries 🌍",
     "href": "quiz.html?quiz=countries",

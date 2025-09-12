@@ -42,6 +42,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Adjectives**: Common adjectives with Thai script, phonetics, emoji hints, and comparison examples
  - **Countries**: Country names with Thai script, phonetics, and flag emoji hints; example sentences on correct answers
  - **Vowels That Change Form**: Thai vowels that change their writing form between consonants; English/Thai/phonetics with examples and a quick reference table.
+ - **Consonants in Final Position (Individually)**: Thai consonants as final sounds with examples; maps to collapsed finals like k/t/p and nasals m/n/ŋ.
 
 ### Quick start (local)
 
@@ -228,6 +229,8 @@ body.color-quiz {
    - If you don’t need custom logic, you can skip a builder. The loader will automatically run a standard quiz from `data/<id>.json` using `phonetic` as the answer key.
    - If you need custom behavior (emoji rules, multiple datasets, special symbol rendering, examples), add a builder using the helper `makeStandardQuizBuilder(urls, transform)` or write a manual builder.
 4. **Style (optional)**: Add CSS rules in `styles.css` using `body.<id>-quiz` (e.g., `body.foods-quiz`) or the mapped class (e.g., `body.questions-quiz`). The loader ensures both exist.
+
+ 
 
 ### Update the “What’s New” changelog when adding a quiz
 
