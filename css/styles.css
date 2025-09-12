@@ -357,11 +357,13 @@ body.quiz-page .stats {
   display: inline-block;
   opacity: 0.95;
   font-size: clamp(0.9em, 1.8vw, 1em);
-  padding: 0.2em 0.6em;
+  padding: 0;
   margin-right: 0.6em;
-  border-radius: 8px;
-  background: rgba(0, 36, 125, 0.9);
-  color: #ffffff;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-brand);
+  border: none;
+  font-weight: 600;
 }
 
 .example-overlay .overlay-card .text {
@@ -386,11 +388,13 @@ body.quiz-page .stats {
   display: inline-block;
   opacity: 0.95;
   font-size: 0.9em;
-  padding: 0.1em 0.45em;
+  padding: 0;
   margin-right: 0.45em;
-  border-radius: 6px;
-  background: rgba(0, 36, 125, 0.9);
-  color: white;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-brand);
+  border: none;
+  font-weight: 600;
 }
 
 .example .text {
