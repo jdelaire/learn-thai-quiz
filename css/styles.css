@@ -407,10 +407,11 @@ body.quiz-page .stats {
 
 /* Emphasize the question word */
 .example-overlay .overlay-card .text .qword {
-  background: linear-gradient(180deg, rgba(40,167,69,0.15) 0%, rgba(40,167,69,0.0) 100%);
-  color: var(--color-success-strong);
-  padding: 0 0.1em;
-  border-radius: 4px;
+  background: none;
+  color: var(--color-success);
+  font-weight: 900;
+  padding: 0 0.02em;
+  border-radius: 2px;
 }
 
 /* Countdown timer */
