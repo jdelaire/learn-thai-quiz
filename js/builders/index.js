@@ -148,10 +148,10 @@
     time: makeStandardQuizBuilder(['data/time-keywords.json','data/time-formats.json','data/time-examples.json'], function(results) {
       const keyWords = results[0] || [];
       const timeFormats = results[1] || [];
-      const examples = results[2] || [];
+      const examples = results[2] || {};
       function englishOf(item) { return item.english || item.note || item.translation || ''; }
-      const pool = keyWords.concat(timeFormats, examples);
-      return { data: pool, buildSymbol: function(a){ return { english: englishOf(a), thai: a.thai || '' }; }, progressiveDifficulty: { choicesThresholds: [ { correctAnswers: 20, choices: 5 }, { correctAnswers: 40, choices: 6 }, { correctAnswers: 60, choices: 7 }, { correctAnswers: 80, choices: 8 } ] } };
+      const pool = keyWords.concat(timeFormats);
+      return { data: pool, examples: examples, exampleKey: function(a){ return englishOf(a); }, buildSymbol: function(a){ return { english: englishOf(a), thai: a.thai || '' }; }, progressiveDifficulty: { choicesThresholds: [ { correctAnswers: 20, choices: 5 }, { correctAnswers: 40, choices: 6 }, { correctAnswers: 60, choices: 7 }, { correctAnswers: 80, choices: 8 } ] } };
     }),
 
     tones: makeStandardQuizBuilder('data/tones.json', function(results) {
