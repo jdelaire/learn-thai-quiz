@@ -5,6 +5,9 @@
   --color-brand: #00247D;
   --color-brand-dark: #001a5a;
   --color-accent: #A51931;
+  --color-success: #28a745;
+  --color-success-strong: #1e7e34;
+  --color-success-soft: #eaf9f0;
 }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -332,7 +335,7 @@ body.quiz-page .stats {
 .example-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 45%), rgba(0, 0, 0, 0.55);
   display: grid;
   place-items: center;
   z-index: 9999;
@@ -345,20 +348,40 @@ body.quiz-page .stats {
   margin: 0 1em;
   background: var(--color-bg);
   color: var(--color-text);
-  border: 1px solid rgba(0, 36, 125, 0.2);
+  border: 2px solid rgba(40, 167, 69, 0.45);
   border-radius: 14px;
   padding: clamp(1em, 4vw, 1.4em) clamp(1.1em, 5vw, 1.6em);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.25), 0 24px 48px rgba(40,167,69,0.22);
   transform: scale(0.96);
   animation: cardPopIn 200ms ease forwards;
+  position: relative;
+  z-index: 1;
 }
 
 .example-overlay .overlay-card .heading {
-  display: block;
-  font-weight: 800;
-  font-size: clamp(1.1em, 2.4vw, 1.35em);
-  margin: 0 0 0.2em 0;
-  color: var(--color-brand);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+  font-size: clamp(1.2em, 2.6vw, 1.5em);
+  margin: 0 0 0.25em 0;
+  color: var(--color-success-strong);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+
+.celebrate-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: #ffffff;
+  font-weight: 900;
+  box-shadow: 0 8px 18px rgba(39,174,96,0.35), inset 0 -3px 6px rgba(0,0,0,0.15);
+  animation: badgePop 300ms ease-out both;
 }
 
 .example-overlay .overlay-card .label {
@@ -369,7 +392,7 @@ body.quiz-page .stats {
   margin-right: 0.6em;
   border-radius: 0;
   background: transparent;
-  color: var(--color-brand);
+  color: var(--color-success-strong);
   border: none;
   font-weight: 600;
 }
@@ -382,6 +405,59 @@ body.quiz-page .stats {
   line-height: 1.25;
 }
 
+/* Emphasize the question word */
+.example-overlay .overlay-card .text .qword {
+  background: none;
+  color: var(--color-success);
+  font-weight: 900;
+  padding: 0 0.02em;
+  border-radius: 2px;
+}
+
+/* Countdown timer */
+.example-overlay .overlay-card .timer {
+  position: relative;
+  height: 6px;
+  background: var(--color-success-soft);
+  border: 1px solid rgba(40,167,69,0.25);
+  border-radius: 9999px;
+  margin-top: 0.9em;
+  overflow: hidden;
+}
+.example-overlay .overlay-card .timer .timer-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(90deg, var(--color-success) 0%, var(--color-success-strong) 100%);
+  transform: translateX(0%);
+  animation: timerDrain var(--overlay-duration, 2600ms) linear forwards;
+}
+
+@keyframes timerDrain {
+  from { transform: translateX(0%); }
+  to { transform: translateX(100%); }
+}
+
+/* Falling flags layer behind the card */
+.example-overlay .flags-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.flag {
+  position: absolute;
+  top: -12px;
+  opacity: 0;
+  transform: translateY(-10px) rotate(0deg);
+  animation: flagFall 3200ms cubic-bezier(.23,1,.32,1) forwards;
+  will-change: transform, opacity;
+}
+
 @keyframes overlayFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -390,6 +466,18 @@ body.quiz-page .stats {
 @keyframes cardPopIn {
   from { transform: scale(0.96); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes flagFall {
+  0%   { opacity: 0; transform: translateY(-10px) rotate(0deg); }
+  10%  { opacity: 1; }
+  100% { opacity: 1; transform: translateY(120vh) rotate(var(--flag-rotate, 320deg)); }
+}
+
+@keyframes badgePop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .example .label {

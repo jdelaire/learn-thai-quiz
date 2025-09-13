@@ -50,41 +50,105 @@
       removeExistingExampleOverlay();
       if (!exampleText) return;
 
-      var exampleLabel = (global.Utils && global.Utils.i18n && global.Utils.i18n.exampleLabel) || 'Example';
       var correctHeading = (global.Utils && global.Utils.i18n && global.Utils.i18n.correctHeading) || 'Correct!';
+      var durationMs = 2600;
 
       // Build a full-screen overlay to showcase the example prominently
       var overlay = document.createElement('div');
       overlay.className = 'example-overlay';
       try { overlay.setAttribute('role', 'dialog'); } catch (_) {}
       try { overlay.setAttribute('aria-modal', 'true'); } catch (_) {}
-      try { overlay.setAttribute('aria-label', correctHeading + ' — ' + exampleLabel); } catch (_) {}
+      try { overlay.setAttribute('aria-label', correctHeading); } catch (_) {}
+      try { overlay.style.setProperty('--overlay-duration', durationMs + 'ms'); } catch (_) {}
 
       var card = document.createElement('div');
       card.className = 'overlay-card';
 
       var heading = document.createElement('div');
       heading.className = 'heading';
-      heading.textContent = correctHeading;
-
-      var label = document.createElement('span');
-      label.className = 'label';
-      label.textContent = exampleLabel;
+      var icon = document.createElement('span');
+      icon.className = 'celebrate-icon';
+      try { icon.setAttribute('aria-hidden', 'true'); } catch (_) {}
+      icon.textContent = '\u2713';
+      heading.appendChild(icon);
+      heading.appendChild(document.createTextNode(correctHeading));
 
       var text = document.createElement('div');
       text.className = 'text';
-      text.textContent = String(exampleText);
+      (function buildHighlightedText(){
+        try {
+          var raw = String(exampleText);
+          var parts = raw.split('→');
+          var english = String((parts[0] || raw)).trim();
+          var tail = parts[1] ? (' → ' + String(parts[1]).trim()) : '';
+
+          // Highlight a question phrase at the start of the English segment
+          var match = null;
+          var patterns = [
+            /^(How much)\b/i,
+            /^(How many)\b/i,
+            /^(Have you ever)\b/i,
+            /^(Is it)\b/i,
+            /^(Can\b[^?]*)/i,
+            /^(What|Who|Where|When|Why|How|Which)\b/i
+          ];
+          for (var i = 0; i < patterns.length; i++) {
+            var m = patterns[i].exec(english);
+            if (m) { match = m[1]; break; }
+          }
+
+          if (match) {
+            var mark = document.createElement('mark');
+            mark.className = 'qword';
+            mark.textContent = english.slice(0, match.length);
+            text.appendChild(mark);
+            text.appendChild(document.createTextNode(english.slice(match.length)));
+          } else {
+            text.appendChild(document.createTextNode(english));
+          }
+
+          if (tail) { text.appendChild(document.createTextNode(tail)); }
+        } catch (_) {
+          text.textContent = String(exampleText);
+        }
+      })();
+
+      // Visual countdown timer bar synced with auto-dismiss
+      var timer = document.createElement('div');
+      timer.className = 'timer';
+      var timerFill = document.createElement('div');
+      timerFill.className = 'timer-fill';
+      timer.appendChild(timerFill);
 
       card.appendChild(heading);
-      card.appendChild(label);
       card.appendChild(text);
+      card.appendChild(timer);
+      // Falling Thai flags background layer
+      var flagsWrap = document.createElement('div');
+      flagsWrap.className = 'flags-wrap';
+      try { flagsWrap.setAttribute('aria-hidden', 'true'); } catch (_) {}
+      var flagCount = 22;
+      for (var i = 0; i < flagCount; i++) {
+        var flag = document.createElement('span');
+        flag.className = 'flag';
+        flag.textContent = '\uD83C\uDDF9\uD83C\uDDED'; // 🇹🇭
+        var left = 2 + Math.random() * 96;
+        var sizePx = 14 + Math.floor(Math.random() * 9); // 14–22px
+        flag.style.left = left + '%';
+        flag.style.fontSize = sizePx + 'px';
+        flag.style.animationDelay = Math.floor(Math.random() * 220) + 'ms';
+        flag.style.setProperty('--flag-rotate', (200 + Math.floor(Math.random() * 280)) + 'deg');
+        flag.style.animationDuration = (3600 + Math.floor(Math.random() * 2200)) + 'ms';
+        flagsWrap.appendChild(flag);
+      }
+      overlay.appendChild(flagsWrap);
       overlay.appendChild(card);
 
       // Insert overlay at the end of body so it sits above the quiz
       document.body.appendChild(overlay);
 
       // Auto-dismiss shortly before auto-advance to the next question
-      exampleOverlayTimerId = setTimeout(function(){ removeExistingExampleOverlay(); }, 2600);
+      exampleOverlayTimerId = setTimeout(function(){ removeExistingExampleOverlay(); }, durationMs);
     } catch (e) { logError(e, 'ui.renderers.renderExample'); }
   }
 
