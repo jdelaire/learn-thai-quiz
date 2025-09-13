@@ -405,8 +405,8 @@ body.quiz-page .stats {
   line-height: 1.25;
 }
 
-/* Confetti layer behind the card */
-.example-overlay .confetti-wrap {
+/* Falling flags layer behind the card */
+.example-overlay .flags-wrap {
   position: absolute;
   inset: 0;
   overflow: hidden;
@@ -414,15 +414,12 @@ body.quiz-page .stats {
   z-index: 0;
 }
 
-.confetti {
+.flag {
   position: absolute;
   top: -12px;
-  width: 8px;
-  height: 14px;
   opacity: 0;
-  border-radius: 2px;
   transform: translateY(-10px) rotate(0deg);
-  animation: confettiFall 2300ms cubic-bezier(.23,1,.32,1) forwards;
+  animation: flagFall 2300ms cubic-bezier(.23,1,.32,1) forwards;
   will-change: transform, opacity;
 }
 
@@ -436,10 +433,10 @@ body.quiz-page .stats {
   to { transform: scale(1); opacity: 1; }
 }
 
-@keyframes confettiFall {
+@keyframes flagFall {
   0%   { opacity: 0; transform: translateY(-10px) rotate(0deg); }
   10%  { opacity: 1; }
-  100% { opacity: 1; transform: translateY(120vh) rotate(var(--confetti-rotate, 320deg)); }
+  100% { opacity: 1; transform: translateY(120vh) rotate(var(--flag-rotate, 320deg)); }
 }
 
 @keyframes badgePop {

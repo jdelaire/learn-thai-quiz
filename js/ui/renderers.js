@@ -83,26 +83,24 @@
       card.appendChild(heading);
       card.appendChild(label);
       card.appendChild(text);
-      // Confetti background layer
-      var confettiWrap = document.createElement('div');
-      confettiWrap.className = 'confetti-wrap';
-      try { confettiWrap.setAttribute('aria-hidden', 'true'); } catch (_) {}
-      var colors = ['#27ae60','#2ecc71','#f39c12','#3498db','#A51931','#00247D','#ff6b6b','#ffd166','#06d6a0','#118ab2'];
-      for (var i = 0; i < 24; i++) {
-        var piece = document.createElement('span');
-        piece.className = 'confetti';
+      // Falling Thai flags background layer
+      var flagsWrap = document.createElement('div');
+      flagsWrap.className = 'flags-wrap';
+      try { flagsWrap.setAttribute('aria-hidden', 'true'); } catch (_) {}
+      var flagCount = 22;
+      for (var i = 0; i < flagCount; i++) {
+        var flag = document.createElement('span');
+        flag.className = 'flag';
+        flag.textContent = '\uD83C\uDDF9\uD83C\uDDED'; // 🇹🇭
         var left = 2 + Math.random() * 96;
-        var widthPx = 6 + Math.floor(Math.random() * 5);
-        var heightPx = 10 + Math.floor(Math.random() * 7);
-        piece.style.left = left + '%';
-        piece.style.width = widthPx + 'px';
-        piece.style.height = heightPx + 'px';
-        piece.style.background = colors[i % colors.length];
-        piece.style.animationDelay = Math.floor(Math.random() * 200) + 'ms';
-        piece.style.setProperty('--confetti-rotate', (240 + Math.floor(Math.random() * 240)) + 'deg');
-        confettiWrap.appendChild(piece);
+        var sizePx = 14 + Math.floor(Math.random() * 9); // 14–22px
+        flag.style.left = left + '%';
+        flag.style.fontSize = sizePx + 'px';
+        flag.style.animationDelay = Math.floor(Math.random() * 220) + 'ms';
+        flag.style.setProperty('--flag-rotate', (200 + Math.floor(Math.random() * 280)) + 'deg');
+        flagsWrap.appendChild(flag);
       }
-      overlay.appendChild(confettiWrap);
+      overlay.appendChild(flagsWrap);
       overlay.appendChild(card);
 
       // Insert overlay at the end of body so it sits above the quiz
