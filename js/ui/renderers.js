@@ -48,10 +48,10 @@
       // Clear any inline feedback content and remove previous overlays
       while (feedbackEl.firstChild) feedbackEl.removeChild(feedbackEl.firstChild);
       removeExistingExampleOverlay();
-      if (!exampleText) return;
 
       var correctHeading = (global.Utils && global.Utils.i18n && global.Utils.i18n.correctHeading) || 'Correct!';
       var durationMs = 2600;
+      var hasExample = !!exampleText;
 
       // Build a full-screen overlay to showcase the example prominently
       var overlay = document.createElement('div');
@@ -76,6 +76,7 @@
       var text = document.createElement('div');
       text.className = 'text';
       (function buildHighlightedText(){
+        if (!hasExample) { return; }
         try {
           var raw = String(exampleText);
           var parts = raw.split('→');
@@ -109,7 +110,7 @@
 
           if (tail) { text.appendChild(document.createTextNode(tail)); }
         } catch (_) {
-          text.textContent = String(exampleText);
+          try { text.textContent = String(exampleText); } catch (_) {}
         }
       })();
 
