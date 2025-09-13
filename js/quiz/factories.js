@@ -56,14 +56,16 @@
       ariaLabelForChoice: function(choice){ return common.i18n.answerPrefix + (choice && choice[answerKey]); },
       isCorrect: function(choice, answer){ return (choice && choice[answerKey]) === (answer && answer[answerKey]); },
       onAnswered: function(ctx){
-        if (!examples) return;
         const correct = ctx && ctx.correct;
         if (!correct) return;
         try {
           const fb = document.getElementById('feedback');
-          const ans = ctx && ctx.answer || {};
-          const key = (typeof exampleKeyFn === 'function') ? exampleKeyFn(ans) : (ans && ans.english);
-          const ex = examples[key];
+          var ex = null;
+          if (examples) {
+            const ans = ctx && ctx.answer || {};
+            const key = (typeof exampleKeyFn === 'function') ? exampleKeyFn(ans) : (ans && ans.english);
+            ex = examples[key];
+          }
           renderers.renderExample(fb, ex);
         } catch (e) { logError(e, 'quiz.factories.onAnswered'); }
       }
