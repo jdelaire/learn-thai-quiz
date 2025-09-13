@@ -65,7 +65,12 @@
 
       var heading = document.createElement('div');
       heading.className = 'heading';
-      heading.textContent = correctHeading;
+      var icon = document.createElement('span');
+      icon.className = 'celebrate-icon';
+      try { icon.setAttribute('aria-hidden', 'true'); } catch (_) {}
+      icon.textContent = '\u2713';
+      heading.appendChild(icon);
+      heading.appendChild(document.createTextNode(correctHeading));
 
       var label = document.createElement('span');
       label.className = 'label';
@@ -78,6 +83,26 @@
       card.appendChild(heading);
       card.appendChild(label);
       card.appendChild(text);
+      // Confetti background layer
+      var confettiWrap = document.createElement('div');
+      confettiWrap.className = 'confetti-wrap';
+      try { confettiWrap.setAttribute('aria-hidden', 'true'); } catch (_) {}
+      var colors = ['#27ae60','#2ecc71','#f39c12','#3498db','#A51931','#00247D','#ff6b6b','#ffd166','#06d6a0','#118ab2'];
+      for (var i = 0; i < 24; i++) {
+        var piece = document.createElement('span');
+        piece.className = 'confetti';
+        var left = 2 + Math.random() * 96;
+        var widthPx = 6 + Math.floor(Math.random() * 5);
+        var heightPx = 10 + Math.floor(Math.random() * 7);
+        piece.style.left = left + '%';
+        piece.style.width = widthPx + 'px';
+        piece.style.height = heightPx + 'px';
+        piece.style.background = colors[i % colors.length];
+        piece.style.animationDelay = Math.floor(Math.random() * 200) + 'ms';
+        piece.style.setProperty('--confetti-rotate', (240 + Math.floor(Math.random() * 240)) + 'deg');
+        confettiWrap.appendChild(piece);
+      }
+      overlay.appendChild(confettiWrap);
       overlay.appendChild(card);
 
       // Insert overlay at the end of body so it sits above the quiz
