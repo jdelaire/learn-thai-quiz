@@ -222,9 +222,10 @@
       return { data: data, buildSymbol: function(a){ var eng = (a && a.english) ? (a.english + (a.planet ? ' (' + a.planet + ')' : '')) : ''; return { english: eng, thai: (a && a.thai) || '', emoji: (a && a.emoji) || '' }; } };
     }),
 
-    prepositions: makeStandardQuizBuilder(['data/prepositions.json'], function(results) {
+    prepositions: makeStandardQuizBuilder(['data/prepositions.json','data/prepositions-examples.json'], function(results) {
       const data = results[0] || [];
-      return { data: data, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      const examples = results[1] || {};
+      return { data: data, examples: examples, exampleKey: function(a){ return a.english; }, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
     }),
 
     countries: makeStandardQuizBuilder(['data/countries.json','data/countries-examples.json'], function(results) {
