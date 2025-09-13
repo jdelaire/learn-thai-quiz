@@ -124,7 +124,15 @@
             },
             renderButtonContent: function(choice) { return choice.phonetic; },
             ariaLabelForChoice: function(choice) { return Utils.i18n.answerPrefix + choice.phonetic; },
-            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; }
+            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
+            onAnswered: function(ctx) {
+              if (!ctx || !ctx.correct) return;
+              try {
+                var ans = ctx.answer || {};
+                var text = (ans.english || '') + ' → ' + (ans.thai || '') + (ans.phonetic ? (' — ' + ans.phonetic) : '');
+                Utils.renderExample(document.getElementById('feedback'), text);
+              } catch (e) { Utils.logError && Utils.logError(e, 'colors.onAnswered'); }
+            }
           });
         };
       });
