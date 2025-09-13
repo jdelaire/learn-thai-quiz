@@ -22,6 +22,7 @@
   const i18n = {
     answerPrefix: 'Answer: ',
     exampleLabel: 'Example',
+    correctHeading: 'Correct!',
     labelEnglishThaiPrefix: 'English and Thai: ',
     labelNumberThaiPrefix: 'Number and Thai: ',
     labelClassMarkerLengthPrefix: 'Class + Marker + Length: ',
