@@ -353,6 +353,14 @@ body.quiz-page .stats {
   animation: cardPopIn 200ms ease forwards;
 }
 
+.example-overlay .overlay-card .heading {
+  display: block;
+  font-weight: 800;
+  font-size: clamp(1.1em, 2.4vw, 1.35em);
+  margin: 0 0 0.2em 0;
+  color: var(--color-brand);
+}
+
 .example-overlay .overlay-card .label {
   display: inline-block;
   opacity: 0.95;

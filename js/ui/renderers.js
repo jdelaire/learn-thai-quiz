@@ -51,16 +51,21 @@
       if (!exampleText) return;
 
       var exampleLabel = (global.Utils && global.Utils.i18n && global.Utils.i18n.exampleLabel) || 'Example';
+      var correctHeading = (global.Utils && global.Utils.i18n && global.Utils.i18n.correctHeading) || 'Correct!';
 
       // Build a full-screen overlay to showcase the example prominently
       var overlay = document.createElement('div');
       overlay.className = 'example-overlay';
       try { overlay.setAttribute('role', 'dialog'); } catch (_) {}
       try { overlay.setAttribute('aria-modal', 'true'); } catch (_) {}
-      try { overlay.setAttribute('aria-label', exampleLabel); } catch (_) {}
+      try { overlay.setAttribute('aria-label', correctHeading + ' — ' + exampleLabel); } catch (_) {}
 
       var card = document.createElement('div');
       card.className = 'overlay-card';
+
+      var heading = document.createElement('div');
+      heading.className = 'heading';
+      heading.textContent = correctHeading;
 
       var label = document.createElement('span');
       label.className = 'label';
@@ -70,6 +75,7 @@
       text.className = 'text';
       text.textContent = String(exampleText);
 
+      card.appendChild(heading);
       card.appendChild(label);
       card.appendChild(text);
       overlay.appendChild(card);
