@@ -52,6 +52,7 @@
 
       var exampleLabel = (global.Utils && global.Utils.i18n && global.Utils.i18n.exampleLabel) || 'Example';
       var correctHeading = (global.Utils && global.Utils.i18n && global.Utils.i18n.correctHeading) || 'Correct!';
+      var durationMs = 2600;
 
       // Build a full-screen overlay to showcase the example prominently
       var overlay = document.createElement('div');
@@ -59,6 +60,7 @@
       try { overlay.setAttribute('role', 'dialog'); } catch (_) {}
       try { overlay.setAttribute('aria-modal', 'true'); } catch (_) {}
       try { overlay.setAttribute('aria-label', correctHeading + ' — ' + exampleLabel); } catch (_) {}
+      try { overlay.style.setProperty('--overlay-duration', durationMs + 'ms'); } catch (_) {}
 
       var card = document.createElement('div');
       card.className = 'overlay-card';
@@ -80,9 +82,17 @@
       text.className = 'text';
       text.textContent = String(exampleText);
 
+      // Visual countdown timer bar synced with auto-dismiss
+      var timer = document.createElement('div');
+      timer.className = 'timer';
+      var timerFill = document.createElement('div');
+      timerFill.className = 'timer-fill';
+      timer.appendChild(timerFill);
+
       card.appendChild(heading);
       card.appendChild(label);
       card.appendChild(text);
+      card.appendChild(timer);
       // Falling Thai flags background layer
       var flagsWrap = document.createElement('div');
       flagsWrap.className = 'flags-wrap';
@@ -107,7 +117,7 @@
       document.body.appendChild(overlay);
 
       // Auto-dismiss shortly before auto-advance to the next question
-      exampleOverlayTimerId = setTimeout(function(){ removeExistingExampleOverlay(); }, 2600);
+      exampleOverlayTimerId = setTimeout(function(){ removeExistingExampleOverlay(); }, durationMs);
     } catch (e) { logError(e, 'ui.renderers.renderExample'); }
   }
 

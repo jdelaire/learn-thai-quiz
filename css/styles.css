@@ -405,6 +405,32 @@ body.quiz-page .stats {
   line-height: 1.25;
 }
 
+/* Countdown timer */
+.example-overlay .overlay-card .timer {
+  position: relative;
+  height: 6px;
+  background: var(--color-success-soft);
+  border: 1px solid rgba(40,167,69,0.25);
+  border-radius: 9999px;
+  margin-top: 0.9em;
+  overflow: hidden;
+}
+.example-overlay .overlay-card .timer .timer-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(90deg, var(--color-success) 0%, var(--color-success-strong) 100%);
+  transform: translateX(0%);
+  animation: timerDrain var(--overlay-duration, 2600ms) linear forwards;
+}
+
+@keyframes timerDrain {
+  from { transform: translateX(0%); }
+  to { transform: translateX(100%); }
+}
+
 /* Falling flags layer behind the card */
 .example-overlay .flags-wrap {
   position: absolute;
