@@ -45,6 +45,8 @@
     insertProTip: ui.insertProTip,
     insertConsonantLegend: ui.insertConsonantLegend,
     renderVowelSymbol: ui.renderVowelSymbol,
+    renderConsonantSymbol: ui.renderConsonantSymbol,
+    dismissExampleOverlay: ui.dismissExampleOverlay,
 
     // progressive & factories
     createProgressiveDifficulty: prog.createProgressiveDifficulty,

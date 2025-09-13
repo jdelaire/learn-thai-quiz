@@ -30,6 +30,7 @@
     labelConsonantSymbolPrefix: 'Thai consonant symbol: ',
     labelColorPhrasePrefix: 'Thai color phrase: ',
     statsStarsAriaLabel: 'Completion stars',
+    playerNameEditLabel: 'Player name - click to edit',
     noDataMessage: 'No data available for this quiz.'
   };
 

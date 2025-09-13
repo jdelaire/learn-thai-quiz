@@ -242,12 +242,31 @@
     } catch (e) { logError(e, 'ui.renderers.renderVowelSymbol'); }
   }
 
+  function renderConsonantSymbol(symbolEl, symbol) {
+    try {
+      const raw = String(symbol || '');
+      symbolEl.textContent = raw;
+      try {
+        var prefix = (global.Utils && global.Utils.i18n && global.Utils.i18n.labelConsonantSymbolPrefix) || 'Thai consonant symbol: ';
+        symbolEl.setAttribute('aria-label', prefix + raw);
+      } catch (_) {}
+    } catch (e) { logError(e, 'ui.renderers.renderConsonantSymbol'); }
+  }
+
+  function dismissExampleOverlay() {
+    try {
+      removeExistingExampleOverlay();
+    } catch (e) { logError(e, 'ui.renderers.dismissExampleOverlay'); }
+  }
+
   NS.ui.renderers = {
     renderEnglishThaiSymbol: renderEnglishThaiSymbol,
     renderExample: renderExample,
     insertProTip: insertProTip,
     insertConsonantLegend: insertConsonantLegend,
-    renderVowelSymbol: renderVowelSymbol
+    renderVowelSymbol: renderVowelSymbol,
+    renderConsonantSymbol: renderConsonantSymbol,
+    dismissExampleOverlay: dismissExampleOverlay
   };
 })(window);
 

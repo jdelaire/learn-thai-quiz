@@ -447,6 +447,12 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
 - `Utils.renderVowelSymbol(symbolEl, symbol)`
   - Render vowel symbols with the shaping‑safe placeholder behavior (ko kai replacement) and set `aria-label`.
 
+- `Utils.renderConsonantSymbol(symbolEl, symbol)`
+  - Renders a consonant symbol and sets an accessible `aria-label` using i18n prefix. Use in builders instead of duplicating aria‑label logic.
+
+- `Utils.dismissExampleOverlay()`
+  - Programmatically remove any active example overlay. The quiz engine now calls this before rendering a new question; you can also call it from custom flows if needed.
+
 #### Player name management
 
 - `Utils.getPlayerDisplayName()`
