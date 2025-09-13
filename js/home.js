@@ -57,7 +57,10 @@
         nameElement.setAttribute('title', 'Click to edit your name');
         nameElement.setAttribute('role', 'button');
         nameElement.setAttribute('tabindex', '0');
-        nameElement.setAttribute('aria-label', 'Player name - click to edit');
+        try {
+          var label = (Utils && Utils.i18n && Utils.i18n.playerNameEditLabel) || 'Player name - click to edit';
+          nameElement.setAttribute('aria-label', label);
+        } catch (_) { nameElement.setAttribute('aria-label', 'Player name - click to edit'); }
 
         // Refresh avatar to reflect new initial (player card only)
         try {
@@ -76,7 +79,10 @@
         nameElement.setAttribute('title', 'Click to edit your name');
         nameElement.setAttribute('role', 'button');
         nameElement.setAttribute('tabindex', '0');
-        nameElement.setAttribute('aria-label', 'Player name - click to edit');
+        try {
+          var label = (Utils && Utils.i18n && Utils.i18n.playerNameEditLabel) || 'Player name - click to edit';
+          nameElement.setAttribute('aria-label', label);
+        } catch (_) { nameElement.setAttribute('aria-label', 'Player name - click to edit'); }
       }
       
       input.addEventListener('blur', saveName);
@@ -109,7 +115,10 @@
       playerNameEl.setAttribute('title', 'Click to edit your name');
       playerNameEl.setAttribute('role', 'button');
       playerNameEl.setAttribute('tabindex', '0');
-      playerNameEl.setAttribute('aria-label', 'Player name - click to edit');
+      try {
+        var label = (Utils && Utils.i18n && Utils.i18n.playerNameEditLabel) || 'Player name - click to edit';
+        playerNameEl.setAttribute('aria-label', label);
+      } catch (_) { playerNameEl.setAttribute('aria-label', 'Player name - click to edit'); }
       
       // Single click handler
       playerNameEl.addEventListener('click', function(e) {
@@ -610,7 +619,12 @@
           const starsText = Utils.formatStars(starsCount);
           starsWrap.textContent = starsText || '';
           if (starsText) {
-            starsWrap.setAttribute('aria-label', 'Completion stars');
+            try {
+              var sl = (Utils && Utils.i18n && Utils.i18n.statsStarsAriaLabel) || 'Completion stars';
+              starsWrap.setAttribute('aria-label', sl);
+            } catch (_) {
+              starsWrap.setAttribute('aria-label', 'Completion stars');
+            }
             starsWrap.title = Utils.getStarRulesTooltip();
           }
         } catch (_) {}

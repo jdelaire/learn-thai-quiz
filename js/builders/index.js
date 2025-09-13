@@ -28,12 +28,7 @@
         return function init(){
           var base = Utils.createQuizWithProgressiveDifficulty({ data: data, answerKey: 'final' });
           ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: 'final-consonants' }, base, {
-            renderSymbol: function(answer, els) {
-              els.symbolEl.textContent = answer.symbol;
-              try {
-                els.symbolEl.setAttribute('aria-label', (Utils.i18n.labelConsonantSymbolPrefix || 'Thai consonant symbol: ') + answer.symbol);
-              } catch (_) {}
-            },
+            renderSymbol: function(answer, els) { Utils.ErrorHandler.safe(Utils.renderConsonantSymbol)(els.symbolEl, answer.symbol); },
             ariaLabelForChoice: function(choice) {
               return Utils.i18n.answerPrefix + choice.final;
             },
@@ -61,12 +56,7 @@
         return function init(){
           var base = Utils.createQuizWithProgressiveDifficulty({ data: data, answerKey: 'name' });
           ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: 'consonants' }, base, {
-            renderSymbol: function(answer, els) {
-              els.symbolEl.textContent = answer.symbol;
-              try {
-                els.symbolEl.setAttribute('aria-label', (Utils.i18n.labelConsonantSymbolPrefix || 'Thai consonant symbol: ') + answer.symbol);
-              } catch (_) {}
-            },
+            renderSymbol: function(answer, els) { Utils.ErrorHandler.safe(Utils.renderConsonantSymbol)(els.symbolEl, answer.symbol); },
             ariaLabelForChoice: function(choice) {
               return Utils.i18n.answerPrefix + choice.name + ' (' + choice.meaning + ')';
             },
