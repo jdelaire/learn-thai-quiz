@@ -414,6 +414,17 @@ body.quiz-page .stats {
   border-radius: 2px;
 }
 
+/* Highlight for the selected word across languages */
+.example-overlay .overlay-card .text .sel {
+  background: none;
+  color: var(--color-success);
+  font-weight: 900;
+  padding: 0 0.02em;
+  border-radius: 2px;
+}
+/* Optional subtle variations per language (currently same color) */
+
+
 /* Countdown timer */
 .example-overlay .overlay-card .timer {
   position: relative;

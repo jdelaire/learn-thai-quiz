@@ -61,12 +61,17 @@
         try {
           const fb = document.getElementById('feedback');
           var ex = null;
+          var ans = ctx && ctx.answer || null;
           if (examples) {
-            const ans = ctx && ctx.answer || {};
-            const key = (typeof exampleKeyFn === 'function') ? exampleKeyFn(ans) : (ans && ans.english);
+            const key = (typeof exampleKeyFn === 'function') ? exampleKeyFn(ans || {}) : (ans && ans.english);
             ex = examples[key];
           }
-          renderers.renderExample(fb, ex);
+          // Pass highlight info when answer fields are available
+          if (ans && (ans.english || ans.thai || ans.phonetic)) {
+            renderers.renderExample(fb, { text: ex, highlight: { english: ans.english || '', thai: ans.thai || '', phonetic: ans.phonetic || '' } });
+          } else {
+            renderers.renderExample(fb, ex);
+          }
         } catch (e) { logError(e, 'quiz.factories.onAnswered'); }
       }
     };
