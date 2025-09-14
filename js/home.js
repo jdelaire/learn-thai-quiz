@@ -234,15 +234,11 @@
             a.className = 'resume-link';
             a.href = meta.href || ('quiz.html?quiz=' + latest.quizId);
             a.textContent = meta.title || latest.quizId;
-            a.setAttribute('aria-label', 'Resume your quiz ' + (meta.title || latest.quizId));
-
-            const sub = document.createElement('div');
-            sub.className = 'resume-sub';
-            sub.textContent = 'Continue where you left off';
+            a.setAttribute('aria-label', 'Resume your latest quiz ' + (meta.title || latest.quizId));
 
             resumeEl.appendChild(label);
             resumeEl.appendChild(a);
-            resumeEl.appendChild(sub);
+            
             resumeEl.hidden = false;
           })
           .catch(function(err){

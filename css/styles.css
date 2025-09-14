@@ -938,10 +938,6 @@ body.home .socials a.chip {
 .player-resume .resume-link:hover {
   color: var(--color-accent);
 }
-.player-resume .resume-sub {
-  font-size: 0.85em;
-  opacity: 0.9;
-}
 
 .pt-line {
   display: block;
