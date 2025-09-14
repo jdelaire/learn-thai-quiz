@@ -405,6 +405,20 @@ body.quiz-page .stats {
   line-height: 1.25;
 }
 
+/* Highlight English and Thai in the overlay example */
+.example-overlay .overlay-card .text .ans {
+  padding: 0 0.04em;
+  border-radius: 4px;
+}
+.example-overlay .overlay-card .text .ans-en {
+  background: rgba(40,167,69,0.08);
+  box-shadow: inset 0 -2px 0 rgba(40,167,69,0.35);
+}
+.example-overlay .overlay-card .text .ans-th {
+  background: rgba(0,36,125,0.08);
+  box-shadow: inset 0 -2px 0 rgba(0,36,125,0.35);
+}
+
 /* Emphasize the question word */
 .example-overlay .overlay-card .text .qword {
   background: none;
