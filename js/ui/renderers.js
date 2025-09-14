@@ -81,22 +81,7 @@
           var raw = String(exampleText);
           var parts = raw.split('→');
           var english = String((parts[0] || raw)).trim();
-          var rhsRaw = parts[1] ? String(parts[1]).trim() : '';
-
-          // Prepare Thai and remainder (e.g., phonetic after an em dash)
-          var thai = '';
-          var remainder = '';
-          if (rhsRaw) {
-            var dashParts = rhsRaw.split('—');
-            thai = String((dashParts[0] || '').trim());
-            if (dashParts.length > 1) {
-              remainder = ' — ' + String(dashParts.slice(1).join('—')).trim();
-            }
-          }
-
-          // English segment container with optional question-word highlight
-          var enWrap = document.createElement('span');
-          enWrap.className = 'ans ans-en';
+          var tail = parts[1] ? (' → ' + String(parts[1]).trim()) : '';
 
           // Highlight a question phrase at the start of the English segment
           var match = null;
@@ -114,25 +99,16 @@
           }
 
           if (match) {
-            var qmark = document.createElement('mark');
-            qmark.className = 'qword';
-            qmark.textContent = english.slice(0, match.length);
-            enWrap.appendChild(qmark);
-            enWrap.appendChild(document.createTextNode(english.slice(match.length)));
+            var mark = document.createElement('mark');
+            mark.className = 'qword';
+            mark.textContent = english.slice(0, match.length);
+            text.appendChild(mark);
+            text.appendChild(document.createTextNode(english.slice(match.length)));
           } else {
-            enWrap.appendChild(document.createTextNode(english));
+            text.appendChild(document.createTextNode(english));
           }
-          text.appendChild(enWrap);
 
-          // Thai segment (if present)
-          if (rhsRaw) {
-            text.appendChild(document.createTextNode(' → '));
-            var thWrap = document.createElement('span');
-            thWrap.className = 'ans ans-th';
-            thWrap.textContent = thai || rhsRaw;
-            text.appendChild(thWrap);
-            if (remainder) { text.appendChild(document.createTextNode(remainder)); }
-          }
+          if (tail) { text.appendChild(document.createTextNode(tail)); }
         } catch (_) {
           try { text.textContent = String(exampleText); } catch (_) {}
         }
