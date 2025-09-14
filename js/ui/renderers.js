@@ -53,6 +53,19 @@
       var durationMs = 2600;
       var hasExample = !!exampleText;
 
+      // Support extended API: exampleText can be an object { text: string, highlight: { english?, thai?, phonetic? } }
+      var exampleTextStr = '';
+      var highlight = null;
+      try {
+        if (exampleText && typeof exampleText === 'object' && exampleText.nodeType == null) {
+          exampleTextStr = String(exampleText.text || '');
+          highlight = exampleText.highlight || null;
+        } else {
+          exampleTextStr = String(exampleText || '');
+        }
+      } catch (_) { exampleTextStr = String(exampleText || ''); }
+      hasExample = !!exampleTextStr;
+
       // Build a full-screen overlay to showcase the example prominently
       var overlay = document.createElement('div');
       overlay.className = 'example-overlay';
@@ -78,39 +91,118 @@
       (function buildHighlightedText(){
         if (!hasExample) { return; }
         try {
-          var raw = String(exampleText);
-          var parts = raw.split('→');
-          var english = String((parts[0] || raw)).trim();
-          var tail = parts[1] ? (' → ' + String(parts[1]).trim()) : '';
+          var raw = String(exampleTextStr);
 
-          // Highlight a question phrase at the start of the English segment
-          var match = null;
-          var patterns = [
-            /^(How much)\b/i,
-            /^(How many)\b/i,
-            /^(Have you ever)\b/i,
-            /^(Is it)\b/i,
-            /^(Can\b[^?]*)/i,
-            /^(What|Who|Where|When|Why|How|Which)\b/i
-          ];
-          for (var i = 0; i < patterns.length; i++) {
-            var m = patterns[i].exec(english);
-            if (m) { match = m[1]; break; }
-          }
+          // If highlight info is provided, prioritize highlighting the selected word(s)
+          if (highlight && (highlight.english || highlight.thai || highlight.phonetic)) {
+            // Compute first match ranges for each highlight without overlapping
+            function escapeRegExp(s){ return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+            function findRange(hay, needle, opts){
+              if (!needle) return null;
+              var h = String(hay);
+              var n = String(needle);
+              if (!n) return null;
+              if (opts && opts.mode === 'regex') {
+                var m = (opts.regex).exec(h);
+                if (m) return { start: m.index, end: m.index + m[0].length, kind: opts.kind };
+                return null;
+              }
+              if (opts && opts.caseInsensitive) {
+                var lc = h.toLowerCase();
+                var ni = n.toLowerCase();
+                var idx = lc.indexOf(ni);
+                if (idx >= 0) return { start: idx, end: idx + ni.length, kind: opts.kind };
+                return null;
+              }
+              var i = h.indexOf(n);
+              return (i >= 0) ? { start: i, end: i + n.length, kind: opts && opts.kind } : null;
+            }
+            var candidates = [];
+            try {
+              if (highlight.english) {
+                var reEn = new RegExp('\\b' + escapeRegExp(highlight.english) + '\\b', 'i');
+                var rEn = findRange(raw, null, { mode: 'regex', regex: reEn, kind: 'en' });
+                if (rEn) { candidates.push(rEn); }
+                else {
+                  var rEnFallback = findRange(raw, highlight.english, { caseInsensitive: true, kind: 'en' });
+                  if (rEnFallback) candidates.push(rEnFallback);
+                }
+              }
+            } catch (_) {
+              var rEn2 = findRange(raw, highlight.english, { caseInsensitive: true, kind: 'en' });
+              if (rEn2) candidates.push(rEn2);
+            }
+            if (highlight.thai) {
+              var rTh = findRange(raw, highlight.thai, { caseInsensitive: false, kind: 'th' });
+              if (rTh) candidates.push(rTh);
+            }
+            if (highlight.phonetic) {
+              // Simple case-insensitive substring match (romanized words separated by spaces)
+              var rPh = findRange(raw, highlight.phonetic, { caseInsensitive: true, kind: 'ph' });
+              if (rPh) candidates.push(rPh);
+            }
 
-          if (match) {
-            var mark = document.createElement('mark');
-            mark.className = 'qword';
-            mark.textContent = english.slice(0, match.length);
-            text.appendChild(mark);
-            text.appendChild(document.createTextNode(english.slice(match.length)));
+            if (candidates.length === 0) {
+              text.appendChild(document.createTextNode(raw));
+            } else {
+              // Resolve overlaps: sort by start, then by longer length first
+              candidates.sort(function(a, b){ if (a.start === b.start) return (b.end - b.start) - (a.end - a.start); return a.start - b.start; });
+              var merged = [];
+              for (var ci = 0; ci < candidates.length; ci++) {
+                var c = candidates[ci];
+                var last = merged[merged.length - 1];
+                if (!last || c.start >= last.end) { merged.push(c); }
+              }
+              var cursor = 0;
+              for (var mi = 0; mi < merged.length; mi++) {
+                var m = merged[mi];
+                if (cursor < m.start) {
+                  text.appendChild(document.createTextNode(raw.slice(cursor, m.start)));
+                }
+                var mark = document.createElement('mark');
+                mark.className = 'sel' + (m.kind ? (' sel-' + m.kind) : '');
+                mark.textContent = raw.slice(m.start, m.end);
+                text.appendChild(mark);
+                cursor = m.end;
+              }
+              if (cursor < raw.length) {
+                text.appendChild(document.createTextNode(raw.slice(cursor)));
+              }
+            }
           } else {
-            text.appendChild(document.createTextNode(english));
-          }
+            // Legacy behavior: emphasize a question word at the start of the English segment
+            var parts = raw.split('→');
+            var english = String((parts[0] || raw)).trim();
+            var tail = parts[1] ? (' → ' + String(parts[1]).trim()) : '';
 
-          if (tail) { text.appendChild(document.createTextNode(tail)); }
+            var match = null;
+            var patterns = [
+              /^(How much)\b/i,
+              /^(How many)\b/i,
+              /^(Have you ever)\b/i,
+              /^(Is it)\b/i,
+              /^(Can\b[^?]*)/i,
+              /^(What|Who|Where|When|Why|How|Which)\b/i
+            ];
+            for (var i = 0; i < patterns.length; i++) {
+              var m0 = patterns[i].exec(english);
+              if (m0) { match = m0[1]; break; }
+            }
+
+            if (match) {
+              var mark0 = document.createElement('mark');
+              mark0.className = 'qword';
+              mark0.textContent = english.slice(0, match.length);
+              text.appendChild(mark0);
+              text.appendChild(document.createTextNode(english.slice(match.length)));
+            } else {
+              text.appendChild(document.createTextNode(english));
+            }
+
+            if (tail) { text.appendChild(document.createTextNode(tail)); }
+          }
         } catch (_) {
-          try { text.textContent = String(exampleText); } catch (_) {}
+          try { text.textContent = String(exampleTextStr); } catch (_) {}
         }
       })();
 

@@ -43,7 +43,7 @@
                 } else if (ans.phonetic) {
                   line = ans.phonetic;
                 }
-                Utils.renderExample(document.getElementById('feedback'), line);
+                Utils.renderExample(document.getElementById('feedback'), { text: line, highlight: { english: '', thai: ans.exampleThai || '', phonetic: ans.phonetic || '' } });
               } catch (e) { Utils.logError && Utils.logError(e, 'final-consonants.onAnswered'); }
             }
           }));
@@ -130,7 +130,7 @@
               try {
                 var ans = ctx.answer || {};
                 var text = (ans.english || '') + ' → ' + (ans.thai || '') + (ans.phonetic ? (' — ' + ans.phonetic) : '');
-                Utils.renderExample(document.getElementById('feedback'), text);
+                Utils.renderExample(document.getElementById('feedback'), { text: text, highlight: { english: ans.english || '', thai: ans.thai || '', phonetic: ans.phonetic || '' } });
               } catch (e) { Utils.logError && Utils.logError(e, 'colors.onAnswered'); }
             }
           });
