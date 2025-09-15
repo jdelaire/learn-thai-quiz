@@ -2,6 +2,19 @@
   'use strict';
   
   // Generate and set all player card data
+  function applyInteractivePlayerNameAttributes(nameElement) {
+    try {
+      nameElement.style.cursor = 'pointer';
+      nameElement.setAttribute('title', 'Click to edit your name');
+      nameElement.setAttribute('role', 'button');
+      nameElement.setAttribute('tabindex', '0');
+      try {
+        var label = (Utils && Utils.i18n && Utils.i18n.playerNameEditLabel) || 'Player name - click to edit';
+        nameElement.setAttribute('aria-label', label);
+      } catch (_) { nameElement.setAttribute('aria-label', 'Player name - click to edit'); }
+    } catch (_) {}
+  }
+
   // Function to handle player name editing (defined early for scope access)
   function editPlayerName(nameElement) {
     try {
@@ -53,14 +66,7 @@
         }
         
         // Restore click functionality
-        nameElement.style.cursor = 'pointer';
-        nameElement.setAttribute('title', 'Click to edit your name');
-        nameElement.setAttribute('role', 'button');
-        nameElement.setAttribute('tabindex', '0');
-        try {
-          var label = (Utils && Utils.i18n && Utils.i18n.playerNameEditLabel) || 'Player name - click to edit';
-          nameElement.setAttribute('aria-label', label);
-        } catch (_) { nameElement.setAttribute('aria-label', 'Player name - click to edit'); }
+        applyInteractivePlayerNameAttributes(nameElement);
 
         // Refresh avatar to reflect new initial (player card only)
         try {
@@ -75,14 +81,7 @@
       function cancelEdit() {
         nameElement.textContent = Utils.getPlayerDisplayName();
         // Restore click functionality
-        nameElement.style.cursor = 'pointer';
-        nameElement.setAttribute('title', 'Click to edit your name');
-        nameElement.setAttribute('role', 'button');
-        nameElement.setAttribute('tabindex', '0');
-        try {
-          var label = (Utils && Utils.i18n && Utils.i18n.playerNameEditLabel) || 'Player name - click to edit';
-          nameElement.setAttribute('aria-label', label);
-        } catch (_) { nameElement.setAttribute('aria-label', 'Player name - click to edit'); }
+        applyInteractivePlayerNameAttributes(nameElement);
       }
       
       input.addEventListener('blur', saveName);
@@ -111,14 +110,7 @@
       playerNameEl.textContent = Utils.getPlayerDisplayName();
       
       // Add edit functionality
-      playerNameEl.style.cursor = 'pointer';
-      playerNameEl.setAttribute('title', 'Click to edit your name');
-      playerNameEl.setAttribute('role', 'button');
-      playerNameEl.setAttribute('tabindex', '0');
-      try {
-        var label = (Utils && Utils.i18n && Utils.i18n.playerNameEditLabel) || 'Player name - click to edit';
-        playerNameEl.setAttribute('aria-label', label);
-      } catch (_) { playerNameEl.setAttribute('aria-label', 'Player name - click to edit'); }
+      applyInteractivePlayerNameAttributes(playerNameEl);
       
       // Single click handler
       playerNameEl.addEventListener('click', function(e) {

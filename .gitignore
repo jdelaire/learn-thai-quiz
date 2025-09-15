@@ -1,16 +1,10 @@
-# Generated .gitignore patterns
-
-# IDE Files
-.vscode/
-.idea/
-*.sublime-workspace
-*.sublime-project
-.vs/
-
-# OS Generated
+node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 .DS_Store
-.DS_Store?
-._*
-Thumbs.db
-ehthumbs.db
-Desktop.ini
+.idea/
+.vscode/
+coverage/
+.tmp/

@@ -86,8 +86,7 @@
     getStarRulesTooltip: player.getStarRulesTooltip,
     getPlayerAvatar: player.getPlayerAvatar,
     formatNumber: player.formatNumber,
-    getXPProgressPercentage: player.getXPProgressPercentage
-    ,
+    getXPProgressPercentage: player.getXPProgressPercentage,
     // latest attempt
     getLatestAttempt: player.getLatestAttempt
   };
