@@ -66,6 +66,20 @@
               span.className = 'emoji';
               span.textContent = choice.emoji;
               btn.insertBefore(span, btn.firstChild);
+            },
+            onAnswered: function(ctx) {
+              if (!ctx || !ctx.correct) return;
+              try {
+                var ans = ctx.answer || {};
+                var eng = String(ans.meaning || '');
+                var th = String(ans.symbol || '');
+                var ph = String(ans.name || '');
+                var text = '';
+                if (eng || th || ph) {
+                  text = (eng || '') + (th ? (' → ' + th) : '') + (ph ? (' — ' + ph) : '');
+                }
+                Utils.renderExample(document.getElementById('feedback'), { text: text, highlight: { english: eng, thai: th, phonetic: ph } });
+              } catch (e) { Utils.logError && Utils.logError(e, 'consonants.onAnswered'); }
             }
           }));
         };

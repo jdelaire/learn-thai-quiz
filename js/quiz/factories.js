@@ -66,12 +66,39 @@
             const key = (typeof exampleKeyFn === 'function') ? exampleKeyFn(ans || {}) : (ans && ans.english);
             ex = examples[key];
           }
-          // Pass highlight info when answer fields are available
-          if (ans && (ans.english || ans.thai || ans.phonetic)) {
-            renderers.renderExample(fb, { text: ex, highlight: { english: ans.english || '', thai: ans.thai || '', phonetic: ans.phonetic || '' } });
-          } else {
-            renderers.renderExample(fb, ex);
+
+          // Build a consistent fallback example if no dedicated example text exists
+          if (!ex) {
+            var englishText = '';
+            try {
+              if (ans && typeof ans.english === 'string' && ans.english) englishText = ans.english;
+              else if (ans && ans.number != null) englishText = String(ans.number);
+              else if (ans && typeof ans[answerKey] === 'string') englishText = ans[answerKey];
+            } catch (_) {}
+
+            var thaiText = '';
+            try { thaiText = (ans && (ans.thai || ans.symbol)) ? String(ans.thai || ans.symbol) : ''; } catch (_) { thaiText = ''; }
+
+            var phoneticText = '';
+            try { phoneticText = (ans && ans.phonetic) ? String(ans.phonetic) : ''; } catch (_) { phoneticText = ''; }
+
+            if (englishText || thaiText || phoneticText) {
+              var parts = [];
+              if (englishText) parts.push(englishText);
+              if (thaiText) parts.push('→ ' + thaiText);
+              if (phoneticText) parts.push('— ' + phoneticText);
+              ex = parts.join(' ');
+            }
           }
+
+          var highlight = { english: '', thai: '', phonetic: '' };
+          try {
+            highlight.english = (ans && (ans.english != null ? String(ans.english) : (ans && ans.number != null ? String(ans.number) : (ans && typeof ans[answerKey] === 'string' ? ans[answerKey] : '')))) || '';
+            highlight.thai = (ans && (ans.thai || ans.symbol)) ? String(ans.thai || ans.symbol) : '';
+            highlight.phonetic = (ans && ans.phonetic) ? String(ans.phonetic) : '';
+          } catch (_) {}
+
+          renderers.renderExample(fb, ex ? { text: ex, highlight: highlight } : ex);
         } catch (e) { logError(e, 'quiz.factories.onAnswered'); }
       }
     };
