@@ -7,10 +7,57 @@
   var logError = error.logError || function(){};
   var StorageService = global.StorageService;
 
+  // Funny Thai-culture themed name generator (deterministic per device)
+  function createPRNG(seed) {
+    let s = (seed >>> 0) || 1;
+    return function() {
+      s = (s * 1664525 + 1013904223) >>> 0; // LCG
+      return (s >>> 0) / 4294967296;
+    };
+  }
+
+  function pickFrom(arr, rnd) {
+    return arr[Math.floor(rnd() * arr.length) % arr.length];
+  }
+
+  function generateThaiFunnyNameFromSeed(seed) {
+    var rnd = createPRNG(seed);
+
+    // Keep words short to fit typical UI; avoid religious terms directly
+    var adjectives = [
+      'Spicy','Golden','Jasmine','Coconut','Sticky','Cheerful','Lucky','Brave','Chill','Smiling','Sunny','Lively','Zesty','Swift','Gentle'
+    ];
+    var nouns = [
+      'Elephant','TukTuk','Mango','Lotus','Basil','Noodle','Durian','Chili','Lantern','Longtail','Temple','Market','Gecko','Gibbon','River','Monsoon','Tiger'
+    ];
+    var roles = [
+      'Rider','Ranger','Nomad','Guru','Captain','Wanderer','Ninja','Maestro','Explorer','Whisper','Sprinter','Dreamer','Seeker','Chiller','Smiler','Hero'
+    ];
+    var places = [
+      'Bangkok','Chiang Mai','Ayutthaya','Sukhothai','Phuket','Isan','Chiang Rai','Krabi','Lampang','Trang'
+    ];
+
+    var patterns = [
+      function(){ return pickFrom(adjectives, rnd) + ' ' + pickFrom(nouns, rnd); },
+      function(){ return pickFrom(nouns, rnd) + ' ' + pickFrom(roles, rnd); },
+      function(){ return pickFrom(places, rnd) + ' ' + pickFrom(nouns, rnd); },
+      function(){ return pickFrom(adjectives, rnd) + ' ' + pickFrom(nouns, rnd) + ' ' + pickFrom(roles, rnd); }
+    ];
+
+    var name = pickFrom(patterns, rnd)();
+    // Prefer shorter variants if too long
+    if (name.length > 20) {
+      var short1 = patterns[0]();
+      var short2 = patterns[1]();
+      name = short1.length <= 20 ? short1 : (short2.length <= 20 ? short2 : name);
+    }
+    return name;
+  }
+
   function generatePlayerID() {
     try {
       let playerID = StorageService && StorageService.getItem('thaiQuestPlayerID');
-      if (!playerID) {
+      if (!playerID || /^Player_/.test(playerID)) {
         const fingerprint = [
           navigator.userAgent,
           navigator.language,
@@ -26,12 +73,12 @@
           hash = ((hash << 5) - hash) + char;
           hash = hash & hash;
         }
-        const hashStr = Math.abs(hash).toString(36).toUpperCase();
-        playerID = 'Player_' + hashStr;
+        const seed = Math.abs(hash) || (Date.now() & 0xffffffff);
+        playerID = generateThaiFunnyNameFromSeed(seed);
         if (StorageService) StorageService.setItem('thaiQuestPlayerID', playerID);
       }
       return playerID;
-    } catch (e) { logError(e, 'quiz.player.generatePlayerID'); return 'Player_' + Date.now() + '_' + Math.floor(Math.random() * 1000); }
+    } catch (e) { logError(e, 'quiz.player.generatePlayerID'); return 'Spicy Mango ' + Math.floor(Math.random() * 1000); }
   }
 
   function getPlayerDisplayName() {
