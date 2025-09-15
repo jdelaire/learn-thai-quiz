@@ -779,7 +779,7 @@ body.home .socials a.chip {
   background: var(--color-bg);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 16px;
-  padding: 1em 1.2em;
+  padding: 0.75em 1em;
   position: relative;
   overflow: hidden;
 }
@@ -789,12 +789,12 @@ body.home .socials a.chip {
 .player-top {
   display: flex;
   align-items: center;
-  gap: 0.9em;
+  gap: 0.8em;
 }
 
 .player-avatar {
-  width: 56px;
-  height: 56px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid rgba(0, 0, 0, 0.12);
@@ -850,19 +850,19 @@ body.home .socials a.chip {
   color: var(--color-brand);
 }
 
-.player-xp { margin-top: 0.6em; }
+.player-xp { margin-top: 0.5em; }
 .xp-labels {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 0.4em;
+  margin-bottom: 0.3em;
 }
 .xp-title { font-weight: 800; letter-spacing: 0.02em; }
 .xp-value { font-weight: 600; opacity: 0.9; }
 
 .xp-bar {
   position: relative;
-  height: 10px;
+  height: 8px;
   background: #f5f7fb;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 9999px;
@@ -878,19 +878,19 @@ body.home .socials a.chip {
 .player-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.8em;
-  margin-top: 0.8em;
+  gap: 0.6em;
+  margin-top: 0.6em;
 }
 
 .metric {
   background: #f7f7f7;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 12px;
-  padding: 0.6em 0.8em;
+  padding: 0.5em 0.6em;
   text-align: center;
 }
 .metric-label {
-  font-size: 0.72em;
+  font-size: 0.7em;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: 0.85;
@@ -898,7 +898,7 @@ body.home .socials a.chip {
   font-weight: 700;
 }
 .metric-value {
-  font-size: 1.05em;
+  font-size: 1em;
   font-weight: 800;
   color: var(--color-text);
 }
@@ -908,7 +908,7 @@ body.home .socials a.chip {
   background: #fafafa;
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 12px;
-  padding: 0.6em 0.7em;
+  padding: 0.5em 0.6em;
   text-align: center;
 }
 
@@ -917,7 +917,7 @@ body.home .socials a.chip {
   background: #fafafa;
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 12px;
-  padding: 0.6em 0.7em;
+  padding: 0.5em 0.6em;
   text-align: center;
 }
 .player-resume .resume-label {
@@ -982,20 +982,20 @@ body.home .socials a.chip {
   }
   
   /* Overlay styles removed */
-  .player-avatar { width: 52px; height: 52px; }
+  .player-avatar { width: 64px; height: 64px; }
   .player-metrics { 
     gap: 0.6em; 
     grid-template-columns: repeat(3, 1fr);
   }
   .metric {
-    padding: 0.5em 0.6em;
+    padding: 0.45em 0.55em;
     min-width: 0;
   }
   .metric-label {
-    font-size: 0.68em;
+    font-size: 0.66em;
   }
   .metric-value {
-    font-size: 1em;
+    font-size: 0.98em;
   }
   .xp-labels {
     gap: 0.5em;
@@ -1004,7 +1004,7 @@ body.home .socials a.chip {
     font-size: 0.9em;
   }
 
-  .player-today { padding: 0.55em 0.6em; }
+  .player-today { padding: 0.5em 0.55em; }
   .pt-grid { grid-template-columns: 1fr auto 1fr; gap: 0.4em; }
   .pt-sep { display: block; }
 }
