@@ -106,8 +106,22 @@
   }
 
   try {
+    const playerCard = document.querySelector('.player-card');
+    const dom = {
+      card: playerCard,
+      name: playerCard ? playerCard.querySelector('.player-name') : document.querySelector('.player-name'),
+      level: playerCard ? playerCard.querySelector('.player-level') : document.querySelector('.player-level'),
+      xpValue: playerCard ? playerCard.querySelector('.xp-value') : document.querySelector('.xp-value'),
+      xpBar: playerCard ? playerCard.querySelector('.xp-bar') : document.querySelector('.xp-bar'),
+      xpFill: playerCard ? playerCard.querySelector('.xp-fill') : document.querySelector('.xp-fill'),
+      metrics: playerCard ? playerCard.querySelectorAll('.metric-value') : document.querySelectorAll('.metric-value'),
+      today: playerCard ? playerCard.querySelector('.player-today') : document.querySelector('.player-today'),
+      resume: playerCard ? playerCard.querySelector('.player-resume') : document.querySelector('.player-resume'),
+      avatar: playerCard ? playerCard.querySelector('.player-avatar') : document.querySelector('.player-avatar')
+    };
+
     // Player Display Name
-    const playerNameEl = document.querySelector('.player-name');
+    const playerNameEl = dom.name;
     if (playerNameEl) {
 
       playerNameEl.textContent = Utils.getPlayerDisplayName();
@@ -134,21 +148,21 @@
     function updateHeaderLevelAndXP() {
       try {
         const playerLevel = Utils.getPlayerLevel();
-        const playerLevelEl = document.querySelector('.player-level');
+        const playerLevelEl = dom.level;
         if (playerLevelEl) {
           playerLevelEl.textContent = `Level ${playerLevel}`;
         }
 
         const currentXP = Utils.getPlayerXP();
         const maxXP = Utils.getPlayerMaxXP();
-        const xpValueEl = document.querySelector('.xp-value');
+        const xpValueEl = dom.xpValue;
         if (xpValueEl) {
           xpValueEl.textContent = `${Utils.formatNumber(currentXP)} / ${Utils.formatNumber(maxXP)}`;
         }
 
         const xpProgress = Utils.getXPProgressPercentage();
-        const xpBarEl = document.querySelector('.xp-bar');
-        const xpFillEl = document.querySelector('.xp-fill');
+        const xpBarEl = dom.xpBar;
+        const xpFillEl = dom.xpFill;
         if (xpBarEl && xpFillEl) {
           xpBarEl.setAttribute('aria-valuenow', xpProgress);
           xpFillEl.style.width = `${xpProgress}%`;
@@ -156,7 +170,7 @@
 
         // Update avatars so visuals evolve with level/XP
         const avatarURI = Utils.getPlayerAvatar();
-        const playerAvatarEl = document.querySelector('.player-avatar');
+        const playerAvatarEl = dom.avatar;
         if (playerAvatarEl && avatarURI) {
           playerAvatarEl.src = avatarURI;
           try { playerAvatarEl.alt = `Player avatar`; } catch (_) {}
@@ -174,7 +188,7 @@
         const quizzesCompleted = Utils.getQuizzesCompleted();
         const totalStars = Utils.getTotalStarsEarned();
 
-        const metricValues = document.querySelectorAll('.metric-value');
+        const metricValues = dom.metrics;
         if (metricValues.length >= 3) {
           metricValues[0].textContent = `${accuracy}%`;
           metricValues[1].textContent = Utils.formatNumber(quizzesCompleted);
@@ -188,13 +202,13 @@
     // Render resume quick link (below today card, above metrics)
     function renderResumeQuickLink() {
       try {
-        const playerCard = document.querySelector('.player-card');
+        const playerCard = dom.card || document.querySelector('.player-card');
         if (!playerCard) return;
-        const todayEl = playerCard.querySelector('.player-today');
+        const todayEl = dom.today || playerCard.querySelector('.player-today');
         const metricsEl = playerCard.querySelector('.player-metrics');
         if (!metricsEl) return;
 
-        let resumeEl = playerCard.querySelector('.player-resume');
+        let resumeEl = dom.resume || playerCard.querySelector('.player-resume');
         if (!resumeEl) {
           resumeEl = document.createElement('div');
           resumeEl.className = 'player-resume';
@@ -204,6 +218,7 @@
           } else {
             playerCard.insertBefore(resumeEl, metricsEl);
           }
+          dom.resume = resumeEl;
         }
 
         const latest = (Utils && typeof Utils.getLatestAttempt === 'function') ? Utils.getLatestAttempt() : null;
