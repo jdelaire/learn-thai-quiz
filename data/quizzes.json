@@ -45,7 +45,9 @@
     "description": "Practice 32 Thai vowels with sound patterns and example words.",
     "bullets": ["Vowel symbols","Sound patterns"],
     "categories": ["Alphabet","Reading","Beginner"],
-    "bodyClass": "vowel-quiz"
+    "bodyClass": "vowel-quiz",
+    "symbolNote": "Note: The consonant ก (goo gai) may appear as a placeholder to show where the vowel attaches; it is not part of the answer.",
+    "symbolNoteClass": "vowel-note"
   },
   {
     "id": "vowel-changes",
