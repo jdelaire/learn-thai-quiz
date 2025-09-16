@@ -21,6 +21,16 @@
 
   const Utils = global.Utils;
   const defaultElements = Utils.defaultElements;
+  function symbolEnglishThaiEmoji(item, englishOverride) {
+    try {
+      var english = typeof englishOverride === 'function' ? englishOverride(item) : (item && item.english) || '';
+      return { english: english || '', thai: (item && item.thai) || '', emoji: (item && item.emoji) || '' };
+    } catch (_) {
+      return { english: '', thai: '', emoji: '' };
+    }
+  }
+  function exampleKeyIdOrEnglish(item) { return (item && (item.id || item.english)) || ''; }
+  function exampleKeyEnglish(item) { return (item && item.english) || ''; }
 
   const QuizBuilders = {
     'final-consonants': function() {
@@ -180,7 +190,7 @@
     verbs: makeStandardQuizBuilder(['data/verbs.json','data/verbs-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
-      return { data: data, examples: examples, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      return { data: data, examples: examples, buildSymbol: symbolEnglishThaiEmoji };
     }),
 
     family: makeStandardQuizBuilder('data/family.json', function(results) {
@@ -191,42 +201,42 @@
     classifiers: makeStandardQuizBuilder(['data/classifiers.json','data/classifiers-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
-      return { data: data, examples: examples, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      return { data: data, examples: examples, buildSymbol: symbolEnglishThaiEmoji };
     }),
 
     jobs: makeStandardQuizBuilder(['data/jobs.json'], function(results) {
       const data = results[0] || [];
-      return { data: data, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      return { data: data, buildSymbol: symbolEnglishThaiEmoji };
     }),
 
     foods: makeStandardQuizBuilder(['data/foods.json','data/foods-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
-      return { data: data, examples: examples, exampleKey: function(a){ return a.id || a.english; }, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      return { data: data, examples: examples, exampleKey: exampleKeyIdOrEnglish, buildSymbol: symbolEnglishThaiEmoji };
     }),
 
     adjectives: makeStandardQuizBuilder(['data/adjectives.json','data/adjectives-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
-      return { data: data, examples: examples, exampleKey: function(a){ return a.id || a.english; }, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      return { data: data, examples: examples, exampleKey: exampleKeyIdOrEnglish, buildSymbol: symbolEnglishThaiEmoji };
     }),
 
     months: makeStandardQuizBuilder(['data/months-seasons.json','data/months-seasons-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
-      return { data: data, examples: examples, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; }, progressiveDifficulty: { choicesThresholds: [ { correctAnswers: 20, choices: 5 }, { correctAnswers: 40, choices: 6 }, { correctAnswers: 60, choices: 7 }, { correctAnswers: 80, choices: 8 } ], hideEmojiThreshold: 50 } };
+      return { data: data, examples: examples, buildSymbol: symbolEnglishThaiEmoji, progressiveDifficulty: { choicesThresholds: [ { correctAnswers: 20, choices: 5 }, { correctAnswers: 40, choices: 6 }, { correctAnswers: 60, choices: 7 }, { correctAnswers: 80, choices: 8 } ], hideEmojiThreshold: 50 } };
     }),
 
     rooms: makeStandardQuizBuilder(['data/rooms.json','data/rooms-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
-      return { data: data, examples: examples, exampleKey: function(a){ return a.id || a.english; }, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      return { data: data, examples: examples, exampleKey: exampleKeyIdOrEnglish, buildSymbol: symbolEnglishThaiEmoji };
     }),
 
     tenses: makeStandardQuizBuilder(['data/tenses.json','data/tenses-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
-      return { data: data, examples: examples, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      return { data: data, examples: examples, buildSymbol: symbolEnglishThaiEmoji };
     }),
 
     days: makeStandardQuizBuilder('data/days.json', function(results) {
@@ -237,25 +247,25 @@
     prepositions: makeStandardQuizBuilder(['data/prepositions.json','data/prepositions-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
-      return { data: data, examples: examples, exampleKey: function(a){ return a.english; }, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      return { data: data, examples: examples, exampleKey: exampleKeyEnglish, buildSymbol: symbolEnglishThaiEmoji };
     }),
 
     countries: makeStandardQuizBuilder(['data/countries.json','data/countries-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
-      return { data: data, examples: examples, exampleKey: function(a){ return a.english; }, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      return { data: data, examples: examples, exampleKey: exampleKeyEnglish, buildSymbol: symbolEnglishThaiEmoji };
     }),
 
     greetings: makeStandardQuizBuilder(['data/greetings.json','data/greetings-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
-      return { data: data, examples: examples, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      return { data: data, examples: examples, buildSymbol: symbolEnglishThaiEmoji };
     }),
 
     'body-parts': makeStandardQuizBuilder(['data/body-parts.json','data/body-parts-examples.json'], function(results) {
       const data = results[0] || [];
       const examples = results[1] || {};
-      return { data: data, examples: examples, exampleKey: function(a){ return a.english; }, buildSymbol: function(a){ return { english: a.english || '', thai: a.thai || '', emoji: (a && a.emoji) || '' }; } };
+      return { data: data, examples: examples, exampleKey: exampleKeyEnglish, buildSymbol: symbolEnglishThaiEmoji };
     }),
 
     'vowel-changes': makeStandardQuizBuilder(['data/vowel-changes.json','data/vowel-changes-examples.json'], function(results) {
@@ -277,4 +287,3 @@
 
   global.QuizBuilders = QuizBuilders;
 })(window);
-
