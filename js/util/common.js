@@ -34,32 +34,6 @@
     noDataMessage: 'No data available for this quiz.'
   };
 
-  function getBodyClass(quizId) {
-    const map = {
-      consonants: 'consonant-quiz',
-      vowels: 'vowel-quiz',
-      colors: 'color-quiz',
-      numbers: 'numbers-quiz',
-      time: 'time-quiz',
-      tones: 'questions-quiz',
-      questions: 'questions-quiz',
-      verbs: 'questions-quiz',
-      family: 'family-quiz',
-      classifiers: 'classifiers-quiz',
-      rooms: 'rooms-quiz',
-      jobs: 'jobs-quiz',
-      foods: 'foods-quiz',
-      months: 'questions-quiz',
-      tenses: 'questions-quiz',
-      days: 'questions-quiz',
-      'body-parts': 'questions-quiz',
-      prepositions: 'questions-quiz',
-      countries: 'questions-quiz',
-      'final-consonants': 'questions-quiz'
-    };
-    return map[quizId] || null;
-  }
-
   function pickRandom(array) { return array[Math.floor(Math.random() * array.length)]; }
 
   function pickUniqueChoices(pool, count, keyFn, seed) {
@@ -96,11 +70,9 @@
     byProp: byProp,
     setText: setText,
     i18n: i18n,
-    getBodyClass: getBodyClass,
     pickRandom: pickRandom,
     pickUniqueChoices: pickUniqueChoices,
     defaultElements: defaultElements,
     clearChildren: clearChildren
   };
 })(window);
-

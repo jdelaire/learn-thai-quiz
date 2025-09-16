@@ -150,7 +150,7 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 
 1. The home page (`index.html`) loads `data/quizzes.json`, renders cards, and provides search/category filters.
 2. Clicking a card navigates to `quiz.html?quiz=<id>`.
-3. `js/quiz-loader.js` reads the `id` and metadata from `data/quizzes.json`, sets page title/subtitle, applies `meta.bodyClass` when present (else a default mapping via `Utils.getBodyClass(id)`) and also adds a generic `<id>-quiz` class. If `meta.proTip` is present, it is inserted into the quiz footer.
+3. `js/quiz-loader.js` reads the `id` and metadata from `data/quizzes.json`, sets page title/subtitle, applies the metadata-driven `bodyClass`, and also adds a generic `<id>-quiz` class. If `meta.proTip` is present, it is inserted into the quiz footer.
 4. The loader invokes a per‑quiz builder from `js/builders/index.js`. If no builder exists for the `id`, it falls back to running a standard quiz from `data/<id>.json` using `phonetic` as the answer key.
 5. Builders fetch JSON via `Utils.fetchJSONCached`/`Utils.fetchJSONs` and wire `ThaiQuiz.setupQuiz(...)` using `Utils.createStandardQuiz` plus small overrides (emoji, examples, symbol rendering).
 6. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
@@ -418,7 +418,7 @@ QuizBuilders.myquiz = function() {
 
 Available hooks in the engine: `pickRound(state)`, `renderSymbol(answer, els, state)`, `renderButtonContent(choice, state)`, `ariaLabelForChoice(choice, state)`, `decorateButton(btn, choice, state)`, `isCorrect(choice, answer, state)`, `onRoundStart({ answer, choices, state })`, `onAnswered(ctx)`.
 
-Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `Utils.pickRandom`, `Utils.pickUniqueChoices(pool, count, keyFn, seed)`, `Utils.byProp('phonetic')`, `Utils.getDisplayHex(baseHex, modifier)`, `Utils.createStandardQuiz(params)`, `Utils.getBodyClass(id)`, and `Utils.i18n` for label prefixes and accessibility strings. Error handling: `Utils.ErrorHandler` for centralized error management. Player metrics helpers: `Utils.getTotalStarsEarned()`, `Utils.getPlayerAccuracy()`, `Utils.getQuizzesCompleted()`, `Utils.aggregateGlobalStatsFromStorage()`, `Utils.getAllSavedProgress()`. Player name helpers: `Utils.getPlayerDisplayName()`, `Utils.setPlayerCustomName(name)`, `Utils.getPlayerCustomName()`.
+Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `Utils.pickRandom`, `Utils.pickUniqueChoices(pool, count, keyFn, seed)`, `Utils.byProp('phonetic')`, `Utils.getDisplayHex(baseHex, modifier)`, `Utils.createStandardQuiz(params)`, and `Utils.i18n` for label prefixes and accessibility strings. Error handling: `Utils.ErrorHandler` for centralized error management. Player metrics helpers: `Utils.getTotalStarsEarned()`, `Utils.getPlayerAccuracy()`, `Utils.getQuizzesCompleted()`, `Utils.aggregateGlobalStatsFromStorage()`, `Utils.getAllSavedProgress()`. Player name helpers: `Utils.getPlayerDisplayName()`, `Utils.setPlayerCustomName(name)`, `Utils.getPlayerCustomName()`.
 
 #### New utilities for faster quiz creation
 

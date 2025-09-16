@@ -26,7 +26,6 @@
     setText: common.setText,
     byProp: common.byProp,
     i18n: common.i18n,
-    getBodyClass: common.getBodyClass,
     defaultElements: common.defaultElements,
     clearChildren: common.clearChildren,
 
@@ -92,4 +91,3 @@
     getLatestAttempt: player.getLatestAttempt
   };
 })(window);
-

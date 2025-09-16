@@ -53,8 +53,8 @@
           }
           metaDesc.setAttribute('content', meta.description || 'ThaiQuest quiz: practice Thai with interactive, accessible quizzes.');
         } catch (e) {}
-        // Map categories to a default body class; allow overrides via metadata
-        var cls = (meta && meta.bodyClass) || Utils.getBodyClass(quizId);
+        // Body class lives in data/quizzes.json so metadata stays the single source of truth
+        var cls = meta && meta.bodyClass;
         if (cls) document.body.classList.add(cls);
         // Always add a generic per-quiz class as a fallback (e.g., foods -> foods-quiz)
         try {
@@ -64,24 +64,24 @@
           }
         } catch (e) {}
 
-        // Add per-quiz pro tips, prefer metadata if provided
+        // Add per-quiz pro tips and optional symbol notes from metadata
         try {
           if (meta && meta.proTip) {
             Utils.insertProTip(meta.proTip);
-          } else {
-             if (quizId === 'vowels') {
-              // Friendly note specific to vowel shaping
-              try {
-                const symbolAnchor = document.getElementById('symbol');
-                if (symbolAnchor && !document.querySelector('.vowel-note')) {
-                  const tip = document.createElement('div');
-                  tip.className = 'vowel-note';
-                  tip.setAttribute('role', 'note');
-                  tip.textContent = 'Note: The consonant ก (goo gai) may appear as a placeholder to show where the vowel attaches; it is not part of the answer.';
-                  symbolAnchor.insertAdjacentElement('afterend', tip);
-                }
-              } catch (e) {}
-            }
+          }
+          if (meta && meta.symbolNote) {
+            try {
+              const anchor = document.getElementById('symbol');
+              if (anchor && !document.querySelector('.quiz-symbol-note')) {
+                const note = document.createElement('div');
+                var cls = 'quiz-symbol-note';
+                if (meta.symbolNoteClass) cls += ' ' + meta.symbolNoteClass;
+                note.className = cls;
+                note.setAttribute('role', meta.symbolNoteRole || 'note');
+                note.textContent = meta.symbolNote;
+                anchor.insertAdjacentElement('afterend', note);
+              }
+            } catch (e) {}
           }
         } catch (e) {}
 
