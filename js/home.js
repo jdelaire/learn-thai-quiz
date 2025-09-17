@@ -105,6 +105,30 @@
     }
   }
 
+  let quizzesMetaCache = null;
+  let quizzesMetaPromise = null;
+  let lastResumeQuizId = null;
+
+  function loadQuizzesMeta(){
+    if (quizzesMetaCache) return Promise.resolve(quizzesMetaCache);
+    if (!quizzesMetaPromise) {
+      quizzesMetaPromise = Utils.fetchJSONCached('data/quizzes.json').then(function(list){
+        const arr = Array.isArray(list) ? list : [];
+        const map = Object.create(null);
+        for (let i = 0; i < arr.length; i++) {
+          const it = arr[i];
+          if (it && it.id) map[it.id] = it;
+        }
+        quizzesMetaCache = { list: arr, map: map };
+        return quizzesMetaCache;
+      }).catch(function(err){
+        quizzesMetaPromise = null;
+        throw err;
+      });
+    }
+    return quizzesMetaPromise;
+  }
+
   try {
     const playerCard = document.querySelector('.player-card');
     const dom = {
@@ -223,16 +247,24 @@
 
         const latest = (Utils && typeof Utils.getLatestAttempt === 'function') ? Utils.getLatestAttempt() : null;
         if (!latest || !latest.quizId) {
+          lastResumeQuizId = null;
           resumeEl.hidden = true;
           Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(resumeEl); })();
           return;
         }
 
+        if (latest.quizId === lastResumeQuizId && resumeEl.childNodes.length > 0) {
+          resumeEl.hidden = false;
+          return;
+        }
+
+        lastResumeQuizId = latest.quizId;
+
         // Resolve quiz metadata (title and href)
-        Utils.fetchJSONCached('data/quizzes.json')
-          .then(function(list){
-            const quizzes = Array.isArray(list) ? list : [];
-            const meta = quizzes.find(function(q){ return q && q.id === latest.quizId; }) || { id: latest.quizId, title: latest.quizId, href: 'quiz.html?quiz=' + latest.quizId };
+        loadQuizzesMeta()
+          .then(function(metaBundle){
+            const map = metaBundle && metaBundle.map;
+            const meta = (map && map[latest.quizId]) || { id: latest.quizId, title: latest.quizId, href: 'quiz.html?quiz=' + latest.quizId };
 
             Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(resumeEl); })();
 
@@ -262,6 +294,7 @@
               resumeEl.appendChild(a);
               resumeEl.hidden = false;
             } catch (_) {}
+            lastResumeQuizId = null;
             Utils.logError(err, 'home.js: renderResumeQuickLink fetch quizzes');
           });
       } catch (e) { Utils.logError(e, 'home.js: renderResumeQuickLink'); }
