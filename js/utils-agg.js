@@ -28,6 +28,7 @@
     i18n: common.i18n,
     defaultElements: common.defaultElements,
     clearChildren: common.clearChildren,
+    sanitizeHTML: common.sanitizeHTML,
 
     // color
     hexToRgb: color.hexToRgb,

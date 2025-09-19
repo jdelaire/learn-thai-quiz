@@ -1,9 +1,11 @@
 (function(global){
   'use strict';
 
+  // Single source of Utils/defaultElements for this module
+  const Utils = global.Utils;
+  const defaultElements = Utils.defaultElements;
+
   function makeStandardQuizBuilder(urls, transform) {
-    const Utils = global.Utils;
-    const defaultElements = Utils.defaultElements;
     return function() {
       try {
         const list = Array.isArray(urls) ? urls : [urls];
@@ -19,8 +21,6 @@
     };
   }
 
-  const Utils = global.Utils;
-  const defaultElements = Utils.defaultElements;
   function symbolEnglishThaiEmoji(item, englishOverride) {
     try {
       var english = typeof englishOverride === 'function' ? englishOverride(item) : (item && item.english) || '';

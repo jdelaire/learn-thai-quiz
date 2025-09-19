@@ -66,6 +66,47 @@
     } catch (_) {}
   }
 
+  // Minimal sanitizer that preserves a tiny whitelist of tags and strips attributes.
+  // Returns a DocumentFragment suitable for insertion.
+  function sanitizeHTML(html) {
+    try {
+      var allowed = { BR: true, STRONG: true, EM: true, SMALL: true };
+      var tpl = document.createElement('template');
+      tpl.innerHTML = String(html);
+      function cleanse(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return document.createTextNode(node.nodeValue || '');
+        }
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          var tag = String(node.tagName || '').toUpperCase();
+          if (!allowed[tag]) {
+            // Flatten disallowed elements by returning their children sanitized
+            var frag = document.createDocumentFragment();
+            var child = node.firstChild;
+            while (child) {
+              frag.appendChild(cleanse(child));
+              child = child.nextSibling;
+            }
+            return frag;
+          }
+          var el = document.createElement(tag.toLowerCase());
+          var c = node.firstChild;
+          while (c) { el.appendChild(cleanse(c)); c = c.nextSibling; }
+          return el;
+        }
+        return document.createTextNode('');
+      }
+      var out = document.createDocumentFragment();
+      var n = tpl.content.firstChild;
+      while (n) { out.appendChild(cleanse(n)); n = n.nextSibling; }
+      return out;
+    } catch (_) {
+      var fallback = document.createDocumentFragment();
+      fallback.appendChild(document.createTextNode(String(html)));
+      return fallback;
+    }
+  }
+
   NS.util.common = {
     byProp: byProp,
     setText: setText,
@@ -73,6 +114,7 @@
     pickRandom: pickRandom,
     pickUniqueChoices: pickUniqueChoices,
     defaultElements: defaultElements,
-    clearChildren: clearChildren
+    clearChildren: clearChildren,
+    sanitizeHTML: sanitizeHTML
   };
 })(window);

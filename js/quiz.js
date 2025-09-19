@@ -39,6 +39,29 @@
       autoAdvanceTimerId: null
     };
 
+    function disableOtherButtons(exceptBtn) {
+      Utils.ErrorHandler.safeDOM(function() {
+        const buttons = optionsEl.querySelectorAll('button');
+        buttons.forEach(function(b) {
+          if (b !== exceptBtn) {
+            b.disabled = true;
+            try { b.setAttribute('aria-disabled', 'true'); } catch (_) {}
+            try { b.tabIndex = -1; } catch (_) {}
+          }
+        });
+      })();
+    }
+
+    function scheduleAutoAdvance(delayMs) {
+      if (state.autoAdvanceTimerId != null) {
+        clearTimeout(state.autoAdvanceTimerId);
+      }
+      state.autoAdvanceTimerId = setTimeout(() => {
+        state.autoAdvanceTimerId = null;
+        pickQuestion();
+      }, delayMs);
+    }
+
     function updateStats() {
       const accuracy = state.questionsAnswered > 0
         ? Math.round((state.correctAnswers / state.questionsAnswered) * 100)
@@ -167,20 +190,7 @@
               btn.classList.remove('answer-correct');
             }, { once: true });
             // Disable other options until next question
-            Utils.ErrorHandler.safeDOM(function() {
-              const buttons = optionsEl.querySelectorAll('button');
-              buttons.forEach(function(b) {
-                if (b !== btn) {
-                  b.disabled = true;
-                  Utils.ErrorHandler.safeDOM(function() {
-                    b.setAttribute('aria-disabled', 'true');
-                  })();
-                  Utils.ErrorHandler.safeDOM(function() {
-                    b.tabIndex = -1;
-                  })();
-                }
-              });
-            })();
+            disableOtherButtons(btn);
             // Also prevent re-clicks on the correct button during the delay
             Utils.ErrorHandler.safeDOM(function() {
               btn.onclick = null;
@@ -188,15 +198,9 @@
             // Don't show next button - auto-advance only
             nextBtn.style.display = 'none';
 
-            if (state.autoAdvanceTimerId != null) {
-              clearTimeout(state.autoAdvanceTimerId);
-            }
             // Use longer delay (3 seconds) for quizzes that show examples
             const delay = (typeof config.onAnswered === 'function') ? 3000 : 1500;
-            state.autoAdvanceTimerId = setTimeout(() => {
-              state.autoAdvanceTimerId = null;
-              pickQuestion();
-            }, delay);
+            scheduleAutoAdvance(delay);
           } else {
             feedbackEl.textContent = '';
             btn.classList.add('answer-wrong');

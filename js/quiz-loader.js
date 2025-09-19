@@ -22,24 +22,23 @@
     Utils.ErrorHandler.safe(Utils.setText)(id, text);
   }
 
+  function showNotFound(quizId) {
+    try {
+      setText('page-title', 'Quiz not found');
+      setText('page-subtitle', 'Unknown quiz: ' + (quizId || ''));
+    } catch (_) {}
+  }
+
   function initFromQuery() {
     try {
       const params = new URLSearchParams(window.location.search);
       const quizId = params.get('quiz') || '';
-      if (!quizId) {
-        setText('page-title', 'Quiz not found');
-        setText('page-subtitle', 'Unknown quiz: ' + quizId);
-        return;
-      }
+      if (!quizId) { showNotFound(quizId); return; }
 
       // Load metadata from data/quizzes.json to drive page chrome
       Utils.fetchJSONCached('data/quizzes.json').then(function(list){
         const meta = (Array.isArray(list) ? list : []).find(function(it){ return it && it.id === quizId; }) || null;
-        if (!meta) {
-          setText('page-title', 'Quiz not found');
-          setText('page-subtitle', 'Unknown quiz: ' + quizId);
-          return;
-        }
+        if (!meta) { showNotFound(quizId); return; }
 
         document.title = (meta.title || 'ThaiQuest') + ' — ThaiQuest';
         setText('page-title', meta.title || 'ThaiQuest');
@@ -91,23 +90,15 @@
           // Fallback: try to load data/<quizId>.json as a standard quiz dataset
           try {
             Utils.fetchJSONCached('data/' + quizId + '.json').then(function(data){
-              if (!Array.isArray(data) || data.length === 0) {
-                setText('page-title', 'Quiz not found');
-                setText('page-subtitle', 'Unknown quiz: ' + quizId);
-                return;
-              }
+              if (!Array.isArray(data) || data.length === 0) { showNotFound(quizId); return; }
               try {
                 ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: quizId }, Utils.createQuizWithProgressiveDifficulty({
                   data: data
                 })));
               } catch (e) { handleDataLoadError(e); }
-            }).catch(function(){
-              setText('page-title', 'Quiz not found');
-              setText('page-subtitle', 'Unknown quiz: ' + quizId);
-            });
+            }).catch(function(){ showNotFound(quizId); });
           } catch (e) {
-            setText('page-title', 'Quiz not found');
-            setText('page-subtitle', 'Unknown quiz: ' + quizId);
+            showNotFound(quizId);
           }
           return;
         }

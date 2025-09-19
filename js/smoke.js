@@ -158,6 +158,37 @@
     }
   }
 
+  async function testHomeSearchFilters(serverRoot) {
+    const name = 'Home search filters show empty state';
+    const iframe = createFrame();
+    try {
+      const nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      const doc = nav.doc;
+      const search = doc.getElementById('search-input');
+      const list = doc.getElementById('quiz-list');
+      if (!search || !list) return { name: name, ok: false, details: 'Missing search or quiz-list' };
+
+      // Enter an unlikely term to force empty state
+      search.value = 'zzzzzzzzzz-__unlikely__-zzzzzzzz';
+      search.dispatchEvent(new nav.win.Event('input', { bubbles: true }));
+
+      let start = Date.now();
+      while (Date.now() - start < 3000) {
+        const empty = list.querySelector('.empty');
+        if (empty && /No quizzes found/i.test(empty.textContent || '')) {
+          return { name: name, ok: true };
+        }
+        await wait(100);
+      }
+      return { name: name, ok: false, details: 'Empty state did not appear' };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+    }
+  }
+
   async function testHomeContent(serverRoot) {
     const name = 'Home renders quiz cards from metadata';
     const iframe = createFrame();
@@ -245,6 +276,26 @@
         return { name: name, ok: false, details: 'No answer buttons rendered' };
       }
 
+      // After first render, options should be focusable (tabindex=0)
+      try {
+        let okTab = false;
+        let t1 = Date.now();
+        while (Date.now() - t1 < 2000) {
+          const tb = options.getAttribute('tabindex');
+          if (tb === '0') { okTab = true; break; }
+          await wait(50);
+        }
+        if (!okTab) return { name: name, ok: false, details: 'Options tabindex not 0' };
+      } catch (_) {}
+
+      // At least first button should have aria-label for screen readers
+      try {
+        const firstBtn = options.querySelector('button');
+        if (!firstBtn || !firstBtn.getAttribute('aria-label')) {
+          return { name: name, ok: false, details: 'First answer button missing aria-label' };
+        }
+      } catch (_) {}
+
       // Ensure generic per-quiz body class is applied by loader (poll briefly)
       try {
         let t0 = Date.now();
@@ -256,6 +307,16 @@
         }
         if (!hasBodyClass) return { name: name, ok: false, details: 'Missing body class ' + quizId + '-quiz' };
       } catch (_) {}
+
+      // If we know the expected metadata body class, verify it
+      if (expectations && expectations.expectedBodyClass) {
+        try {
+          const cls = expectations.expectedBodyClass;
+          if (cls && !doc.body.classList.contains(cls)) {
+            return { name: name, ok: false, details: 'Missing metadata bodyClass ' + cls };
+          }
+        } catch (_) {}
+      }
 
       // Baseline stats value
       const baselineQuestions = extractQuestionsAnswered(stats);
@@ -330,6 +391,120 @@
     }
   }
 
+  async function testQuizProTip(serverRoot, quizId) {
+    const name = 'Quiz "' + quizId + '" inserts metadata proTip';
+    const iframe = createFrame();
+    try {
+      const url = serverRoot + '/quiz.html?quiz=' + encodeURIComponent(quizId);
+      const nav = await withTimeout(navigateFrame(iframe, url), 6000, 'Quiz did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      const doc = nav.doc;
+      let start = Date.now();
+      while (Date.now() - start < 3000) {
+        const tip = doc.querySelector('.footer .pro-tip small');
+        if (tip && (tip.textContent || tip.childNodes.length > 0)) return { name: name, ok: true };
+        await wait(100);
+      }
+      return { name: name, ok: false, details: 'No metadata proTip found in footer' };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+    }
+  }
+
+  async function testQuizSymbolNote(serverRoot, quizId) {
+    const name = 'Quiz "' + quizId + '" shows symbol note';
+    const iframe = createFrame();
+    try {
+      const url = serverRoot + '/quiz.html?quiz=' + encodeURIComponent(quizId);
+      const nav = await withTimeout(navigateFrame(iframe, url), 6000, 'Quiz did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      const doc = nav.doc;
+      let start = Date.now();
+      while (Date.now() - start < 3000) {
+        const note = doc.querySelector('.quiz-symbol-note');
+        if (note && (note.textContent || '').trim()) return { name: name, ok: true };
+        await wait(100);
+      }
+      return { name: name, ok: false, details: 'Symbol note not found' };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+    }
+  }
+
+  async function testHomeResumeLink(serverRoot, quizId) {
+    const name = 'Home shows Resume link for last attempt';
+    const iframe = createFrame();
+    try {
+      // Seed last attempt in same-origin storage
+      const key = 'thaiQuest.lastAttempt.' + quizId;
+      window.StorageService && window.StorageService.setNumber(key, Date.now());
+
+      const nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      const doc = nav.doc;
+      let start = Date.now();
+      while (Date.now() - start < 4000) {
+        const link = doc.querySelector('.player-resume .resume-link');
+        if (link && /quiz\.html\?quiz=/.test(link.getAttribute('href') || '')) {
+          return { name: name, ok: true };
+        }
+        await wait(100);
+      }
+      return { name: name, ok: false, details: 'Resume link not visible' };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+    }
+  }
+
+  async function testHomeCardStars(serverRoot, quizId) {
+    const name = 'Home quiz card shows star rating from progress';
+    const iframe = createFrame();
+    try {
+      // Seed 3★ progress (100/100 correct)
+      const pkey = 'thaiQuest.progress.' + quizId;
+      window.StorageService && window.StorageService.setJSON(pkey, { questionsAnswered: 100, correctAnswers: 100 });
+      const akey = 'thaiQuest.lastAttempt.' + quizId;
+      window.StorageService && window.StorageService.setNumber(akey, Date.now());
+
+      const nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      const doc = nav.doc;
+
+      // Find the quiz card by its start link href
+      let start = Date.now();
+      while (Date.now() - start < 5000) {
+        const cards = Array.prototype.slice.call(doc.querySelectorAll('.quiz-card'));
+        for (let i = 0; i < cards.length; i++) {
+          try {
+            const a = cards[i].querySelector('a.start-btn');
+            if (a && /quiz\.html\?quiz=/.test(a.getAttribute('href') || '')) {
+              const href = new URL(a.getAttribute('href'), serverRoot + '/');
+              const q = href.searchParams.get('quiz');
+              if (q === quizId) {
+                const rating = cards[i].querySelector('.star-rating');
+                if (rating && /^★★★/.test(rating.textContent || '')) {
+                  return { name: name, ok: true };
+                }
+              }
+            }
+          } catch (_) {}
+        }
+        await wait(100);
+      }
+      return { name: name, ok: false, details: 'Star rating not found for ' + quizId };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+    }
+  }
+
   async function runAll() {
     const results = [];
     const root = (new URL('.', window.location.href)).href.replace(/\/$/, '');
@@ -344,6 +519,7 @@
     // Home page tests
     results.push(await testHome(root));
     results.push(await testHomeContent(root));
+    results.push(await testHomeSearchFilters(root));
 
     // Discover subset of quizzes to run
     let quizIds = await discoverQuizIds(root);
@@ -353,10 +529,38 @@
     const limit = parseInt(params.get('limit'), 10);
     if (isFinite(limit) && limit > 0) quizIds = quizIds.slice(0, limit);
 
+    // Load metadata so we can pass expected bodyClass and pick special cases
+    let metaMap = {};
+    try {
+      const res = await withTimeout(fetch(root + '/data/quizzes.json', { cache: 'no-cache' }), 5000, 'Could not fetch quizzes.json');
+      if (res && res.ok) {
+        const list = await res.json();
+        (Array.isArray(list) ? list : []).forEach(function(it){ if (it && it.id) metaMap[it.id] = it; });
+      }
+    } catch (_) {}
+
     for (let i = 0; i < quizIds.length; i++) {
-      results.push(await testQuiz(root, quizIds[i], { minChoices: 4 }));
+      const id = quizIds[i];
+      const meta = metaMap[id] || {};
+      results.push(await testQuiz(root, id, { minChoices: 4, expectedBodyClass: meta.bodyClass }));
       // Add a focused keyboard test for the first discovered quiz only (fast)
-      if (i === 0) results.push(await testKeyboardFocus(root, quizIds[i]));
+      if (i === 0) results.push(await testKeyboardFocus(root, id));
+    }
+
+    // Pick one quiz with a proTip and one with symbolNote to expand coverage
+    try {
+      const withProTip = Object.keys(metaMap).find(function(k){ return metaMap[k] && metaMap[k].proTip; });
+      if (withProTip) results.push(await testQuizProTip(root, withProTip));
+    } catch (_) {}
+    try {
+      const withSymbolNote = Object.keys(metaMap).find(function(k){ return metaMap[k] && metaMap[k].symbolNote; });
+      if (withSymbolNote) results.push(await testQuizSymbolNote(root, withSymbolNote));
+    } catch (_) {}
+
+    // Home resume link and card stars using a discovered quiz id (first)
+    if (quizIds.length > 0) {
+      results.push(await testHomeResumeLink(root, quizIds[0]));
+      results.push(await testHomeCardStars(root, quizIds[0]));
     }
 
     return results;
@@ -407,4 +611,3 @@
 
   wire();
 })();
-
