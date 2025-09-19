@@ -68,6 +68,8 @@
                   if (ans.thai) text += (text ? ' → ' : '') + ans.thai;
                   if (ans.phonetic) text += (text ? ' — ' : '') + ans.phonetic;
                 }
+                var typeLabel = (ans && ans.type === 'fake') ? 'Fake cluster' : 'True cluster';
+                text = text ? (text + ' — ' + typeLabel) : typeLabel;
                 Utils.renderExample(document.getElementById('feedback'), { text: text, highlight: { english: ans.english || '', thai: ans.thai || '', phonetic: ans.phonetic || '' } });
               } catch (e) { Utils.logError && Utils.logError(e, 'consonant-clusters.onAnswered'); }
             }
