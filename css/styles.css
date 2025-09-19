@@ -1014,7 +1014,8 @@ body.consonant-quiz h1 {
   margin-bottom: 0.5em;
 }
 
-body.consonant-quiz { --symbol-font-size: 10em; --symbol-margin: 0 0 0.3em 0; --symbol-font-weight: bold; }
+body.consonant-quiz,
+body.consonant-clusters-quiz { --symbol-font-size: 10em; --symbol-margin: 0 0 0.3em 0; --symbol-font-weight: bold; }
 
 
 
@@ -1249,7 +1250,8 @@ body.questions-quiz .correct-line {
   body.color-quiz { --symbol-font-size: 3.4em; }
   body.numbers-quiz { --symbol-font-size: 3.6em; }
   body.classifiers-quiz { --symbol-font-size: 3.6em; }
-  body.consonant-quiz { --symbol-font-size: 7em; --symbol-margin: 0.6em 0 0.6em 0; }
+  body.consonant-quiz,
+  body.consonant-clusters-quiz { --symbol-font-size: 7em; --symbol-margin: 0.6em 0 0.6em 0; }
   button { font-size: 1.05em; padding: 0.8em; }
   .pro-tip { display: none; }
 
@@ -1280,7 +1282,8 @@ body.questions-quiz .correct-line {
 }
 
 @media (max-width: 400px) {
-  body.consonant-quiz { --symbol-font-size: 6em; }
+  body.consonant-quiz,
+  body.consonant-clusters-quiz { --symbol-font-size: 6em; }
   body.consonant-quiz .legend { flex-direction: column; gap: 0.5em; }
   body.consonant-quiz button { font-size: 0.9em; padding: 0.6em; }
   
