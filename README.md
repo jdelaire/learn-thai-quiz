@@ -43,7 +43,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
  - **Countries**: Country names with Thai script, phonetics, and flag emoji hints; example sentences on correct answers
  - **Vowels That Change Form**: Thai vowels that change their writing form between consonants; English/Thai/phonetics with examples and a quick reference table.
  - **Consonants in Final Position (Individually)**: Thai consonants as final sounds with examples; maps to collapsed finals like k/t/p and nasals m/n/ŋ.
-- **Thai Consonant Clusters Cheat Sheet**: True vs fake clusters with Thai script, phonetics, and emoji cues.
+- **Consonant Clusters**: True vs fake clusters with Thai script, phonetics, and emoji cues.
 
 ### Quick start (local)
 
