@@ -45,6 +45,18 @@
   }
 
   const QuizBuilders = {
+    'consonant-clusters': makeStandardQuizBuilder('data/consonant-clusters.json', function(results) {
+      const data = results[0] || [];
+      return {
+        data: data,
+        answerKey: 'sounds',
+        buildSymbol: function(a){
+          var prefix = a && a.type === 'fake' ? 'Fake cluster' : 'True cluster';
+          var english = ((prefix + ': ' + (a.cluster || '') + ' → ' + (a.sounds || '')) + (a.english ? (' — ' + a.english) : ''));
+          return { english: english, thai: (a.thai || ''), emoji: (a.emoji || '') };
+        }
+      };
+    }),
     'final-consonants': function() {
       return Utils.fetchJSONCached('data/final-consonants.json').then(function(data){
         return function init(){
