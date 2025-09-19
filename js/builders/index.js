@@ -79,15 +79,10 @@
             data: data,
             answerKey: 'sounds',
             buildSymbol: function(item) {
-              var type = item && item.type;
-              var englishLabel = '';
-              if (type === 'true') englishLabel = 'True cluster (อักษรควบแท้)';
-              else if (type === 'fake') englishLabel = 'Fake cluster (อักษรควบไม่แท้)';
-              else englishLabel = (item && item.english) || '';
               return {
-                english: englishLabel,
+                english: '',
                 thai: (item && item.cluster) || '',
-                emoji: (item && item.emoji) || ''
+                emoji: ''
               };
             }
           });
