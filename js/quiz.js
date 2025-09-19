@@ -68,16 +68,26 @@
         });
         footer.appendChild(btn);
 
-        // Optional speed toggle (Slow <-> Normal)
+        // Speed toggle (cycles among clearer distinct rates)
         const speedBtn = document.createElement('button');
         speedBtn.type = 'button';
         speedBtn.className = 'chip sound-speed-toggle';
-        function labelFor(rate) { return (rate <= 0.85) ? '🐢 Speed: Slow' : '🏃 Speed: Normal'; }
-        function normalize(rate) { var r = parseFloat(rate); if (!isFinite(r)) r = 0.8; if (r <= 0.85) return 0.8; return 1.0; }
-        let current = normalize(getSoundRate());
+        var RATES = [0.6, 0.8, 1.0];
+        function nearestRate(val){
+          var r = parseFloat(val);
+          if (!isFinite(r)) r = 0.8;
+          var best = RATES[0]; var bestDiff = Math.abs(RATES[0] - r);
+          for (var i=1;i<RATES.length;i++){ var d = Math.abs(RATES[i]-r); if (d < bestDiff) { best = RATES[i]; bestDiff = d; } }
+          return best;
+        }
+        function labelFor(rate) { return 'Speed: ' + (rate.toFixed(1) + 'x'); }
+        var current = nearestRate(getSoundRate());
+        setSoundRate(current);
         speedBtn.textContent = labelFor(current);
         speedBtn.addEventListener('click', function(){
-          current = (current <= 0.85) ? 1.0 : 0.8;
+          var idx = 0;
+          for (var i=0;i<RATES.length;i++){ if (Math.abs(RATES[i]-current) < 0.001) { idx = i; break; } }
+          current = RATES[(idx + 1) % RATES.length];
           setSoundRate(current);
           try { speedBtn.textContent = labelFor(current); } catch (_) {}
         });
