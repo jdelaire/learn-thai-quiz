@@ -1,7 +1,7 @@
 [
   {
     "id": "true-gr",
-    "english": "True cluster: กร (gr)",
+    "english": "True cluster: กร",
     "thai": "กรรม",
     "phonetic": "gam (karma, deed)",
     "sounds": "gr",
@@ -10,7 +10,7 @@
   },
   {
     "id": "true-gl",
-    "english": "True cluster: กล (gl)",
+    "english": "True cluster: กล",
     "thai": "กลาง",
     "phonetic": "glaaŋ (middle)",
     "sounds": "gl",
@@ -19,7 +19,7 @@
   },
   {
     "id": "true-gw",
-    "english": "True cluster: กว (gw)",
+    "english": "True cluster: กว",
     "thai": "กว่า",
     "phonetic": "gwàa (than)",
     "sounds": "gw",
@@ -28,7 +28,7 @@
   },
   {
     "id": "true-pr",
-    "english": "True cluster: ปร (pr)",
+    "english": "True cluster: ปร",
     "thai": "ประเทศ",
     "phonetic": "bprà-thêet (country)",
     "sounds": "pr",
@@ -37,7 +37,7 @@
   },
   {
     "id": "true-pl",
-    "english": "True cluster: ปล (pl)",
+    "english": "True cluster: ปล",
     "thai": "ปลา",
     "phonetic": "bplaa (fish)",
     "sounds": "pl",
@@ -46,7 +46,7 @@
   },
   {
     "id": "true-dtr",
-    "english": "True cluster: ตร (dtr)",
+    "english": "True cluster: ตร",
     "thai": "ตำรวจ",
     "phonetic": "dtam-rùat (police)",
     "sounds": "dtr",
@@ -55,7 +55,7 @@
   },
   {
     "id": "true-khr-rough",
-    "english": "True cluster: ขร (khr)",
+    "english": "True cluster: ขร",
     "thai": "ขรุขระ",
     "phonetic": "khrù-khrà (rough, uneven)",
     "sounds": "khr",
@@ -64,7 +64,7 @@
   },
   {
     "id": "true-khl-flute",
-    "english": "True cluster: ขล (khl)",
+    "english": "True cluster: ขล",
     "thai": "ขลุ่ย",
     "phonetic": "khlùy (flute)",
     "sounds": "khl",
@@ -73,7 +73,7 @@
   },
   {
     "id": "true-khw-right",
-    "english": "True cluster: ขว (khw)",
+    "english": "True cluster: ขว",
     "thai": "ขวา",
     "phonetic": "khwǎa (right side)",
     "sounds": "khw",
@@ -82,7 +82,7 @@
   },
   {
     "id": "true-khr-teacher",
-    "english": "True cluster: คร (khr)",
+    "english": "True cluster: คร",
     "thai": "ครู",
     "phonetic": "khruu (teacher)",
     "sounds": "khr",
@@ -91,7 +91,7 @@
   },
   {
     "id": "true-khl-wave",
-    "english": "True cluster: คล (khl)",
+    "english": "True cluster: คล",
     "thai": "คลื่น",
     "phonetic": "khlʉ̂ʉn (wave)",
     "sounds": "khl",
@@ -100,7 +100,7 @@
   },
   {
     "id": "true-khw-buffalo",
-    "english": "True cluster: คว (khw)",
+    "english": "True cluster: คว",
     "thai": "ควาย",
     "phonetic": "khwaai (buffalo)",
     "sounds": "khw",
@@ -109,7 +109,7 @@
   },
   {
     "id": "true-phr",
-    "english": "True cluster: พร (phr)",
+    "english": "True cluster: พร",
     "thai": "พร",
     "phonetic": "phɔɔn (blessing)",
     "sounds": "phr",
@@ -118,7 +118,7 @@
   },
   {
     "id": "true-phl",
-    "english": "True cluster: พล (phl)",
+    "english": "True cluster: พล",
     "thai": "พละ",
     "phonetic": "phá-lá (strength, power)",
     "sounds": "phl",
@@ -127,7 +127,7 @@
   },
   {
     "id": "fake-jor",
-    "english": "Fake cluster: จร (sounds like j)",
+    "english": "Fake cluster: จร",
     "thai": "จราจร",
     "phonetic": "jà-raa-jon (traffic)",
     "sounds": "j",
@@ -136,7 +136,7 @@
   },
   {
     "id": "fake-sor",
-    "english": "Fake cluster: สร (sounds like s)",
+    "english": "Fake cluster: สร",
     "thai": "สรวง",
     "phonetic": "sǔaŋ (heaven, divine realm)",
     "sounds": "s",
@@ -145,7 +145,7 @@
   },
   {
     "id": "fake-sor-faith",
-    "english": "Fake cluster: ศร (sounds like s)",
+    "english": "Fake cluster: ศร",
     "thai": "ศรัทธา",
     "phonetic": "sàt-thaa (faith)",
     "sounds": "s",
@@ -154,7 +154,7 @@
   },
   {
     "id": "fake-sor-archaic",
-    "english": "Fake cluster: ซร (sounds like s)",
+    "english": "Fake cluster: ซร",
     "thai": "ซรบ",
     "phonetic": "sop (archaic reading)",
     "sounds": "s",
@@ -163,7 +163,7 @@
   },
   {
     "id": "fake-sor-royal",
-    "english": "Fake cluster: ทร (sounds like s)",
+    "english": "Fake cluster: ทร",
     "thai": "ทรง",
     "phonetic": "soŋ (royal ‘to wear/hold’)",
     "sounds": "s",
