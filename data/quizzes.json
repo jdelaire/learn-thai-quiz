@@ -67,8 +67,7 @@
       "Pronunciation"
     ],
     "bodyClass": "questions-quiz",
-    "proTip": "True clusters keep the r/l/w sound; fake clusters only pronounce the first consonant — the classic example is ทร → s.",
-    "symbolNote": "True clusters pronounce both consonants. Fake clusters keep only the first consonant sound."
+    "proTip": "True clusters keep the r/l/w sound; fake clusters only pronounce the first consonant — the classic example is ทร → s."
   },
   {
     "id": "greetings",
