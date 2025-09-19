@@ -515,6 +515,17 @@ body.quiz-page .stats {
   text-align: center;
 }
 
+/* Ensure sound toggle stacks below Back button on quiz pages */
+body.quiz-page .footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6em;
+}
+body.quiz-page .footer .sound-toggle {
+  display: inline-flex;
+}
+
 .back-btn, .coffee-btn {
   color: var(--color-brand);
   text-decoration: none;

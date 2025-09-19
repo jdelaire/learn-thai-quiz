@@ -21,6 +21,65 @@
       return null;
     }
 
+    // Sound preference helpers (persisted)
+    const SOUND_KEY = 'thaiQuest.settings.sound';
+    const SOUND_RATE_KEY = 'thaiQuest.settings.soundRate';
+    function isSoundOn() {
+      try {
+        const v = (window.StorageService && window.StorageService.getItem(SOUND_KEY)) || '';
+        return String(v).toLowerCase() === 'on';
+      } catch (_) { return false; }
+    }
+    function setSoundOn(on) {
+      try { window.StorageService && window.StorageService.setItem(SOUND_KEY, on ? 'on' : 'off'); } catch (_) {}
+    }
+    function getSoundRate() {
+      try {
+        var raw = (window.StorageService && window.StorageService.getItem(SOUND_RATE_KEY)) || '';
+        var n = parseFloat(raw);
+        if (!isFinite(n)) n = 0.8; // default: slightly slower
+        if (n < 0.5) n = 0.5; if (n > 1.5) n = 1.5;
+        return n;
+      } catch (_) { return 0.8; }
+    }
+    function setSoundRate(rate) {
+      try { window.StorageService && window.StorageService.setItem(SOUND_RATE_KEY, String(rate)); } catch (_) {}
+    }
+    function insertSoundToggle() {
+      try {
+        const footer = document.querySelector('.footer');
+        if (!footer || footer.querySelector('.sound-toggle')) return;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chip sound-toggle';
+        const on = isSoundOn();
+        btn.textContent = on ? '🔊 Sound: On' : '🔇 Sound: Off';
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        btn.addEventListener('click', function(){
+          const nowOn = !isSoundOn();
+          setSoundOn(nowOn);
+          try { btn.textContent = nowOn ? '🔊 Sound: On' : '🔇 Sound: Off'; } catch (_) {}
+          try { btn.setAttribute('aria-pressed', nowOn ? 'true' : 'false'); } catch (_) {}
+        });
+        footer.appendChild(btn);
+
+        // Optional speed toggle (Slow <-> Normal)
+        const speedBtn = document.createElement('button');
+        speedBtn.type = 'button';
+        speedBtn.className = 'chip sound-speed-toggle';
+        function labelFor(rate) { return (rate <= 0.85) ? '🐢 Speed: Slow' : '🏃 Speed: Normal'; }
+        function normalize(rate) { var r = parseFloat(rate); if (!isFinite(r)) r = 0.8; if (r <= 0.85) return 0.8; return 1.0; }
+        let current = normalize(getSoundRate());
+        speedBtn.textContent = labelFor(current);
+        speedBtn.addEventListener('click', function(){
+          current = (current <= 0.85) ? 1.0 : 0.8;
+          setSoundRate(current);
+          try { speedBtn.textContent = labelFor(current); } catch (_) {}
+        });
+        footer.appendChild(speedBtn);
+      } catch (_) {}
+    }
+
     // Ensure options container is focusable for scoped keyboard events
     Utils.ErrorHandler.safeDOM(function() {
       if (!optionsEl.hasAttribute('tabindex')) optionsEl.setAttribute('tabindex', '0');
@@ -108,6 +167,17 @@
       } catch (_) {}
     }
 
+    function maybeSpeakThaiFromAnswer(ans) {
+      try {
+        if (!isSoundOn()) return;
+        if (!(window.Utils && window.Utils.TTS && typeof window.Utils.TTS.speakThai === 'function' && window.Utils.TTS.isSupported && window.Utils.TTS.isSupported())) return;
+        var text = '';
+        try { text = (ans && (ans.thai || ans.symbol)) ? String(ans.thai || ans.symbol) : ''; } catch (_) { text = ''; }
+        if (!text) return;
+        window.Utils.TTS.speakThai(text, { rate: getSoundRate(), pitch: 1.0 });
+      } catch (_) {}
+    }
+
     function pickQuestion() {
       if (state.autoAdvanceTimerId != null) {
         clearTimeout(state.autoAdvanceTimerId);
@@ -189,6 +259,8 @@
             btn.addEventListener('animationend', function handle() {
               btn.classList.remove('answer-correct');
             }, { once: true });
+            // Speak Thai of the correct answer when enabled
+            maybeSpeakThaiFromAnswer(answer);
             // Disable other options until next question
             disableOtherButtons(btn);
             // Also prevent re-clicks on the correct button during the delay
@@ -252,6 +324,7 @@
     // Initialize
     pickQuestion();
     updateStats();
+    insertSoundToggle();
 
     return {
       pickQuestion,

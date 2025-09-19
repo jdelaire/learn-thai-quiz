@@ -6,6 +6,7 @@
   var common = (NS.util && NS.util.common) || {};
   var color = (NS.util && NS.util.color) || {};
   var coreFetch = (NS.core && NS.core.fetch) || {};
+  var tts = (NS.core && NS.core.tts) || {};
   var ui = (NS.ui && NS.ui.renderers) || {};
   var prog = (NS.quiz && NS.quiz.progressive) || {};
   var factories = (NS.quiz && NS.quiz.factories) || {};
@@ -19,6 +20,13 @@
     fetchJSON: coreFetch.fetchJSON,
     fetchJSONCached: coreFetch.fetchJSONCached,
     fetchJSONs: coreFetch.fetchJSONs,
+    
+    // text-to-speech (Thai, when available)
+    TTS: {
+      isSupported: tts.isSupported,
+      speakThai: tts.speakThai,
+      pickThaiVoice: tts.pickThaiVoice
+    },
 
     // common utils
     pickRandom: common.pickRandom,
