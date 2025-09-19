@@ -99,6 +99,7 @@
           setSoundOn(nowOn);
           try { btn.textContent = nowOn ? '🔊 Sound: On' : '🔇 Sound: Off'; } catch (_) {}
           try { btn.setAttribute('aria-pressed', nowOn ? 'true' : 'false'); } catch (_) {}
+          try { window.speechSynthesis && window.speechSynthesis.resume(); } catch (_) {}
         });
         footer.appendChild(btn);
 
@@ -124,6 +125,7 @@
           current = RATES[(idx + 1) % RATES.length];
           setSoundRate(current);
           try { speedBtn.textContent = labelFor(current); } catch (_) {}
+          try { window.speechSynthesis && window.speechSynthesis.resume(); } catch (_) {}
         });
         footer.appendChild(speedBtn);
       } catch (_) {}
