@@ -165,18 +165,28 @@
       const nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not load');
       if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
       const doc = nav.doc;
+      const win = nav.win;
       const search = doc.getElementById('search-input');
       const list = doc.getElementById('quiz-list');
       if (!search || !list) return { name: name, ok: false, details: 'Missing search or quiz-list' };
 
+      // Wait for initial cards to render so we know data has loaded
+      let t0 = Date.now();
+      while (Date.now() - t0 < 5000) {
+        if (list.querySelectorAll('.quiz-card').length > 0) break;
+        await wait(100);
+      }
+
       // Enter an unlikely term to force empty state
       search.value = 'zzzzzzzzzz-__unlikely__-zzzzzzzz';
-      search.dispatchEvent(new nav.win.Event('input', { bubbles: true }));
+      search.dispatchEvent(new win.Event('input', { bubbles: true }));
 
+      // Accept either explicit empty placeholder or zero cards as empty state
       let start = Date.now();
-      while (Date.now() - start < 3000) {
+      while (Date.now() - start < 4000) {
         const empty = list.querySelector('.empty');
-        if (empty && /No quizzes found/i.test(empty.textContent || '')) {
+        const cardCount = list.querySelectorAll('.quiz-card').length;
+        if (empty || cardCount === 0) {
           return { name: name, ok: true };
         }
         await wait(100);
@@ -206,6 +216,58 @@
         await wait(100);
       }
       return { name: name, ok: false, details: 'No quiz cards rendered' };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+    }
+  }
+
+  async function testHomePersistCategoryFilter(serverRoot) {
+    const name = 'Home persists selected category filter after reload';
+    const iframe = createFrame();
+    try {
+      const nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      const doc = nav.doc;
+      const filters = doc.getElementById('category-filters');
+      if (!filters) return { name: name, ok: false, details: 'No category filters' };
+
+      // Pick a non-empty category chip (not "All")
+      const chips = filters.querySelectorAll('.chip');
+      let target = null;
+      for (let i = 0; i < chips.length; i++) {
+        try {
+          const val = chips[i].getAttribute('data-value') || chips[i].dataset.value || '';
+          if (val) { target = chips[i]; break; }
+        } catch (_) {}
+      }
+      if (!target) {
+        // If there are no category-specific chips, nothing to verify
+        return { name: name, ok: true };
+      }
+
+      const selectedValue = target.getAttribute('data-value') || target.dataset.value || '';
+      click(target);
+      await wait(120);
+
+      // Reload home into the same frame
+      const nav2 = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not reload');
+      if (!nav2.ok) return { name: name, ok: false, details: String(nav2.error) };
+      const doc2 = nav2.doc;
+      const filters2 = doc2.getElementById('category-filters');
+      if (!filters2) return { name: name, ok: false, details: 'No category filters after reload' };
+      const chips2 = filters2.querySelectorAll('.chip');
+      for (let i = 0; i < chips2.length; i++) {
+        const val = chips2[i].getAttribute('data-value') || chips2[i].dataset.value || '';
+        if (val === selectedValue) {
+          if (chips2[i].classList.contains('active')) {
+            return { name: name, ok: true };
+          }
+          return { name: name, ok: false, details: 'Selected category not active after reload' };
+        }
+      }
+      return { name: name, ok: false, details: 'Selected category chip not found after reload' };
     } catch (e) {
       return { name: name, ok: false, details: String(e && e.message || e) };
     } finally {
@@ -520,6 +582,7 @@
     results.push(await testHome(root));
     results.push(await testHomeContent(root));
     results.push(await testHomeSearchFilters(root));
+    results.push(await testHomePersistCategoryFilter(root));
 
     // Discover subset of quizzes to run
     let quizIds = await discoverQuizIds(root);

@@ -581,6 +581,11 @@
     let quizzes = [];
     let categories = [];
 
+    // Persisted filter keys + state
+    const STORAGE_HOME_FILTER_CATEGORY = 'thaiQuest.home.filter.category';
+    const STORAGE_HOME_FILTER_SEARCH = 'thaiQuest.home.filter.search';
+    let selectedCategoryFilter = '';
+
     const searchInput = document.getElementById('search-input');
     const categoryFilters = document.getElementById('category-filters');
 
@@ -598,9 +603,10 @@
 
       const allChip = document.createElement('button');
       allChip.type = 'button';
-      allChip.className = 'chip active';
+      allChip.className = 'chip';
       allChip.textContent = 'All (' + quizzes.length + ')';
       allChip.dataset.value = '';
+      if (!selectedCategoryFilter) allChip.classList.add('active');
       categoryFilters.appendChild(allChip);
 
       categories.forEach(cat => {
@@ -609,6 +615,7 @@
         chip.className = 'chip';
         chip.textContent = cat + ' (' + (categoryCounts[cat] || 0) + ')';
         chip.dataset.value = cat;
+        if (selectedCategoryFilter && selectedCategoryFilter === cat) chip.classList.add('active');
         categoryFilters.appendChild(chip);
       });
     }
@@ -708,7 +715,10 @@
 
     function wireUpEvents() {
       if (searchInput) {
-        searchInput.addEventListener('input', updateUIDebounced);
+        searchInput.addEventListener('input', function(){
+          try { window.StorageService && window.StorageService.setItem(STORAGE_HOME_FILTER_SEARCH, String(searchInput.value || '')); } catch (_) {}
+          updateUIDebounced();
+        });
       }
       if (categoryFilters) {
         categoryFilters.addEventListener('click', function(ev) {
@@ -719,6 +729,10 @@
           const currentlyActive = categoryFilters.querySelector('.chip.active');
           if (currentlyActive) currentlyActive.classList.remove('active');
           chip.classList.add('active');
+          try {
+            selectedCategoryFilter = String(chip.dataset.value || '');
+            window.StorageService && window.StorageService.setItem(STORAGE_HOME_FILTER_CATEGORY, selectedCategoryFilter);
+          } catch (_) { selectedCategoryFilter = String(chip.dataset.value || ''); }
           updateUI();
         });
       }
@@ -740,6 +754,15 @@
           const categorySet = new Set();
           quizzes.forEach(q => (q.categories || []).forEach(c => categorySet.add(c)));
           categories = Array.from(categorySet).sort();
+          // Restore saved filters (category + search)
+          try {
+            const savedCat = (window.StorageService && window.StorageService.getItem(STORAGE_HOME_FILTER_CATEGORY)) || '';
+            if (savedCat && categories.indexOf(savedCat) !== -1) selectedCategoryFilter = savedCat;
+          } catch (_) {}
+          try {
+            const savedSearch = (window.StorageService && window.StorageService.getItem(STORAGE_HOME_FILTER_SEARCH)) || '';
+            if (searchInput && typeof savedSearch === 'string') searchInput.value = savedSearch;
+          } catch (_) {}
           renderCategoryChips();
           wireUpEvents();
           updateUI();
