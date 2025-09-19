@@ -4,8 +4,16 @@
     "title": "Consonants in Final Position 📜",
     "href": "quiz.html?quiz=final-consonants",
     "description": "Practice Thai consonants in final position and their resulting sounds.",
-    "bullets": ["Final sound rules","English/Thai/phonetics examples","Emoji hints"],
-    "categories": ["Alphabet","Reading","Pronunciation"],
+    "bullets": [
+      "Final sound rules",
+      "English/Thai/phonetics examples",
+      "Emoji hints"
+    ],
+    "categories": [
+      "Alphabet",
+      "Reading",
+      "Pronunciation"
+    ],
     "bodyClass": "questions-quiz",
     "proTip": "In final position, many Thai consonants collapse to <strong>k</strong>, <strong>t</strong>, or <strong>p</strong>. Nasals keep their sound (m, n, ŋ)."
   },
@@ -14,8 +22,15 @@
     "title": "Countries 🌍",
     "href": "quiz.html?quiz=countries",
     "description": "Practice country names: English, Thai script, and phonetics.",
-    "bullets": ["English/Thai/phonetics","Flag emoji hints","Example sentences"],
-    "categories": ["Vocabulary","Beginner"],
+    "bullets": [
+      "English/Thai/phonetics",
+      "Flag emoji hints",
+      "Example sentences"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Beginner"
+    ],
     "bodyClass": "questions-quiz",
     "proTip": "Structure: <strong>ฉัน/ผม + มาจาก + ประเทศ + [country]</strong> — I come from [country]."
   },
@@ -24,17 +39,50 @@
     "title": "Consonants 🔤",
     "href": "quiz.html?quiz=consonants",
     "description": "Learn all 44 Thai consonants with pronunciation, meanings, and tone classes.",
-    "bullets": ["Color-coded tone classes","Emoji associations","Progress tracking"],
-    "categories": ["Alphabet","Reading","Beginner"],
+    "bullets": [
+      "Color-coded tone classes",
+      "Emoji associations",
+      "Progress tracking"
+    ],
+    "categories": [
+      "Alphabet",
+      "Reading",
+      "Beginner"
+    ],
     "bodyClass": "consonant-quiz"
+  },
+  {
+    "id": "consonant-clusters",
+    "title": "Consonant Clusters",
+    "href": "quiz.html?quiz=consonant-clusters",
+    "description": "Practice Thai consonant clusters with real pronunciations and silent-letter traps.",
+    "bullets": [
+      "True vs fake clusters",
+      "Thai script + phonetics",
+      "Emoji cues"
+    ],
+    "categories": [
+      "Alphabet",
+      "Reading",
+      "Pronunciation"
+    ],
+    "bodyClass": "questions-quiz",
+    "proTip": "True clusters keep the r/l/w sound; fake clusters only pronounce the first consonant — the classic example is ทร → s."
   },
   {
     "id": "greetings",
     "title": "Greetings 🙏",
     "href": "quiz.html?quiz=greetings",
     "description": "Core Thai greetings with Thai script, phonetics, and polite particles.",
-    "bullets": ["Hello/Thanks/Sorry","Never mind / It’s ok","How about you?"],
-    "categories": ["Phrases","Beginner"],
+    "bullets": [
+      "Hello/Thanks/Sorry",
+      "Never mind / It’s ok",
+      "How about you?"
+    ],
+    "categories": [
+      "Phrases",
+      "Beginner"
+    ],
     "bodyClass": "questions-quiz",
     "proTip": "Add polite particles at the end: <strong>ครับ (khráp)</strong> for male speakers, <strong>ค่ะ (khâ)</strong> for female."
   },
@@ -43,8 +91,15 @@
     "title": "Vowels 🔤",
     "href": "quiz.html?quiz=vowels",
     "description": "Practice 32 Thai vowels with sound patterns and example words.",
-    "bullets": ["Vowel symbols","Sound patterns"],
-    "categories": ["Alphabet","Reading","Beginner"],
+    "bullets": [
+      "Vowel symbols",
+      "Sound patterns"
+    ],
+    "categories": [
+      "Alphabet",
+      "Reading",
+      "Beginner"
+    ],
     "bodyClass": "vowel-quiz",
     "symbolNote": "Note: The consonant ก (goo gai) may appear as a placeholder to show where the vowel attaches; it is not part of the answer.",
     "symbolNoteClass": "vowel-note"
@@ -54,8 +109,16 @@
     "title": "Vowels That Change Form ✍️",
     "href": "quiz.html?quiz=vowel-changes",
     "description": "Thai vowels that change their writing form between consonants (closed syllables).",
-    "bullets": ["Base vs new form","Between consonant + final","English/Thai/phonetics"],
-    "categories": ["Alphabet","Reading","Beginner"],
+    "bullets": [
+      "Base vs new form",
+      "Between consonant + final",
+      "English/Thai/phonetics"
+    ],
+    "categories": [
+      "Alphabet",
+      "Reading",
+      "Beginner"
+    ],
     "bodyClass": "vowel-quiz",
     "proTip": "<strong>✍️ Vowels That Change Form</strong><br><small>Some Thai vowels change their writing form when they appear in the middle of a syllable (between consonants).</small><br><em>Key notes:</em> • These vowels look different when placed between a consonant + final consonant. • Recognizing them improves reading fluency. • Common in short words (กิน, กัน, เกิน, กวน).<br><em>Examples:</em> ฉันกินข้าว (chǎn gin khâaw), เราจะเจอกัน (rao jà jəə gan), มันเกินไป (man gəən bpai), เขากวนมาก (kháw guan mâak)"
   },
@@ -64,8 +127,15 @@
     "title": "Colors 🎨",
     "href": "quiz.html?quiz=colors",
     "description": "Practice Thai colors including light/dark modifiers with phonetics.",
-    "bullets": ["Base colors","Light/Dark modifiers", "Dynamic colors"],
-    "categories": ["Vocabulary","Beginner"],
+    "bullets": [
+      "Base colors",
+      "Light/Dark modifiers",
+      "Dynamic colors"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Beginner"
+    ],
     "bodyClass": "color-quiz"
   },
   {
@@ -73,8 +143,15 @@
     "title": "Numbers 🔢",
     "href": "quiz.html?quiz=numbers",
     "description": "Practice Thai numbers with phonetics, from 0 to the millions.",
-    "bullets": ["Basic 0–10","Teens and Tens","Hundreds & Thousands"],
-    "categories": ["Vocabulary","Beginner"],
+    "bullets": [
+      "Basic 0–10",
+      "Teens and Tens",
+      "Hundreds & Thousands"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Beginner"
+    ],
     "bodyClass": "numbers-quiz",
     "proTip": "Insert a classifier after the number when counting. e.g., 2 bottles = <strong>สองขวด</strong> (<em>sɔ̌ɔŋ khùat</em>), 5 people = <strong>ห้าคน</strong> (<em>hâa khon</em>)."
   },
@@ -83,8 +160,15 @@
     "title": "Days of the Week 📅",
     "href": "quiz.html?quiz=days",
     "description": "Thai days with phonetics, planet, and color associations.",
-    "bullets": ["Thai + phonetic","Planet and color associations","Emoji hints"],
-    "categories": ["Vocabulary","Beginner"],
+    "bullets": [
+      "Thai + phonetic",
+      "Planet and color associations",
+      "Emoji hints"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Beginner"
+    ],
     "bodyClass": "questions-quiz",
     "proTip": "• 'wan' = day, used before every day name<br>• Each day links to a planet and traditional color in Thai culture"
   },
@@ -93,8 +177,15 @@
     "title": "Family 🧑‍🧑‍🧒‍🧒",
     "href": "quiz.html?quiz=family",
     "description": "Learn Thai family members with Thai script and phonetics.",
-    "bullets": ["Parents & siblings","Extended family (aunts/uncles, grandparents)","Phonetics practice"],
-    "categories": ["Vocabulary","Beginner"],
+    "bullets": [
+      "Parents & siblings",
+      "Extended family (aunts/uncles, grandparents)",
+      "Phonetics practice"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Beginner"
+    ],
     "bodyClass": "family-quiz"
   },
   {
@@ -102,8 +193,15 @@
     "title": "Body Parts 🧍‍♂️",
     "href": "quiz.html?quiz=body-parts",
     "description": "Practice common body parts with Thai script and phonetics.",
-    "bullets": ["English/Thai/phonetics","Emoji hints when available","Core anatomy words"],
-    "categories": ["Vocabulary","Beginner"],
+    "bullets": [
+      "English/Thai/phonetics",
+      "Emoji hints when available",
+      "Core anatomy words"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Beginner"
+    ],
     "bodyClass": "questions-quiz"
   },
   {
@@ -111,8 +209,15 @@
     "title": "Time ⏰",
     "href": "quiz.html?quiz=time",
     "description": "Telling time in Thai: keywords, formats, and common phrases.",
-    "bullets": ["Key words (นาที, โมง, ทุ่ม, ครึ่ง, ตรง)","AM/PM patterns (ตี…, …โมงเช้า, …ทุ่ม)","Practical sentences"],
-    "categories": ["Phrases","Intermediate"],
+    "bullets": [
+      "Key words (นาที, โมง, ทุ่ม, ครึ่ง, ตรง)",
+      "AM/PM patterns (ตี…, …โมงเช้า, …ทุ่ม)",
+      "Practical sentences"
+    ],
+    "categories": [
+      "Phrases",
+      "Intermediate"
+    ],
     "bodyClass": "time-quiz"
   },
   {
@@ -120,8 +225,15 @@
     "title": "Questions ❓",
     "href": "quiz.html?quiz=questions",
     "description": "Asking questions in Thai: core words and common patterns.",
-    "bullets": ["Question words (อะไร, ใคร, ที่ไหน, เมื่อไหร่, ทำไม)","Patterns (…ไหม, …ได้ไหม, เคย…ไหม)","How much/how many"],
-    "categories": ["Phrases","Intermediate"],
+    "bullets": [
+      "Question words (อะไร, ใคร, ที่ไหน, เมื่อไหร่, ทำไม)",
+      "Patterns (…ไหม, …ได้ไหม, เคย…ไหม)",
+      "How much/how many"
+    ],
+    "categories": [
+      "Phrases",
+      "Intermediate"
+    ],
     "bodyClass": "questions-quiz",
     "proTip": "• Most yes/no questions end in \"mái?\"<br>• Add \"khráp/khà\" for politeness at the end<br>• Use \"bâaŋ\" after question words for 'what kinds / which ones'"
   },
@@ -130,8 +242,15 @@
     "title": "Common Action Verbs 🚀",
     "href": "quiz.html?quiz=verbs",
     "description": "Practice essential Thai action verbs with English, Thai, and phonetics.",
-    "bullets": ["Core everyday verbs","Examples after correct answers","Emoji hints"],
-    "categories": ["Vocabulary","Intermediate"],
+    "bullets": [
+      "Core everyday verbs",
+      "Examples after correct answers",
+      "Emoji hints"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Intermediate"
+    ],
     "bodyClass": "questions-quiz",
     "proTip": "• Common combos: 'tham ŋaan' (work), 'àap-náam' (shower)<br>• Use 'bpai/maa' for go/come; add places with 'thîi' (at)"
   },
@@ -140,8 +259,15 @@
     "title": "Months & Seasons 📆",
     "href": "quiz.html?quiz=months",
     "description": "Practice Thai months and seasons with Thai script, phonetics, and examples.",
-    "bullets": ["12 months","Thailand's seasons","Examples after correct answers"],
-    "categories": ["Vocabulary","Intermediate"],
+    "bullets": [
+      "12 months",
+      "Thailand's seasons",
+      "Examples after correct answers"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Intermediate"
+    ],
     "bodyClass": "questions-quiz"
   },
   {
@@ -149,8 +275,15 @@
     "title": "Common Thai Classifiers 🔢",
     "href": "quiz.html?quiz=classifiers",
     "description": "Practice essential Thai classifiers with English, Thai, and phonetics.",
-    "bullets": ["Core classifiers","Food & drinks classifiers","Usage tips"],
-    "categories": ["Vocabulary","Intermediate"],
+    "bullets": [
+      "Core classifiers",
+      "Food & drinks classifiers",
+      "Usage tips"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Intermediate"
+    ],
     "bodyClass": "classifiers-quiz",
     "proTip": "Structure: <strong>[noun] + [number] + [classifier]</strong><br>'nɯ̀ŋ' (one) is often omitted in casual speech."
   },
@@ -159,8 +292,15 @@
     "title": "Rooms 🏠",
     "href": "quiz.html?quiz=rooms",
     "description": "Learn Thai room and house vocabulary with phonetics and example sentences.",
-    "bullets": ["Rooms & spaces","House types","Usage examples"],
-    "categories": ["Vocabulary","Intermediate"],
+    "bullets": [
+      "Rooms & spaces",
+      "House types",
+      "Usage examples"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Intermediate"
+    ],
     "bodyClass": "rooms-quiz",
     "proTip": "• Use 'hɔ̂ɔŋ' (room) before specific room names<br>• 'nai' means 'in' — phǒm yùu nai hɔ̂ɔŋ nɔɔn (I'm in the bedroom)<br>• 'thîi' means 'at' — rao nâŋ lên thîi rá-biiang (We sit on the balcony)"
   },
@@ -169,8 +309,15 @@
     "title": "Jobs 🕵🏻‍♂️👨‍💼",
     "href": "quiz.html?quiz=jobs",
     "description": "Practice Thai job and occupation vocabulary with phonetics.",
-    "bullets": ["Common professions","Thai script + phonetics","Emoji hints"],
-    "categories": ["Vocabulary","Intermediate"],
+    "bullets": [
+      "Common professions",
+      "Thai script + phonetics",
+      "Emoji hints"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Intermediate"
+    ],
     "bodyClass": "jobs-quiz"
   },
   {
@@ -178,8 +325,15 @@
     "title": "Common Thai Foods 🍛",
     "href": "quiz.html?quiz=foods",
     "description": "Practice common Thai foods, fruits, and cooking methods with phonetics and examples.",
-    "bullets": ["Foods, fruits, and methods","English/Thai/phonetic","Emoji hints + examples"],
-    "categories": ["Vocabulary","Intermediate"],
+    "bullets": [
+      "Foods, fruits, and methods",
+      "English/Thai/phonetic",
+      "Emoji hints + examples"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Intermediate"
+    ],
     "bodyClass": "foods-quiz"
   },
   {
@@ -187,8 +341,16 @@
     "title": "Tone Markers ⚡",
     "href": "quiz.html?quiz=tones",
     "description": "Practice Thai tone outcomes by consonant class, tone mark, and vowel length.",
-    "bullets": ["Middle/High/Low consonant classes","Tone marks ( ่ ้ ๊ ๋ ) and none","Long vs short vowels"],
-    "categories": ["Pronunciation","Reading","Advanced"],
+    "bullets": [
+      "Middle/High/Low consonant classes",
+      "Tone marks ( ่ ้ ๊ ๋ ) and none",
+      "Long vs short vowels"
+    ],
+    "categories": [
+      "Pronunciation",
+      "Reading",
+      "Advanced"
+    ],
     "bodyClass": "questions-quiz"
   },
   {
@@ -196,8 +358,15 @@
     "title": "Tense Markers ⏱️",
     "href": "quiz.html?quiz=tenses",
     "description": "Practice Thai time markers and aspects: now, already, not yet, soon, often, never.",
-    "bullets": ["Time words & structures","English/Thai/phonetics","Examples after correct answers"],
-    "categories": ["Phrases","Advanced"],
+    "bullets": [
+      "Time words & structures",
+      "English/Thai/phonetics",
+      "Examples after correct answers"
+    ],
+    "categories": [
+      "Phrases",
+      "Advanced"
+    ],
     "bodyClass": "questions-quiz",
     "proTip": "Structure: <strong>[Subject] + [Time Marker] + [Verb] + [Particle]</strong>"
   },
@@ -206,8 +375,15 @@
     "title": "Essential Prepositions 📍",
     "href": "quiz.html?quiz=prepositions",
     "description": "Practice essential Thai prepositions and existential ‘mii’ with Thai and phonetics.",
-    "bullets": ["Place prepositions","English/Thai/phonetics","Usage structure tip"],
-    "categories": ["Vocabulary","Beginner"],
+    "bullets": [
+      "Place prepositions",
+      "English/Thai/phonetics",
+      "Usage structure tip"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Beginner"
+    ],
     "bodyClass": "questions-quiz",
     "proTip": "Structure: <strong>[Preposition] + [location] + mii + [object] + [number] + [classifier]</strong><br>Examples: <em>bon dtó mii nǎŋ-sɯ̌ɯ sɔ̌ɔŋ lêm</em> — On the table, there are two books. <em>dtâay gâw-îi mii mɛɛw nɯ̀ŋ dtua</em> — Under the chair, there’s one cat."
   },
@@ -216,8 +392,15 @@
     "title": "Adjectives 🛠️",
     "href": "quiz.html?quiz=adjectives",
     "description": "Practice Thai adjectives with Thai script, phonetics, and comparison examples.",
-    "bullets": ["English/Thai/phonetics","Comparative and superlative examples","Emoji hints"],
-    "categories": ["Vocabulary","Beginner"],
+    "bullets": [
+      "English/Thai/phonetics",
+      "Comparative and superlative examples",
+      "Emoji hints"
+    ],
+    "categories": [
+      "Vocabulary",
+      "Beginner"
+    ],
     "bodyClass": "questions-quiz",
     "proTip": "Comparatives use \"gwàa\"; superlatives often use \"thîi-sùt\"."
   }
