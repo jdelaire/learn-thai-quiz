@@ -45,10 +45,15 @@
     function setSoundRate(rate) {
       try { window.StorageService && window.StorageService.setItem(SOUND_RATE_KEY, String(rate)); } catch (_) {}
     }
+    function isVoiceSupported() {
+      try { return !!(document && document.body && document.body.dataset && document.body.dataset.voiceSupported === '1'); } catch (_) { return false; }
+    }
+
     function insertSoundToggle() {
       try {
         const footer = document.querySelector('.footer');
         if (!footer || footer.querySelector('.sound-toggle')) return;
+        if (!isVoiceSupported()) return;
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'chip sound-toggle';
@@ -169,10 +174,16 @@
 
     function maybeSpeakThaiFromAnswer(ans) {
       try {
+        if (!isVoiceSupported()) return;
         if (!isSoundOn()) return;
         if (!(window.Utils && window.Utils.TTS && typeof window.Utils.TTS.speakThai === 'function' && window.Utils.TTS.isSupported && window.Utils.TTS.isSupported())) return;
         var text = '';
-        try { text = (ans && (ans.thai || ans.symbol)) ? String(ans.thai || ans.symbol) : ''; } catch (_) { text = ''; }
+        try {
+          if (ans && ans.thai) text = String(ans.thai);
+          else if (ans && ans.exampleThai) text = String(ans.exampleThai);
+          else if (ans && ans.symbol) text = String(ans.symbol);
+          else text = '';
+        } catch (_) { text = ''; }
         if (!text) return;
         window.Utils.TTS.speakThai(text, { rate: getSoundRate(), pitch: 1.0 });
       } catch (_) {}

@@ -7,7 +7,8 @@
     "bullets": ["True (อักษรควบแท้) and Fake (อักษรควบไม่แท้)","R/L/W clusters","Silent second consonant (ทร → s)"],
     "categories": ["Alphabet","Reading","Pronunciation"],
     "bodyClass": "questions-quiz",
-    "proTip": "<strong>Clusters:</strong> True clusters pronounce both consonants (usually +ร/ล/ว). Fake clusters only pronounce the first (e.g., <strong>ทร</strong> → <em>s</em>)."
+    "proTip": "<strong>Clusters:</strong> True clusters pronounce both consonants (usually +ร/ล/ว). Fake clusters only pronounce the first (e.g., <strong>ทร</strong> → <em>s</em>).",
+    "supportsVoice": true
   },
   {
     "id": "final-consonants",
@@ -17,7 +18,8 @@
     "bullets": ["Final sound rules","English/Thai/phonetics examples","Emoji hints"],
     "categories": ["Alphabet","Reading","Pronunciation"],
     "bodyClass": "questions-quiz",
-    "proTip": "In final position, many Thai consonants collapse to <strong>k</strong>, <strong>t</strong>, or <strong>p</strong>. Nasals keep their sound (m, n, ŋ)."
+    "proTip": "In final position, many Thai consonants collapse to <strong>k</strong>, <strong>t</strong>, or <strong>p</strong>. Nasals keep their sound (m, n, ŋ).",
+    "supportsVoice": true
   },
   {
     "id": "countries",
@@ -27,7 +29,8 @@
     "bullets": ["English/Thai/phonetics","Flag emoji hints","Example sentences"],
     "categories": ["Vocabulary","Beginner"],
     "bodyClass": "questions-quiz",
-    "proTip": "Structure: <strong>ฉัน/ผม + มาจาก + ประเทศ + [country]</strong> — I come from [country]."
+    "proTip": "Structure: <strong>ฉัน/ผม + มาจาก + ประเทศ + [country]</strong> — I come from [country].",
+    "supportsVoice": true
   },
   {
     "id": "consonants",
@@ -36,7 +39,8 @@
     "description": "Learn all 44 Thai consonants with pronunciation, meanings, and tone classes.",
     "bullets": ["Color-coded tone classes","Emoji associations","Progress tracking"],
     "categories": ["Alphabet","Reading","Beginner"],
-    "bodyClass": "consonant-quiz"
+    "bodyClass": "consonant-quiz",
+    "supportsVoice": false
   },
   {
     "id": "greetings",
@@ -46,7 +50,8 @@
     "bullets": ["Hello/Thanks/Sorry","Never mind / It’s ok","How about you?"],
     "categories": ["Phrases","Beginner"],
     "bodyClass": "questions-quiz",
-    "proTip": "Add polite particles at the end: <strong>ครับ (khráp)</strong> for male speakers, <strong>ค่ะ (khâ)</strong> for female."
+    "proTip": "Add polite particles at the end: <strong>ครับ (khráp)</strong> for male speakers, <strong>ค่ะ (khâ)</strong> for female.",
+    "supportsVoice": true
   },
   {
     "id": "vowels",
@@ -57,7 +62,8 @@
     "categories": ["Alphabet","Reading","Beginner"],
     "bodyClass": "vowel-quiz",
     "symbolNote": "Note: The consonant ก (goo gai) may appear as a placeholder to show where the vowel attaches; it is not part of the answer.",
-    "symbolNoteClass": "vowel-note"
+    "symbolNoteClass": "vowel-note",
+    "supportsVoice": false
   },
   {
     "id": "vowel-changes",
@@ -67,7 +73,8 @@
     "bullets": ["Base vs new form","Between consonant + final","English/Thai/phonetics"],
     "categories": ["Alphabet","Reading","Beginner"],
     "bodyClass": "vowel-quiz",
-    "proTip": "<strong>✍️ Vowels That Change Form</strong><br><small>Some Thai vowels change their writing form when they appear in the middle of a syllable (between consonants).</small><br><em>Key notes:</em> • These vowels look different when placed between a consonant + final consonant. • Recognizing them improves reading fluency. • Common in short words (กิน, กัน, เกิน, กวน).<br><em>Examples:</em> ฉันกินข้าว (chǎn gin khâaw), เราจะเจอกัน (rao jà jəə gan), มันเกินไป (man gəən bpai), เขากวนมาก (kháw guan mâak)"
+    "proTip": "<strong>✍️ Vowels That Change Form</strong><br><small>Some Thai vowels change their writing form when they appear in the middle of a syllable (between consonants).</small><br><em>Key notes:</em> • These vowels look different when placed between a consonant + final consonant. • Recognizing them improves reading fluency. • Common in short words (กิน, กัน, เกิน, กวน).<br><em>Examples:</em> ฉันกินข้าว (chǎn gin khâaw), เราจะเจอกัน (rao jà jəə gan), มันเกินไป (man gəən bpai), เขากวนมาก (kháw guan mâak)",
+    "supportsVoice": false
   },
   {
     "id": "colors",
@@ -76,7 +83,8 @@
     "description": "Practice Thai colors including light/dark modifiers with phonetics.",
     "bullets": ["Base colors","Light/Dark modifiers", "Dynamic colors"],
     "categories": ["Vocabulary","Beginner"],
-    "bodyClass": "color-quiz"
+    "bodyClass": "color-quiz",
+    "supportsVoice": true
   },
   {
     "id": "numbers",
@@ -86,7 +94,8 @@
     "bullets": ["Basic 0–10","Teens and Tens","Hundreds & Thousands"],
     "categories": ["Vocabulary","Beginner"],
     "bodyClass": "numbers-quiz",
-    "proTip": "Insert a classifier after the number when counting. e.g., 2 bottles = <strong>สองขวด</strong> (<em>sɔ̌ɔŋ khùat</em>), 5 people = <strong>ห้าคน</strong> (<em>hâa khon</em>)."
+    "proTip": "Insert a classifier after the number when counting. e.g., 2 bottles = <strong>สองขวด</strong> (<em>sɔ̌ɔŋ khùat</em>), 5 people = <strong>ห้าคน</strong> (<em>hâa khon</em>).",
+    "supportsVoice": true
   },
   {
     "id": "days",
@@ -96,7 +105,8 @@
     "bullets": ["Thai + phonetic","Planet and color associations","Emoji hints"],
     "categories": ["Vocabulary","Beginner"],
     "bodyClass": "questions-quiz",
-    "proTip": "• 'wan' = day, used before every day name<br>• Each day links to a planet and traditional color in Thai culture"
+    "proTip": "• 'wan' = day, used before every day name<br>• Each day links to a planet and traditional color in Thai culture",
+    "supportsVoice": true
   },
   {
     "id": "family",
@@ -105,7 +115,8 @@
     "description": "Learn Thai family members with Thai script and phonetics.",
     "bullets": ["Parents & siblings","Extended family (aunts/uncles, grandparents)","Phonetics practice"],
     "categories": ["Vocabulary","Beginner"],
-    "bodyClass": "family-quiz"
+    "bodyClass": "family-quiz",
+    "supportsVoice": true
   },
   {
     "id": "body-parts",
@@ -114,7 +125,8 @@
     "description": "Practice common body parts with Thai script and phonetics.",
     "bullets": ["English/Thai/phonetics","Emoji hints when available","Core anatomy words"],
     "categories": ["Vocabulary","Beginner"],
-    "bodyClass": "questions-quiz"
+    "bodyClass": "questions-quiz",
+    "supportsVoice": true
   },
   {
     "id": "time",
@@ -152,7 +164,8 @@
     "description": "Practice Thai months and seasons with Thai script, phonetics, and examples.",
     "bullets": ["12 months","Thailand's seasons","Examples after correct answers"],
     "categories": ["Vocabulary","Intermediate"],
-    "bodyClass": "questions-quiz"
+    "bodyClass": "questions-quiz",
+    "supportsVoice": true
   },
   {
     "id": "classifiers",
@@ -162,7 +175,8 @@
     "bullets": ["Core classifiers","Food & drinks classifiers","Usage tips"],
     "categories": ["Vocabulary","Intermediate"],
     "bodyClass": "classifiers-quiz",
-    "proTip": "Structure: <strong>[noun] + [number] + [classifier]</strong><br>'nɯ̀ŋ' (one) is often omitted in casual speech."
+    "proTip": "Structure: <strong>[noun] + [number] + [classifier]</strong><br>'nɯ̀ŋ' (one) is often omitted in casual speech.",
+    "supportsVoice": true
   },
   {
     "id": "rooms",
@@ -172,7 +186,8 @@
     "bullets": ["Rooms & spaces","House types","Usage examples"],
     "categories": ["Vocabulary","Intermediate"],
     "bodyClass": "rooms-quiz",
-    "proTip": "• Use 'hɔ̂ɔŋ' (room) before specific room names<br>• 'nai' means 'in' — phǒm yùu nai hɔ̂ɔŋ nɔɔn (I'm in the bedroom)<br>• 'thîi' means 'at' — rao nâŋ lên thîi rá-biiang (We sit on the balcony)"
+    "proTip": "• Use 'hɔ̂ɔŋ' (room) before specific room names<br>• 'nai' means 'in' — phǒm yùu nai hɔ̂ɔŋ nɔɔn (I'm in the bedroom)<br>• 'thîi' means 'at' — rao nâŋ lên thîi rá-biiang (We sit on the balcony)",
+    "supportsVoice": true
   },
   {
     "id": "jobs",
@@ -181,7 +196,8 @@
     "description": "Practice Thai job and occupation vocabulary with phonetics.",
     "bullets": ["Common professions","Thai script + phonetics","Emoji hints"],
     "categories": ["Vocabulary","Intermediate"],
-    "bodyClass": "jobs-quiz"
+    "bodyClass": "jobs-quiz",
+    "supportsVoice": true
   },
   {
     "id": "foods",
@@ -190,7 +206,8 @@
     "description": "Practice common Thai foods, fruits, and cooking methods with phonetics and examples.",
     "bullets": ["Foods, fruits, and methods","English/Thai/phonetic","Emoji hints + examples"],
     "categories": ["Vocabulary","Intermediate"],
-    "bodyClass": "foods-quiz"
+    "bodyClass": "foods-quiz",
+    "supportsVoice": true
   },
   {
     "id": "tones",
@@ -199,7 +216,8 @@
     "description": "Practice Thai tone outcomes by consonant class, tone mark, and vowel length.",
     "bullets": ["Middle/High/Low consonant classes","Tone marks ( ่ ้ ๊ ๋ ) and none","Long vs short vowels"],
     "categories": ["Pronunciation","Reading","Advanced"],
-    "bodyClass": "questions-quiz"
+    "bodyClass": "questions-quiz",
+    "supportsVoice": true
   },
   {
     "id": "tenses",
@@ -209,7 +227,8 @@
     "bullets": ["Time words & structures","English/Thai/phonetics","Examples after correct answers"],
     "categories": ["Phrases","Advanced"],
     "bodyClass": "questions-quiz",
-    "proTip": "Structure: <strong>[Subject] + [Time Marker] + [Verb] + [Particle]</strong>"
+    "proTip": "Structure: <strong>[Subject] + [Time Marker] + [Verb] + [Particle]</strong>",
+    "supportsVoice": true
   },
   {
     "id": "prepositions",
@@ -219,7 +238,8 @@
     "bullets": ["Place prepositions","English/Thai/phonetics","Usage structure tip"],
     "categories": ["Vocabulary","Beginner"],
     "bodyClass": "questions-quiz",
-    "proTip": "Structure: <strong>[Preposition] + [location] + mii + [object] + [number] + [classifier]</strong><br>Examples: <em>bon dtó mii nǎŋ-sɯ̌ɯ sɔ̌ɔŋ lêm</em> — On the table, there are two books. <em>dtâay gâw-îi mii mɛɛw nɯ̀ŋ dtua</em> — Under the chair, there’s one cat."
+    "proTip": "Structure: <strong>[Preposition] + [location] + mii + [object] + [number] + [classifier]</strong><br>Examples: <em>bon dtó mii nǎŋ-sɯ̌ɯ sɔ̌ɔŋ lêm</em> — On the table, there are two books. <em>dtâay gâw-îi mii mɛɛw nɯ̀ŋ dtua</em> — Under the chair, there’s one cat.",
+    "supportsVoice": true
   },
   {
     "id": "adjectives",
@@ -229,6 +249,7 @@
     "bullets": ["English/Thai/phonetics","Comparative and superlative examples","Emoji hints"],
     "categories": ["Vocabulary","Beginner"],
     "bodyClass": "questions-quiz",
-    "proTip": "Comparatives use \"gwàa\"; superlatives often use \"thîi-sùt\"."
+    "proTip": "Comparatives use \"gwàa\"; superlatives often use \"thîi-sùt\".",
+    "supportsVoice": true
   }
 ]

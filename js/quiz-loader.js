@@ -60,6 +60,7 @@
           if (quizId) {
             document.body.classList.add(quizId + '-quiz');
             document.body.dataset.quizId = quizId;
+            try { document.body.dataset.voiceSupported = (meta && meta.supportsVoice) ? '1' : '0'; } catch (_) {}
           }
         } catch (e) {}
 
