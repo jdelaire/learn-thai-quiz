@@ -49,11 +49,45 @@
       try { return !!(document && document.body && document.body.dataset && document.body.dataset.voiceSupported === '1'); } catch (_) { return false; }
     }
 
+    function hasThaiVoice() {
+      try {
+        return !!(window.Utils && window.Utils.TTS && typeof window.Utils.TTS.pickThaiVoice === 'function' && window.Utils.TTS.pickThaiVoice());
+      } catch (_) { return false; }
+    }
+
+    function getThaiVoiceInstallMessage() {
+      try {
+        var ua = (navigator && navigator.userAgent) ? String(navigator.userAgent) : '';
+        var plat = (navigator && navigator.platform) ? String(navigator.platform) : '';
+        var isIOS = /iPad|iPhone|iPod/.test(ua) || (/Mac/.test(plat) && 'maxTouchPoints' in navigator && navigator.maxTouchPoints > 1);
+        var isAndroid = /Android/i.test(ua);
+        var isWindows = /Windows/i.test(ua);
+        var isMac = !isIOS && /Mac OS X|Macintosh/i.test(ua);
+        if (isIOS) return 'To enable audio: Settings → Accessibility → Spoken Content → Voices → Add New Voice → Thai';
+        if (isAndroid) return 'To enable audio: Settings → System → Languages & input → Text‑to‑speech → Install voice data → Thai';
+        if (isMac) return 'To enable audio: System Settings → Accessibility → Spoken Content → System Voice → Manage Voices → Thai';
+        if (isWindows) return 'To enable audio: Settings → Time & Language → Speech → Manage voices → Add voices → Thai';
+        return 'Thai voice not available. Install Thai TTS in your system settings.';
+      } catch (_) {
+        return 'Thai voice not available. Install Thai TTS in your system settings.';
+      }
+    }
+
     function insertSoundToggle() {
       try {
         const footer = document.querySelector('.footer');
-        if (!footer || footer.querySelector('.sound-toggle')) return;
+        if (!footer || footer.querySelector('.sound-toggle') || footer.querySelector('.sound-help')) return;
         if (!isVoiceSupported()) return;
+
+        // Gate on Thai voice availability. If absent, show a help tip instead of controls.
+        var canSpeakThai = !!(window.Utils && window.Utils.TTS && window.Utils.TTS.isSupported && window.Utils.TTS.isSupported() && hasThaiVoice());
+        if (!canSpeakThai) {
+          var help = document.createElement('div');
+          help.className = 'sound-help';
+          help.textContent = getThaiVoiceInstallMessage();
+          footer.appendChild(help);
+          return;
+        }
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'chip sound-toggle';
