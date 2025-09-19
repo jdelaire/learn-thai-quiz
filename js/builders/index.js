@@ -72,6 +72,12 @@
         };
       });
     },
+    'consonant-clusters': makeStandardQuizBuilder('data/consonant-clusters.json', function(results) {
+      return configSimple(results, {
+        answerKey: 'sounds',
+        buildSymbol: symbolEnglishThaiEmoji
+      });
+    }),
     consonants: function() {
       Utils.ErrorHandler.safe(Utils.insertConsonantLegend)();
       return Utils.fetchJSONCached('data/consonants.json').then(function(data){
