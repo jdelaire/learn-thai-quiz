@@ -45,6 +45,38 @@
   }
 
   const QuizBuilders = {
+    'consonant-clusters': function() {
+      return Utils.fetchJSONCached('data/consonant-clusters.json').then(function(data){
+        return function init(){
+          var base = Utils.createQuizWithProgressiveDifficulty({ data: data, answerKey: 'sounds' });
+          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: 'consonant-clusters' }, base, {
+            renderSymbol: function(answer, els) {
+              try {
+                var el = els.symbolEl;
+                Utils.ErrorHandler.safeDOM(function(){ while (el.firstChild) el.removeChild(el.firstChild); })();
+                el.textContent = String((answer && answer.cluster) || '');
+                try { el.setAttribute('aria-label', 'Thai consonant cluster: ' + String((answer && answer.cluster) || '')); } catch (_) {}
+              } catch (e) { Utils.logError && Utils.logError(e, 'consonant-clusters.renderSymbol'); }
+            },
+            onAnswered: function(ctx) {
+              if (!ctx || !ctx.correct) return;
+              try {
+                var ans = ctx.answer || {};
+                var text = '';
+                if (ans.english || ans.thai || ans.phonetic) {
+                  text = (ans.english || '');
+                  if (ans.thai) text += (text ? ' → ' : '') + ans.thai;
+                  if (ans.phonetic) text += (text ? ' — ' : '') + ans.phonetic;
+                }
+                var typeLabel = (ans && ans.type === 'fake') ? 'Fake cluster' : 'True cluster';
+                text = text ? (text + ' — ' + typeLabel) : typeLabel;
+                Utils.renderExample(document.getElementById('feedback'), { text: text, highlight: { english: ans.english || '', thai: ans.thai || '', phonetic: ans.phonetic || '' } });
+              } catch (e) { Utils.logError && Utils.logError(e, 'consonant-clusters.onAnswered'); }
+            }
+          }));
+        };
+      });
+    },
     'final-consonants': function() {
       return Utils.fetchJSONCached('data/final-consonants.json').then(function(data){
         return function init(){
