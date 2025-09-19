@@ -1,173 +1,173 @@
 [
-  {
-    "id": "true-gr",
-    "english": "True cluster: กร",
-    "thai": "กรรม",
-    "phonetic": "gam (karma, deed)",
-    "sounds": "gr",
-    "type": "true",
-    "emoji": "⚖️"
-  },
-  {
-    "id": "true-gl",
-    "english": "True cluster: กล",
-    "thai": "กลาง",
-    "phonetic": "glaaŋ (middle)",
-    "sounds": "gl",
-    "type": "true",
-    "emoji": "🎯"
-  },
-  {
-    "id": "true-gw",
-    "english": "True cluster: กว",
-    "thai": "กว่า",
-    "phonetic": "gwàa (than)",
-    "sounds": "gw",
-    "type": "true",
-    "emoji": "📏"
-  },
-  {
-    "id": "true-pr",
-    "english": "True cluster: ปร",
-    "thai": "ประเทศ",
-    "phonetic": "bprà-thêet (country)",
-    "sounds": "pr",
-    "type": "true",
-    "emoji": "🗺️"
-  },
-  {
-    "id": "true-pl",
-    "english": "True cluster: ปล",
-    "thai": "ปลา",
-    "phonetic": "bplaa (fish)",
-    "sounds": "pl",
-    "type": "true",
-    "emoji": "🐟"
-  },
-  {
-    "id": "true-dtr",
-    "english": "True cluster: ตร",
-    "thai": "ตำรวจ",
-    "phonetic": "dtam-rùat (police)",
-    "sounds": "dtr",
-    "type": "true",
-    "emoji": "🚓"
-  },
-  {
-    "id": "true-khr-rough",
-    "english": "True cluster: ขร",
-    "thai": "ขรุขระ",
-    "phonetic": "khrù-khrà (rough, uneven)",
-    "sounds": "khr",
-    "type": "true",
-    "emoji": "🪨"
-  },
-  {
-    "id": "true-khl-flute",
-    "english": "True cluster: ขล",
-    "thai": "ขลุ่ย",
-    "phonetic": "khlùy (flute)",
-    "sounds": "khl",
-    "type": "true",
-    "emoji": "🪈"
-  },
-  {
-    "id": "true-khw-right",
-    "english": "True cluster: ขว",
-    "thai": "ขวา",
-    "phonetic": "khwǎa (right side)",
-    "sounds": "khw",
-    "type": "true",
-    "emoji": "👉"
-  },
-  {
-    "id": "true-khr-teacher",
-    "english": "True cluster: คร",
-    "thai": "ครู",
-    "phonetic": "khruu (teacher)",
-    "sounds": "khr",
-    "type": "true",
-    "emoji": "👩‍🏫"
-  },
-  {
-    "id": "true-khl-wave",
-    "english": "True cluster: คล",
-    "thai": "คลื่น",
-    "phonetic": "khlʉ̂ʉn (wave)",
-    "sounds": "khl",
-    "type": "true",
-    "emoji": "🌊"
-  },
-  {
-    "id": "true-khw-buffalo",
-    "english": "True cluster: คว",
-    "thai": "ควาย",
-    "phonetic": "khwaai (buffalo)",
-    "sounds": "khw",
-    "type": "true",
-    "emoji": "🐃"
-  },
-  {
-    "id": "true-phr",
-    "english": "True cluster: พร",
-    "thai": "พร",
-    "phonetic": "phɔɔn (blessing)",
-    "sounds": "phr",
-    "type": "true",
-    "emoji": "✨"
-  },
-  {
-    "id": "true-phl",
-    "english": "True cluster: พล",
-    "thai": "พละ",
-    "phonetic": "phá-lá (strength, power)",
-    "sounds": "phl",
-    "type": "true",
-    "emoji": "💪"
-  },
-  {
-    "id": "fake-jor",
-    "english": "Fake cluster: จร",
-    "thai": "จราจร",
-    "phonetic": "jà-raa-jon (traffic)",
-    "sounds": "j",
-    "type": "fake",
-    "emoji": "🚦"
-  },
-  {
-    "id": "fake-sor",
-    "english": "Fake cluster: สร",
-    "thai": "สรวง",
-    "phonetic": "sǔaŋ (heaven, divine realm)",
-    "sounds": "s",
-    "type": "fake",
-    "emoji": "👼"
-  },
-  {
-    "id": "fake-sor-faith",
-    "english": "Fake cluster: ศร",
-    "thai": "ศรัทธา",
-    "phonetic": "sàt-thaa (faith)",
-    "sounds": "s",
-    "type": "fake",
-    "emoji": "🙏"
-  },
-  {
-    "id": "fake-sor-archaic",
-    "english": "Fake cluster: ซร",
-    "thai": "ซรบ",
-    "phonetic": "sop (archaic reading)",
-    "sounds": "s",
-    "type": "fake",
-    "emoji": "📜"
-  },
-  {
-    "id": "fake-sor-royal",
-    "english": "Fake cluster: ทร",
-    "thai": "ทรง",
-    "phonetic": "soŋ (royal ‘to wear/hold’)",
-    "sounds": "s",
-    "type": "fake",
-    "emoji": "👑"
-  }
+    {
+        "id": "true-gr",
+        "type": "true",
+        "cluster": "\u0e01\u0e23",
+        "sounds": "gr",
+        "exampleThai": "\u0e01\u0e23\u0e23\u0e21",
+        "examplePhonetic": "gam (karma, deed)",
+        "emoji": "\u2696\ufe0f"
+    },
+    {
+        "id": "true-gl",
+        "type": "true",
+        "cluster": "\u0e01\u0e25",
+        "sounds": "gl",
+        "exampleThai": "\u0e01\u0e25\u0e32\u0e07",
+        "examplePhonetic": "glaa\u014b (middle)",
+        "emoji": "\ud83c\udfaf"
+    },
+    {
+        "id": "true-gw",
+        "type": "true",
+        "cluster": "\u0e01\u0e27",
+        "sounds": "gw",
+        "exampleThai": "\u0e01\u0e27\u0e48\u0e32",
+        "examplePhonetic": "gw\u00e0a (than)",
+        "emoji": "\ud83d\udccf"
+    },
+    {
+        "id": "true-pr",
+        "type": "true",
+        "cluster": "\u0e1b\u0e23",
+        "sounds": "pr",
+        "exampleThai": "\u0e1b\u0e23\u0e30\u0e40\u0e17\u0e28",
+        "examplePhonetic": "bpr\u00e0-th\u00eaet (country)",
+        "emoji": "\ud83d\uddfa\ufe0f"
+    },
+    {
+        "id": "true-pl",
+        "type": "true",
+        "cluster": "\u0e1b\u0e25",
+        "sounds": "pl",
+        "exampleThai": "\u0e1b\u0e25\u0e32",
+        "examplePhonetic": "bplaa (fish)",
+        "emoji": "\ud83d\udc1f"
+    },
+    {
+        "id": "true-dtr",
+        "type": "true",
+        "cluster": "\u0e15\u0e23",
+        "sounds": "dtr",
+        "exampleThai": "\u0e15\u0e33\u0e23\u0e27\u0e08",
+        "examplePhonetic": "dtam-r\u00f9at (police)",
+        "emoji": "\ud83d\ude93"
+    },
+    {
+        "id": "true-khr-rough",
+        "type": "true",
+        "cluster": "\u0e02\u0e23",
+        "sounds": "khr",
+        "exampleThai": "\u0e02\u0e23\u0e38\u0e02\u0e23\u0e30",
+        "examplePhonetic": "khr\u00f9-khr\u00e0 (rough, uneven)",
+        "emoji": "\ud83e\udea8"
+    },
+    {
+        "id": "true-khl-flute",
+        "type": "true",
+        "cluster": "\u0e02\u0e25",
+        "sounds": "khl",
+        "exampleThai": "\u0e02\u0e25\u0e38\u0e48\u0e22",
+        "examplePhonetic": "khl\u00f9y (flute)",
+        "emoji": "\ud83e\ude88"
+    },
+    {
+        "id": "true-khw-right",
+        "type": "true",
+        "cluster": "\u0e02\u0e27",
+        "sounds": "khw",
+        "exampleThai": "\u0e02\u0e27\u0e32",
+        "examplePhonetic": "khw\u01cea (right side)",
+        "emoji": "\ud83d\udc49"
+    },
+    {
+        "id": "true-khr-teacher",
+        "type": "true",
+        "cluster": "\u0e04\u0e23",
+        "sounds": "khr",
+        "exampleThai": "\u0e04\u0e23\u0e39",
+        "examplePhonetic": "khruu (teacher)",
+        "emoji": "\ud83d\udc69\u200d\ud83c\udfeb"
+    },
+    {
+        "id": "true-khl-wave",
+        "type": "true",
+        "cluster": "\u0e04\u0e25",
+        "sounds": "khl",
+        "exampleThai": "\u0e04\u0e25\u0e37\u0e48\u0e19",
+        "examplePhonetic": "khl\u0289\u0302\u0289n (wave)",
+        "emoji": "\ud83c\udf0a"
+    },
+    {
+        "id": "true-khw-buffalo",
+        "type": "true",
+        "cluster": "\u0e04\u0e27",
+        "sounds": "khw",
+        "exampleThai": "\u0e04\u0e27\u0e32\u0e22",
+        "examplePhonetic": "khwaai (buffalo)",
+        "emoji": "\ud83d\udc03"
+    },
+    {
+        "id": "true-phr",
+        "type": "true",
+        "cluster": "\u0e1e\u0e23",
+        "sounds": "phr",
+        "exampleThai": "\u0e1e\u0e23",
+        "examplePhonetic": "ph\u0254\u0254n (blessing)",
+        "emoji": "\u2728"
+    },
+    {
+        "id": "true-phl",
+        "type": "true",
+        "cluster": "\u0e1e\u0e25",
+        "sounds": "phl",
+        "exampleThai": "\u0e1e\u0e25\u0e30",
+        "examplePhonetic": "ph\u00e1-l\u00e1 (strength, power)",
+        "emoji": "\ud83d\udcaa"
+    },
+    {
+        "id": "fake-jor",
+        "type": "fake",
+        "cluster": "\u0e08\u0e23",
+        "sounds": "j",
+        "exampleThai": "\u0e08\u0e23\u0e32\u0e08\u0e23",
+        "examplePhonetic": "j\u00e0-raa-jon (traffic)",
+        "emoji": "\ud83d\udea6"
+    },
+    {
+        "id": "fake-sor",
+        "type": "fake",
+        "cluster": "\u0e2a\u0e23",
+        "sounds": "s",
+        "exampleThai": "\u0e2a\u0e23\u0e27\u0e07",
+        "examplePhonetic": "s\u01d4a\u014b (heaven, divine realm)",
+        "emoji": "\ud83d\udc7c"
+    },
+    {
+        "id": "fake-sor-faith",
+        "type": "fake",
+        "cluster": "\u0e28\u0e23",
+        "sounds": "s",
+        "exampleThai": "\u0e28\u0e23\u0e31\u0e17\u0e18\u0e32",
+        "examplePhonetic": "s\u00e0t-thaa (faith)",
+        "emoji": "\ud83d\ude4f"
+    },
+    {
+        "id": "fake-sor-archaic",
+        "type": "fake",
+        "cluster": "\u0e0b\u0e23",
+        "sounds": "s",
+        "exampleThai": "\u0e0b\u0e23\u0e1a",
+        "examplePhonetic": "sop (archaic reading)",
+        "emoji": "\ud83d\udcdc"
+    },
+    {
+        "id": "fake-sor-royal",
+        "type": "fake",
+        "cluster": "\u0e17\u0e23",
+        "sounds": "s",
+        "exampleThai": "\u0e17\u0e23\u0e07",
+        "examplePhonetic": "so\u014b (royal \u2018to wear/hold\u2019)",
+        "emoji": "\ud83d\udc51"
+    }
 ]

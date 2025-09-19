@@ -72,12 +72,65 @@
         };
       });
     },
-    'consonant-clusters': makeStandardQuizBuilder('data/consonant-clusters.json', function(results) {
-      return configSimple(results, {
-        answerKey: 'sounds',
-        buildSymbol: symbolEnglishThaiEmoji
+    'consonant-clusters': function() {
+      return Utils.fetchJSONCached('data/consonant-clusters.json').then(function(data) {
+        return function init(){
+          var base = Utils.createQuizWithProgressiveDifficulty({
+            data: data,
+            answerKey: 'sounds',
+            buildSymbol: function(item) {
+              var type = item && item.type;
+              var englishLabel = '';
+              if (type === 'true') englishLabel = 'True cluster (อักษรควบแท้)';
+              else if (type === 'fake') englishLabel = 'Fake cluster (อักษรควบไม่แท้)';
+              else englishLabel = (item && item.english) || '';
+              return {
+                english: englishLabel,
+                thai: (item && item.cluster) || '',
+                emoji: (item && item.emoji) || ''
+              };
+            }
+          });
+          ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: 'consonant-clusters' }, base, {
+            ariaLabelForChoice: function(choice) {
+              var value = choice && choice.sounds;
+              return Utils.i18n.answerPrefix + (value ? (value + ' sound') : '');
+            },
+            onAnswered: function(ctx) {
+              if (!ctx || !ctx.correct) return;
+              try {
+                var ans = ctx.answer || {};
+                var pieces = [];
+                if (ans && ans.cluster) {
+                  var typeLabel = ans.type === 'fake' ? 'Fake cluster' : (ans.type === 'true' ? 'True cluster' : 'Cluster');
+                  var clusterLine = typeLabel + ': ' + ans.cluster;
+                  if (ans.sounds) clusterLine += ' → ' + ans.sounds;
+                  pieces.push(clusterLine);
+                }
+                if (ans && (ans.exampleThai || ans.examplePhonetic)) {
+                  var exampleLine = ans.exampleThai || '';
+                  if (ans.examplePhonetic) {
+                    exampleLine += (exampleLine ? ' — ' : '') + ans.examplePhonetic;
+                  }
+                  pieces.push(exampleLine);
+                }
+                var feedbackText = pieces.join('\n');
+                Utils.renderExample(document.getElementById('feedback'), {
+                  text: feedbackText,
+                  highlight: {
+                    english: ans && ans.sounds || '',
+                    thai: ans && (ans.exampleThai || ans.cluster || ''),
+                    phonetic: ans && (ans.examplePhonetic || '')
+                  }
+                });
+              } catch (e) {
+                if (Utils.logError) Utils.logError(e, 'consonant-clusters.onAnswered');
+              }
+            }
+          }));
+        };
       });
-    }),
+    },
     consonants: function() {
       Utils.ErrorHandler.safe(Utils.insertConsonantLegend)();
       return Utils.fetchJSONCached('data/consonants.json').then(function(data){
