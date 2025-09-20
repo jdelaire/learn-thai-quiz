@@ -88,6 +88,10 @@
           footer.appendChild(help);
           return;
         }
+        // Controls wrapper to group sound toggles together
+        const wrap = document.createElement('div');
+        wrap.className = 'sound-controls';
+
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'chip sound-toggle';
@@ -101,7 +105,7 @@
           try { btn.setAttribute('aria-pressed', nowOn ? 'true' : 'false'); } catch (_) {}
           try { window.speechSynthesis && window.speechSynthesis.resume(); } catch (_) {}
         });
-        footer.appendChild(btn);
+        wrap.appendChild(btn);
 
         // Speed toggle (cycles among clearer distinct rates)
         const speedBtn = document.createElement('button');
@@ -127,7 +131,8 @@
           try { speedBtn.textContent = labelFor(current); } catch (_) {}
           try { window.speechSynthesis && window.speechSynthesis.resume(); } catch (_) {}
         });
-        footer.appendChild(speedBtn);
+        wrap.appendChild(speedBtn);
+        footer.appendChild(wrap);
       } catch (_) {}
     }
 

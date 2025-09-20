@@ -522,9 +522,8 @@ body.quiz-page .footer {
   align-items: center;
   gap: 0.6em;
 }
-body.quiz-page .footer .sound-toggle {
-  display: inline-flex;
-}
+body.quiz-page .footer .sound-controls { display: inline-flex; gap: 0.5em; flex-wrap: wrap; align-items: center; justify-content: center; }
+body.quiz-page .footer .sound-help { font-size: 0.85em; opacity: 0.85; max-width: 720px; }
 
 .back-btn, .coffee-btn {
   color: var(--color-brand);
