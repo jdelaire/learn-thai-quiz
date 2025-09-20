@@ -135,7 +135,8 @@
     "description": "Telling time in Thai: keywords, formats, and common phrases.",
     "bullets": ["Key words (นาที, โมง, ทุ่ม, ครึ่ง, ตรง)","AM/PM patterns (ตี…, …โมงเช้า, …ทุ่ม)","Practical sentences"],
     "categories": ["Phrases","Intermediate"],
-    "bodyClass": "time-quiz"
+    "bodyClass": "time-quiz",
+    "supportsVoice": true
   },
   {
     "id": "questions",
@@ -145,7 +146,8 @@
     "bullets": ["Question words (อะไร, ใคร, ที่ไหน, เมื่อไหร่, ทำไม)","Patterns (…ไหม, …ได้ไหม, เคย…ไหม)","How much/how many"],
     "categories": ["Phrases","Intermediate"],
     "bodyClass": "questions-quiz",
-    "proTip": "• Most yes/no questions end in \"mái?\"<br>• Add \"khráp/khà\" for politeness at the end<br>• Use \"bâaŋ\" after question words for 'what kinds / which ones'"
+    "proTip": "• Most yes/no questions end in \"mái?\"<br>• Add \"khráp/khà\" for politeness at the end<br>• Use \"bâaŋ\" after question words for 'what kinds / which ones'",
+    "supportsVoice": true
   },
   {
     "id": "verbs",
@@ -155,7 +157,8 @@
     "bullets": ["Core everyday verbs","Examples after correct answers","Emoji hints"],
     "categories": ["Vocabulary","Intermediate"],
     "bodyClass": "questions-quiz",
-    "proTip": "• Common combos: 'tham ŋaan' (work), 'àap-náam' (shower)<br>• Use 'bpai/maa' for go/come; add places with 'thîi' (at)"
+    "proTip": "• Common combos: 'tham ŋaan' (work), 'àap-náam' (shower)<br>• Use 'bpai/maa' for go/come; add places with 'thîi' (at)",
+    "supportsVoice": true
   },
   {
     "id": "months",
