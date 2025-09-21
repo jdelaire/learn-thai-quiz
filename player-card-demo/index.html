@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Player Card Demo</title>
+    <style>
+      :root {
+        --bg-page: #0b0c0f; /* used only for demo background */
+        --bg-card: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --accent: #3b82f6;
+        --accent-weak: #dbeafe;
+
+        --radius: 14px;
+        --shadow: 0 1px 1px rgba(0,0,0,0.04), 0 8px 30px rgba(2,6,23,0.06);
+
+        --space-1: clamp(4px, 0.6vw, 8px);
+        --space-2: clamp(8px, 1.0vw, 12px);
+        --space-3: clamp(12px, 1.4vw, 16px);
+        --space-4: clamp(16px, 2.0vw, 22px);
+        --space-5: clamp(20px, 2.4vw, 28px);
+
+        --text-xs: clamp(12px, 0.9vw, 13px);
+        --text-sm: clamp(13px, 1.05vw, 14.5px);
+        --text-md: clamp(14px, 1.2vw, 16px);
+        --text-lg: clamp(15px, 1.6vw, 18px);
+        --text-xl: clamp(16px, 2.0vw, 20px);
+        --avatar: clamp(44px, 7vw, 64px);
+        --tap-min: 44px;
+        --bar-h: 6px;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg-page: #0b0c0f;
+          --bg-card: #0f172a;
+          --text: #e5e7eb;
+          --muted: #94a3b8;
+          --border: #1f2937;
+          --accent: #60a5fa;
+          --accent-weak: #0b2948;
+          --shadow: 0 1px 1px rgba(0,0,0,0.3), 0 8px 30px rgba(0,0,0,0.35);
+        }
+      }
+
+      /* Demo page layout */
+      body {
+        margin: 0;
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(1200px 800px at 20% 0%, rgba(99,102,241,0.08), transparent 60%),
+          radial-gradient(1000px 700px at 100% 100%, rgba(59,130,246,0.10), transparent 60%),
+          var(--bg-page);
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--text);
+      }
+
+      .demo-wrap {
+        width: min(960px, 92vw);
+        padding: var(--space-5) var(--space-3);
+      }
+
+      /* Player Card */
+      .player-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: var(--space-4);
+        display: grid;
+        gap: var(--space-3);
+        max-width: 100%;
+      }
+
+      /* Wide screens: optional side-by-side layout */
+      @media (min-width: 980px) {
+        .player-card {
+          grid-template-columns: 1.25fr 0.85fr;
+          align-items: start;
+        }
+        .player-card__stats {
+          grid-column: 2;
+          grid-row: 1 / span 3;
+        }
+      }
+
+      .player-card__header {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: var(--space-3);
+      }
+      @media (min-width: 720px) {
+        .player-card__header {
+          grid-template-columns: auto 1fr auto;
+        }
+      }
+
+      .player-card__avatar {
+        width: var(--avatar);
+        height: var(--avatar);
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--border);
+      }
+
+      .player-card__identity {
+        min-width: 0;
+      }
+      .player-card__name {
+        font-weight: 700;
+        font-size: var(--text-xl);
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+      }
+      .player-card__meta {
+        color: var(--muted);
+        font-size: var(--text-sm);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .player-card__quiz {
+        grid-column: 1 / -1; /* mobile: full width under identity */
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        justify-self: start;
+        color: var(--muted);
+        font-size: var(--text-sm);
+      }
+      @media (min-width: 720px) {
+        .player-card__quiz { grid-column: 3; }
+      }
+      .player-card__quiz-label {
+        color: var(--muted);
+        background: color-mix(in oklab, var(--accent) 14%, transparent);
+        border: 1px solid color-mix(in oklab, var(--accent) 28%, transparent);
+        padding: 2px 6px;
+        border-radius: 999px;
+        line-height: 1;
+        font-size: var(--text-xs);
+      }
+      .player-card__quiz-title {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .player-card__dot {
+        display: inline-block;
+        width: 4px; height: 4px;
+        border-radius: 2px;
+        background: var(--muted);
+        opacity: 0.7;
+      }
+
+      /* XP */
+      .player-card__xp {
+        display: grid;
+        gap: var(--space-2);
+      }
+      .player-card__xp-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: var(--text-sm);
+        color: var(--muted);
+      }
+      .player-card__xp-value { color: var(--text); font-weight: 600; }
+
+      .player-card__xp-bar {
+        position: relative;
+        height: var(--bar-h);
+        border-radius: 999px;
+        overflow: hidden;
+        background: color-mix(in oklab, var(--accent-weak) 55%, transparent);
+        outline: 1px solid color-mix(in oklab, var(--accent) 22%, transparent);
+        --progress: 0%; /* animated via JS */
+      }
+      .player-card__xp-bar::after {
+        content: "";
+        position: absolute; inset: 0;
+        width: var(--progress);
+        background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 65%, #16a34a 35%));
+        box-shadow: inset 0 0 0 1px color-mix(in oklab, #ffffff 28%, transparent);
+        transition: width 900ms cubic-bezier(.2, .7, .1, 1);
+      }
+
+      /* Stats */
+      .player-card__stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-2);
+        border: 1px solid var(--border);
+        border-radius: calc(var(--radius) - 4px);
+        padding: var(--space-2);
+        align-self: stretch;
+        background: color-mix(in oklab, var(--bg-card) 85%, transparent);
+      }
+      .player-card__stat {
+        list-style: none;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
+        grid-template-areas:
+          "icon value"
+          "icon label";
+        column-gap: var(--space-2);
+        row-gap: 2px;
+        align-items: center;
+        padding: clamp(6px, 1.2vw, 10px);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 180ms ease, transform 180ms ease;
+        min-height: max(var(--tap-min), 0px);
+      }
+      .player-card__stat:focus-visible {
+        outline: 2px solid color-mix(in oklab, var(--accent) 70%, transparent);
+        outline-offset: 2px;
+      }
+      .player-card__stat:hover {
+        background: color-mix(in oklab, var(--accent) 10%, transparent);
+      }
+      .player-card__stat:active { transform: translateY(1px); }
+
+      .player-card__stat-icon { grid-area: icon; font-size: 1.15em; }
+      .player-card__stat-value { grid-area: value; font-weight: 700; font-size: var(--text-lg); }
+      .player-card__stat-label { grid-area: label; color: var(--muted); font-size: var(--text-xs); }
+
+      /* Utilities */
+      .visually-hidden {
+        position: absolute !important;
+        height: 1px; width: 1px;
+        overflow: hidden;
+        clip: rect(1px, 1px, 1px, 1px);
+        white-space: nowrap;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .player-card__xp-bar::after, .player-card__stat {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-wrap">
+      <article class="player-card" aria-label="Player summary card">
+        <header class="player-card__header">
+          <img class="player-card__avatar" src="https://i.pravatar.cc/160?img=32" alt="Alex Kim avatar" />
+          <div class="player-card__identity">
+            <div class="player-card__name">Alex Kim</div>
+            <div class="player-card__meta">Lv 12 · Joined Sep 2025</div>
+          </div>
+          <div class="player-card__quiz">
+            <span class="player-card__quiz-label" aria-hidden="true">Current</span>
+            <span class="player-card__quiz-title">Unit Conversions</span>
+            <span class="player-card__dot" aria-hidden="true"></span>
+            <span class="player-card__quiz-meta">5/12</span>
+          </div>
+        </header>
+
+        <section class="player-card__xp" aria-label="XP progress">
+          <div class="player-card__xp-row">
+            <span class="player-card__xp-label">XP</span>
+            <span class="player-card__xp-value" aria-live="polite">740/1000</span>
+          </div>
+          <div class="player-card__xp-bar" role="progressbar" aria-label="Experience points progress" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="740" data-percent="74"></div>
+        </section>
+
+        <ul class="player-card__stats" role="list">
+          <li class="player-card__stat" tabindex="0" role="button" aria-label="Accuracy 87 percent">
+            <span class="player-card__stat-icon" aria-hidden="true">🎯</span>
+            <span class="player-card__stat-value">87%</span>
+            <span class="player-card__stat-label">Accuracy</span>
+          </li>
+          <li class="player-card__stat" tabindex="0" role="button" aria-label="Quizzes completed 24">
+            <span class="player-card__stat-icon" aria-hidden="true">📝</span>
+            <span class="player-card__stat-value">24</span>
+            <span class="player-card__stat-label">Quizzes</span>
+          </li>
+          <li class="player-card__stat" tabindex="0" role="button" aria-label="Stars earned 19">
+            <span class="player-card__stat-icon" aria-hidden="true">⭐</span>
+            <span class="player-card__stat-value">19</span>
+            <span class="player-card__stat-label">Stars</span>
+          </li>
+        </ul>
+      </article>
+
+      <p style="margin: var(--space-3) 0 0; color: var(--muted); font-size: var(--text-xs); text-align:center;">Resize your window to test responsiveness. Dark mode follows your system setting.</p>
+    </div>
+
+    <script>
+      (function () {
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        document.querySelectorAll('.player-card__xp-bar').forEach(function (bar) {
+          var percent = parseFloat(bar.getAttribute('data-percent')) || 0;
+          var set = function () { bar.style.setProperty('--progress', Math.max(0, Math.min(100, percent)) + '%'); };
+          if (reduce) { set(); return; }
+          bar.style.setProperty('--progress', '0%');
+          requestAnimationFrame(function () { requestAnimationFrame(set); });
+        });
+      })();
+    </script>
+
+    <!--
+      Notes
+      - Compact header: name · level · joined date combined on one line.
+      - Thin XP bar with concise label; animated fill, respects reduced-motion.
+      - Current quiz is concise: "Current" chip, title, and steps (5/12).
+      - Stats in a compact 3-column row with subtle hover/tap feedback.
+      - Responsive grid: stacks on mobile; optional two-column layout on wide screens.
+      - Dark mode via prefers-color-scheme; semantic HTML and ARIA for accessibility.
+    -->
+  </body>
+  </html>
+
