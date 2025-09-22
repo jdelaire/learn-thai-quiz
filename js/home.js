@@ -583,7 +583,6 @@
 
     // Persisted filter keys + state
     const STORAGE_HOME_FILTER_CATEGORY = 'thaiQuest.home.filter.category';
-    const STORAGE_HOME_FILTER_SEARCH = 'thaiQuest.home.filter.search';
     let selectedCategoryFilter = '';
 
     const searchInput = document.getElementById('search-input');
@@ -716,7 +715,6 @@
     function wireUpEvents() {
       if (searchInput) {
         searchInput.addEventListener('input', function(){
-          try { window.StorageService && window.StorageService.setItem(STORAGE_HOME_FILTER_SEARCH, String(searchInput.value || '')); } catch (_) {}
           updateUIDebounced();
         });
       }
@@ -754,14 +752,10 @@
           const categorySet = new Set();
           quizzes.forEach(q => (q.categories || []).forEach(c => categorySet.add(c)));
           categories = Array.from(categorySet).sort();
-          // Restore saved filters (category + search)
+          // Restore saved filters (category only)
           try {
             const savedCat = (window.StorageService && window.StorageService.getItem(STORAGE_HOME_FILTER_CATEGORY)) || '';
             if (savedCat && categories.indexOf(savedCat) !== -1) selectedCategoryFilter = savedCat;
-          } catch (_) {}
-          try {
-            const savedSearch = (window.StorageService && window.StorageService.getItem(STORAGE_HOME_FILTER_SEARCH)) || '';
-            if (searchInput && typeof savedSearch === 'string') searchInput.value = savedSearch;
           } catch (_) {}
           renderCategoryChips();
           wireUpEvents();

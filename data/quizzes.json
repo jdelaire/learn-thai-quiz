@@ -5,7 +5,7 @@
     "href": "quiz.html?quiz=consonant-clusters",
     "description": "Thai consonant clusters: true vs fake clusters with examples and phonetics.",
     "bullets": ["True (อักษรควบแท้) and Fake (อักษรควบไม่แท้)","R/L/W clusters","Silent second consonant (ทร → s)"],
-    "categories": ["Alphabet","Reading","Pronunciation","Advanced"],
+    "categories": ["Alphabet","Reading","Pronunciation"],
     "bodyClass": "questions-quiz",
     "proTip": "<strong>Clusters:</strong> True clusters pronounce both consonants (usually +ร/ล/ว). Fake clusters only pronounce the first (e.g., <strong>ทร</strong> → <em>s</em>).",
     "supportsVoice": true

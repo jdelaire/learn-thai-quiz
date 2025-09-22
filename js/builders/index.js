@@ -272,7 +272,16 @@
     }),
 
     'sara-ai-mai-muan': makeStandardQuizBuilder(['data/sara-ai-mai-muan.json','data/sara-ai-mai-muan-examples.json'], function(results) {
-      return configWithExamples(results, { answerKey: 'thaiDisplay', buildSymbol: symbolEnglishThaiEmoji });
+      return configWithExamples(results, {
+        answerKey: 'thaiDisplay',
+        buildSymbol: function(item) {
+          return {
+            english: (item && item.english) || '',
+            thai: '',
+            emoji: (item && item.emoji) || ''
+          };
+        }
+      });
     }),
 
     countries: makeStandardQuizBuilder(['data/countries.json','data/countries-examples.json'], function(results) {
