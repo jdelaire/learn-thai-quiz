@@ -245,6 +245,17 @@
     "supportsVoice": true
   },
   {
+    "id": "sara-ai-mai-muan",
+    "title": "Words with ใ- 🪷",
+    "href": "quiz.html?quiz=sara-ai-mai-muan",
+    "description": "Thai words that use ใ (sà-rà ai mái-muán) with phonetics and examples.",
+    "bullets": ["19 ใ- vocabulary words","English prompt → Thai (phonetic) choices","Example sentences with pronunciation"],
+    "categories": ["Alphabet","Reading","Vocabulary"],
+    "bodyClass": "questions-quiz",
+    "proTip": "<strong>Memorization tips:</strong> Read each Thai sentence aloud, then swap nouns (เช่น เสื้อ → กางเกง, โต๊ะ → เก้าอี้) to create your own examples.",
+    "supportsVoice": true
+  },
+  {
     "id": "adjectives",
     "title": "Adjectives 🛠️",
     "href": "quiz.html?quiz=adjectives",
