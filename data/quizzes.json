@@ -5,7 +5,7 @@
     "href": "quiz.html?quiz=consonant-clusters",
     "description": "Thai consonant clusters: true vs fake clusters with examples and phonetics.",
     "bullets": ["True (อักษรควบแท้) and Fake (อักษรควบไม่แท้)","R/L/W clusters","Silent second consonant (ทร → s)"],
-    "categories": ["Alphabet","Reading","Pronunciation"],
+    "categories": ["Alphabet","Reading","Pronunciation","Advanced"],
     "bodyClass": "questions-quiz",
     "proTip": "<strong>Clusters:</strong> True clusters pronounce both consonants (usually +ร/ล/ว). Fake clusters only pronounce the first (e.g., <strong>ทร</strong> → <em>s</em>).",
     "supportsVoice": true
@@ -242,6 +242,17 @@
     "categories": ["Vocabulary","Beginner"],
     "bodyClass": "questions-quiz",
     "proTip": "Structure: <strong>[Preposition] + [location] + mii + [object] + [number] + [classifier]</strong><br>Examples: <em>bon dtó mii nǎŋ-sɯ̌ɯ sɔ̌ɔŋ lêm</em> — On the table, there are two books. <em>dtâay gâw-îi mii mɛɛw nɯ̀ŋ dtua</em> — Under the chair, there’s one cat.",
+    "supportsVoice": true
+  },
+  {
+    "id": "sara-ai-mai-muan",
+    "title": "Words with ใ- 🪷",
+    "href": "quiz.html?quiz=sara-ai-mai-muan",
+    "description": "Thai words that use ใ (sà-rà ai mái-muán) with phonetics and examples.",
+    "bullets": ["19 ใ- vocabulary words","English prompt → Thai (phonetic) choices","Example sentences with pronunciation"],
+    "categories": ["Alphabet","Reading","Vocabulary"],
+    "bodyClass": "questions-quiz",
+    "proTip": "<strong>Memorization tips:</strong> Read each Thai sentence aloud, then swap nouns (เช่น เสื้อ → กางเกง, โต๊ะ → เก้าอี้) to create your own examples.",
     "supportsVoice": true
   },
   {
