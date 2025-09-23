@@ -8,6 +8,7 @@
   var prog = (NS.quiz && NS.quiz.progressive) || {};
   var error = (NS.core && NS.core.error) || {};
   var logError = error.logError || function(){};
+  var phonetics = (NS.quiz && NS.quiz.phonetics) || {};
 
   function createQuizWithProgressiveDifficulty(params) {
     const progressiveDifficulty = params.progressiveDifficulty === false ? null : (params.progressiveDifficulty || prog.DEFAULT_PROGRESSIVE_DIFFICULTY);
@@ -23,6 +24,36 @@
     const choices = (params && params.choices) || 4;
     const labelPrefix = (params && params.labelPrefix) || common.i18n.labelEnglishThaiPrefix;
     const progressiveDifficulty = params && params.progressiveDifficulty ? prog.createProgressiveDifficulty(params.progressiveDifficulty) : null;
+    const isPhoneticAnswer = answerKey === 'phonetic';
+
+    function bundleFor(item) {
+      if (!item) return { canonical: '', display: '' };
+      if (isPhoneticAnswer && typeof phonetics.getPhoneticBundle === 'function') {
+        try {
+          var bundle = phonetics.getPhoneticBundle(item);
+          if (bundle && (bundle.canonical || bundle.display)) {
+            return {
+              canonical: String(bundle.canonical || ''),
+              display: String(bundle.display || '')
+            };
+          }
+        } catch (_) {}
+      }
+      var raw;
+      try { raw = item[answerKey]; } catch (_) { raw = ''; }
+      var str = (raw == null) ? '' : String(raw);
+      return { canonical: str, display: str };
+    }
+
+    function getDisplay(item) {
+      var bundle = bundleFor(item);
+      return bundle.display;
+    }
+
+    function getCanonical(item) {
+      var bundle = bundleFor(item);
+      return bundle.canonical;
+    }
 
     return {
       pickRound: function(state){
@@ -30,14 +61,14 @@
         const currentChoices = prog.getChoicesCountForState(state, progressiveDifficulty, choices);
         // Avoid repeating the immediately previous question (by answerKey)
         var prev = state && state.currentAnswer;
-        var prevKey = prev && prev[answerKey];
+        var prevKey = getCanonical(prev);
         var candidatePool = data;
-        if (prevKey != null && data.length > 1) {
-          candidatePool = data.filter(function(it){ return it && it[answerKey] !== prevKey; });
+        if (prevKey != null && prevKey !== '' && data.length > 1) {
+          candidatePool = data.filter(function(it){ return getCanonical(it) !== prevKey; });
           if (candidatePool.length === 0) candidatePool = data;
         }
         const answer = common.pickRandom(candidatePool);
-        const uniqueChoices = common.pickUniqueChoices(data, currentChoices, common.byProp(answerKey), answer);
+        const uniqueChoices = common.pickUniqueChoices(data, currentChoices, function(it){ return getCanonical(it); }, answer);
         return { answer: answer, choices: uniqueChoices };
       },
       renderSymbol: function(answer, els){
@@ -51,10 +82,10 @@
           });
         } catch (e) { logError(e, 'quiz.factories.renderSymbol'); }
       },
-      renderButtonContent: function(choice){ return choice && choice[answerKey]; },
+      renderButtonContent: function(choice){ return getDisplay(choice); },
       shouldHideHints: function(){ return false; },
-      ariaLabelForChoice: function(choice){ return common.i18n.answerPrefix + (choice && choice[answerKey]); },
-      isCorrect: function(choice, answer){ return (choice && choice[answerKey]) === (answer && answer[answerKey]); },
+      ariaLabelForChoice: function(choice){ return common.i18n.answerPrefix + getDisplay(choice); },
+      isCorrect: function(choice, answer){ return getCanonical(choice) === getCanonical(answer); },
       onAnswered: function(ctx){
         const correct = ctx && ctx.correct;
         if (!correct) return;
@@ -62,6 +93,7 @@
           const fb = document.getElementById('feedback');
           var ex = null;
           var ans = ctx && ctx.answer || null;
+          var bundle = bundleFor(ans);
           if (examples) {
             const key = (typeof exampleKeyFn === 'function') ? exampleKeyFn(ans || {}) : (ans && ans.english);
             ex = examples[key];
@@ -74,13 +106,14 @@
               if (ans && typeof ans.english === 'string' && ans.english) englishText = ans.english;
               else if (ans && ans.number != null) englishText = String(ans.number);
               else if (ans && typeof ans[answerKey] === 'string') englishText = ans[answerKey];
+              else if (isPhoneticAnswer) englishText = bundle.canonical || '';
             } catch (_) {}
 
             var thaiText = '';
             try { thaiText = (ans && (ans.thai || ans.symbol)) ? String(ans.thai || ans.symbol) : ''; } catch (_) { thaiText = ''; }
 
             var phoneticText = '';
-            try { phoneticText = (ans && ans.phonetic) ? String(ans.phonetic) : ''; } catch (_) { phoneticText = ''; }
+            try { phoneticText = bundle.display || ''; } catch (_) { phoneticText = ''; }
 
             if (englishText || thaiText || phoneticText) {
               var parts = [];
@@ -93,9 +126,16 @@
 
           var highlight = { english: '', thai: '', phonetic: '' };
           try {
-            highlight.english = (ans && (ans.english != null ? String(ans.english) : (ans && ans.number != null ? String(ans.number) : (ans && typeof ans[answerKey] === 'string' ? ans[answerKey] : '')))) || '';
+            var englishHighlight = '';
+            if (ans) {
+              if (ans.english != null) englishHighlight = String(ans.english);
+              else if (ans.number != null) englishHighlight = String(ans.number);
+              else if (typeof ans[answerKey] === 'string') englishHighlight = ans[answerKey];
+              else if (isPhoneticAnswer) englishHighlight = bundle.display || bundle.canonical || '';
+            }
+            highlight.english = englishHighlight || '';
             highlight.thai = (ans && (ans.thai || ans.symbol)) ? String(ans.thai || ans.symbol) : '';
-            highlight.phonetic = (ans && ans.phonetic) ? String(ans.phonetic) : '';
+            highlight.phonetic = bundle.display || '';
           } catch (_) {}
 
           renderers.renderExample(fb, ex ? { text: ex, highlight: highlight } : ex);
@@ -106,4 +146,3 @@
 
   NS.quiz.factories = { createStandardQuiz: createStandardQuiz, createQuizWithProgressiveDifficulty: createQuizWithProgressiveDifficulty };
 })(window);
-

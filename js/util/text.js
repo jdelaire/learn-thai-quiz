@@ -4,6 +4,7 @@
   var NS = global.__TQ = global.__TQ || {};
   NS.util = NS.util || {};
   var logError = (NS.core && NS.core.error && NS.core.error.logError) || function(){};
+  var phonetics = (NS.quiz && NS.quiz.phonetics) || {};
 
   function escapeRegExp(s){ return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
@@ -87,7 +88,15 @@
       else if (answerKey && typeof ans[answerKey] === 'string') out.english = ans[answerKey];
     } catch (_) {}
     try { if (ans.thai) out.thai = String(ans.thai); else if (ans.symbol) out.thai = String(ans.symbol); } catch (_) {}
-    try { if (ans.phonetic) out.phonetic = String(ans.phonetic); } catch (_) {}
+    try {
+      if (phonetics && typeof phonetics.getPhoneticBundle === 'function') {
+        var bundle = phonetics.getPhoneticBundle(ans);
+        if (bundle && (bundle.display || bundle.canonical)) {
+          out.phonetic = String(bundle.display || bundle.canonical || '');
+        }
+      }
+      if (!out.phonetic && ans && ans.phonetic) out.phonetic = String(ans.phonetic);
+    } catch (_) {}
     return out;
   }
 
@@ -106,4 +115,3 @@
 
   NS.util.text = { buildHighlightedNodes: buildHighlightedNodes, formatExample: formatExample, normalizeAnswer: normalizeAnswer };
 })(window);
-

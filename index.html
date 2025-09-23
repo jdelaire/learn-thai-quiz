@@ -114,6 +114,15 @@
     </div>
   </div>
 
+  <div class="preferences-panel" aria-label="Pronunciation settings">
+    <label for="phonetic-locale-select">Phonetic language</label>
+    <select id="phonetic-locale-select" data-role="phonetic-locale-select">
+      <option value="en">English (default)</option>
+      <option value="fr">Français</option>
+    </select>
+    <small class="preferences-hint">Used when alternate phonetics are available.</small>
+  </div>
+
   <!-- Temporary: reset all local progress for testing -->
   <div style="margin: 24px 16px; text-align: center;">
     <button id="reset-progress" type="button" class="chip" aria-label="Reset all quiz progress (local storage)">Reset progression</button>
@@ -127,10 +136,12 @@
   <script src="js/util/common.js"></script>
   <script src="js/util/color.js"></script>
   <script src="js/ui/renderers.js"></script>
+  <script src="js/quiz/phonetics.js"></script>
   <script src="js/quiz/progressive.js"></script>
   <script src="js/quiz/factories.js"></script>
   <script src="js/quiz/player.js"></script>
   <script src="js/utils-agg.js"></script>
+  <script src="js/ui/preferences.js"></script>
   <script src="js/home.js"></script>
   </body>
 </html>

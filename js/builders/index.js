@@ -4,6 +4,37 @@
   // Single source of Utils/defaultElements for this module
   const Utils = global.Utils;
   const defaultElements = Utils.defaultElements;
+  const getPhoneticBundle = (Utils && typeof Utils.getPhoneticBundle === 'function')
+    ? function(item){ try { return Utils.getPhoneticBundle(item); } catch (_) { return fallbackBundle(item); } }
+    : fallbackBundle;
+
+  function fallbackBundle(item) {
+    if (!item) return { canonical: '', display: '' };
+    var raw = '';
+    try { raw = item.phonetic; } catch (_) { raw = ''; }
+    raw = (raw == null) ? '' : String(raw);
+    return { canonical: raw, display: raw };
+  }
+
+  function phoneticDisplay(item) {
+    var bundle = getPhoneticBundle(item) || fallbackBundle(item);
+    var display = '';
+    try { display = bundle.display != null ? String(bundle.display) : ''; } catch (_) { display = ''; }
+    if (!display) {
+      try { display = bundle.canonical != null ? String(bundle.canonical) : ''; } catch (_) { display = ''; }
+    }
+    return display;
+  }
+
+  function phoneticCanonical(item) {
+    var bundle = getPhoneticBundle(item) || fallbackBundle(item);
+    var canonical = '';
+    try { canonical = bundle.canonical != null ? String(bundle.canonical) : ''; } catch (_) { canonical = ''; }
+    if (!canonical) {
+      try { canonical = bundle.display != null ? String(bundle.display) : ''; } catch (_) { canonical = ''; }
+    }
+    return canonical;
+  }
 
   function makeStandardQuizBuilder(urls, transform) {
     return function() {
@@ -63,14 +94,15 @@
               try {
                 var ans = ctx.answer || {};
                 var text = '';
-                if (ans.english || ans.thai || ans.phonetic) {
+                var ansPhonetic = phoneticDisplay(ans);
+                if (ans.english || ans.thai || ansPhonetic) {
                   text = (ans.english || '');
                   if (ans.thai) text += (text ? ' → ' : '') + ans.thai;
-                  if (ans.phonetic) text += (text ? ' — ' : '') + ans.phonetic;
+                  if (ansPhonetic) text += (text ? ' — ' : '') + ansPhonetic;
                 }
                 var typeLabel = (ans && ans.type === 'fake') ? 'Fake cluster' : 'True cluster';
                 text = text ? (text + ' — ' + typeLabel) : typeLabel;
-                Utils.renderExample(document.getElementById('feedback'), { text: text, highlight: { english: ans.english || '', thai: ans.thai || '', phonetic: ans.phonetic || '' } });
+                Utils.renderExample(document.getElementById('feedback'), { text: text, highlight: { english: ans.english || '', thai: ans.thai || '', phonetic: ansPhonetic || '' } });
               } catch (e) { Utils.logError && Utils.logError(e, 'consonant-clusters.onAnswered'); }
             }
           }));
@@ -90,14 +122,15 @@
               if (!ctx || !ctx.correct) return;
               try {
                 var ans = ctx.answer || {};
+                var ansPhonetic = phoneticDisplay(ans);
                 var line = '';
                 if (ans.exampleThai) {
                   line = ans.exampleThai;
-                  if (ans.phonetic) line += ' — ' + ans.phonetic;
-                } else if (ans.phonetic) {
-                  line = ans.phonetic;
+                  if (ansPhonetic) line += ' — ' + ansPhonetic;
+                } else if (ansPhonetic) {
+                  line = ansPhonetic;
                 }
-                Utils.renderExample(document.getElementById('feedback'), { text: line, highlight: { english: '', thai: ans.exampleThai || '', phonetic: ans.phonetic || '' } });
+                Utils.renderExample(document.getElementById('feedback'), { text: line, highlight: { english: '', thai: ans.exampleThai || '', phonetic: ansPhonetic || '' } });
               } catch (e) { Utils.logError && Utils.logError(e, 'final-consonants.onAnswered'); }
             }
           }));
@@ -143,7 +176,7 @@
     vowels: function() {
       return Utils.fetchJSONCached('data/vowels.json').then(function(data){
         return function init(){
-          var base = Utils.createQuizWithProgressiveDifficulty({ data: data, answerKey: 'sound' });
+          var base = Utils.createQuizWithProgressiveDifficulty({ data: data, answerKey: 'phonetic' });
           ThaiQuiz.setupQuiz(Object.assign({ elements: defaultElements, quizId: 'vowels' }, base, {
             renderSymbol: function(answer, els) { Utils.ErrorHandler.safe(Utils.renderVowelSymbol)(els.symbolEl, answer.symbol); }
           }));
@@ -159,24 +192,78 @@
           const hasBuiltInShade = /(^|\s)(dark|light)\s/i.test(base.english);
           const useModifier = !!maybeModifier && !hasBuiltInShade;
           const thai = useModifier ? (base.thai + ' ' + maybeModifier.thai) : base.thai;
-          const phonetic = useModifier ? (base.phonetic + ' ' + maybeModifier.phonetic) : base.phonetic;
           const english = useModifier ? (maybeModifier.english + ' ' + base.english) : base.english;
           const hex = useModifier ? Utils.getDisplayHex(base.hex, maybeModifier) : base.hex;
-          return { english: english, thai: thai, phonetic: phonetic, hex: hex };
+
+          function joinParts(a, b) {
+            var left = (a || '').trim();
+            var right = (b || '').trim();
+            if (left && right) return left + ' ' + right;
+            return left || right || '';
+          }
+
+          const baseBundle = getPhoneticBundle(base) || fallbackBundle(base);
+          var phoneticCanonical = baseBundle.canonical || baseBundle.display || '';
+          var phoneticsMap = null;
+
+          if (useModifier) {
+            const modifierBundle = getPhoneticBundle(maybeModifier) || fallbackBundle(maybeModifier);
+            phoneticCanonical = joinParts(baseBundle.canonical || baseBundle.display, modifierBundle.canonical || modifierBundle.display);
+
+            var localeCandidates = {};
+            function collectLocales(map) {
+              if (!map) return;
+              for (var key in map) {
+                if (!Object.prototype.hasOwnProperty.call(map, key)) continue;
+                var norm = (Utils && typeof Utils.normalizePhoneticLocale === 'function') ? Utils.normalizePhoneticLocale(key) : String(key || '');
+                if (!norm) continue;
+                localeCandidates[norm] = true;
+              }
+            }
+            collectLocales(base.phonetics);
+            collectLocales(maybeModifier && maybeModifier.phonetics);
+            var preferred = (Utils && typeof Utils.getPreferredPhoneticLocale === 'function') ? Utils.getPreferredPhoneticLocale() : '';
+            if (preferred) {
+              var normPreferred = (Utils && typeof Utils.normalizePhoneticLocale === 'function') ? Utils.normalizePhoneticLocale(preferred) : preferred;
+              if (normPreferred) localeCandidates[normPreferred] = true;
+            }
+            localeCandidates.en = true;
+
+            var mapOut = {};
+            var hasLocale = false;
+            for (var locale in localeCandidates) {
+              if (!Object.prototype.hasOwnProperty.call(localeCandidates, locale)) continue;
+              if (!locale) continue;
+              var basePart = (Utils && typeof Utils.getPhoneticForLocale === 'function') ? Utils.getPhoneticForLocale(base, locale) : (base.phonetics && base.phonetics[locale]) || base.phonetic || '';
+              var modifierPart = (Utils && typeof Utils.getPhoneticForLocale === 'function') ? Utils.getPhoneticForLocale(maybeModifier, locale) : (maybeModifier && ((maybeModifier.phonetics && maybeModifier.phonetics[locale]) || maybeModifier.phonetic)) || '';
+              var combined = joinParts(basePart, modifierPart);
+              if (combined) {
+                mapOut[locale] = combined;
+                hasLocale = true;
+              }
+            }
+            if (hasLocale) phoneticsMap = mapOut;
+          } else if (base.phonetics) {
+            phoneticsMap = base.phonetics;
+          }
+
+          var phrase = { english: english, thai: thai, phonetic: phoneticCanonical, hex: hex };
+          if (phoneticsMap) phrase.phonetics = phoneticsMap;
+          return phrase;
         }
         return function init(){
           ThaiQuiz.setupQuiz({
             elements: defaultElements,
             pickRound: function(state) {
               // Avoid repeating the previous phonetic answer
-              var prevPhonetic = state && state.currentAnswer && state.currentAnswer.phonetic;
+              var prevPhonetic = phoneticCanonical(state && state.currentAnswer);
               var attempt = 0;
               var answer;
               while (attempt < 10) {
                 const base = Utils.pickRandom(baseColors);
                 const maybeModifier = Math.random() < 0.55 ? Utils.pickRandom(modifiers) : null;
                 const candidate = buildColorPhrase(base, maybeModifier);
-                if (!prevPhonetic || candidate.phonetic !== prevPhonetic) { answer = candidate; break; }
+                if (!prevPhonetic || phoneticCanonical(candidate) !== prevPhonetic) { answer = candidate; break; }
                 attempt++;
                 if (attempt >= 10) { answer = candidate; break; }
               }
@@ -186,19 +273,20 @@
                 const b = Utils.pickRandom(baseColors);
                 const m = Math.random() < 0.45 ? Utils.pickRandom(modifiers) : null;
                 const choice = buildColorPhrase(b, m);
-                if (!choices.find(function(c) { return c.phonetic === choice.phonetic; })) choices.push(choice);
+                if (!choices.find(function(c) { return phoneticCanonical(c) === phoneticCanonical(choice); })) choices.push(choice);
               }
               return { answer: answer, choices: choices, symbolText: answer.thai, symbolStyle: { color: answer.hex }, symbolAriaLabel: (Utils.i18n.labelColorPhrasePrefix || 'Thai color phrase: ') + answer.thai };
             },
-            renderButtonContent: function(choice) { return choice.phonetic; },
-            ariaLabelForChoice: function(choice) { return Utils.i18n.answerPrefix + choice.phonetic; },
-            isCorrect: function(choice, answer) { return choice.phonetic === answer.phonetic; },
+            renderButtonContent: function(choice) { return phoneticDisplay(choice); },
+            ariaLabelForChoice: function(choice) { return Utils.i18n.answerPrefix + phoneticDisplay(choice); },
+            isCorrect: function(choice, answer) { return phoneticCanonical(choice) === phoneticCanonical(answer); },
             onAnswered: function(ctx) {
               if (!ctx || !ctx.correct) return;
               try {
                 var ans = ctx.answer || {};
-                var text = (ans.english || '') + ' → ' + (ans.thai || '') + (ans.phonetic ? (' — ' + ans.phonetic) : '');
-                Utils.renderExample(document.getElementById('feedback'), { text: text, highlight: { english: ans.english || '', thai: ans.thai || '', phonetic: ans.phonetic || '' } });
+                var ansPhonetic = phoneticDisplay(ans);
+                var text = (ans.english || '') + ' → ' + (ans.thai || '') + (ansPhonetic ? (' — ' + ansPhonetic) : '');
+                Utils.renderExample(document.getElementById('feedback'), { text: text, highlight: { english: ans.english || '', thai: ans.thai || '', phonetic: ansPhonetic || '' } });
               } catch (e) { Utils.logError && Utils.logError(e, 'colors.onAnswered'); }
             }
           });
