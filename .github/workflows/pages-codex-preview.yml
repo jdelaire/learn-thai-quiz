@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'codex/**'
-      - 'cursor/**'
   workflow_dispatch:
 
 permissions:
