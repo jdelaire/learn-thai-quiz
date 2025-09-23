@@ -1,0 +1,110 @@
+[
+  {
+    "english": "now / currently",
+    "thai": "ตอนนี้",
+    "phonetic": "dtɔɔn-níi",
+    "emoji": "🕒"
+  },
+  {
+    "english": "today",
+    "thai": "วันนี้",
+    "phonetic": "wan-níi",
+    "emoji": "🕒"
+  },
+  {
+    "english": "yesterday",
+    "thai": "เมื่อวาน",
+    "phonetic": "mûea-waan",
+    "emoji": "📅"
+  },
+  {
+    "english": "tomorrow",
+    "thai": "พรุ่งนี้",
+    "phonetic": "phrûŋ-níi",
+    "emoji": "🚀"
+  },
+  {
+    "english": "already",
+    "thai": "แล้ว",
+    "phonetic": "lɛ́ɛw",
+    "emoji": "✅"
+  },
+  {
+    "english": "not yet",
+    "thai": "ยังไม่",
+    "phonetic": "yaŋ mâi",
+    "emoji": "⏳"
+  },
+  {
+    "english": "still",
+    "thai": "ยัง",
+    "phonetic": "yaŋ",
+    "emoji": "🔁"
+  },
+  {
+    "english": "just (recently)",
+    "thai": "เพิ่ง",
+    "phonetic": "phə̂ŋ",
+    "emoji": "✨"
+  },
+  {
+    "english": "soon",
+    "thai": "เร็วๆนี้",
+    "phonetic": "rew-rew níi",
+    "emoji": "🚀"
+  },
+  {
+    "english": "in the past",
+    "thai": "เมื่อก่อน",
+    "phonetic": "mûea-gɔ̀ɔn",
+    "emoji": "📅"
+  },
+  {
+    "english": "in the future",
+    "thai": "ในอนาคต",
+    "phonetic": "nai à-naa-khót",
+    "emoji": "🚀"
+  },
+  {
+    "english": "often",
+    "thai": "บ่อยๆ",
+    "phonetic": "bɔ̀y-bɔ̀y",
+    "emoji": "🔄"
+  },
+  {
+    "english": "sometimes",
+    "thai": "บางที",
+    "phonetic": "baaŋ-thii",
+    "emoji": "🔄"
+  },
+  {
+    "english": "always",
+    "thai": "เสมอ",
+    "phonetic": "sà-mɯ̌ɯ",
+    "emoji": "🔄"
+  },
+  {
+    "english": "never",
+    "thai": "ไม่เคย",
+    "phonetic": "mâi khəəy",
+    "emoji": "✅"
+  },
+  {
+    "english": "ever",
+    "thai": "เคย",
+    "phonetic": "khəəy",
+    "emoji": "✅"
+  },
+  {
+    "english": "still not (yet)",
+    "thai": "ยังไม่ได้",
+    "phonetic": "yaŋ mâi dâay",
+    "emoji": "⏳"
+  },
+  {
+    "english": "cannot yet",
+    "thai": "ยังทำไม่ได้",
+    "phonetic": "yaŋ tham mâi dâay",
+    "emoji": "⏳"
+  }
+]

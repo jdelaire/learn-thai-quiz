@@ -1,0 +1,159 @@
+[
+  {
+    "symbol": "-ะ",
+    "sound": "a",
+    "phonetic": "a"
+  },
+  {
+    "symbol": "-า",
+    "sound": "aa",
+    "phonetic": "aa"
+  },
+  {
+    "symbol": "-ิ",
+    "sound": "i",
+    "phonetic": "i"
+  },
+  {
+    "symbol": "-ี",
+    "sound": "ii",
+    "phonetic": "ii"
+  },
+  {
+    "symbol": "-ึ",
+    "sound": "ɯ",
+    "phonetic": "ɯ"
+  },
+  {
+    "symbol": "-ื",
+    "sound": "ɯɯ",
+    "phonetic": "ɯɯ"
+  },
+  {
+    "symbol": "-ุ",
+    "sound": "u",
+    "phonetics": {
+      "en": "u",
+      "fr": "ou"
+    },
+    "phonetic": "u"
+  },
+  {
+    "symbol": "-ู",
+    "sound": "uu",
+    "phonetics": {
+      "en": "uu",
+      "fr": "ouu"
+    },
+    "phonetic": "uu"
+  },
+  {
+    "symbol": "เ-ะ",
+    "sound": "e",
+    "phonetics": {
+      "en": "e", 
+      "fr": "é"
+    },
+    "phonetic": "e"
+  },
+  {
+    "symbol": "เ-",
+    "sound": "ee",
+    "phonetics": {
+      "en": "ee",
+      "fr": "éé"
+    },
+    "phonetic": "ee"
+  },
+  {
+    "symbol": "แ-ะ",
+    "sound": "ɛ",
+    "phonetics": {
+      "en": "ɛ",
+      "fr": "è"
+    },
+    "phonetic": "ɛ"
+  },
+  {
+    "symbol": "แ-",
+    "sound": "ɛɛ",
+    "phonetics": {
+      "en": "ɛɛ",
+      "fr": "èè"
+    },
+    "phonetic": "ɛɛ"
+  },
+  {
+    "symbol": "โ-ะ",
+    "sound": "o",
+    "phonetic": "o"
+  },
+  {
+    "symbol": "โ-",
+    "sound": "oo",
+    "phonetic": "oo"
+  },
+  {
+    "symbol": "เ-าะ",
+    "sound": "ɔ",
+    "phonetic": "ɔ"
+  },
+  {
+    "symbol": "-อ",
+    "sound": "ɔɔ",
+    "phonetic": "ɔɔ"
+  },
+  {
+    "symbol": "เ-อะ",
+    "sound": "ə",
+    "phonetics": {
+      "en": "ə",
+      "fr": "e"
+    },
+    "phonetic": "ə"
+  },
+  {
+    "symbol": "เ-อ",
+    "sound": "əə",
+    "phonetics": {
+      "en": "əə",
+      "fr": "ee"
+    },
+    "phonetic": "əə"
+  },
+  {
+    "symbol": "เ-ีย",
+    "sound": "iɑ",
+    "phonetic": "iɑ"
+  },
+  {
+    "symbol": "เ-ือ",
+    "sound": "ɯɑ",
+    "phonetic": "ɯɑ"
+  },
+  {
+    "symbol": "-ัว",
+    "sound": "uɑ",
+    "phonetic": "uɑ"
+  },
+  {
+    "symbol": "ไ-",
+    "sound": "ɑi",
+    "phonetic": "ɑi"
+  },
+  {
+    "symbol": "ใ-",
+    "sound": "ɑi",
+    "phonetic": "ɑi"
+  },
+  {
+    "symbol": "-ำ",
+    "sound": "ɑm",
+    "phonetic": "ɑm"
+  },
+  {
+    "symbol": "เ-า",
+    "sound": "ɑw",
+    "phonetic": "ɑw"
+  }
+]
