@@ -40,7 +40,7 @@
     "bullets": ["Color-coded tone classes","Emoji associations","Progress tracking"],
     "categories": ["Alphabet","Reading","Beginner"],
     "bodyClass": "consonant-quiz",
-    "supportsVoice": false
+    "supportsVoice": true
   },
   {
     "id": "greetings",

@@ -17,16 +17,93 @@
 
   // Builders are provided by js/builders/index.js and exposed on window.QuizBuilders
   const QuizBuilders = (window.QuizBuilders || {});
+  const metaHelpers = (function(){
+    try {
+      const ns = window.__TQ;
+      if (!ns || !ns.ui || !ns.ui.meta) return null;
+      return ns.ui.meta;
+    } catch (_) {
+      return null;
+    }
+  })();
 
   function setText(id, text) {
     Utils.ErrorHandler.safe(Utils.setText)(id, text);
   }
 
-  function showNotFound(quizId) {
+  function fallbackShowNotFound(quizId) {
     try {
       setText('page-title', 'Quiz not found');
       setText('page-subtitle', 'Unknown quiz: ' + (quizId || ''));
     } catch (_) {}
+  }
+
+  function showNotFound(quizId) {
+    if (metaHelpers && typeof metaHelpers.showNotFound === 'function') {
+      try {
+        metaHelpers.showNotFound(quizId);
+        return;
+      } catch (err) {
+        Utils.logError(err, 'quiz-loader.js: showNotFound');
+      }
+    }
+    fallbackShowNotFound(quizId);
+  }
+
+  function fallbackApplyQuizMetadata(meta, quizId) {
+    try {
+      document.title = (meta.title || 'ThaiQuest') + ' — ThaiQuest';
+    } catch (_) {}
+    try { setText('page-title', meta.title || 'ThaiQuest'); } catch (_) {}
+    try { setText('page-subtitle', meta.description || ''); } catch (_) {}
+    try {
+      var metaDesc = document.querySelector('meta[name="description"]');
+      if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.setAttribute('name', 'description');
+        document.head.appendChild(metaDesc);
+      }
+      metaDesc.setAttribute('content', meta.description || 'ThaiQuest quiz: practice Thai with interactive, accessible quizzes.');
+    } catch (_) {}
+    try {
+      if (meta && meta.bodyClass) document.body.classList.add(meta.bodyClass);
+    } catch (_) {}
+    try {
+      if (quizId) {
+        document.body.classList.add(quizId + '-quiz');
+        document.body.dataset.quizId = quizId;
+        try { document.body.dataset.voiceSupported = (meta && meta.supportsVoice) ? '1' : '0'; } catch (_) {}
+      }
+    } catch (_) {}
+    try {
+      if (meta && meta.proTip) Utils.insertProTip(meta.proTip);
+    } catch (_) {}
+    try {
+      if (meta && meta.symbolNote) {
+        const anchor = document.getElementById('symbol');
+        if (anchor && !document.querySelector('.quiz-symbol-note')) {
+          const note = document.createElement('div');
+          var cls = 'quiz-symbol-note';
+          if (meta.symbolNoteClass) cls += ' ' + meta.symbolNoteClass;
+          note.className = cls;
+          note.setAttribute('role', meta.symbolNoteRole || 'note');
+          note.textContent = meta.symbolNote;
+          anchor.insertAdjacentElement('afterend', note);
+        }
+      }
+    } catch (_) {}
+  }
+
+  function applyQuizMetadata(meta, quizId) {
+    if (metaHelpers && typeof metaHelpers.applyQuizMetadata === 'function') {
+      try {
+        metaHelpers.applyQuizMetadata(meta, quizId);
+        return;
+      } catch (err) {
+        Utils.logError(err, 'quiz-loader.js: applyQuizMetadata');
+      }
+    }
+    fallbackApplyQuizMetadata(meta || {}, quizId);
   }
 
   function initFromQuery() {
@@ -40,50 +117,7 @@
         const meta = (Array.isArray(list) ? list : []).find(function(it){ return it && it.id === quizId; }) || null;
         if (!meta) { showNotFound(quizId); return; }
 
-        document.title = (meta.title || 'ThaiQuest') + ' — ThaiQuest';
-        setText('page-title', meta.title || 'ThaiQuest');
-        setText('page-subtitle', meta.description || '');
-        try {
-          var metaDesc = document.querySelector('meta[name="description"]');
-          if (!metaDesc) {
-            metaDesc = document.createElement('meta');
-            metaDesc.setAttribute('name', 'description');
-            document.head.appendChild(metaDesc);
-          }
-          metaDesc.setAttribute('content', meta.description || 'ThaiQuest quiz: practice Thai with interactive, accessible quizzes.');
-        } catch (e) {}
-        // Body class lives in data/quizzes.json so metadata stays the single source of truth
-        var cls = meta && meta.bodyClass;
-        if (cls) document.body.classList.add(cls);
-        // Always add a generic per-quiz class as a fallback (e.g., foods -> foods-quiz)
-        try {
-          if (quizId) {
-            document.body.classList.add(quizId + '-quiz');
-            document.body.dataset.quizId = quizId;
-            try { document.body.dataset.voiceSupported = (meta && meta.supportsVoice) ? '1' : '0'; } catch (_) {}
-          }
-        } catch (e) {}
-
-        // Add per-quiz pro tips and optional symbol notes from metadata
-        try {
-          if (meta && meta.proTip) {
-            Utils.insertProTip(meta.proTip);
-          }
-          if (meta && meta.symbolNote) {
-            try {
-              const anchor = document.getElementById('symbol');
-              if (anchor && !document.querySelector('.quiz-symbol-note')) {
-                const note = document.createElement('div');
-                var cls = 'quiz-symbol-note';
-                if (meta.symbolNoteClass) cls += ' ' + meta.symbolNoteClass;
-                note.className = cls;
-                note.setAttribute('role', meta.symbolNoteRole || 'note');
-                note.textContent = meta.symbolNote;
-                anchor.insertAdjacentElement('afterend', note);
-              }
-            } catch (e) {}
-          }
-        } catch (e) {}
+        applyQuizMetadata(meta, quizId);
 
         // Build and start the selected quiz
         const builder = QuizBuilders[quizId];
