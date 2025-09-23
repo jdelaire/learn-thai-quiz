@@ -1,0 +1,80 @@
+[
+  {
+    "english": "in",
+    "thai": "ใน",
+    "phonetic": "nai",
+    "emoji": "📦"
+  },
+  {
+    "english": "on",
+    "thai": "บน",
+    "phonetic": "bon",
+    "emoji": "📌"
+  },
+  {
+    "english": "under",
+    "thai": "ใต้",
+    "phonetic": "dtâay",
+    "emoji": "⬇️"
+  },
+  {
+    "english": "in front of",
+    "thai": "ข้างหน้า",
+    "phonetic": "khâaŋ-nâa",
+    "emoji": "👀"
+  },
+  {
+    "english": "behind",
+    "thai": "ข้างหลัง",
+    "phonetic": "khâaŋ-lǎŋ",
+    "emoji": "🔙"
+  },
+  {
+    "english": "next to / beside",
+    "thai": "ข้างๆ",
+    "phonetic": "khâaŋ-khâaŋ",
+    "emoji": "↔️"
+  },
+  {
+    "english": "between",
+    "thai": "ระหว่าง",
+    "phonetic": "rá-wàaŋ",
+    "emoji": "↔️"
+  },
+  {
+    "english": "near / close to",
+    "thai": "ใกล้",
+    "phonetic": "glâi",
+    "emoji": "🤏"
+  },
+  {
+    "english": "far from",
+    "thai": "ไกล",
+    "phonetic": "glai",
+    "emoji": "🏞️"
+  },
+  {
+    "english": "inside",
+    "thai": "ข้างใน",
+    "phonetic": "khâaŋ-nai",
+    "emoji": "📦"
+  },
+  {
+    "english": "outside",
+    "thai": "ข้างนอก",
+    "phonetic": "khâaŋ-nɔ̂ɔk",
+    "emoji": "🌤️"
+  },
+  {
+    "english": "at / to (a place)",
+    "thai": "ที่",
+    "phonetic": "thîi",
+    "emoji": "📍"
+  },
+  {
+    "english": "there is / are",
+    "thai": "มี",
+    "phonetic": "mii",
+    "emoji": "✅"
+  }
+]
