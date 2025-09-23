@@ -149,9 +149,13 @@
 
     const state = {
       currentAnswer: null,
+      currentChoices: [],
+      currentRound: null,
+      currentRoundInfo: null,
       questionsAnswered: initialProgress.questionsAnswered || 0,
       correctAnswers: initialProgress.correctAnswers || 0,
-      autoAdvanceTimerId: null
+      autoAdvanceTimerId: null,
+      isAwaitingAnswer: true
     };
 
     function disableOtherButtons(exceptBtn) {
@@ -240,51 +244,38 @@
       } catch (_) {}
     }
 
-    function pickQuestion() {
-      if (state.autoAdvanceTimerId != null) {
-        clearTimeout(state.autoAdvanceTimerId);
-        state.autoAdvanceTimerId = null;
+    function renderWithChoices(answer, choices, round, opts) {
+      if (!answer || !Array.isArray(choices) || choices.length === 0) return;
+      opts = opts || {};
+      var resetFeedback = opts.resetFeedback !== false;
+      var focusOptions = opts.focusOptions !== false;
+
+      if (resetFeedback) {
+        feedbackEl.textContent = '';
+        Utils.ErrorHandler.safe(function(){ if (Utils && typeof Utils.dismissExampleOverlay === 'function') Utils.dismissExampleOverlay(); })();
       }
-      // Ensure any lingering example overlay is removed before rendering a new question
-      Utils.ErrorHandler.safe(function(){ if (Utils && typeof Utils.dismissExampleOverlay === 'function') Utils.dismissExampleOverlay(); })();
-      feedbackEl.textContent = '';
+
       nextBtn.style.display = 'none';
       Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(optionsEl); })();
 
-      const round = (typeof config.pickRound === 'function') ? config.pickRound(state) : null;
-      if (!round || !round.answer || !Array.isArray(round.choices)) {
-        showNoDataMessage();
-        return;
-      }
-
-      const answer = round.answer;
-      const choices = shuffle(round.choices.slice());
-      state.currentAnswer = answer;
-
-      if (typeof config.onRoundStart === 'function') {
-        Utils.ErrorHandler.wrap(config.onRoundStart, 'quiz.js: onRoundStart')({ answer: answer, choices: choices, state: state });
-      }
-
+      var symbolMeta = round || state.currentRoundInfo || {};
       if (typeof config.renderSymbol === 'function') {
         config.renderSymbol(answer, { symbolEl, optionsEl, feedbackEl, nextBtn, statsEl }, state);
       } else {
-        // Fallback rendering if provided by round
-        if (round.symbolText != null) {
-          symbolEl.textContent = String(round.symbolText);
+        if (symbolMeta && symbolMeta.symbolText != null) {
+          symbolEl.textContent = String(symbolMeta.symbolText);
         }
-        if (round.symbolAriaLabel) {
-          symbolEl.setAttribute('aria-label', round.symbolAriaLabel);
+        if (symbolMeta && symbolMeta.symbolAriaLabel) {
+          symbolEl.setAttribute('aria-label', symbolMeta.symbolAriaLabel);
         }
-        if (round.symbolStyle && typeof round.symbolStyle === 'object') {
-          Object.assign(symbolEl.style, round.symbolStyle);
+        if (symbolMeta && symbolMeta.symbolStyle && typeof symbolMeta.symbolStyle === 'object') {
+          try { Object.assign(symbolEl.style, symbolMeta.symbolStyle); } catch (_) {}
         }
       }
 
-      choices.forEach((choice) => {
+      choices.forEach(function(choice){
         const btn = document.createElement('button');
-        Utils.ErrorHandler.safeDOM(function() {
-          btn.type = 'button';
-        })();
+        Utils.ErrorHandler.safeDOM(function(){ btn.type = 'button'; })();
         if (typeof config.renderButtonContent === 'function') {
           const content = config.renderButtonContent(choice, state);
           if (content && typeof content === 'object' && 'nodeType' in content) {
@@ -305,7 +296,7 @@
           config.decorateButton(btn, choice, state);
         }
 
-        btn.onclick = () => {
+        btn.onclick = function(){
           state.questionsAnswered++;
           const isCorrect = (typeof config.isCorrect === 'function')
             ? !!config.isCorrect(choice, answer, state)
@@ -316,35 +307,27 @@
 
           if (isCorrect) {
             state.correctAnswers++;
+            state.isAwaitingAnswer = false;
             feedbackEl.textContent = '';
             btn.classList.add('answer-correct');
-            btn.addEventListener('animationend', function handle() {
+            btn.addEventListener('animationend', function handle(){
               btn.classList.remove('answer-correct');
             }, { once: true });
-            // Speak Thai of the correct answer when enabled
             maybeSpeakThaiFromAnswer(answer);
-            // Disable other options until next question
             disableOtherButtons(btn);
-            // Also prevent re-clicks on the correct button during the delay
-            Utils.ErrorHandler.safeDOM(function() {
-              btn.onclick = null;
-            })();
-            // Don't show next button - auto-advance only
+            Utils.ErrorHandler.safeDOM(function(){ btn.onclick = null; })();
             nextBtn.style.display = 'none';
-
-            // Use longer delay (3 seconds) for quizzes that show examples
             const delay = (typeof config.onAnswered === 'function') ? 3000 : 1500;
             scheduleAutoAdvance(delay);
           } else {
             feedbackEl.textContent = '';
             btn.classList.add('answer-wrong');
-            btn.addEventListener('animationend', function handle() {
+            btn.addEventListener('animationend', function handle(){
               btn.classList.remove('answer-wrong');
             }, { once: true });
           }
 
-          // Persist progress after each answer
-          Utils.ErrorHandler.safe(function() {
+          Utils.ErrorHandler.safe(function(){
             if (quizId && global && global.Utils && typeof global.Utils.saveQuizProgress === 'function') {
               global.Utils.saveQuizProgress(quizId, {
                 questionsAnswered: state.questionsAnswered,
@@ -356,17 +339,57 @@
           updateStats();
 
           if (typeof config.onAnswered === 'function') {
-            Utils.ErrorHandler.wrap(config.onAnswered, 'quiz.js: onAnswered')({ correct: isCorrect, choice, answer, state });
+            Utils.ErrorHandler.wrap(config.onAnswered, 'quiz.js: onAnswered')({ correct: isCorrect, choice: choice, answer: answer, state: state });
           }
         };
 
         optionsEl.appendChild(btn);
       });
 
-      Utils.ErrorHandler.safeDOM(function() {
-        optionsEl.focus();
-      })();
+      if (focusOptions) {
+        Utils.ErrorHandler.safeDOM(function(){ optionsEl.focus(); })();
+      }
     }
+
+    function pickQuestion() {
+      if (state.autoAdvanceTimerId != null) {
+        clearTimeout(state.autoAdvanceTimerId);
+        state.autoAdvanceTimerId = null;
+      }
+
+      const round = (typeof config.pickRound === 'function') ? config.pickRound(state) : null;
+      if (!round || !round.answer || !Array.isArray(round.choices)) {
+        showNoDataMessage();
+        return;
+      }
+
+      const answer = round.answer;
+      const choices = shuffle(round.choices.slice());
+      state.currentAnswer = answer;
+      state.currentChoices = choices.slice();
+      state.currentRound = round;
+      state.currentRoundInfo = {
+        symbolText: round.symbolText,
+        symbolStyle: (round.symbolStyle && typeof round.symbolStyle === 'object') ? Object.assign({}, round.symbolStyle) : null,
+        symbolAriaLabel: round.symbolAriaLabel || ''
+      };
+      state.isAwaitingAnswer = true;
+
+      if (typeof config.onRoundStart === 'function') {
+        Utils.ErrorHandler.wrap(config.onRoundStart, 'quiz.js: onRoundStart')({ answer: answer, choices: state.currentChoices, state: state });
+      }
+
+      renderWithChoices(state.currentAnswer, state.currentChoices, round, { resetFeedback: true, focusOptions: true });
+    }
+
+    function handlePhoneticLocaleChange() {
+      if (state.autoAdvanceTimerId != null) return;
+      if (!state.isAwaitingAnswer) return;
+      if (!state.currentAnswer || !Array.isArray(state.currentChoices) || state.currentChoices.length === 0) return;
+      renderWithChoices(state.currentAnswer, state.currentChoices, state.currentRound, { resetFeedback: false, focusOptions: false });
+    }
+
+    try { document.addEventListener('thaiQuest.phonetics.change', handlePhoneticLocaleChange); } catch (_) {}
 
     if (config.enableKeyboard !== false) {
       optionsEl.addEventListener('keydown', (e) => {

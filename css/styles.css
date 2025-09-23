@@ -1209,6 +1209,42 @@ body.questions-quiz .correct-line {
   margin: 0 auto 1.5em;
 }
 
+.preferences-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.6em;
+  font-size: 0.95em;
+}
+
+.preferences-panel label {
+  font-weight: 600;
+}
+
+.preferences-panel select,
+.quiz-preferences select {
+  padding: 0.45em 0.75em;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.95em;
+  min-width: 160px;
+}
+
+.preferences-panel select:focus,
+.quiz-preferences select:focus {
+  outline: none;
+  border-color: rgba(0, 36, 125, 0.5);
+  box-shadow: 0 0 0 3px rgba(0, 36, 125, 0.15);
+}
+
+.preferences-panel .preferences-hint {
+  font-size: 0.82em;
+  color: rgba(17, 17, 17, 0.6);
+}
+
 #search-input {
   padding: 0.9em 1em;
   font-size: 1em;
@@ -1257,6 +1293,19 @@ body.questions-quiz .correct-line {
   padding: 1em 1.2em;
 }
 
+.quiz-preferences {
+  margin: 0.8em auto 0.6em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  font-size: 0.95em;
+}
+
+.quiz-preferences label {
+  font-weight: 600;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   body.home { padding: 1em; }
@@ -1265,6 +1314,13 @@ body.questions-quiz .correct-line {
     flex-direction: column;
     align-items: center;
     gap: 1.5em;
+  }
+  .preferences-panel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .preferences-panel select {
+    width: 100%;
   }
   body.home .quiz-card {
     min-width: 280px;
@@ -1299,6 +1355,13 @@ body.questions-quiz .correct-line {
   body.consonant-quiz #feedback { font-size: 1.2em; margin-top: 0.8em; }
   body.consonant-quiz #nextBtn { margin-top: 1.5em; padding: 0.7em 1.5em; }
   body.consonant-quiz .stats { font-size: 0.8em; }
+  .quiz-preferences {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .quiz-preferences select {
+    width: 100%;
+  }
 
   
   body.rooms-quiz { --symbol-font-size: 3.6em; }

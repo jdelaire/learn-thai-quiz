@@ -11,6 +11,7 @@
   var prog = (NS.quiz && NS.quiz.progressive) || {};
   var factories = (NS.quiz && NS.quiz.factories) || {};
   var player = (NS.quiz && NS.quiz.player) || {};
+  var phonetics = (NS.quiz && NS.quiz.phonetics) || {};
 
   global.Utils = {
     // Storage service re-export
@@ -94,7 +95,15 @@
     getStarRulesTooltip: player.getStarRulesTooltip,
     getPlayerAvatar: player.getPlayerAvatar,
     formatNumber: player.formatNumber,
-    getXPProgressPercentage: player.getXPProgressPercentage
+    getXPProgressPercentage: player.getXPProgressPercentage,
+    // phonetics / localization
+    normalizePhoneticLocale: phonetics.normalizeLocale,
+    getPreferredPhoneticLocale: phonetics.getPreferredLocale,
+    setPreferredPhoneticLocale: phonetics.setPreferredLocale,
+    getCanonicalPhonetic: phonetics.getCanonicalPhonetic,
+    getPhoneticForLocale: phonetics.getPhoneticForLocale,
+    getDisplayPhonetic: phonetics.getDisplayPhonetic,
+    getPhoneticBundle: phonetics.getPhoneticBundle
     ,
     // latest attempt
     getLatestAttempt: player.getLatestAttempt
