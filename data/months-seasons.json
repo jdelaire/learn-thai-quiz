@@ -1,0 +1,110 @@
+[
+  {
+    "english": "January",
+    "thai": "มกราคม",
+    "phonetic": "má-gà-raa-khom",
+    "emoji": "📅"
+  },
+  {
+    "english": "February",
+    "thai": "กุมภาพันธ์",
+    "phonetic": "gum-phaa-pan",
+    "emoji": "📅"
+  },
+  {
+    "english": "March",
+    "thai": "มีนาคม",
+    "phonetic": "mii-naa-khom",
+    "emoji": "📅"
+  },
+  {
+    "english": "April",
+    "thai": "เมษายน",
+    "phonetic": "mee-sǎa-yon",
+    "emoji": "📅"
+  },
+  {
+    "english": "May",
+    "thai": "พฤษภาคม",
+    "phonetic": "phrɯ́t-sà-phaa-khom",
+    "emoji": "📅"
+  },
+  {
+    "english": "June",
+    "thai": "มิถุนายน",
+    "phonetic": "mí-thù-naa-yon",
+    "emoji": "📅"
+  },
+  {
+    "english": "July",
+    "thai": "กรกฎาคม",
+    "phonetic": "gà-rá-gà-daa-khom",
+    "emoji": "📅"
+  },
+  {
+    "english": "August",
+    "thai": "สิงหาคม",
+    "phonetic": "sǐŋ-hǎa-khom",
+    "emoji": "📅"
+  },
+  {
+    "english": "September",
+    "thai": "กันยายน",
+    "phonetic": "gan-yaa-yon",
+    "emoji": "📅"
+  },
+  {
+    "english": "October",
+    "thai": "ตุลาคม",
+    "phonetic": "dtù-laa-khom",
+    "emoji": "📅"
+  },
+  {
+    "english": "November",
+    "thai": "พฤศจิกายน",
+    "phonetic": "phrɯ́t-sà-jì-gaa-yon",
+    "emoji": "📅"
+  },
+  {
+    "english": "December",
+    "thai": "ธันวาคม",
+    "phonetic": "than-waa-khom",
+    "emoji": "📅"
+  },
+  {
+    "english": "season",
+    "thai": "ฤดู",
+    "phonetic": "rɯ́-duu",
+    "emoji": "🗓️"
+  },
+  {
+    "english": "summer",
+    "thai": "ฤดูร้อน",
+    "phonetic": "rɯ́-duu rɔ́ɔn",
+    "emoji": "☀️"
+  },
+  {
+    "english": "rainy season",
+    "thai": "ฤดูฝน",
+    "phonetic": "rɯ́-duu fǒn",
+    "emoji": "🌧️"
+  },
+  {
+    "english": "winter",
+    "thai": "ฤดูหนาว",
+    "phonetic": "rɯ́-duu nǎaw",
+    "emoji": "❄️"
+  },
+  {
+    "english": "spring",
+    "thai": "ฤดูใบไม้ผลิ",
+    "phonetic": "rɯ́-duu bai-mái-phlì",
+    "emoji": "🌸"
+  },
+  {
+    "english": "autumn/fall",
+    "thai": "ฤดูใบไม้ร่วง",
+    "phonetic": "rɯ́-duu bai-mái-rûaŋ",
+    "emoji": "🍂"
+  }
+]
