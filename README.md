@@ -153,7 +153,7 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 
 1. The home page (`index.html`) loads `data/quizzes.json`, renders cards, and provides search/category filters.
 2. Clicking a card navigates to `quiz.html?quiz=<id>`.
-3. `js/quiz-loader.js` reads the `id` and metadata from `data/quizzes.json`, sets page title/subtitle, applies the metadata-driven `bodyClass`, and also adds a generic `<id>-quiz` class. Metadata can also provide a `symbolNote` (rendered just below the prompt) and a `proTip` (inserted in the footer).
+3. `js/quiz-loader.js` reads the `id` and metadata from `data/quizzes.json`, sets page title/subtitle, applies the metadata-driven `bodyClass`, and also adds a generic `<id>-quiz` class. Metadata can also provide a `symbolNote` (rendered just below the prompt) and a `proTip` (inserted in the footer). Setting `supportsVoice` enables the Thai TTS controls; setting `supportsPhonetics` (optionally with a `phoneticLocales` array) surfaces the per-quiz phonetic selector in the footer.
 4. The loader invokes a per‑quiz builder from `js/builders/index.js`. If no builder exists for the `id`, it falls back to running a standard quiz from `data/<id>.json` using `phonetic` as the answer key.
 5. Builders fetch JSON via `Utils.fetchJSONCached`/`Utils.fetchJSONs` and wire `ThaiQuiz.setupQuiz(...)` using `Utils.createStandardQuiz` plus small overrides (emoji, examples, symbol rendering).
 6. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
@@ -174,6 +174,13 @@ Implementation details:
 - Aggregation is computed from per‑quiz progress stored under the key `thaiQuest.progress.<quizId>` via the storage service.
 - Public helpers: `Utils.getTotalStarsEarned()`, `Utils.getPlayerAccuracy()`, `Utils.getQuizzesCompleted()`, and low‑level `Utils.aggregateGlobalStatsFromStorage()` / `Utils.getAllSavedProgress()`.
 - Stars unlock once you answer 100 questions in a quiz; accuracy thresholds: >95% = 3★, >85% = 2★, >75% = 1★, otherwise 0★.
+
+### Per-quiz phonetic locales
+
+- Set `supportsPhonetics` in `data/quizzes.json` to enable a phonetic locale selector in the quiz footer. Provide `phoneticLocales` (array of locale codes like `"en"`, `"fr"`) to restrict the dropdown; otherwise it defaults to English/French when available in the dataset.
+- Selections persist per quiz under `thaiQuest.settings.phoneticLocale.<quizId>` (the legacy global preference is no longer used beyond migration).
+- `Utils.getQuizPhoneticLocale(quizId)` / `Utils.setQuizPhoneticLocale(quizId, locale)` expose the stored value; `Utils.normalizePhoneticLocale(locale)` is still the canonical normalizer.
+- Changing the selector fires `thaiQuest.phonetics.change` with `{ quizId, locale }` so `ThaiQuiz.setupQuiz` can re-render the current round without restarting.
 
 ### Leveling and XP
 
@@ -227,7 +234,7 @@ body.color-quiz {
 ### Add a new quiz
 
 1. **Create data**: Add a new JSON file under `data/`. For a standard quiz, prefer `data/<id>.json` with items like `{ "english": "water", "thai": "น้ำ", "phonetic": "náam" }`.
-2. **Add metadata**: In `data/quizzes.json`, add an object with `id`, `title`, `href`, `description`, `bullets`, `categories`, and optionally `bodyClass`, `proTip`, and `symbolNote`/`symbolNoteClass`.
+2. **Add metadata**: In `data/quizzes.json`, add an object with `id`, `title`, `href`, `description`, `bullets`, `categories`, and optionally `bodyClass`, `proTip`, `supportsVoice`, `supportsPhonetics`/`phoneticLocales`, plus `symbolNote`/`symbolNoteClass`.
 3. **Wire it up**:
    - If you don’t need custom logic, you can skip a builder. The loader will automatically run a standard quiz from `data/<id>.json` using `phonetic` as the answer key.
    - If you need custom behavior (emoji rules, multiple datasets, special symbol rendering, examples), add a builder using the helper `makeStandardQuizBuilder(urls, transform)` or write a manual builder.
@@ -483,13 +490,16 @@ Utilities you can use: `Utils.fetchJSONCached(s)`, `Utils.fetchJSONs([urls])`, `
   "categories": ["Vocabulary","Beginner"],
   "bodyClass": "questions-quiz",
   "proTip": "Optional HTML snippet shown in the quiz footer with helpful hints.",
+  "supportsVoice": true,
+  "supportsPhonetics": true,
+  "phoneticLocales": ["en", "fr"],
   "symbolNote": "Optional plain-text note displayed under the symbol (e.g., shaping reminders).",
   "symbolNoteClass": "custom-symbol-note"
 }
 ```
 
 
-- `bodyClass`, `proTip`, and `symbolNote`/`symbolNoteClass` are optional. If omitted, the loader picks a sensible default class, no footer tip is shown, and no inline prompt note appears.
+- `bodyClass`, `proTip`, `supportsVoice`, `supportsPhonetics` (plus optional `phoneticLocales`), and `symbolNote`/`symbolNoteClass` are optional. If omitted, the loader picks a sensible default class; no footer tip, voice toggle, or phonetic selector is shown, and no inline prompt note appears.
 
 #### Accessibility and UX requirements
 

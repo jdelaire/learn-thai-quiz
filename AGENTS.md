@@ -6,15 +6,15 @@
 - `js/storage.js` defines `window.StorageService` with a localStorage fallback; `js/prelude.js` asserts the storage shim exists before the rest of the scripts run.
 - `js/core/` hosts infrastructure modules: `error.js` (`ErrorHandler` helpers and logging), `fetch.js` (cached JSON fetchers), and `tts.js` (Thai text to speech utilities).
 - `js/util/` contains shared helpers: `common.js` (DOM utilities, sanitizer, i18n strings, safe random choice helpers), `color.js`, `text.js`, and `platform.js`.
-- `js/ui/` centralizes DOM glue: `renderers.js` for shared markup, `meta.js` for applying quiz metadata and body classes, `quiz-ui.js` for stats helpers, and `sound.js` for opt-in speech controls.
+- `js/ui/` centralizes DOM glue: `renderers.js` for shared markup, `meta.js` for applying quiz metadata and body classes, `quiz-ui.js` for stats helpers, `sound.js` for opt-in speech controls, and `preferences.js` for per-quiz phonetic locale UI.
 - `js/quiz/` holds the quiz engine pieces: `progressive.js` (adaptive choice counts), `factories.js` (standard quiz scaffolding), `player.js` (XP curve, avatar generation, progress aggregation), and `phonetics.js` (locale-aware transliteration helpers).
 - `js/utils-agg.js` is the single point that assembles `window.Utils` from the `__TQ` namespace; expose new helpers there instead of creating fresh globals.
 - `js/builders/index.js` registers all per-quiz builders, composing datasets and overrides before calling `ThaiQuiz.setupQuiz`.
 - `js/quiz.js` exposes `window.ThaiQuiz.setupQuiz`, renders questions, persists per-quiz progress, injects stats and stars, and wires optional text-to-speech controls.
-- `js/quiz-loader.js` reads `quiz` from the query string, loads metadata from `data/quizzes.json`, applies `bodyClass`/`symbolNote`/`supportsVoice`, and invokes the appropriate builder or falls back to `data/<id>.json`.
+- `js/quiz-loader.js` reads `quiz` from the query string, loads metadata from `data/quizzes.json`, applies `bodyClass`/`symbolNote`/`supportsVoice`/`supportsPhonetics`, and invokes the appropriate builder or falls back to `data/<id>.json`.
 - `js/home.js` powers the landing page search, category chips, resume button, player card (level, XP, avatar, Today in Thai), and the "What's New" popover which pulls `data/changelog.json`.
 - `js/smoke.js` contains the in-browser regression suite that drives `smoke.html`.
-- `data/` stores quiz datasets; many quizzes have paired `*-examples.json` files that builders join with base data. `data/quizzes.json` is the metadata source of truth (ids, titles, bodyClass, supportsVoice, proTip, bullets, categories). `data/changelog.json` feeds the home page drawer; keep ISO 8601 timestamps, newest first.
+- `data/` stores quiz datasets; many quizzes have paired `*-examples.json` files that builders join with base data. `data/quizzes.json` is the metadata source of truth (ids, titles, bodyClass, supportsVoice, supportsPhonetics, phoneticLocales, proTip, bullets, categories). `data/changelog.json` feeds the home page drawer; keep ISO 8601 timestamps, newest first.
 - `css/styles.css` owns all styling and per-quiz overrides (using body classes such as `body.colors-quiz`).
 - `asset/` contains images/icons plus the manifest and favicons used by the PWA hooks.
 
@@ -44,3 +44,4 @@
 - Shared UI helpers (stats/auto-advance/disable) live under `Utils.quizUI`, voice controls under `Utils.sound`, and platform detection under `Utils.platform`; call those instead of reimplementing quiz glue.
 - Quiz stats and stars cap at `state.maxQuestions` (default 100). After the cap, progress is frozen until the "Restart Quizz" button (appended to the footer) resets per-quiz storage via `Utils.saveQuizProgress`.
 - Quizzes that set `supportsVoice` in metadata enable voice controls; use the helpers in `js/ui/sound.js`/`Utils.TTS` instead of custom speech synthesis code.
+- Quizzes that set `supportsPhonetics` add a footer dropdown; rely on `Utils.phoneticsUI.injectControls` (called inside `ThaiQuiz.setupQuiz`) and fetch/store locales with `Utils.getQuizPhoneticLocale(quizId)`/`Utils.setQuizPhoneticLocale(quizId, locale)`.

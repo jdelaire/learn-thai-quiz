@@ -27,6 +27,9 @@
     config = config || {};
     const questionCap = getQuestionCap();
     const utils = (global && global.Utils) || {};
+    const bodyDataset = (global.document && global.document.body && global.document.body.dataset) || {};
+    const phoneticsSupported = bodyDataset && bodyDataset.phoneticsSupported === '1';
+    const phoneticLocalesAttr = bodyDataset && bodyDataset.phoneticLocales || '';
     const defaultElements = utils.defaultElements || {};
     const elementsConfig = Object.assign({}, defaultElements, config.elements || {});
     const symbolEl = document.getElementById(elementsConfig.symbol);
@@ -47,6 +50,9 @@
       getRate: function(){ return 0.8; },
       setRate: function(){}
     };
+    const phoneticControls = (utils && utils.phoneticsUI && typeof utils.phoneticsUI.injectControls === 'function')
+      ? utils.phoneticsUI
+      : { injectControls: function(){} };
     const quizUI = utils.quizUI || {
       disableOtherButtons: function(optionsEl, exceptBtn){
         try {
@@ -344,7 +350,10 @@
       renderWithChoices(state.currentAnswer, state.currentChoices, round, { resetFeedback: true, focusOptions: true });
     }
 
-    function handlePhoneticLocaleChange() {
+    function handlePhoneticLocaleChange(evt) {
+      try {
+        if (evt && evt.detail && evt.detail.quizId && quizId && evt.detail.quizId !== quizId) return;
+      } catch (_) {}
       if (state.autoAdvanceTimerId != null) return;
       if (!state.isAwaitingAnswer) return;
       if (!state.currentAnswer || !Array.isArray(state.currentChoices) || state.currentChoices.length === 0) return;
@@ -373,6 +382,13 @@
     quizUI.updateStats(statsEl, quizId, state);
     updateRestartButtonVisibility();
     try { soundControls.injectControls(); } catch (_) {}
+    try {
+      phoneticControls.injectControls({
+        quizId: quizId,
+        supported: phoneticsSupported,
+        locales: phoneticLocalesAttr
+      });
+    } catch (_) {}
 
     return {
       pickQuestion,

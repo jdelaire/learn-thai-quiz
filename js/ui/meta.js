@@ -37,6 +37,12 @@
           document.body.classList.add(quizId + '-quiz');
           document.body.dataset.quizId = quizId;
           document.body.dataset.voiceSupported = (meta && meta.supportsVoice) ? '1' : '0';
+          document.body.dataset.phoneticsSupported = (meta && meta.supportsPhonetics) ? '1' : '0';
+          if (meta && meta.supportsPhonetics && meta.phoneticLocales && meta.phoneticLocales.length) {
+            document.body.dataset.phoneticLocales = meta.phoneticLocales.join(',');
+          } else {
+            try { delete document.body.dataset.phoneticLocales; } catch (_) { document.body.dataset.phoneticLocales = ''; }
+          }
         }
       } catch (_) {}
 
@@ -63,4 +69,3 @@
 
   NS.ui.meta = { applyQuizMetadata: applyQuizMetadata, showNotFound: showNotFound };
 })(window);
-

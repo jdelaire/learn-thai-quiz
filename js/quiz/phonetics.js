@@ -4,8 +4,47 @@
   var NS = global.__TQ = global.__TQ || {};
   NS.quiz = NS.quiz || {};
 
-  var storageKey = 'thaiQuest.settings.phoneticLocale';
+  var storagePrefix = 'thaiQuest.settings.phoneticLocale.';
+  var legacyStorageKey = 'thaiQuest.settings.phoneticLocale';
   var defaultLocale = 'en';
+
+  function normalizeQuizId(input) {
+    try {
+      if (input != null) {
+        var str = String(input).trim();
+        if (str) return str;
+      }
+    } catch (_) {}
+    try {
+      var body = global.document && global.document.body;
+      if (body && body.dataset && body.dataset.quizId) {
+        var fromBody = String(body.dataset.quizId || '').trim();
+        if (fromBody) return fromBody;
+      }
+    } catch (_) {}
+    return '';
+  }
+
+  function storageKey(quizId) {
+    var normalizedId = normalizeQuizId(quizId);
+    if (!normalizedId) return '';
+    return storagePrefix + normalizedId;
+  }
+
+  function defaultLocaleForQuiz(quizId) {
+    try {
+      var body = global.document && global.document.body;
+      if (!body || !body.dataset) return defaultLocale;
+      var attr = body.dataset.phoneticLocales || '';
+      if (!attr) return defaultLocale;
+      var parts = attr.split(',');
+      for (var i = 0; i < parts.length; i++) {
+        var norm = normalizeLocale(parts[i]);
+        if (norm) return norm;
+      }
+    } catch (_) {}
+    return defaultLocale;
+  }
 
   function normalizeLocale(locale) {
     try {
@@ -23,22 +62,36 @@
     }
   }
 
-  function getPreferredLocale() {
+  function getQuizLocale(quizId, fallbackLocale) {
+    var normalizedId = normalizeQuizId(quizId);
+    var fallback = normalizeLocale(fallbackLocale) || defaultLocaleForQuiz(normalizedId);
+    var key = storageKey(normalizedId);
+    if (!key) return fallback;
     try {
-      var raw = global.StorageService && typeof global.StorageService.getItem === 'function'
-        ? global.StorageService.getItem(storageKey)
-        : null;
-      var normalized = normalizeLocale(raw);
-      if (normalized) return normalized;
+      if (global.StorageService && typeof global.StorageService.getItem === 'function') {
+        var raw = global.StorageService.getItem(key);
+        var normalized = normalizeLocale(raw);
+        if (normalized) return normalized;
+      }
     } catch (_) {}
-    return defaultLocale;
+    try {
+      if (global.StorageService && typeof global.StorageService.getItem === 'function') {
+        var legacy = global.StorageService.getItem(legacyStorageKey);
+        var legacyNorm = normalizeLocale(legacy);
+        if (legacyNorm) return legacyNorm;
+      }
+    } catch (_) {}
+    return fallback;
   }
 
-  function setPreferredLocale(locale) {
-    var normalized = normalizeLocale(locale) || defaultLocale;
+  function setQuizLocale(quizId, locale) {
+    var normalizedId = normalizeQuizId(quizId);
+    var normalized = normalizeLocale(locale) || defaultLocaleForQuiz(normalizedId);
+    var key = storageKey(normalizedId);
+    if (!key) return normalized;
     try {
       if (global.StorageService && typeof global.StorageService.setItem === 'function') {
-        global.StorageService.setItem(storageKey, normalized);
+        global.StorageService.setItem(key, normalized);
       }
     } catch (_) {}
     return normalized;
@@ -91,11 +144,12 @@
     return '';
   }
 
-  function getPhoneticForLocale(item, locale) {
+  function getPhoneticForLocale(item, locale, quizId) {
     var canonical = getCanonicalPhonetic(item);
     var map = getPhoneticMap(item);
     if (!map) return canonical;
-    var loc = normalizeLocale(locale) || getPreferredLocale();
+    var loc = normalizeLocale(locale);
+    if (!loc) loc = getQuizLocale(normalizeQuizId(quizId));
     if (loc && map[loc] != null && map[loc] !== '') {
       try { return String(map[loc]); } catch (_) { return canonical; }
     }
@@ -106,23 +160,23 @@
     return first || canonical;
   }
 
-  function getDisplayPhonetic(item, locale) {
-    var value = getPhoneticForLocale(item, locale);
+  function getDisplayPhonetic(item, locale, quizId) {
+    var value = getPhoneticForLocale(item, locale, quizId);
     if (value) return value;
     return getCanonicalPhonetic(item);
   }
 
-  function getPhoneticBundle(item, locale) {
+  function getPhoneticBundle(item, locale, quizId) {
     return {
       canonical: getCanonicalPhonetic(item),
-      display: getDisplayPhonetic(item, locale)
+      display: getDisplayPhonetic(item, locale, quizId)
     };
   }
 
   NS.quiz.phonetics = {
     normalizeLocale: normalizeLocale,
-    getPreferredLocale: getPreferredLocale,
-    setPreferredLocale: setPreferredLocale,
+    getQuizLocale: getQuizLocale,
+    setQuizLocale: setQuizLocale,
     getCanonicalPhonetic: getCanonicalPhonetic,
     getPhoneticForLocale: getPhoneticForLocale,
     getDisplayPhonetic: getDisplayPhonetic,
