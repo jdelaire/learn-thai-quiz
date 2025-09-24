@@ -3,10 +3,15 @@
 
   var NS = global.__TQ = global.__TQ || {};
   NS.ui = NS.ui || {};
+  var logError = (NS.core && NS.core.error && NS.core.error.logError) || function(){};
 
-  var SELECTOR = '[data-role="phonetic-locale-select"]';
-  var DEFAULT_LOCALE = 'en';
-  var LOCALES = [
+  var LABEL_MAP = {
+    en: 'English',
+    fr: 'Français',
+    es: 'Español'
+  };
+
+  var DEFAULT_LOCALE_OPTIONS = [
     { value: 'en', label: 'English (default)' },
     { value: 'fr', label: 'Français' }
   ];
@@ -15,143 +20,187 @@
     try { return global.Utils || null; } catch (_) { return null; }
   }
 
-  function ensureOptions(select) {
-    if (!select) return;
-    try {
-      if (!select.options || select.options.length === 0) {
-        for (var i = 0; i < LOCALES.length; i++) {
-          var opt = document.createElement('option');
-          opt.value = LOCALES[i].value;
-          opt.textContent = LOCALES[i].label;
-          select.appendChild(opt);
-        }
-        return;
-      }
-      // Ensure at least the known locales exist
-      var existing = {};
-      for (var j = 0; j < select.options.length; j++) {
-        existing[select.options[j].value] = true;
-      }
-      for (var k = 0; k < LOCALES.length; k++) {
-        if (!existing[LOCALES[k].value]) {
-          var opt2 = document.createElement('option');
-          opt2.value = LOCALES[k].value;
-          opt2.textContent = LOCALES[k].label;
-          select.appendChild(opt2);
-        }
-      }
-    } catch (_) {}
-  }
-
-  function setSelectValue(select, locale) {
-    if (!select) return;
-    ensureOptions(select);
-    var value = locale || DEFAULT_LOCALE;
-    var hasOption = false;
-    try {
-      for (var i = 0; i < select.options.length; i++) {
-        if (select.options[i].value === value) { hasOption = true; break; }
-      }
-      if (!hasOption) {
-        var opt = document.createElement('option');
-        opt.value = value;
-        opt.textContent = value;
-        select.appendChild(opt);
-      }
-      select.value = value;
-    } catch (_) {
-      try { select.value = value; } catch (_) {}
-    }
-  }
-
-  function normalizeLocale(locale) {
+  function normalize(locale) {
     var Utils = getUtils();
     if (Utils && typeof Utils.normalizePhoneticLocale === 'function') {
       var norm = Utils.normalizePhoneticLocale(locale);
       if (norm) return norm;
-      return DEFAULT_LOCALE;
     }
     try {
-      if (!locale) return DEFAULT_LOCALE;
+      if (!locale) return '';
       var str = String(locale).trim().toLowerCase();
-      if (!str) return DEFAULT_LOCALE;
+      if (!str) return '';
       str = str.replace(/_/g, '-');
       var base = str.split('-')[0] || '';
       base = base.replace(/[^a-z]/g, '');
-      if (!base) return DEFAULT_LOCALE;
+      if (!base) return '';
       if (base.length > 5) base = base.slice(0, 5);
       return base;
     } catch (_) {
-      return DEFAULT_LOCALE;
+      return '';
     }
   }
 
-  function syncAllSelects(locale, skip) {
+  function labelForLocale(locale) {
+    var norm = normalize(locale);
+    if (!norm) return '';
+    if (LABEL_MAP[norm]) return LABEL_MAP[norm];
     try {
-      var selects = document.querySelectorAll(SELECTOR);
-      for (var i = 0; i < selects.length; i++) {
-        if (skip && selects[i] === skip) continue;
-        setSelectValue(selects[i], locale);
-        try { selects[i].setAttribute('data-selected-locale', locale); } catch (_) {}
-      }
-    } catch (_) {}
-  }
-
-  function handleChange(event) {
-    var select = event && event.target;
-    if (!select) return;
-    var Utils = getUtils();
-    if (!Utils || typeof Utils.setPreferredPhoneticLocale !== 'function') return;
-    var normalized = normalizeLocale(select.value);
-    try {
-      normalized = Utils.setPreferredPhoneticLocale(normalized);
+      return norm.toUpperCase();
     } catch (_) {
-      // ignore
+      return norm;
     }
-    setSelectValue(select, normalized);
-    try { select.setAttribute('data-selected-locale', normalized); } catch (_) {}
-    syncAllSelects(normalized, select);
-    try { document.dispatchEvent(new CustomEvent('thaiQuest.phonetics.change', { detail: { locale: normalized } })); } catch (_) {}
   }
 
-  function initSelect(select) {
-    if (!select || select.__tqPhoneticInit) return;
-    select.__tqPhoneticInit = true;
-    ensureOptions(select);
-    var Utils = getUtils();
-    var locale = DEFAULT_LOCALE;
-    try {
-      if (Utils && typeof Utils.getPreferredPhoneticLocale === 'function') {
-        locale = Utils.getPreferredPhoneticLocale() || DEFAULT_LOCALE;
+  function uniquePush(target, value) {
+    var norm = normalize(value);
+    if (!norm) return;
+    for (var i = 0; i < target.length; i++) {
+      if (target[i] === norm) return;
+    }
+    target.push(norm);
+  }
+
+  function parseLocales(input) {
+    var list = [];
+    if (!input) return list;
+    if (Array.isArray(input)) {
+      for (var i = 0; i < input.length; i++) {
+        uniquePush(list, input[i]);
       }
-    } catch (_) {}
-    locale = normalizeLocale(locale);
-    setSelectValue(select, locale);
-    try { select.setAttribute('data-selected-locale', locale); } catch (_) {}
-    try { select.addEventListener('change', handleChange); } catch (_) {}
-  }
-
-  function initAll() {
-    try {
-      var selects = document.querySelectorAll(SELECTOR);
-      for (var i = 0; i < selects.length; i++) {
-        initSelect(selects[i]);
+    } else if (typeof input === 'string') {
+      var parts = input.split(',');
+      for (var j = 0; j < parts.length; j++) {
+        uniquePush(list, parts[j]);
       }
-    } catch (_) {}
+    }
+    return list;
   }
 
-  var Preferences = {
-    initPhoneticLocaleSelect: initSelect,
-    initPhoneticLocaleSelectors: initAll,
-    LOCALE_OPTIONS: LOCALES.slice()
+  function localeOptions(quizId, provided) {
+    var codes = parseLocales(provided);
+    var options = [];
+    if (!codes.length) {
+      for (var i = 0; i < DEFAULT_LOCALE_OPTIONS.length; i++) {
+        var value = normalize(DEFAULT_LOCALE_OPTIONS[i].value);
+        if (!value) continue;
+        options.push({ value: value, label: DEFAULT_LOCALE_OPTIONS[i].label });
+      }
+      if (options.length) return options;
+      codes = ['en'];
+    }
+    var seen = {};
+    for (var j = 0; j < codes.length; j++) {
+      var value = normalize(codes[j]);
+      if (!value || seen[value]) continue;
+      seen[value] = true;
+      var label = labelForLocale(value);
+      if (!label) continue;
+      options.push({ value: value, label: label });
+    }
+    if (!options.length) {
+      options.push({ value: 'en', label: labelForLocale('en') || 'EN' });
+    }
+    return options;
+  }
+
+  function injectControls(config) {
+    try {
+      var doc = global.document;
+      if (!doc) return;
+      var body = doc.body;
+      if (!body) return;
+
+      config = config || {};
+      var quizId = config.quizId || (body.dataset && body.dataset.quizId) || '';
+      if (!quizId) return;
+
+      var supported = (typeof config.supported === 'boolean')
+        ? config.supported
+        : !!(body.dataset && body.dataset.phoneticsSupported === '1');
+
+      var container = doc.getElementById('quiz-preferences');
+      if (!container) return;
+
+      if (!supported) {
+        while (container.firstChild) container.removeChild(container.firstChild);
+        container.style.display = 'none';
+        return;
+      }
+
+      container.style.display = '';
+      while (container.firstChild) container.removeChild(container.firstChild);
+
+      var providedLocales = config.locales;
+      if (!providedLocales && body.dataset) {
+        providedLocales = body.dataset.phoneticLocales || '';
+      }
+      var options = localeOptions(quizId, providedLocales);
+      var Utils = getUtils();
+      var current = options[0].value;
+      try {
+        if (Utils && typeof Utils.getQuizPhoneticLocale === 'function') {
+          var stored = Utils.getQuizPhoneticLocale(quizId, current);
+          if (stored) current = normalize(stored) || current;
+        }
+      } catch (_) {}
+
+      var hasCurrent = false;
+      for (var i = 0; i < options.length; i++) {
+        if (options[i].value === current) { hasCurrent = true; break; }
+      }
+      if (!hasCurrent) {
+        options.push({ value: current, label: labelForLocale(current) || current });
+      }
+
+      var label = doc.createElement('label');
+      label.setAttribute('for', 'quiz-phonetic-locale');
+      label.textContent = 'Phonetic language';
+      container.appendChild(label);
+
+      var select = doc.createElement('select');
+      select.id = 'quiz-phonetic-locale';
+      select.setAttribute('aria-label', 'Select phonetic language for this quiz');
+
+      for (var j = 0; j < options.length; j++) {
+        var opt = doc.createElement('option');
+        opt.value = options[j].value;
+        opt.textContent = options[j].label;
+        select.appendChild(opt);
+      }
+
+      select.value = current;
+      try { select.setAttribute('data-selected-locale', current); } catch (_) {}
+
+      select.addEventListener('change', function(){
+        var value = normalize(select.value);
+        if (!value) value = options[0].value;
+        try {
+          if (Utils && typeof Utils.setQuizPhoneticLocale === 'function') {
+            value = Utils.setQuizPhoneticLocale(quizId, value);
+          }
+        } catch (_) {}
+        select.value = value;
+        try { select.setAttribute('data-selected-locale', value); } catch (_) {}
+        try {
+          doc.dispatchEvent(new CustomEvent('thaiQuest.phonetics.change', {
+            detail: { quizId: quizId, locale: value }
+          }));
+        } catch (_) {}
+      });
+
+      container.appendChild(select);
+
+      var hint = doc.createElement('small');
+      hint.className = 'preferences-hint';
+      hint.textContent = 'Used when alternate phonetics are available.';
+      container.appendChild(hint);
+    } catch (e) {
+      logError(e, 'ui.phonetics.injectControls');
+    }
+  }
+
+  NS.ui.phonetics = {
+    injectControls: injectControls
   };
-
-  NS.ui.preferences = Preferences;
-  global.ThaiQuestPreferences = Preferences;
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAll);
-  } else {
-    initAll();
-  }
 })(window);

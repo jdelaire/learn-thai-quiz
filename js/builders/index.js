@@ -222,7 +222,8 @@
             }
             collectLocales(base.phonetics);
             collectLocales(maybeModifier && maybeModifier.phonetics);
-            var preferred = (Utils && typeof Utils.getPreferredPhoneticLocale === 'function') ? Utils.getPreferredPhoneticLocale() : '';
+            var quizLocaleGetter = (Utils && typeof Utils.getQuizPhoneticLocale === 'function') ? Utils.getQuizPhoneticLocale : null;
+            var preferred = quizLocaleGetter ? quizLocaleGetter('colors') : '';
             if (preferred) {
               var normPreferred = (Utils && typeof Utils.normalizePhoneticLocale === 'function') ? Utils.normalizePhoneticLocale(preferred) : preferred;
               if (normPreferred) localeCandidates[normPreferred] = true;

@@ -11,6 +11,7 @@
   var ui = (NS.ui && NS.ui.renderers) || {};
   var quizUI = (NS.ui && NS.ui.quizui) || {};
   var sound = (NS.ui && NS.ui.sound) || {};
+  var phoneticControls = (NS.ui && NS.ui.phonetics) || {};
   var prog = (NS.quiz && NS.quiz.progressive) || {};
   var factories = (NS.quiz && NS.quiz.factories) || {};
   var player = (NS.quiz && NS.quiz.player) || {};
@@ -93,6 +94,11 @@
       setSoundOn: pickFn(sound, 'setSoundOn', noop),
       getRate: pickFn(sound, 'getRate', function(){ return 0.8; }),
       setRate: pickFn(sound, 'setRate', noop)
+    },
+
+    // phonetic controls UI
+    phoneticsUI: {
+      injectControls: pickFn(phoneticControls, 'injectControls', noop)
     },
 
     // quiz UI helpers
@@ -200,8 +206,8 @@
     getXPProgressPercentage: player.getXPProgressPercentage,
     // phonetics / localization
     normalizePhoneticLocale: phonetics.normalizeLocale,
-    getPreferredPhoneticLocale: phonetics.getPreferredLocale,
-    setPreferredPhoneticLocale: phonetics.setPreferredLocale,
+    getQuizPhoneticLocale: phonetics.getQuizLocale,
+    setQuizPhoneticLocale: phonetics.setQuizLocale,
     getCanonicalPhonetic: phonetics.getCanonicalPhonetic,
     getPhoneticForLocale: phonetics.getPhoneticForLocale,
     getDisplayPhonetic: phonetics.getDisplayPhonetic,

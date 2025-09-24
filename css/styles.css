@@ -1302,6 +1302,10 @@ body.questions-quiz .correct-line {
   font-size: 0.95em;
 }
 
+.quiz-preferences:empty {
+  display: none;
+}
+
 .quiz-preferences label {
   font-weight: 600;
 }
