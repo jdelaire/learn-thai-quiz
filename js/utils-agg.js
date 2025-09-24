@@ -8,6 +8,7 @@
   var coreFetch = (NS.core && NS.core.fetch) || {};
   var tts = (NS.core && NS.core.tts) || {};
   var ui = (NS.ui && NS.ui.renderers) || {};
+  var sound = (NS.ui && NS.ui.sound) || {};
   var prog = (NS.quiz && NS.quiz.progressive) || {};
   var factories = (NS.quiz && NS.quiz.factories) || {};
   var player = (NS.quiz && NS.quiz.player) || {};
@@ -56,6 +57,16 @@
     renderVowelSymbol: ui.renderVowelSymbol,
     renderConsonantSymbol: ui.renderConsonantSymbol,
     dismissExampleOverlay: ui.dismissExampleOverlay,
+
+    // sound controls
+    sound: {
+      injectControls: sound.injectControls,
+      maybeSpeakThaiFromAnswer: sound.maybeSpeakThaiFromAnswer,
+      isSoundOn: sound.isSoundOn,
+      setSoundOn: sound.setSoundOn,
+      getRate: sound.getRate,
+      setRate: sound.setRate
+    },
 
     // progressive & factories
     createProgressiveDifficulty: prog.createProgressiveDifficulty,
