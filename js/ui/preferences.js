@@ -190,11 +190,6 @@
       });
 
       container.appendChild(select);
-
-      var hint = doc.createElement('small');
-      hint.className = 'preferences-hint';
-      hint.textContent = 'Used when alternate phonetics are available.';
-      container.appendChild(hint);
     } catch (e) {
       logError(e, 'ui.phonetics.injectControls');
     }
