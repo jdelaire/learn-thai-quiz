@@ -17,7 +17,14 @@
   var phonetics = (NS.quiz && NS.quiz.phonetics) || {};
 
   var noop = function(){};
-  var MAX_QUESTIONS = 100;
+  function questionCap() {
+    try {
+      if (player && typeof player.getQuestionCap === 'function') {
+        return player.getQuestionCap();
+      }
+    } catch (_) {}
+    return 100;
+  }
   function pickFn(source, key, fallback) {
     return (source && typeof source[key] === 'function') ? source[key] : fallback;
   }
@@ -25,6 +32,7 @@
   global.Utils = {
     // Storage service re-export
     Storage: global.StorageService || null,
+    getQuestionCap: questionCap,
 
     // fetch
     fetchJSON: coreFetch.fetchJSON,
@@ -118,7 +126,8 @@
       updateStats: pickFn(quizUI, 'updateStats', function(statsEl, quizId, state){
         try {
           if (!statsEl || !state || !global || !global.document) return;
-          var maxQuestions = Math.max(1, parseInt(state.maxQuestions, 10) || MAX_QUESTIONS);
+          var cap = questionCap();
+          var maxQuestions = Math.max(1, parseInt(state.maxQuestions, 10) || cap);
           var qa = Math.max(0, Math.min(maxQuestions, parseInt(state.questionsAnswered, 10) || 0));
           var ca = Math.max(0, Math.min(qa, parseInt(state.correctAnswers, 10) || 0));
           var acc = qa > 0 ? Math.round((ca / qa) * 100) : 0;
