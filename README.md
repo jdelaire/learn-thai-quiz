@@ -173,7 +173,7 @@ Implementation details:
 
 - Aggregation is computed from per‑quiz progress stored under the key `thaiQuest.progress.<quizId>` via the storage service.
 - Public helpers: `Utils.getTotalStarsEarned()`, `Utils.getPlayerAccuracy()`, `Utils.getQuizzesCompleted()`, and low‑level `Utils.aggregateGlobalStatsFromStorage()` / `Utils.getAllSavedProgress()`.
-- Star tiers: see the table below; totals are computed by summing stars across all quizzes.
+- Stars unlock once you answer 100 questions in a quiz; accuracy thresholds: >95% = 3★, >85% = 2★, >75% = 1★, otherwise 0★.
 
 ### Leveling and XP
 

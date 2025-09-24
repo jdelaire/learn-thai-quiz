@@ -1,6 +1,8 @@
 (function(global) {
   'use strict';
 
+  var MAX_QUESTIONS = 100;
+
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -102,17 +104,71 @@
     const initialProgress = (global && global.Utils && typeof global.Utils.getQuizProgress === 'function' && quizId)
       ? global.Utils.getQuizProgress(quizId)
       : { questionsAnswered: 0, correctAnswers: 0 };
+    const initialQuestions = Math.max(0, Math.min(MAX_QUESTIONS, parseInt(initialProgress.questionsAnswered, 10) || 0));
+    const initialCorrect = Math.max(0, Math.min(initialQuestions, parseInt(initialProgress.correctAnswers, 10) || 0));
 
     const state = {
       currentAnswer: null,
       currentChoices: [],
       currentRound: null,
       currentRoundInfo: null,
-      questionsAnswered: initialProgress.questionsAnswered || 0,
-      correctAnswers: initialProgress.correctAnswers || 0,
+      questionsAnswered: initialQuestions,
+      correctAnswers: initialCorrect,
       autoAdvanceTimerId: null,
-      isAwaitingAnswer: true
+      isAwaitingAnswer: true,
+      maxQuestions: MAX_QUESTIONS
     };
+
+    var restartButton = null;
+    function ensureRestartButton() {
+      if (!quizId || restartButton) return;
+      var footer = document.querySelector('.footer');
+      if (!footer) return;
+      restartButton = document.createElement('button');
+      restartButton.type = 'button';
+      restartButton.className = 'chip restart-quiz';
+      restartButton.textContent = 'Restart Quizz';
+      restartButton.setAttribute('aria-label', 'Restart quiz progress');
+      restartButton.style.display = 'none';
+      restartButton.addEventListener('click', function(){
+        restartQuizProgress();
+      });
+      footer.appendChild(restartButton);
+    }
+
+    function updateRestartButtonVisibility() {
+      ensureRestartButton();
+      if (!restartButton) return;
+      restartButton.style.display = state.questionsAnswered >= MAX_QUESTIONS ? '' : 'none';
+    }
+
+    function restartQuizProgress() {
+      try {
+        if (state.autoAdvanceTimerId != null) {
+          clearTimeout(state.autoAdvanceTimerId);
+          state.autoAdvanceTimerId = null;
+        }
+      } catch (_) {}
+      state.currentAnswer = null;
+      state.currentChoices = [];
+      state.currentRound = null;
+      state.currentRoundInfo = null;
+      state.questionsAnswered = 0;
+      state.correctAnswers = 0;
+      state.isAwaitingAnswer = true;
+      Utils.ErrorHandler.safeDOM(function(){ feedbackEl.textContent = ''; })();
+      Utils.ErrorHandler.safeDOM(function(){ nextBtn.style.display = 'none'; })();
+      Utils.ErrorHandler.safe(function(){
+        if (quizId && global && global.Utils && typeof global.Utils.saveQuizProgress === 'function') {
+          global.Utils.saveQuizProgress(quizId, { questionsAnswered: 0, correctAnswers: 0 });
+        }
+      })();
+      quizUI.updateStats(statsEl, quizId, state);
+      updateRestartButtonVisibility();
+      pickQuestion();
+    }
+
+    ensureRestartButton();
 
     function showNoDataMessage() {
       try {
@@ -121,6 +177,7 @@
         symbolEl.setAttribute('aria-label', msg);
         Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(optionsEl); })();
         nextBtn.style.display = 'none';
+        updateRestartButtonVisibility();
       } catch (_) {}
     }
 
@@ -148,7 +205,11 @@
       }
 
       btn.onclick = function(){
-        state.questionsAnswered++;
+        var previousQuestions = state.questionsAnswered;
+        var shouldCountQuestion = previousQuestions < MAX_QUESTIONS;
+        if (shouldCountQuestion) {
+          state.questionsAnswered = Math.min(MAX_QUESTIONS, previousQuestions + 1);
+        }
         const isCorrect = (typeof config.isCorrect === 'function')
           ? !!config.isCorrect(choice, answer, state)
           : (choice === answer);
@@ -157,7 +218,9 @@
         void btn.offsetWidth;
 
         if (isCorrect) {
-          state.correctAnswers++;
+          if (shouldCountQuestion && state.correctAnswers < MAX_QUESTIONS) {
+            state.correctAnswers = Math.min(MAX_QUESTIONS, state.correctAnswers + 1);
+          }
           state.isAwaitingAnswer = false;
           feedbackEl.textContent = '';
           btn.classList.add('answer-correct');
@@ -181,13 +244,14 @@
         Utils.ErrorHandler.safe(function(){
           if (quizId && global && global.Utils && typeof global.Utils.saveQuizProgress === 'function') {
             global.Utils.saveQuizProgress(quizId, {
-              questionsAnswered: state.questionsAnswered,
-              correctAnswers: state.correctAnswers
+              questionsAnswered: Math.min(state.questionsAnswered, MAX_QUESTIONS),
+              correctAnswers: Math.min(state.correctAnswers, MAX_QUESTIONS)
             });
           }
         })();
 
         quizUI.updateStats(statsEl, quizId, state);
+        updateRestartButtonVisibility();
 
         if (typeof config.onAnswered === 'function') {
           Utils.ErrorHandler.wrap(config.onAnswered, 'quiz.js: onAnswered')({ correct: isCorrect, choice: choice, answer: answer, state: state });
@@ -293,6 +357,7 @@
     // Initialize
     pickQuestion();
     quizUI.updateStats(statsEl, quizId, state);
+    updateRestartButtonVisibility();
     try { soundControls.injectControls(); } catch (_) {}
 
     return {
