@@ -107,7 +107,19 @@
   }
 
   const XP_CURVE = { A: 2.0993329046504186, p: 1.9 };
-  const STAR_TARGET_QUESTIONS = 100;
+
+  function getQuestionCap() {
+    try {
+      if (global.__TQ && typeof global.__TQ.getQuestionCap === 'function') {
+        return global.__TQ.getQuestionCap();
+      }
+    } catch (e) { logError(e, 'quiz.player.getQuestionCap'); }
+    return 100;
+  }
+
+  function clampProgressValue(value) {
+    return Math.max(0, Math.min(getQuestionCap(), parseInt(value, 10) || 0));
+  }
   function xpTotalForLevel(levelIndex) { try { const L = Math.max(0, parseInt(levelIndex, 10) || 0); return XP_CURVE.A * Math.pow(L, XP_CURVE.p); } catch (e) { logError(e, 'quiz.player.xpTotalForLevel'); return 0; } }
   function xpDeltaForLevel(levelIndex) { try { const L = Math.max(0, parseInt(levelIndex, 10) || 0); return xpTotalForLevel(L + 1) - xpTotalForLevel(L); } catch (e) { logError(e, 'quiz.player.xpDeltaForLevel'); return XP_CURVE.A; } }
   function getXPForStars(stars) { try { const n = Math.max(0, Math.min(3, parseInt(stars, 10) || 0)); if (n === 3) return 40; if (n === 2) return 20; if (n === 1) return 10; return 0; } catch (e) { logError(e, 'quiz.player.getXPForStars'); return 0; } }
@@ -124,8 +136,8 @@
           const norm = (StorageService.validate && StorageService.validate.ensureProgressShape) ? StorageService.validate.ensureProgressShape(data) : { questionsAnswered: 0, correctAnswers: 0 };
           entries.push({
             quizId: quizId,
-            questionsAnswered: Math.max(0, Math.min(STAR_TARGET_QUESTIONS, parseInt(norm.questionsAnswered, 10) || 0)),
-            correctAnswers: Math.max(0, Math.min(STAR_TARGET_QUESTIONS, parseInt(norm.correctAnswers, 10) || 0))
+            questionsAnswered: clampProgressValue(norm.questionsAnswered),
+            correctAnswers: clampProgressValue(norm.correctAnswers)
           });
         } catch (_) {}
       }
@@ -141,7 +153,7 @@
         const p = progressEntries[i];
         totalQuestionsAnswered += p.questionsAnswered;
         totalCorrectAnswers += p.correctAnswers;
-        if (p.questionsAnswered >= STAR_TARGET_QUESTIONS) quizzesCompleted += 1;
+        if (p.questionsAnswered >= getQuestionCap()) quizzesCompleted += 1;
         try { const s = computeStarRating(p.correctAnswers, p.questionsAnswered); totalStarsEarned += s; totalXPFromStars += getXPForStars(s); } catch (_) {}
       }
       const totalAccuracy = totalQuestionsAnswered > 0 ? Math.round((totalCorrectAnswers / totalQuestionsAnswered) * 100) : 0;
@@ -387,8 +399,8 @@
       if (!quizId || !StorageService) return;
       const key = 'thaiQuest.progress.' + quizId;
       const payload = {
-        questionsAnswered: Math.max(0, Math.min(STAR_TARGET_QUESTIONS, parseInt(stateLike && stateLike.questionsAnswered, 10) || 0)),
-        correctAnswers: Math.max(0, Math.min(STAR_TARGET_QUESTIONS, parseInt(stateLike && stateLike.correctAnswers, 10) || 0))
+        questionsAnswered: clampProgressValue(stateLike && stateLike.questionsAnswered),
+        correctAnswers: clampProgressValue(stateLike && stateLike.correctAnswers)
       };
       StorageService.setJSON(key, payload);
       try { StorageService.setNumber('thaiQuest.lastAttempt.' + quizId, Date.now()); } catch (_) {}
@@ -397,10 +409,10 @@
 
   function computeStarRating(correctAnswers, questionsAnswered) {
     try {
-      const answered = Math.max(0, parseInt(questionsAnswered, 10) || 0);
-      const total = Math.min(STAR_TARGET_QUESTIONS, answered);
-      if (total < STAR_TARGET_QUESTIONS) return 0;
-      const correct = Math.max(0, Math.min(STAR_TARGET_QUESTIONS, parseInt(correctAnswers, 10) || 0));
+      const cap = getQuestionCap();
+      const total = clampProgressValue(questionsAnswered);
+      if (total < cap) return 0;
+      const correct = clampProgressValue(correctAnswers);
       const acc = total > 0 ? (correct / total) * 100 : 0;
       if (acc > 95) return 3; if (acc > 85) return 2; if (acc > 75) return 1; return 0;
     } catch (e) { logError(e, 'quiz.player.computeStarRating'); return 0; }
@@ -427,7 +439,10 @@
   }
 
   function getStarRulesTooltip() {
-    return 'Star rules: answer 100 questions. Accuracy >95% = 3★; >85% = 2★; >75% = 1★; otherwise 0★.';
+    try {
+      const cap = getQuestionCap();
+      return 'Star rules: answer ' + cap + ' questions. Accuracy >95% = 3★; >85% = 2★; >75% = 1★; otherwise 0★.';
+    } catch (e) { logError(e, 'quiz.player.getStarRulesTooltip'); return 'Star rules unavailable.'; }
   }
 
   function getLatestAttempt() {
@@ -477,6 +492,7 @@
     getPlayerAccuracy: getPlayerAccuracy,
     getQuizzesCompleted: getQuizzesCompleted,
     getTotalStarsEarned: getTotalStarsEarned,
+    getQuestionCap: getQuestionCap,
     getQuizStars: getQuizStars,
     // progress
     getAllSavedProgress: getAllSavedProgress,
@@ -496,4 +512,3 @@
     getLatestAttempt: getLatestAttempt
   };
 })(window);
-

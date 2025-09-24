@@ -1,7 +1,19 @@
 (function(global) {
   'use strict';
 
-  var MAX_QUESTIONS = 100;
+  function getQuestionCap() {
+    try {
+      if (global.__TQ && typeof global.__TQ.getQuestionCap === 'function') {
+        return global.__TQ.getQuestionCap();
+      }
+    } catch (_) {}
+    return 100;
+  }
+
+  function clampToCap(value, cap) {
+    var limit = cap || getQuestionCap();
+    return Math.max(0, Math.min(limit, parseInt(value, 10) || 0));
+  }
 
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -13,6 +25,7 @@
 
   function setupQuiz(config) {
     config = config || {};
+    const questionCap = getQuestionCap();
     const utils = (global && global.Utils) || {};
     const defaultElements = utils.defaultElements || {};
     const elementsConfig = Object.assign({}, defaultElements, config.elements || {});
@@ -64,10 +77,11 @@
       updateStats: function(statsEl, quizId, state){
         try {
           if (!statsEl || !state) return;
+          var cap = Math.max(1, parseInt(state.maxQuestions, 10) || questionCap);
           var qa = state.questionsAnswered || 0;
           var ca = state.correctAnswers || 0;
           var acc = qa > 0 ? Math.round((ca / qa) * 100) : 0;
-          var baseText = 'Questions: ' + qa + ' | Correct: ' + ca + ' | Accuracy: ' + acc + '%';
+          var baseText = 'Questions: ' + qa + '/' + cap + ' | Correct: ' + ca + ' | Accuracy: ' + acc + '%';
           var starsText = '';
           try {
             if (quizId && utils && typeof utils.computeStarRating === 'function' && typeof utils.formatStars === 'function') {
@@ -104,7 +118,7 @@
     const initialProgress = (global && global.Utils && typeof global.Utils.getQuizProgress === 'function' && quizId)
       ? global.Utils.getQuizProgress(quizId)
       : { questionsAnswered: 0, correctAnswers: 0 };
-    const initialQuestions = Math.max(0, Math.min(MAX_QUESTIONS, parseInt(initialProgress.questionsAnswered, 10) || 0));
+    const initialQuestions = clampToCap(initialProgress.questionsAnswered, questionCap);
     const initialCorrect = Math.max(0, Math.min(initialQuestions, parseInt(initialProgress.correctAnswers, 10) || 0));
 
     const state = {
@@ -116,7 +130,7 @@
       correctAnswers: initialCorrect,
       autoAdvanceTimerId: null,
       isAwaitingAnswer: true,
-      maxQuestions: MAX_QUESTIONS
+      maxQuestions: questionCap
     };
 
     var restartButton = null;
@@ -139,7 +153,7 @@
     function updateRestartButtonVisibility() {
       ensureRestartButton();
       if (!restartButton) return;
-      restartButton.style.display = state.questionsAnswered >= MAX_QUESTIONS ? '' : 'none';
+      restartButton.style.display = state.questionsAnswered >= questionCap ? '' : 'none';
     }
 
     function restartQuizProgress() {
@@ -206,9 +220,9 @@
 
       btn.onclick = function(){
         var previousQuestions = state.questionsAnswered;
-        var shouldCountQuestion = previousQuestions < MAX_QUESTIONS;
+        var shouldCountQuestion = previousQuestions < questionCap;
         if (shouldCountQuestion) {
-          state.questionsAnswered = Math.min(MAX_QUESTIONS, previousQuestions + 1);
+          state.questionsAnswered = Math.min(questionCap, previousQuestions + 1);
         }
         const isCorrect = (typeof config.isCorrect === 'function')
           ? !!config.isCorrect(choice, answer, state)
@@ -218,8 +232,8 @@
         void btn.offsetWidth;
 
         if (isCorrect) {
-          if (shouldCountQuestion && state.correctAnswers < MAX_QUESTIONS) {
-            state.correctAnswers = Math.min(MAX_QUESTIONS, state.correctAnswers + 1);
+          if (shouldCountQuestion && state.correctAnswers < questionCap) {
+            state.correctAnswers = Math.min(questionCap, state.correctAnswers + 1);
           }
           state.isAwaitingAnswer = false;
           feedbackEl.textContent = '';
@@ -244,8 +258,8 @@
         Utils.ErrorHandler.safe(function(){
           if (quizId && global && global.Utils && typeof global.Utils.saveQuizProgress === 'function') {
             global.Utils.saveQuizProgress(quizId, {
-              questionsAnswered: Math.min(state.questionsAnswered, MAX_QUESTIONS),
-              correctAnswers: Math.min(state.correctAnswers, MAX_QUESTIONS)
+              questionsAnswered: Math.min(state.questionsAnswered, questionCap),
+              correctAnswers: Math.min(state.correctAnswers, questionCap)
             });
           }
         })();

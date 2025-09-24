@@ -4,7 +4,15 @@
   var NS = global.__TQ = global.__TQ || {};
   NS.ui = NS.ui || {};
   var logError = (NS.core && NS.core.error && NS.core.error.logError) || function(){};
-  var MAX_QUESTIONS = 100;
+
+  function getQuestionCap() {
+    try {
+      if (global.__TQ && typeof global.__TQ.getQuestionCap === 'function') {
+        return global.__TQ.getQuestionCap();
+      }
+    } catch (_) {}
+    return 100;
+  }
 
   function disableOtherButtons(optionsEl, exceptBtn) {
     try {
@@ -35,7 +43,8 @@
     try {
       if (!statsEl || !state) return;
       var utils = (global && global.Utils) || {};
-      var maxQuestions = Math.max(1, parseInt(state.maxQuestions, 10) || MAX_QUESTIONS);
+      var cap = getQuestionCap();
+      var maxQuestions = Math.max(1, parseInt(state.maxQuestions, 10) || cap);
       var qa = Math.max(0, Math.min(maxQuestions, parseInt(state.questionsAnswered, 10) || 0));
       var ca = Math.max(0, Math.min(qa, parseInt(state.correctAnswers, 10) || 0));
       var acc = qa > 0 ? Math.round((ca / qa) * 100) : 0;
@@ -68,4 +77,3 @@
 
   NS.ui.quizui = { disableOtherButtons: disableOtherButtons, scheduleAutoAdvance: scheduleAutoAdvance, updateStats: updateStats };
 })(window);
-
