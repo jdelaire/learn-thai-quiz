@@ -10,7 +10,10 @@
   }
 
   function setupQuiz(config) {
-    const elementsConfig = config.elements || {};
+    config = config || {};
+    const utils = (global && global.Utils) || {};
+    const defaultElements = utils.defaultElements || {};
+    const elementsConfig = Object.assign({}, defaultElements, config.elements || {});
     const symbolEl = document.getElementById(elementsConfig.symbol);
     const optionsEl = document.getElementById(elementsConfig.options);
     const feedbackEl = document.getElementById(elementsConfig.feedback);
@@ -21,7 +24,73 @@
       return null;
     }
 
-    const soundControls = (global && global.Utils && global.Utils.sound) || null;
+    const soundControls = utils.sound || {
+      injectControls: function(){},
+      maybeSpeakThaiFromAnswer: function(){ return false; },
+      isSoundOn: function(){ return false; },
+      setSoundOn: function(){},
+      getRate: function(){ return 0.8; },
+      setRate: function(){}
+    };
+    const quizUI = utils.quizUI || {
+      disableOtherButtons: function(optionsEl, exceptBtn){
+        try {
+          if (!optionsEl) return;
+          var buttons = optionsEl.querySelectorAll('button');
+          for (var i = 0; i < buttons.length; i++) {
+            var b = buttons[i];
+            if (b !== exceptBtn) {
+              b.disabled = true;
+              try { b.setAttribute('aria-disabled', 'true'); } catch (_) {}
+              try { b.tabIndex = -1; } catch (_) {}
+            }
+          }
+        } catch (_) {}
+      },
+      scheduleAutoAdvance: function(state, callback, delayMs){
+        try {
+          if (!state) return;
+          if (state.autoAdvanceTimerId != null) clearTimeout(state.autoAdvanceTimerId);
+          state.autoAdvanceTimerId = setTimeout(function(){
+            try {
+              state.autoAdvanceTimerId = null;
+              if (typeof callback === 'function') callback();
+            } catch (_) {}
+          }, Math.max(0, parseInt(delayMs, 10) || 0));
+        } catch (_) {}
+      },
+      updateStats: function(statsEl, quizId, state){
+        try {
+          if (!statsEl || !state) return;
+          var qa = state.questionsAnswered || 0;
+          var ca = state.correctAnswers || 0;
+          var acc = qa > 0 ? Math.round((ca / qa) * 100) : 0;
+          var baseText = 'Questions: ' + qa + ' | Correct: ' + ca + ' | Accuracy: ' + acc + '%';
+          var starsText = '';
+          try {
+            if (quizId && utils && typeof utils.computeStarRating === 'function' && typeof utils.formatStars === 'function') {
+              var stars = utils.computeStarRating(ca, qa);
+              starsText = utils.formatStars(stars) || '';
+            }
+          } catch (_) {}
+          while (statsEl.firstChild) statsEl.removeChild(statsEl.firstChild);
+          statsEl.appendChild(global.document.createTextNode(baseText));
+          if (starsText) {
+            statsEl.appendChild(global.document.createTextNode(' | '));
+            var span = global.document.createElement('span');
+            span.className = 'stats-stars';
+            span.textContent = starsText;
+            try {
+              if (utils && typeof utils.getStarRulesTooltip === 'function') {
+                span.title = utils.getStarRulesTooltip();
+                try { span.setAttribute('aria-label', (utils.i18n && utils.i18n.statsStarsAriaLabel) || 'Completion stars'); } catch (_) {}
+              }
+            } catch (_) {}
+            statsEl.appendChild(span);
+          }
+        } catch (_) {}
+      }
+    };
 
     // Ensure options container is focusable for scoped keyboard events
     Utils.ErrorHandler.safeDOM(function() {
@@ -45,65 +114,6 @@
       isAwaitingAnswer: true
     };
 
-    function disableOtherButtons(exceptBtn) {
-      Utils.ErrorHandler.safeDOM(function() {
-        const buttons = optionsEl.querySelectorAll('button');
-        buttons.forEach(function(b) {
-          if (b !== exceptBtn) {
-            b.disabled = true;
-            try { b.setAttribute('aria-disabled', 'true'); } catch (_) {}
-            try { b.tabIndex = -1; } catch (_) {}
-          }
-        });
-      })();
-    }
-
-    function scheduleAutoAdvance(delayMs) {
-      if (state.autoAdvanceTimerId != null) {
-        clearTimeout(state.autoAdvanceTimerId);
-      }
-      state.autoAdvanceTimerId = setTimeout(() => {
-        state.autoAdvanceTimerId = null;
-        pickQuestion();
-      }, delayMs);
-    }
-
-    function updateStats() {
-      const accuracy = state.questionsAnswered > 0
-        ? Math.round((state.correctAnswers / state.questionsAnswered) * 100)
-        : 0;
-      const baseText = `Questions: ${state.questionsAnswered} | Correct: ${state.correctAnswers} | Accuracy: ${accuracy}%`;
-      let starsText = '';
-      try {
-        if (quizId && global && global.Utils && typeof global.Utils.computeStarRating === 'function' && typeof global.Utils.formatStars === 'function') {
-          const stars = global.Utils.computeStarRating(state.correctAnswers, state.questionsAnswered);
-          starsText = global.Utils.formatStars(stars) || '';
-        }
-      } catch (_) {}
-
-      // Reset content and compose with a dedicated span for larger stars + tooltip
-      Utils.ErrorHandler.safeDOM(function() {
-        while (statsEl.firstChild) statsEl.removeChild(statsEl.firstChild);
-      })();
-      statsEl.appendChild(document.createTextNode(baseText));
-      if (starsText) {
-        statsEl.appendChild(document.createTextNode(' | '));
-        const span = document.createElement('span');
-        span.className = 'stats-stars';
-        span.textContent = starsText;
-        try {
-          if (global && global.Utils && typeof global.Utils.getStarRulesTooltip === 'function') {
-            span.title = global.Utils.getStarRulesTooltip();
-            try {
-              var label = (global.Utils && global.Utils.i18n && global.Utils.i18n.statsStarsAriaLabel) || 'Completion stars';
-              span.setAttribute('aria-label', label);
-            } catch (_) {}
-          }
-        } catch (_) {}
-        statsEl.appendChild(span);
-      }
-    }
-
     function showNoDataMessage() {
       try {
         const msg = (global && global.Utils && global.Utils.i18n && global.Utils.i18n.noDataMessage) || 'No data available for this quiz.';
@@ -112,6 +122,79 @@
         Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(optionsEl); })();
         nextBtn.style.display = 'none';
       } catch (_) {}
+    }
+
+    function createChoiceButton(choice, answer) {
+      const btn = document.createElement('button');
+      Utils.ErrorHandler.safeDOM(function(){ btn.type = 'button'; })();
+      if (typeof config.renderButtonContent === 'function') {
+        const content = config.renderButtonContent(choice, state);
+        if (content && typeof content === 'object' && 'nodeType' in content) {
+          btn.appendChild(content);
+        } else {
+          btn.textContent = (content == null) ? '' : String(content);
+        }
+      } else {
+        btn.textContent = String(choice);
+      }
+
+      if (typeof config.ariaLabelForChoice === 'function') {
+        const aria = config.ariaLabelForChoice(choice, state);
+        if (aria) btn.setAttribute('aria-label', aria);
+      }
+
+      if (typeof config.decorateButton === 'function') {
+        config.decorateButton(btn, choice, state);
+      }
+
+      btn.onclick = function(){
+        state.questionsAnswered++;
+        const isCorrect = (typeof config.isCorrect === 'function')
+          ? !!config.isCorrect(choice, answer, state)
+          : (choice === answer);
+
+        btn.classList.remove('answer-correct', 'answer-wrong');
+        void btn.offsetWidth;
+
+        if (isCorrect) {
+          state.correctAnswers++;
+          state.isAwaitingAnswer = false;
+          feedbackEl.textContent = '';
+          btn.classList.add('answer-correct');
+          btn.addEventListener('animationend', function handle(){
+            btn.classList.remove('answer-correct');
+          }, { once: true });
+          try { soundControls.maybeSpeakThaiFromAnswer(answer); } catch (_) {}
+          quizUI.disableOtherButtons(optionsEl, btn);
+          Utils.ErrorHandler.safeDOM(function(){ btn.onclick = null; })();
+          nextBtn.style.display = 'none';
+          const delay = (typeof config.onAnswered === 'function') ? 3000 : 1500;
+          quizUI.scheduleAutoAdvance(state, pickQuestion, delay);
+        } else {
+          feedbackEl.textContent = '';
+          btn.classList.add('answer-wrong');
+          btn.addEventListener('animationend', function handle(){
+            btn.classList.remove('answer-wrong');
+          }, { once: true });
+        }
+
+        Utils.ErrorHandler.safe(function(){
+          if (quizId && global && global.Utils && typeof global.Utils.saveQuizProgress === 'function') {
+            global.Utils.saveQuizProgress(quizId, {
+              questionsAnswered: state.questionsAnswered,
+              correctAnswers: state.correctAnswers
+            });
+          }
+        })();
+
+        quizUI.updateStats(statsEl, quizId, state);
+
+        if (typeof config.onAnswered === 'function') {
+          Utils.ErrorHandler.wrap(config.onAnswered, 'quiz.js: onAnswered')({ correct: isCorrect, choice: choice, answer: answer, state: state });
+        }
+      };
+
+      return btn;
     }
 
     function renderWithChoices(answer, choices, round, opts) {
@@ -144,78 +227,7 @@
       }
 
       choices.forEach(function(choice){
-        const btn = document.createElement('button');
-        Utils.ErrorHandler.safeDOM(function(){ btn.type = 'button'; })();
-        if (typeof config.renderButtonContent === 'function') {
-          const content = config.renderButtonContent(choice, state);
-          if (content && typeof content === 'object' && 'nodeType' in content) {
-            btn.appendChild(content);
-          } else {
-            btn.textContent = (content == null) ? '' : String(content);
-          }
-        } else {
-          btn.textContent = String(choice);
-        }
-
-        if (typeof config.ariaLabelForChoice === 'function') {
-          const aria = config.ariaLabelForChoice(choice, state);
-          if (aria) btn.setAttribute('aria-label', aria);
-        }
-
-        if (typeof config.decorateButton === 'function') {
-          config.decorateButton(btn, choice, state);
-        }
-
-        btn.onclick = function(){
-          state.questionsAnswered++;
-          const isCorrect = (typeof config.isCorrect === 'function')
-            ? !!config.isCorrect(choice, answer, state)
-            : (choice === answer);
-
-          btn.classList.remove('answer-correct', 'answer-wrong');
-          void btn.offsetWidth;
-
-          if (isCorrect) {
-            state.correctAnswers++;
-            state.isAwaitingAnswer = false;
-            feedbackEl.textContent = '';
-            btn.classList.add('answer-correct');
-            btn.addEventListener('animationend', function handle(){
-              btn.classList.remove('answer-correct');
-            }, { once: true });
-            if (soundControls && typeof soundControls.maybeSpeakThaiFromAnswer === 'function') {
-              soundControls.maybeSpeakThaiFromAnswer(answer);
-            }
-            disableOtherButtons(btn);
-            Utils.ErrorHandler.safeDOM(function(){ btn.onclick = null; })();
-            nextBtn.style.display = 'none';
-            const delay = (typeof config.onAnswered === 'function') ? 3000 : 1500;
-            scheduleAutoAdvance(delay);
-          } else {
-            feedbackEl.textContent = '';
-            btn.classList.add('answer-wrong');
-            btn.addEventListener('animationend', function handle(){
-              btn.classList.remove('answer-wrong');
-            }, { once: true });
-          }
-
-          Utils.ErrorHandler.safe(function(){
-            if (quizId && global && global.Utils && typeof global.Utils.saveQuizProgress === 'function') {
-              global.Utils.saveQuizProgress(quizId, {
-                questionsAnswered: state.questionsAnswered,
-                correctAnswers: state.correctAnswers
-              });
-            }
-          })();
-
-          updateStats();
-
-          if (typeof config.onAnswered === 'function') {
-            Utils.ErrorHandler.wrap(config.onAnswered, 'quiz.js: onAnswered')({ correct: isCorrect, choice: choice, answer: answer, state: state });
-          }
-        };
-
-        optionsEl.appendChild(btn);
+        optionsEl.appendChild(createChoiceButton(choice, answer));
       });
 
       if (focusOptions) {
@@ -280,10 +292,8 @@
 
     // Initialize
     pickQuestion();
-    updateStats();
-    if (soundControls && typeof soundControls.injectControls === 'function') {
-      soundControls.injectControls();
-    }
+    quizUI.updateStats(statsEl, quizId, state);
+    try { soundControls.injectControls(); } catch (_) {}
 
     return {
       pickQuestion,

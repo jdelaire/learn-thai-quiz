@@ -14,9 +14,10 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Accessibility**: ARIA labels, semantic roles, live regions, keyboard shortcuts (1–9 to select options)
 - **Auto‑advance**: Moves to the next question after a correct answer; tracks questions answered and accuracy
 - **Progressive difficulty**: Automatically increases challenge by adding more choices and removing hints as players improve
+- **Voice-ready**: Optional Thai text-to-speech with adjustable speed and per-platform install tips when voices are missing
 - **JSON‑driven**: Easy to add or tweak data without changing runtime code
 - **Per‑quiz progress & stars**: Progress is saved via a storage service (localStorage under the hood); earn up to 3 stars per quiz based on accuracy when you reach 100 correct answers
- - **Player profile card**: Enabled on the home page; shows Level and XP bar, plus aggregated metrics: Avg accuracy, Quizzes completed, and Total stars earned
+- **Player profile card**: Enabled on the home page; shows Level and XP bar, plus aggregated metrics: Avg accuracy, Quizzes completed, and Total stars earned
 
 ### Quizzes included
 
@@ -41,10 +42,10 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Words with ใ- (sà-rà ai mái-muán)**: ใ-only vocabulary with phonetics, emojis, and sentence practice tips
 - **Greetings**: Core greetings with Thai script, phonetics, examples, and polite particles
 - **Adjectives**: Common adjectives with Thai script, phonetics, emoji hints, and comparison examples
- - **Countries**: Country names with Thai script, phonetics, and flag emoji hints; example sentences on correct answers
- - **Vowels That Change Form**: Thai vowels that change their writing form between consonants; English/Thai/phonetics with examples and a quick reference table.
- - **Consonants in Final Position (Individually)**: Thai consonants as final sounds with examples; maps to collapsed finals like k/t/p and nasals m/n/ŋ.
- - **Consonant Clusters**: True vs fake clusters with Thai examples and phonetics
+- **Countries**: Country names with Thai script, phonetics, and flag emoji hints; example sentences on correct answers
+- **Vowels That Change Form**: Thai vowels that change their writing form between consonants; English/Thai/phonetics with examples and a quick reference table.
+- **Consonants in Final Position (Individually)**: Thai consonants as final sounds with examples; maps to collapsed finals like k/t/p and nasals m/n/ŋ.
+- **Consonant Clusters**: True vs fake clusters with Thai examples and phonetics
 
 ### Quick start (local)
 
@@ -128,12 +129,12 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 - `smoke.html`: Browser-based smoke tests for end-to-end validation
 - `js/`: JavaScript modules (modularized)
   - `prelude.js`: Early asserts for critical globals (e.g., `StorageService`) for fail-fast dev
-  - `core/`: error and fetch utilities (`error.js`, `fetch.js`)
-  - `util/`: common helpers and color utilities (`common.js`, `color.js`)
-  - `ui/`: DOM renderers (`renderers.js`)
-  - `quiz/`: progressive difficulty, factories, and player metrics (`progressive.js`, `factories.js`, `player.js`)
+  - `core/`: error/fetch/TTS utilities (`error.js`, `fetch.js`, `tts.js`)
+  - `util/`: shared helpers (`common.js`, `color.js`, `text.js`, `platform.js`)
+  - `ui/`: DOM glue for quizzes/home (`renderers.js`, `meta.js`, `quiz-ui.js`, `sound.js`)
+  - `quiz/`: quiz engine building blocks (`progressive.js`, `factories.js`, `player.js`, `phonetics.js`)
   - `builders/index.js`: all `QuizBuilders` (moved out of loader)
-  - `utils-agg.js`: aggregator exposing stable `window.Utils` API
+  - `utils-agg.js`: aggregator exposing stable `window.Utils` API (exports `Utils.sound`, `Utils.quizUI`, `Utils.platform`, etc.)
   - `quiz.js`: Quiz engine (rendering, answer handling, auto‑advance, stats)
   - `quiz-loader.js`: Thin loader: reads metadata, applies classes/proTip, resolves `QuizBuilders[quizId]`, and falls back to `data/<id>.json` when needed
   - `home.js`: Home page logic (filters, chips, card rendering, Today/Month widgets)
@@ -142,7 +143,7 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
   - `styles.css`: Shared and per‑quiz styles
 - `data/*.json`: Quiz datasets and metadata
   - Datasets may optionally include an `id` per item; when present, examples prefer `id` for lookups (falling back to `english`).
--  - `data/changelog.json`: Entries powering the home page “What’s New” popover. Each entry links a quiz `id` to a `date`. Dates should be ISO‑8601 UTC (e.g., `2025-08-20T10:00:00Z`). Epoch milliseconds are also accepted. The popover shows the latest 10 by date.
+- `data/changelog.json`: Entries powering the home page “What’s New” popover. Each entry links a quiz `id` to a `date`. Dates should be ISO‑8601 UTC (e.g., `2025-08-20T10:00:00Z`). Epoch milliseconds are also accepted. The popover shows the latest 10 by date.
 - `asset/`: Images and icons used across the site
   - `asset/profile.jpg`: Avatar shown in the home page Socials card
   - `asset/thai-quest-logo.png`: App logo used in the header

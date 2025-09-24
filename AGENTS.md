@@ -5,9 +5,9 @@
 - `dev/avatar-levels.html` is a helper page for inspecting the procedural player avatars across levels.
 - `js/storage.js` defines `window.StorageService` with a localStorage fallback; `js/prelude.js` asserts the storage shim exists before the rest of the scripts run.
 - `js/core/` hosts infrastructure modules: `error.js` (`ErrorHandler` helpers and logging), `fetch.js` (cached JSON fetchers), and `tts.js` (Thai text to speech utilities).
-- `js/util/` contains shared helpers: `common.js` (DOM utilities, sanitizer, i18n strings, safe random choice helpers), `color.js`, and `text.js`.
+- `js/util/` contains shared helpers: `common.js` (DOM utilities, sanitizer, i18n strings, safe random choice helpers), `color.js`, `text.js`, and `platform.js`.
 - `js/ui/` centralizes DOM glue: `renderers.js` for shared markup, `meta.js` for applying quiz metadata and body classes, `quiz-ui.js` for stats helpers, and `sound.js` for opt-in speech controls.
-- `js/quiz/` holds the quiz engine pieces: `progressive.js` (adaptive choice counts), `factories.js` (standard quiz scaffolding), and `player.js` (XP curve, avatar generation, progress aggregation).
+- `js/quiz/` holds the quiz engine pieces: `progressive.js` (adaptive choice counts), `factories.js` (standard quiz scaffolding), `player.js` (XP curve, avatar generation, progress aggregation), and `phonetics.js` (locale-aware transliteration helpers).
 - `js/utils-agg.js` is the single point that assembles `window.Utils` from the `__TQ` namespace; expose new helpers there instead of creating fresh globals.
 - `js/builders/index.js` registers all per-quiz builders, composing datasets and overrides before calling `ThaiQuiz.setupQuiz`.
 - `js/quiz.js` exposes `window.ThaiQuiz.setupQuiz`, renders questions, persists per-quiz progress, injects stats and stars, and wires optional text-to-speech controls.
@@ -41,4 +41,5 @@
 - Scripts attach to `window.__TQ` and are surfaced through `window.Utils`; prefer extending existing namespaces (`core`, `util`, `ui`, `quiz`) rather than adding new globals.
 - `ThaiQuiz.setupQuiz` expects `elements`, `pickRound` or `data`, and optionally `quizId`; reuse `Utils.createQuizWithProgressiveDifficulty` for standard datasets so difficulty and stats remain consistent.
 - Per-quiz progress, stars, and XP live in `StorageService` under the `thaiQuest.*` prefix; call `Utils.getQuizProgress`/`saveQuizProgress` and `Utils.computeStarRating` rather than touching storage directly.
+- Shared UI helpers (stats/auto-advance/disable) live under `Utils.quizUI`, voice controls under `Utils.sound`, and platform detection under `Utils.platform`; call those instead of reimplementing quiz glue.
 - Quizzes that set `supportsVoice` in metadata enable voice controls; use the helpers in `js/ui/sound.js`/`Utils.TTS` instead of custom speech synthesis code.
