@@ -4,6 +4,7 @@
   var NS = global.__TQ = global.__TQ || {};
   NS.ui = NS.ui || {};
   var logError = (NS.core && NS.core.error && NS.core.error.logError) || function(){};
+  var MAX_QUESTIONS = 100;
 
   function disableOtherButtons(optionsEl, exceptBtn) {
     try {
@@ -33,18 +34,18 @@
   function updateStats(statsEl, quizId, state) {
     try {
       if (!statsEl || !state) return;
-      var qa = state.questionsAnswered || 0;
-      var ca = state.correctAnswers || 0;
+      var utils = (global && global.Utils) || {};
+      var maxQuestions = Math.max(1, parseInt(state.maxQuestions, 10) || MAX_QUESTIONS);
+      var qa = Math.max(0, Math.min(maxQuestions, parseInt(state.questionsAnswered, 10) || 0));
+      var ca = Math.max(0, Math.min(qa, parseInt(state.correctAnswers, 10) || 0));
       var acc = qa > 0 ? Math.round((ca / qa) * 100) : 0;
-      var baseText = 'Questions: ' + qa + ' | Correct: ' + ca + ' | Accuracy: ' + acc + '%';
+      var baseText = 'Questions: ' + qa + '/' + maxQuestions + ' | Correct: ' + ca + ' | Accuracy: ' + acc + '%';
 
-      var starsText = '';
-      try {
-        if (quizId && global && global.Utils && typeof global.Utils.computeStarRating === 'function' && typeof global.Utils.formatStars === 'function') {
-          var stars = global.Utils.computeStarRating(ca, qa);
-          starsText = global.Utils.formatStars(stars) || '';
-        }
-      } catch (_) {}
+      var computeStars = (typeof utils.computeStarRating === 'function') ? utils.computeStarRating : function(){ return 0; };
+      var formatStars = (typeof utils.formatStars === 'function') ? utils.formatStars : function(){ return '☆☆☆'; };
+      var getTooltip = (typeof utils.getStarRulesTooltip === 'function') ? utils.getStarRulesTooltip : function(){ return ''; };
+      var starsCount = quizId ? computeStars(ca, qa) : 0;
+      var starsText = formatStars(starsCount) || '';
 
       while (statsEl.firstChild) statsEl.removeChild(statsEl.firstChild);
       statsEl.appendChild(global.document.createTextNode(baseText));
@@ -54,9 +55,10 @@
         span.className = 'stats-stars';
         span.textContent = starsText;
         try {
-          if (global && global.Utils && typeof global.Utils.getStarRulesTooltip === 'function') {
-            span.title = global.Utils.getStarRulesTooltip();
-            try { span.setAttribute('aria-label', (global.Utils.i18n && global.Utils.i18n.statsStarsAriaLabel) || 'Completion stars'); } catch (_) {}
+          var tip = getTooltip();
+          if (tip) {
+            span.title = tip;
+            try { span.setAttribute('aria-label', (utils.i18n && utils.i18n.statsStarsAriaLabel) || 'Completion stars'); } catch (_) {}
           }
         } catch (_) {}
         statsEl.appendChild(span);

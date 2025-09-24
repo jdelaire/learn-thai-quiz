@@ -17,6 +17,7 @@
   var phonetics = (NS.quiz && NS.quiz.phonetics) || {};
 
   var noop = function(){};
+  var MAX_QUESTIONS = 100;
   function pickFn(source, key, fallback) {
     return (source && typeof source[key] === 'function') ? source[key] : fallback;
   }
@@ -116,18 +117,17 @@
       }),
       updateStats: pickFn(quizUI, 'updateStats', function(statsEl, quizId, state){
         try {
-          if (!statsEl || !state) return;
-          var qa = state.questionsAnswered || 0;
-          var ca = state.correctAnswers || 0;
+          if (!statsEl || !state || !global || !global.document) return;
+          var maxQuestions = Math.max(1, parseInt(state.maxQuestions, 10) || MAX_QUESTIONS);
+          var qa = Math.max(0, Math.min(maxQuestions, parseInt(state.questionsAnswered, 10) || 0));
+          var ca = Math.max(0, Math.min(qa, parseInt(state.correctAnswers, 10) || 0));
           var acc = qa > 0 ? Math.round((ca / qa) * 100) : 0;
-          var baseText = 'Questions: ' + qa + ' | Correct: ' + ca + ' | Accuracy: ' + acc + '%';
-          var starsText = '';
-          try {
-            if (quizId && global.Utils && typeof global.Utils.computeStarRating === 'function' && typeof global.Utils.formatStars === 'function') {
-              var stars = global.Utils.computeStarRating(ca, qa);
-              starsText = global.Utils.formatStars(stars) || '';
-            }
-          } catch (_) {}
+          var baseText = 'Questions: ' + qa + '/' + maxQuestions + ' | Correct: ' + ca + ' | Accuracy: ' + acc + '%';
+          var computeStars = pickFn(player, 'computeStarRating', function(){ return 0; });
+          var formatStars = pickFn(player, 'formatStars', function(){ return '☆☆☆'; });
+          var getTooltip = pickFn(player, 'getStarRulesTooltip', function(){ return ''; });
+          var starsCount = quizId ? computeStars(ca, qa) : 0;
+          var starsText = formatStars(starsCount) || '';
           while (statsEl.firstChild) statsEl.removeChild(statsEl.firstChild);
           statsEl.appendChild(global.document.createTextNode(baseText));
           if (starsText) {
@@ -135,12 +135,15 @@
             var span = global.document.createElement('span');
             span.className = 'stats-stars';
             span.textContent = starsText;
-            try {
-              if (global.Utils && typeof global.Utils.getStarRulesTooltip === 'function') {
-                span.title = global.Utils.getStarRulesTooltip();
-                try { span.setAttribute('aria-label', (global.Utils.i18n && global.Utils.i18n.statsStarsAriaLabel) || 'Completion stars'); } catch (_) {}
-              }
-            } catch (_) {}
+            var tip = getTooltip();
+            if (tip) {
+              span.title = tip;
+              try {
+                var label = 'Completion stars';
+                if (common && common.i18n && common.i18n.statsStarsAriaLabel) label = common.i18n.statsStarsAriaLabel;
+                span.setAttribute('aria-label', label);
+              } catch (_) {}
+            }
             statsEl.appendChild(span);
           }
         } catch (_) {}

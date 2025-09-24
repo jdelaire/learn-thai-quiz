@@ -42,4 +42,5 @@
 - `ThaiQuiz.setupQuiz` expects `elements`, `pickRound` or `data`, and optionally `quizId`; reuse `Utils.createQuizWithProgressiveDifficulty` for standard datasets so difficulty and stats remain consistent.
 - Per-quiz progress, stars, and XP live in `StorageService` under the `thaiQuest.*` prefix; call `Utils.getQuizProgress`/`saveQuizProgress` and `Utils.computeStarRating` rather than touching storage directly.
 - Shared UI helpers (stats/auto-advance/disable) live under `Utils.quizUI`, voice controls under `Utils.sound`, and platform detection under `Utils.platform`; call those instead of reimplementing quiz glue.
+- Quiz stats and stars cap at `state.maxQuestions` (default 100). After the cap, progress is frozen until the "Restart Quizz" button (appended to the footer) resets per-quiz storage via `Utils.saveQuizProgress`.
 - Quizzes that set `supportsVoice` in metadata enable voice controls; use the helpers in `js/ui/sound.js`/`Utils.TTS` instead of custom speech synthesis code.
