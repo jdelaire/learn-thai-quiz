@@ -21,120 +21,7 @@
       return null;
     }
 
-    // Sound preference helpers (persisted)
-    const SOUND_KEY = 'thaiQuest.settings.sound';
-    const SOUND_RATE_KEY = 'thaiQuest.settings.soundRate';
-    function isSoundOn() {
-      try {
-        const v = (window.StorageService && window.StorageService.getItem(SOUND_KEY)) || '';
-        return String(v).toLowerCase() === 'on';
-      } catch (_) { return false; }
-    }
-    function setSoundOn(on) {
-      try { window.StorageService && window.StorageService.setItem(SOUND_KEY, on ? 'on' : 'off'); } catch (_) {}
-    }
-    function getSoundRate() {
-      try {
-        var raw = (window.StorageService && window.StorageService.getItem(SOUND_RATE_KEY)) || '';
-        var n = parseFloat(raw);
-        if (!isFinite(n)) n = 0.8; // default: slightly slower
-        if (n < 0.5) n = 0.5; if (n > 1.5) n = 1.5;
-        return n;
-      } catch (_) { return 0.8; }
-    }
-    function setSoundRate(rate) {
-      try { window.StorageService && window.StorageService.setItem(SOUND_RATE_KEY, String(rate)); } catch (_) {}
-    }
-    function isVoiceSupported() {
-      try { return !!(document && document.body && document.body.dataset && document.body.dataset.voiceSupported === '1'); } catch (_) { return false; }
-    }
-
-    function hasThaiVoice() {
-      try {
-        return !!(window.Utils && window.Utils.TTS && typeof window.Utils.TTS.pickThaiVoice === 'function' && window.Utils.TTS.pickThaiVoice());
-      } catch (_) { return false; }
-    }
-
-    function getThaiVoiceInstallMessage() {
-      try {
-        var ua = (navigator && navigator.userAgent) ? String(navigator.userAgent) : '';
-        var plat = (navigator && navigator.platform) ? String(navigator.platform) : '';
-        var isIOS = /iPad|iPhone|iPod/.test(ua) || (/Mac/.test(plat) && 'maxTouchPoints' in navigator && navigator.maxTouchPoints > 1);
-        var isAndroid = /Android/i.test(ua);
-        var isWindows = /Windows/i.test(ua);
-        var isMac = !isIOS && /Mac OS X|Macintosh/i.test(ua);
-        if (isIOS) return 'To enable audio: Settings → Accessibility → Spoken Content → Voices → Add New Voice → Thai';
-        if (isAndroid) return 'To enable audio: Settings → System → Languages & input → Text‑to‑speech → Install voice data → Thai';
-        if (isMac) return 'To enable audio: System Settings → Accessibility → Spoken Content → System Voice → Manage Voices → Thai';
-        if (isWindows) return 'To enable audio: Settings → Time & Language → Speech → Manage voices → Add voices → Thai';
-        return 'Thai voice not available. Install Thai TTS in your system settings.';
-      } catch (_) {
-        return 'Thai voice not available. Install Thai TTS in your system settings.';
-      }
-    }
-
-    function insertSoundToggle() {
-      try {
-        const footer = document.querySelector('.footer');
-        if (!footer || footer.querySelector('.sound-toggle') || footer.querySelector('.sound-help')) return;
-        if (!isVoiceSupported()) return;
-
-        // Gate on Thai voice availability. If absent, show a help tip instead of controls.
-        var canSpeakThai = !!(window.Utils && window.Utils.TTS && window.Utils.TTS.isSupported && window.Utils.TTS.isSupported() && hasThaiVoice());
-        if (!canSpeakThai) {
-          var help = document.createElement('div');
-          help.className = 'sound-help';
-          help.textContent = getThaiVoiceInstallMessage();
-          footer.appendChild(help);
-          return;
-        }
-        // Controls wrapper to group sound toggles together
-        const wrap = document.createElement('div');
-        wrap.className = 'sound-controls';
-
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'chip sound-toggle';
-        const on = isSoundOn();
-        btn.textContent = on ? '🔊 Sound: On' : '🔇 Sound: Off';
-        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-        btn.addEventListener('click', function(){
-          const nowOn = !isSoundOn();
-          setSoundOn(nowOn);
-          try { btn.textContent = nowOn ? '🔊 Sound: On' : '🔇 Sound: Off'; } catch (_) {}
-          try { btn.setAttribute('aria-pressed', nowOn ? 'true' : 'false'); } catch (_) {}
-          try { window.speechSynthesis && window.speechSynthesis.resume(); } catch (_) {}
-        });
-        wrap.appendChild(btn);
-
-        // Speed toggle (cycles among clearer distinct rates)
-        const speedBtn = document.createElement('button');
-        speedBtn.type = 'button';
-        speedBtn.className = 'chip sound-speed-toggle';
-        var RATES = [0.6, 0.8, 1.0];
-        function nearestRate(val){
-          var r = parseFloat(val);
-          if (!isFinite(r)) r = 0.8;
-          var best = RATES[0]; var bestDiff = Math.abs(RATES[0] - r);
-          for (var i=1;i<RATES.length;i++){ var d = Math.abs(RATES[i]-r); if (d < bestDiff) { best = RATES[i]; bestDiff = d; } }
-          return best;
-        }
-        function labelFor(rate) { return 'Speed: ' + (rate.toFixed(1) + 'x'); }
-        var current = nearestRate(getSoundRate());
-        setSoundRate(current);
-        speedBtn.textContent = labelFor(current);
-        speedBtn.addEventListener('click', function(){
-          var idx = 0;
-          for (var i=0;i<RATES.length;i++){ if (Math.abs(RATES[i]-current) < 0.001) { idx = i; break; } }
-          current = RATES[(idx + 1) % RATES.length];
-          setSoundRate(current);
-          try { speedBtn.textContent = labelFor(current); } catch (_) {}
-          try { window.speechSynthesis && window.speechSynthesis.resume(); } catch (_) {}
-        });
-        wrap.appendChild(speedBtn);
-        footer.appendChild(wrap);
-      } catch (_) {}
-    }
+    const soundControls = (global && global.Utils && global.Utils.sound) || null;
 
     // Ensure options container is focusable for scoped keyboard events
     Utils.ErrorHandler.safeDOM(function() {
@@ -227,23 +114,6 @@
       } catch (_) {}
     }
 
-    function maybeSpeakThaiFromAnswer(ans) {
-      try {
-        if (!isVoiceSupported()) return;
-        if (!isSoundOn()) return;
-        if (!(window.Utils && window.Utils.TTS && typeof window.Utils.TTS.speakThai === 'function' && window.Utils.TTS.isSupported && window.Utils.TTS.isSupported())) return;
-        var text = '';
-        try {
-          if (ans && ans.thai) text = String(ans.thai);
-          else if (ans && ans.exampleThai) text = String(ans.exampleThai);
-          else if (ans && ans.symbol) text = String(ans.symbol);
-          else text = '';
-        } catch (_) { text = ''; }
-        if (!text) return;
-        window.Utils.TTS.speakThai(text, { rate: getSoundRate(), pitch: 1.0 });
-      } catch (_) {}
-    }
-
     function renderWithChoices(answer, choices, round, opts) {
       if (!answer || !Array.isArray(choices) || choices.length === 0) return;
       opts = opts || {};
@@ -313,7 +183,9 @@
             btn.addEventListener('animationend', function handle(){
               btn.classList.remove('answer-correct');
             }, { once: true });
-            maybeSpeakThaiFromAnswer(answer);
+            if (soundControls && typeof soundControls.maybeSpeakThaiFromAnswer === 'function') {
+              soundControls.maybeSpeakThaiFromAnswer(answer);
+            }
             disableOtherButtons(btn);
             Utils.ErrorHandler.safeDOM(function(){ btn.onclick = null; })();
             nextBtn.style.display = 'none';
@@ -409,7 +281,9 @@
     // Initialize
     pickQuestion();
     updateStats();
-    insertSoundToggle();
+    if (soundControls && typeof soundControls.injectControls === 'function') {
+      soundControls.injectControls();
+    }
 
     return {
       pickQuestion,
