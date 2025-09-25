@@ -770,34 +770,5 @@
         });
     })();
 
-    // Development-only: reset local quiz progress
-    try {
-      const resetBtn = document.getElementById('reset-progress');
-      if (resetBtn) {
-        resetBtn.addEventListener('click', function(ev){
-          Utils.ErrorHandler.safe(function() { ev.preventDefault(); })();
-          let confirmed = true;
-          try {
-            confirmed = window.confirm('Are you sure you want to reset your progression? All XP and stars will be lost.');
-          } catch (_) { confirmed = true; }
-          if (!confirmed) {
-            return;
-          }
-          Utils.ErrorHandler.wrap(Utils.resetAllProgress, 'home.js: resetAllProgress')();
-          // Recompute header level/XP, metrics and re-render to reflect stars cleared
-          updateHeaderLevelAndXP();
-          updateHeaderMetrics();
-          try { (typeof renderResumeQuickLink === 'function') && renderResumeQuickLink(); } catch (_) {}
-          updateUI();
-          
-          // Refresh player name display (in case custom name was cleared)
-          const playerNameEl = document.querySelector('.player-name');
-          if (playerNameEl) {
-            playerNameEl.textContent = Utils.getPlayerDisplayName();
-          }
-          Utils.ErrorHandler.safe(function() { alert('Local quiz progress has been reset.'); })();
-        });
-      }
-    } catch (e) { Utils.logError(e, 'home.js: wire reset progress'); }
   } catch (e) { Utils.logError(e, 'home.js: init'); }
 })();
