@@ -298,6 +298,98 @@
     }
   }
 
+  async function validateJSONFiles(serverRoot) {
+    const name = 'Validate JSON files parse cleanly';
+    try {
+      const seen = Object.create(null);
+      const targets = [];
+      function add(path) {
+        try { path = String(path || ''); } catch (_) { return; }
+        if (!path) return;
+        path = path.replace(serverRoot + '/', '');
+        path = path.replace(/^\//, '');
+        if (!/\.json$/i.test(path)) return;
+        if (!seen[path]) {
+          seen[path] = true;
+          targets.push(path);
+        }
+      }
+
+      add('data/quizzes.json');
+      add('data/changelog.json');
+
+      const builderIds = Object.create(null);
+      try {
+        const builderRes = await withTimeout(fetch(serverRoot + '/js/builders/index.js', { cache: 'no-cache' }), 5000, 'Could not fetch builders index');
+        if (builderRes && builderRes.ok) {
+          const text = await builderRes.text();
+          const jsonRe = /['"](data\/[A-Za-z0-9_\-\.]+\.json)['"]/g;
+          let match;
+          while ((match = jsonRe.exec(text))) {
+            add(match[1]);
+          }
+          const keyFnRe = /['"]([A-Za-z0-9_\-]+)['"]\s*:\s*function\s*\(/g;
+          while ((match = keyFnRe.exec(text))) {
+            builderIds[match[1]] = true;
+          }
+          const keyFactoryRe = /['"]([A-Za-z0-9_\-]+)['"]\s*:\s*makeStandardQuizBuilder\s*\(/g;
+          while ((match = keyFactoryRe.exec(text))) {
+            builderIds[match[1]] = true;
+          }
+        }
+      } catch (_) {}
+
+      let metadata = [];
+      try {
+        const metaRes = await withTimeout(fetch(serverRoot + '/data/quizzes.json', { cache: 'no-cache' }), 5000, 'Timeout fetching quizzes metadata');
+        if (metaRes && metaRes.ok) {
+          metadata = await metaRes.json();
+        }
+      } catch (_) {}
+      (Array.isArray(metadata) ? metadata : []).forEach(function(item){
+        try {
+          if (item && item.id && !builderIds[item.id]) add('data/' + item.id + '.json');
+        } catch (_) {}
+        try {
+          if (item && item.examplesFile) add(String(item.examplesFile));
+        } catch (_) {}
+      });
+
+      const errors = [];
+      for (let i = 0; i < targets.length; i++) {
+        const path = targets[i];
+        try {
+          const res = await withTimeout(fetch(serverRoot + '/' + path, { cache: 'no-cache' }), 5000, 'Timeout fetching ' + path);
+          if (!res) {
+            continue;
+          }
+          if (res.status === 404) {
+            continue;
+          }
+          if (!res.ok) {
+            errors.push(path + ': HTTP ' + res.status);
+          } else {
+            try {
+              await res.json();
+            } catch (parseErr) {
+              errors.push(path + ': parse failed (' + ((parseErr && parseErr.message) || String(parseErr)) + ')');
+            }
+          }
+        } catch (e) {
+          errors.push(path + ': ' + (e && e.message ? e.message : String(e)));
+        }
+        if (errors.length >= 3) break;
+      }
+
+      if (errors.length) {
+        return { name: name, ok: false, details: errors.join('; ') };
+      }
+      return { name: name, ok: true };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    }
+  }
+
   async function testQuiz(serverRoot, quizId, expectations) {
     const name = 'Quiz "' + quizId + '" basic flow';
     const iframe = createFrame();
@@ -379,6 +471,33 @@
           }
         } catch (_) {}
       }
+
+      // Confirm loader stamped quiz metadata on body dataset
+      try {
+        const data = (doc && doc.body && doc.body.dataset) || {};
+        if (!data.quizId || data.quizId !== quizId) {
+          return { name: name, ok: false, details: 'Body dataset quizId mismatch' };
+        }
+        if (expectations && typeof expectations.voiceSupported === 'boolean') {
+          const expectedVoice = expectations.voiceSupported ? '1' : '0';
+          if (data.voiceSupported !== expectedVoice) {
+            return { name: name, ok: false, details: 'Voice support flag incorrect (expected ' + expectedVoice + ')' };
+          }
+        }
+        if (expectations && typeof expectations.phoneticsSupported === 'boolean') {
+          const expectedPhonetics = expectations.phoneticsSupported ? '1' : '0';
+          if (data.phoneticsSupported !== expectedPhonetics) {
+            return { name: name, ok: false, details: 'Phonetics support flag incorrect (expected ' + expectedPhonetics + ')' };
+          }
+        }
+        if (expectations && expectations.phoneticLocales && expectations.phoneticLocales.length) {
+          const bodyLocales = (data.phoneticLocales || '').split(',').map(function(x){ return x.trim(); }).filter(Boolean).sort();
+          const expectedList = expectations.phoneticLocales.slice().map(function(x){ return String(x).trim(); }).filter(Boolean).sort();
+          if (expectedList.length && (bodyLocales.length !== expectedList.length || bodyLocales.join('|') !== expectedList.join('|'))) {
+            return { name: name, ok: false, details: 'Body phoneticLocales mismatch' };
+          }
+        }
+      } catch (_) {}
 
       // Baseline stats value
       const baselineQuestions = extractQuestionsAnswered(stats);
@@ -475,7 +594,192 @@
     }
   }
 
-  async function testQuizSymbolNote(serverRoot, quizId) {
+  async function testQuizVoiceControls(serverRoot, quizId) {
+    const name = 'Quiz "' + quizId + '" provides voice controls or help';
+    const iframe = createFrame();
+    try {
+      const url = serverRoot + '/quiz.html?quiz=' + encodeURIComponent(quizId);
+      const nav = await withTimeout(navigateFrame(iframe, url), 6000, 'Quiz did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      const doc = nav.doc;
+
+      let start = Date.now();
+      while (Date.now() - start < 2000) {
+        if (doc && doc.body && doc.body.dataset && doc.body.dataset.voiceSupported === '1') break;
+        await wait(50);
+      }
+      if (!(doc && doc.body && doc.body.dataset && doc.body.dataset.voiceSupported === '1')) {
+        return { name: name, ok: false, details: 'Voice support flag missing' };
+      }
+
+      start = Date.now();
+      while (Date.now() - start < 4000) {
+        const controls = doc.querySelector('.sound-controls');
+        const help = doc.querySelector('.sound-help');
+        if (controls && controls.querySelector('.sound-toggle')) {
+          return { name: name, ok: true };
+        }
+        if (help && (help.textContent || '').trim().length > 0) {
+          return { name: name, ok: true };
+        }
+        await wait(100);
+      }
+      return { name: name, ok: false, details: 'Voice controls/help not injected' };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+    }
+  }
+
+  async function testQuizPhoneticsControls(serverRoot, quizId, meta) {
+    const name = 'Quiz "' + quizId + '" shows phonetics selector';
+    const iframe = createFrame();
+    try {
+      const url = serverRoot + '/quiz.html?quiz=' + encodeURIComponent(quizId);
+      const nav = await withTimeout(navigateFrame(iframe, url), 6000, 'Quiz did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      const doc = nav.doc;
+
+      let start = Date.now();
+      while (Date.now() - start < 2000) {
+        if (doc && doc.body && doc.body.dataset && doc.body.dataset.phoneticsSupported === '1') break;
+        await wait(50);
+      }
+      if (!(doc && doc.body && doc.body.dataset && doc.body.dataset.phoneticsSupported === '1')) {
+        return { name: name, ok: false, details: 'Phonetics support flag missing' };
+      }
+
+      const container = doc.getElementById('quiz-preferences');
+      if (!container) return { name: name, ok: false, details: 'Preferences container missing' };
+
+      start = Date.now();
+      while (Date.now() - start < 4000) {
+        const select = container.querySelector('#quiz-phonetic-locale');
+        if (select && select.options && select.options.length > 0) {
+          const aria = select.getAttribute('aria-label');
+          if (!aria) {
+            return { name: name, ok: false, details: 'Phonetics select missing aria-label' };
+          }
+          if (meta && meta.phoneticLocales && meta.phoneticLocales.length) {
+            const expected = meta.phoneticLocales.map(function(x){ return String(x).trim().toLowerCase(); }).filter(Boolean);
+            const optionValues = Array.prototype.map.call(select.options, function(opt){ return String(opt.value || '').toLowerCase(); });
+            let covered = true;
+            for (let i = 0; i < expected.length; i++) {
+              if (optionValues.indexOf(expected[i]) === -1) { covered = false; break; }
+            }
+            if (!covered) {
+              return { name: name, ok: false, details: 'Phonetics select missing locale option' };
+            }
+          }
+          return { name: name, ok: true };
+        }
+        await wait(100);
+      }
+      return { name: name, ok: false, details: 'Phonetics select not injected' };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+    }
+  }
+
+  async function testQuizPhoneticsPersistence(serverRoot, quizId) {
+    const name = 'Quiz "' + quizId + '" remembers phonetic locale selection';
+    const iframe = createFrame();
+    try {
+      const url = serverRoot + '/quiz.html?quiz=' + encodeURIComponent(quizId);
+      let nav = await withTimeout(navigateFrame(iframe, url), 6000, 'Quiz did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      let doc = nav.doc;
+      let win = nav.win;
+
+      const container = doc.getElementById('quiz-preferences');
+      if (!container) return { name: name, ok: false, details: 'Preferences container missing' };
+
+      let select = null;
+      let start = Date.now();
+      while (Date.now() - start < 4000) {
+        select = container.querySelector('#quiz-phonetic-locale');
+        if (select && select.options && select.options.length > 0) break;
+        await wait(100);
+      }
+      if (!select || !select.options || select.options.length < 1) {
+        return { name: name, ok: false, details: 'No phonetics select options' };
+      }
+
+      const original = select.value;
+      let target = original;
+      if (select.options.length > 1) {
+        target = select.options[select.options.length - 1].value;
+        if (target === original) {
+          target = select.options[0].value;
+        }
+      }
+
+      if (target === original) {
+        // Nothing to toggle; treat as covered
+        return { name: name, ok: true };
+      }
+
+      select.value = target;
+      try {
+        const evt = new (win.Event || win.CustomEvent)('change', { bubbles: true });
+        select.dispatchEvent(evt);
+      } catch (_) {
+        try {
+          const legacyEvt = doc.createEvent('Event');
+          legacyEvt.initEvent('change', true, true);
+          select.dispatchEvent(legacyEvt);
+        } catch (__) {
+          // give up, but continue
+        }
+      }
+
+      start = Date.now();
+      while (Date.now() - start < 1500) {
+        const stored = select.getAttribute('data-selected-locale');
+        if (stored && stored.toLowerCase() === String(target).toLowerCase()) break;
+        await wait(50);
+      }
+
+      // Reload quiz to verify persistence
+      nav = await withTimeout(navigateFrame(iframe, url), 6000, 'Quiz reload failed');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      doc = nav.doc;
+      win = nav.win;
+      const container2 = doc.getElementById('quiz-preferences');
+      if (!container2) return { name: name, ok: false, details: 'Preferences container missing after reload' };
+
+      select = null;
+      start = Date.now();
+      while (Date.now() - start < 4000) {
+        select = container2.querySelector('#quiz-phonetic-locale');
+        if (select && select.options && select.options.length > 0) break;
+        await wait(100);
+      }
+      if (!select) return { name: name, ok: false, details: 'Phonetics select missing after reload' };
+
+      if (String(select.value || '').toLowerCase() !== String(target).toLowerCase()) {
+        return { name: name, ok: false, details: 'Phonetic locale did not persist' };
+      }
+
+      // Restore original preference to avoid side-effects for later manual runs
+      try {
+        if (original && original !== target && win && win.Utils && typeof win.Utils.setQuizPhoneticLocale === 'function') {
+          win.Utils.setQuizPhoneticLocale(quizId, original);
+        }
+      } catch (_) {}
+
+      return { name: name, ok: true };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+    }
+  }
+
+  async function testQuizSymbolNote(serverRoot, quizId, meta) {
     const name = 'Quiz "' + quizId + '" shows symbol note';
     const iframe = createFrame();
     try {
@@ -486,7 +790,23 @@
       let start = Date.now();
       while (Date.now() - start < 3000) {
         const note = doc.querySelector('.quiz-symbol-note');
-        if (note && (note.textContent || '').trim()) return { name: name, ok: true };
+        if (note && (note.textContent || '').trim()) {
+          try {
+            if (!note.classList.contains('quiz-symbol-note')) {
+              return { name: name, ok: false, details: 'Symbol note missing base class' };
+            }
+            const expectedRole = (meta && meta.symbolNoteRole) || 'note';
+            const role = note.getAttribute('role') || '';
+            if (role !== expectedRole) {
+              return { name: name, ok: false, details: 'Symbol note role mismatch' };
+            }
+            const cls = meta && meta.symbolNoteClass;
+            if (cls && !note.classList.contains(cls)) {
+              return { name: name, ok: false, details: 'Symbol note missing class ' + cls };
+            }
+          } catch (_) {}
+          return { name: name, ok: true };
+        }
         await wait(100);
       }
       return { name: name, ok: false, details: 'Symbol note not found' };
@@ -567,9 +887,15 @@
     }
   }
 
-  async function runAll() {
+  async function runAll(onProgress, totalExpected) {
     const results = [];
     const root = (new URL('.', window.location.href)).href.replace(/\/$/, '');
+    const stats = {
+      quizzesTotal: 0,
+      quizzesWithVoice: 0,
+      quizzesWithPhonetics: 0,
+      quizIdsExercised: 0
+    };
 
     // Optional reset to stabilize tests
     const didReset = maybeResetProgressForAll();
@@ -577,12 +903,19 @@
 
     // Metadata validation (quick, no frames)
     results.push(await validateQuizzesMetadata(root));
+    if (typeof onProgress === 'function') onProgress();
+    results.push(await validateJSONFiles(root));
+    if (typeof onProgress === 'function') onProgress();
 
     // Home page tests
     results.push(await testHome(root));
+    if (typeof onProgress === 'function') onProgress();
     results.push(await testHomeContent(root));
+    if (typeof onProgress === 'function') onProgress();
     results.push(await testHomeSearchFilters(root));
+    if (typeof onProgress === 'function') onProgress();
     results.push(await testHomePersistCategoryFilter(root));
+    if (typeof onProgress === 'function') onProgress();
 
     // Discover subset of quizzes to run
     let quizIds = await discoverQuizIds(root);
@@ -602,34 +935,77 @@
       }
     } catch (_) {}
 
+    const metaKeys = Object.keys(metaMap);
+    stats.quizzesTotal = metaKeys.length;
+    for (let i = 0; i < metaKeys.length; i++) {
+      const m = metaMap[metaKeys[i]] || {};
+      if (m.supportsVoice) stats.quizzesWithVoice += 1;
+      if (m.supportsPhonetics) stats.quizzesWithPhonetics += 1;
+    }
+
     for (let i = 0; i < quizIds.length; i++) {
       const id = quizIds[i];
       const meta = metaMap[id] || {};
-      results.push(await testQuiz(root, id, { minChoices: 4, expectedBodyClass: meta.bodyClass }));
+      results.push(await testQuiz(root, id, {
+        minChoices: 4,
+        expectedBodyClass: meta.bodyClass,
+        voiceSupported: !!meta.supportsVoice,
+        phoneticsSupported: !!meta.supportsPhonetics,
+        phoneticLocales: Array.isArray(meta.phoneticLocales) ? meta.phoneticLocales : null
+      }));
       // Add a focused keyboard test for the first discovered quiz only (fast)
-      if (i === 0) results.push(await testKeyboardFocus(root, id));
+      if (typeof onProgress === 'function') onProgress();
+      if (i === 0) {
+        results.push(await testKeyboardFocus(root, id));
+        if (typeof onProgress === 'function') onProgress();
+      }
     }
+    stats.quizIdsExercised = quizIds.length;
 
     // Pick one quiz with a proTip and one with symbolNote to expand coverage
     try {
       const withProTip = Object.keys(metaMap).find(function(k){ return metaMap[k] && metaMap[k].proTip; });
-      if (withProTip) results.push(await testQuizProTip(root, withProTip));
+      if (withProTip) {
+        results.push(await testQuizProTip(root, withProTip));
+        if (typeof onProgress === 'function') onProgress();
+      }
     } catch (_) {}
     try {
       const withSymbolNote = Object.keys(metaMap).find(function(k){ return metaMap[k] && metaMap[k].symbolNote; });
-      if (withSymbolNote) results.push(await testQuizSymbolNote(root, withSymbolNote));
+      if (withSymbolNote) {
+        results.push(await testQuizSymbolNote(root, withSymbolNote, metaMap[withSymbolNote]));
+        if (typeof onProgress === 'function') onProgress();
+      }
+    } catch (_) {}
+    try {
+      const withVoice = Object.keys(metaMap).find(function(k){ return metaMap[k] && metaMap[k].supportsVoice; });
+      if (withVoice) {
+        results.push(await testQuizVoiceControls(root, withVoice));
+        if (typeof onProgress === 'function') onProgress();
+      }
+    } catch (_) {}
+    try {
+      const withPhonetics = Object.keys(metaMap).find(function(k){ return metaMap[k] && metaMap[k].supportsPhonetics; });
+      if (withPhonetics) {
+        results.push(await testQuizPhoneticsControls(root, withPhonetics, metaMap[withPhonetics]));
+        if (typeof onProgress === 'function') onProgress();
+        results.push(await testQuizPhoneticsPersistence(root, withPhonetics));
+        if (typeof onProgress === 'function') onProgress();
+      }
     } catch (_) {}
 
     // Home resume link and card stars using a discovered quiz id (first)
     if (quizIds.length > 0) {
       results.push(await testHomeResumeLink(root, quizIds[0]));
+      if (typeof onProgress === 'function') onProgress();
       results.push(await testHomeCardStars(root, quizIds[0]));
+      if (typeof onProgress === 'function') onProgress();
     }
 
-    return results;
+    return { results: results, stats: stats };
   }
 
-  function renderResults(results, durationMs) {
+  function renderResults(results, durationMs, stats) {
     const failures = results.filter(function(r){ return !r.ok; });
     log('Ran ' + results.length + ' checks in ~' + durationMs + 'ms');
     results.forEach(function(r){
@@ -640,6 +1016,15 @@
       ? 'All checks passed.'
       : (failures.length + ' check(s) failed.');
     setStatus(summary);
+    if (stats) {
+      const lines = [];
+      lines.push('Quizzes in metadata: ' + stats.quizzesTotal);
+      lines.push('Voice-enabled quizzes: ' + stats.quizzesWithVoice);
+      lines.push('Phonetics-enabled quizzes: ' + stats.quizzesWithPhonetics);
+      lines.push('Quizzes exercised this run: ' + stats.quizIdsExercised);
+      lines.forEach(function(line){ log(line, 'muted'); });
+    }
+    setProgressBar(100);
   }
 
   function ensureServerWarning() {
@@ -648,15 +1033,96 @@
     }
   }
 
+  function setProgressBar(percent) {
+    try {
+      const container = document.getElementById('progress');
+      if (!container) return;
+      const bar = container.querySelector('.progress-bar');
+      if (!bar) return;
+      let value = Number(percent);
+      if (!isFinite(value)) value = 0;
+      value = Math.max(0, Math.min(100, value));
+      bar.style.width = value + '%';
+      container.setAttribute('aria-valuenow', String(Math.round(value)));
+    } catch (_) {}
+  }
+
+  function resetProgressBar() {
+    setProgressBar(0);
+  }
+
+  function createProgressUpdater(totalChecks) {
+    let completed = 0;
+    const total = Math.max(1, Math.floor(Number(totalChecks)) || 1);
+    setProgressBar(0);
+    return function incrementProgress(){
+      completed += 1;
+      const pct = completed >= total ? 100 : (completed / total) * 100;
+      setProgressBar(pct);
+    };
+  }
+
+  async function estimateTotalChecks() {
+    try {
+      const root = (new URL('.', window.location.href)).href.replace(/\/$/, '');
+      let total = 6; // metadata + JSON + home tests
+
+      let quizIds = await discoverQuizIds(root);
+      const params = getParams();
+      const onlyList = parseListParam(params.get('quiz'));
+      if (onlyList.length) quizIds = quizIds.filter(function(id){ return onlyList.indexOf(id) !== -1; });
+      const limit = parseInt(params.get('limit'), 10);
+      if (isFinite(limit) && limit > 0) quizIds = quizIds.slice(0, limit);
+
+      total += quizIds.length; // per-quiz checks
+      if (quizIds.length > 0) total += 1; // keyboard focus for first quiz
+
+      let metadata = [];
+      try {
+        const res = await withTimeout(fetch(root + '/data/quizzes.json', { cache: 'no-cache' }), 5000, 'Could not fetch quizzes.json');
+        if (res && res.ok) metadata = await res.json();
+      } catch (_) {}
+
+      const list = Array.isArray(metadata) ? metadata : [];
+      const hasProTip = list.some(function(it){ return it && it.proTip; });
+      const hasSymbolNote = list.some(function(it){ return it && it.symbolNote; });
+      const hasVoice = list.some(function(it){ return it && it.supportsVoice; });
+      const hasPhonetics = list.some(function(it){ return it && it.supportsPhonetics; });
+
+      if (hasProTip) total += 1;
+      if (hasSymbolNote) total += 1;
+      if (hasVoice) total += 1;
+      if (hasPhonetics) total += 2; // controls + persistence
+      if (quizIds.length > 0) total += 2; // resume link + card stars
+
+      return Math.max(total, 6);
+    } catch (_) {
+      return 25;
+    }
+  }
+
   function wire() {
     const btn = document.getElementById('runBtn');
     btn.onclick = async function(){
       btn.disabled = true;
       setStatus('Running...');
+      resetProgressBar();
       const start = performance.now();
       try {
-        const results = await runAll();
-        renderResults(results, Math.round(performance.now() - start));
+        let totalChecks;
+        try {
+          totalChecks = await estimateTotalChecks();
+        } catch (_) {
+          totalChecks = 25;
+        }
+        if (!isFinite(totalChecks) || totalChecks <= 0) totalChecks = 1;
+        const bump = createProgressUpdater(totalChecks);
+        const bundle = await runAll(bump, totalChecks);
+        renderResults(bundle && bundle.results ? bundle.results : [], Math.round(performance.now() - start), bundle && bundle.stats);
+      } catch (err) {
+        const msg = (err && err.message) ? err.message : String(err);
+        log('✖ Smoke run aborted — ' + msg, 'fail');
+        setStatus('Run aborted.');
       } finally {
         btn.disabled = false;
       }

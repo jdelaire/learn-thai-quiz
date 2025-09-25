@@ -39,14 +39,15 @@
   function pickUniqueChoices(pool, count, keyFn, seed) {
     const choices = [];
     const usedKeys = new Set();
+    const safeKey = ErrorHandler.safe(keyFn, null);
     if (seed != null) {
       choices.push(seed);
-      const seedKey = ErrorHandler.safe(keyFn, null)(seed);
+      const seedKey = safeKey(seed);
       if (seedKey != null) usedKeys.add(String(seedKey));
     }
     while (choices.length < count && choices.length < pool.length) {
       const candidate = pickRandom(pool);
-      const key = ErrorHandler.safe(keyFn, null)(candidate);
+      const key = safeKey(candidate);
       if (key == null) continue;
       const keyStr = String(key);
       if (!usedKeys.has(keyStr)) {
