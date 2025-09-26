@@ -1,0 +1,31 @@
+[
+  {
+    "id": "quest-survival-basics",
+    "title": "Quest 1: Survival Basics",
+    "emoji": "🟢",
+    "tagline": "Beginner Conversation",
+    "goal": "Hold a very simple intro conversation, ask the time/day, count things.",
+    "steps": [
+      {
+        "title": "Numbers, time, days, months, seasons",
+        "quizIds": ["numbers", "time", "days", "months"]
+      },
+      {
+        "title": "Greetings & polite particles",
+        "quizIds": ["greetings"]
+      },
+      {
+        "title": "Basic classifiers (people, bottles, animals...)",
+        "quizIds": ["classifiers"]
+      },
+      {
+        "title": "Essential adjectives (big/small, hot/cold)",
+        "quizIds": ["adjectives"]
+      },
+      {
+        "title": "Yes/no, question words",
+        "quizIds": ["questions"]
+      }
+    ]
+  }
+]

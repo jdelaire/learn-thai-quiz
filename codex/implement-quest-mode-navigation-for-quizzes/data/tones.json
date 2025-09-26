@@ -1,0 +1,19 @@
+[
+  { "english": "Middle + none (long)", "thai": "กา", "phonetic": "Mid" },
+  { "english": "Middle + none (short)", "thai": "กะ", "phonetic": "Low" },
+  { "english": "Middle + ่", "thai": "ก่", "phonetic": "Low" },
+  { "english": "Middle + ้", "thai": "ก้", "phonetic": "Falling" },
+  { "english": "Middle + ๊", "thai": "ก๊", "phonetic": "High" },
+  { "english": "Middle + ๋", "thai": "ก๋", "phonetic": "Rising" },
+
+  { "english": "High + none (long)", "thai": "สา", "phonetic": "Rising" },
+  { "english": "High + none (short)", "thai": "สะ", "phonetic": "Low" },
+  { "english": "High + ่", "thai": "ส่", "phonetic": "Low" },
+  { "english": "High + ้", "thai": "ส้", "phonetic": "Falling" },
+
+  { "english": "Low + none (long)", "thai": "ยา", "phonetic": "Mid" },
+  { "english": "Low + none (short)", "thai": "ยะ", "phonetic": "High" },
+  { "english": "Low + ่", "thai": "ค่", "phonetic": "Falling" },
+  { "english": "Low + ้", "thai": "ค้", "phonetic": "High" }
+]
+

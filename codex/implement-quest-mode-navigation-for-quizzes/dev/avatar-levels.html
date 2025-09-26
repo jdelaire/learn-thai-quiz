@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Avatar Levels Preview</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; background: #fafafa; color: #111; }
+    header { padding: 12px 16px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #e5e5e5; background: #fff; position: sticky; top: 0; flex-wrap: wrap; }
+    main { padding: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+    .card { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 10px; display: grid; place-items: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    .level { font-weight: 600; font-size: 13px; color: #333; }
+    .row { display: flex; align-items: center; gap: 10px; }
+    .muted { color: #666; font-size: 12px; }
+    input[type="range"] { width: 240px; }
+    .avatar { width: 80px; height: 80px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="row">
+      <label>Progress:</label>
+      <input id="progress" type="range" min="0" max="100" step="1" value="0">
+      <span id="progressVal" class="muted">0%</span>
+    </div>
+    <div class="row">
+      <label>Name:</label>
+      <input id="name" type="text" placeholder="Display name" value="">
+    </div>
+  </header>
+  <main>
+    <div id="grid" class="grid"></div>
+  </main>
+
+  <script src="../js/core/error.js"></script>
+  <script src="../js/util/common.js"></script>
+  <script src="../js/util/color.js"></script>
+  <script src="../js/util/platform.js"></script>
+  <script src="../js/util/text.js"></script>
+  <script src="../js/core/fetch.js"></script>
+  <script src="../js/ui/renderers.js"></script>
+  <script src="../js/quiz/progressive.js"></script>
+  <script src="../js/quiz/factories.js"></script>
+  <script src="../js/quiz/player.js"></script>
+  <script src="../js/utils-agg.js"></script>
+
+  <script>
+    (function() {
+      const grid = document.getElementById('grid');
+      const progress = document.getElementById('progress');
+      const progressVal = document.getElementById('progressVal');
+      const name = document.getElementById('name');
+
+      function render() {
+        const p = Math.max(0, Math.min(100, parseInt(progress.value, 10) || 0));
+        const nm = String(name.value || '');
+        progressVal.textContent = p + '%';
+        while (grid.firstChild) grid.removeChild(grid.firstChild);
+        for (let level = 1; level <= 50; level++) {
+          const card = document.createElement('div');
+          card.className = 'card';
+          const img = document.createElement('img');
+          img.className = 'avatar';
+          const gen = (window.__TQ && __TQ.quiz && __TQ.quiz.player && __TQ.quiz.player.generateAvatar) || null;
+          const dataURI = gen ? gen(level, p, nm) : 'https://placehold.co/80x80/png';
+          img.src = dataURI;
+          img.alt = 'Avatar level ' + level;
+          const label = document.createElement('div');
+          label.className = 'level';
+          label.textContent = 'Level ' + level;
+          card.appendChild(img);
+          card.appendChild(label);
+          grid.appendChild(card);
+        }
+      }
+
+      progress.addEventListener('input', render);
+      name.addEventListener('input', render);
+      render();
+    })();
+  </script>
+</body>
+</html>
+ 
