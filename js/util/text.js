@@ -17,16 +17,17 @@
         frag.appendChild(doc.createTextNode(raw));
         return frag;
       }
+
       function findRange(hay, needle, opts){
-        if (!needle) return null;
+        if (!needle && !(opts && opts.mode === 'regex')) return null;
         var h = String(hay);
-        var n = String(needle);
-        if (!n) return null;
-        if (opts && opts.mode === 'regex') {
-          var m = (opts.regex).exec(h);
-          if (m) return { start: m.index, end: m.index + m[0].length, kind: opts.kind };
+        if (opts && opts.mode === 'regex' && opts.regex) {
+          var match = opts.regex.exec(h);
+          if (match) return { start: match.index, end: match.index + match[0].length, kind: opts.kind };
           return null;
         }
+        var n = String(needle);
+        if (!n) return null;
         if (opts && opts.caseInsensitive) {
           var lc = h.toLowerCase();
           var ni = n.toLowerCase();
@@ -34,22 +35,47 @@
           if (idx >= 0) return { start: idx, end: idx + ni.length, kind: opts.kind };
           return null;
         }
-        var idx2 = h.indexOf(n);
-        if (idx2 >= 0) return { start: idx2, end: idx2 + n.length, kind: opts.kind };
+        var idx = h.indexOf(n);
+        return idx >= 0 ? { start: idx, end: idx + n.length, kind: opts && opts.kind } : null;
+      }
+
+      function pushCandidate(val, optsPrimary, optsFallback){
+        var candidate = findRange(raw, null, optsPrimary);
+        if (!candidate && optsFallback) {
+          candidate = findRange(raw, val, optsFallback);
+        }
+        if (!candidate && optsPrimary && optsPrimary.kind === 'eng' && val) {
+          candidate = findRange(raw, val, { caseInsensitive: true, kind: optsPrimary.kind });
+        }
+        if (candidate) return candidate;
         return null;
       }
 
       var candidates = [];
       try {
         var eng = highlight.english || '';
+        if (eng) {
+          var re = null;
+          try { re = new RegExp('\\b' + escapeRegExp(eng) + '\\b', 'i'); } catch (_) {}
+          var engCandidate = pushCandidate(eng, { mode: 'regex', regex: re, kind: 'eng' }, null);
+          if (engCandidate) candidates.push(engCandidate);
+        }
+      } catch (_) {}
+
+      try {
         var th = highlight.thai || '';
+        if (th) {
+          var thCandidate = findRange(raw, th, { kind: 'th' });
+          if (thCandidate) candidates.push(thCandidate);
+        }
+      } catch (_) {}
+
+      try {
         var ph = highlight.phonetic || '';
-        var rEng = findRange(raw, eng, { caseInsensitive: true, kind: 'eng' });
-        if (rEng) candidates.push(rEng);
-        var rTh = findRange(raw, th, { kind: 'th' });
-        if (rTh) candidates.push(rTh);
-        var rPh = findRange(raw, ph, { caseInsensitive: true, kind: 'ph' });
-        if (rPh) candidates.push(rPh);
+        if (ph) {
+          var phCandidate = findRange(raw, ph, { caseInsensitive: true, kind: 'ph' });
+          if (phCandidate) candidates.push(phCandidate);
+        }
       } catch (_) {}
 
       if (candidates.length === 0) {
@@ -57,26 +83,44 @@
         return frag;
       }
 
-      candidates.sort(function(a, b){ if (a.start === b.start) return (b.end - b.start) - (a.end - a.start); return a.start - b.start; });
+      candidates.sort(function(a, b){
+        if (a.start === b.start) return (b.end - b.start) - (a.end - a.start);
+        return a.start - b.start;
+      });
       var merged = [];
       for (var ci = 0; ci < candidates.length; ci++) {
         var c = candidates[ci];
         var last = merged[merged.length - 1];
-        if (!last || c.start >= last.end) { merged.push(c); }
+        if (!last || c.start >= last.end) {
+          merged.push(c);
+        }
       }
       var cursor = 0;
       for (var mi = 0; mi < merged.length; mi++) {
         var m = merged[mi];
-        if (cursor < m.start) { frag.appendChild(doc.createTextNode(raw.slice(cursor, m.start))); }
+        if (cursor < m.start) {
+          frag.appendChild(doc.createTextNode(raw.slice(cursor, m.start)));
+        }
         var mark = doc.createElement('mark');
         mark.className = 'sel' + (m.kind ? (' sel-' + m.kind) : '');
         mark.textContent = raw.slice(m.start, m.end);
         frag.appendChild(mark);
         cursor = m.end;
       }
-      if (cursor < raw.length) { frag.appendChild(doc.createTextNode(raw.slice(cursor))); }
+      if (cursor < raw.length) {
+        frag.appendChild(doc.createTextNode(raw.slice(cursor)));
+      }
       return frag;
-    } catch (e) { logError(e, 'util.text.buildHighlightedNodes'); var f = global.document.createDocumentFragment(); f.appendChild(global.document.createTextNode(String(text || ''))); return f; }
+    } catch (e) {
+      logError(e, 'util.text.buildHighlightedNodes');
+      try {
+        var fallbackFrag = global.document.createDocumentFragment();
+        fallbackFrag.appendChild(global.document.createTextNode(String(text || '')));
+        return fallbackFrag;
+      } catch (_) {
+        return null;
+      }
+    }
   }
 
   function normalizeAnswer(ans, answerKey){

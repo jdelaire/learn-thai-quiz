@@ -42,7 +42,7 @@
       return null;
     }
 
-    const soundControls = utils.sound || {
+    const defaultSoundControls = {
       injectControls: function(){},
       maybeSpeakThaiFromAnswer: function(){ return false; },
       isSoundOn: function(){ return false; },
@@ -50,69 +50,25 @@
       getRate: function(){ return 0.8; },
       setRate: function(){}
     };
+    const soundControls = (utils && utils.sound) || defaultSoundControls;
     const phoneticControls = (utils && utils.phoneticsUI && typeof utils.phoneticsUI.injectControls === 'function')
       ? utils.phoneticsUI
       : { injectControls: function(){} };
-    const quizUI = utils.quizUI || {
-      disableOtherButtons: function(optionsEl, exceptBtn){
+    const fallbackQuizUI = {
+      disableOtherButtons: function(){},
+      scheduleAutoAdvance: function(state, callback){
+        if (!state) return;
         try {
-          if (!optionsEl) return;
-          var buttons = optionsEl.querySelectorAll('button');
-          for (var i = 0; i < buttons.length; i++) {
-            var b = buttons[i];
-            if (b !== exceptBtn) {
-              b.disabled = true;
-              try { b.setAttribute('aria-disabled', 'true'); } catch (_) {}
-              try { b.tabIndex = -1; } catch (_) {}
-            }
+          if (state.autoAdvanceTimerId != null) {
+            clearTimeout(state.autoAdvanceTimerId);
+            state.autoAdvanceTimerId = null;
           }
         } catch (_) {}
+        if (typeof callback === 'function') callback();
       },
-      scheduleAutoAdvance: function(state, callback, delayMs){
-        try {
-          if (!state) return;
-          if (state.autoAdvanceTimerId != null) clearTimeout(state.autoAdvanceTimerId);
-          state.autoAdvanceTimerId = setTimeout(function(){
-            try {
-              state.autoAdvanceTimerId = null;
-              if (typeof callback === 'function') callback();
-            } catch (_) {}
-          }, Math.max(0, parseInt(delayMs, 10) || 0));
-        } catch (_) {}
-      },
-      updateStats: function(statsEl, quizId, state){
-        try {
-          if (!statsEl || !state) return;
-          var cap = Math.max(1, parseInt(state.maxQuestions, 10) || questionCap);
-          var qa = state.questionsAnswered || 0;
-          var ca = state.correctAnswers || 0;
-          var acc = qa > 0 ? Math.round((ca / qa) * 100) : 0;
-          var baseText = 'Questions: ' + qa + '/' + cap + ' | Correct: ' + ca + ' | Accuracy: ' + acc + '%';
-          var starsText = '';
-          try {
-            if (quizId && utils && typeof utils.computeStarRating === 'function' && typeof utils.formatStars === 'function') {
-              var stars = utils.computeStarRating(ca, qa);
-              starsText = utils.formatStars(stars) || '';
-            }
-          } catch (_) {}
-          while (statsEl.firstChild) statsEl.removeChild(statsEl.firstChild);
-          statsEl.appendChild(global.document.createTextNode(baseText));
-          if (starsText) {
-            statsEl.appendChild(global.document.createTextNode(' | '));
-            var span = global.document.createElement('span');
-            span.className = 'stats-stars';
-            span.textContent = starsText;
-            try {
-              if (utils && typeof utils.getStarRulesTooltip === 'function') {
-                span.title = utils.getStarRulesTooltip();
-                try { span.setAttribute('aria-label', (utils.i18n && utils.i18n.statsStarsAriaLabel) || 'Completion stars'); } catch (_) {}
-              }
-            } catch (_) {}
-            statsEl.appendChild(span);
-          }
-        } catch (_) {}
-      }
+      updateStats: function(){ }
     };
+    const quizUI = (utils && utils.quizUI) || fallbackQuizUI;
 
     // Ensure options container is focusable for scoped keyboard events
     Utils.ErrorHandler.safeDOM(function() {
