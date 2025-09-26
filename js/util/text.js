@@ -51,34 +51,57 @@
         return null;
       }
 
+      var eng = '';
+      var th = '';
+      var ph = '';
+      try { if (highlight.english != null) eng = String(highlight.english).trim(); } catch (_) {}
+      try { if (highlight.thai != null) th = String(highlight.thai).trim(); } catch (_) {}
+      try { if (highlight.phonetic != null) ph = String(highlight.phonetic).trim(); } catch (_) {}
+
       var candidates = [];
-      try {
-        var eng = highlight.english || '';
-        if (eng) {
+      if (eng) {
+        try {
           var re = null;
           try { re = new RegExp('\\b' + escapeRegExp(eng) + '\\b', 'i'); } catch (_) {}
           var engCandidate = pushCandidate(eng, { mode: 'regex', regex: re, kind: 'eng' }, null);
           if (engCandidate) candidates.push(engCandidate);
-        }
-      } catch (_) {}
+        } catch (_) {}
+      }
 
-      try {
-        var th = highlight.thai || '';
-        if (th) {
+      if (th) {
+        try {
           var thCandidate = findRange(raw, th, { kind: 'th' });
           if (thCandidate) candidates.push(thCandidate);
-        }
-      } catch (_) {}
+        } catch (_) {}
+      }
 
-      try {
-        var ph = highlight.phonetic || '';
-        if (ph) {
+      if (ph) {
+        try {
           var phCandidate = findRange(raw, ph, { caseInsensitive: true, kind: 'ph' });
           if (phCandidate) candidates.push(phCandidate);
-        }
-      } catch (_) {}
+        } catch (_) {}
+      }
 
       if (candidates.length === 0) {
+        if (eng || th || ph) {
+          var manual = doc.createDocumentFragment();
+          var appended = false;
+          function appendMarked(value, kind, prefix){
+            if (!value) return;
+            if (prefix) manual.appendChild(doc.createTextNode(prefix));
+            var mark = doc.createElement('mark');
+            mark.className = 'sel' + (kind ? (' sel-' + kind) : '');
+            mark.textContent = value;
+            manual.appendChild(mark);
+            appended = true;
+          }
+          appendMarked(eng, 'eng', '');
+          appendMarked(th, 'th', eng ? ' → ' : '');
+          appendMarked(ph, 'ph', (eng || th) ? ' — ' : '');
+          if (appended) {
+            return manual;
+          }
+        }
         frag.appendChild(doc.createTextNode(raw));
         return frag;
       }
