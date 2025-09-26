@@ -622,7 +622,7 @@ body.home .view-toggle {
   justify-content: center;
   gap: 0.75em;
   flex-wrap: wrap;
-  margin: 1.5em auto 1em;
+  margin: 1em auto 1em;
 }
 
 body.home .view-chip {
@@ -685,6 +685,22 @@ body.home .quest-header {
   margin-bottom: 0.8em;
 }
 
+body.home .quest-collapse-btn {
+  margin-top: 0.6em;
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+body.home .quest-collapse-btn:hover,
+body.home .quest-collapse-btn:focus-visible {
+  text-decoration: underline;
+}
+
 body.home .quest-title {
   font-size: 1.8em;
   font-weight: 800;
@@ -721,6 +737,50 @@ body.home .quest-step {
   padding: 0.9em 1.1em;
 }
 
+body.home .quest-card.preview {
+  border-style: dashed;
+  position: relative;
+}
+
+body.home .quest-step.locked {
+  opacity: 0.5;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+body.home .quest-card.preview .quest-steps {
+  margin-top: 1.2em;
+}
+
+body.home .quest-card.preview .quest-step {
+  border-style: dashed;
+  opacity: 0.85;
+}
+
+body.home .quest-card.preview .quest-step-status {
+  opacity: 0.7;
+}
+
+body.home .quest-lock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5em;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 16px;
+  text-align: center;
+}
+
+body.home .quest-lock-message {
+  font-weight: 700;
+  font-size: 1.05em;
+  color: var(--color-text);
+}
+
 body.home .quest-step-header {
   display: flex;
   align-items: center;
@@ -751,8 +811,8 @@ body.home .quest-step-quizzes {
 
 body.home .quest-quiz {
   display: inline-flex;
-  align-items: center;
-  gap: 0.35em;
+  align-items: flex-start;
+  gap: 0.6em;
   padding: 0.45em 0.9em;
   border-radius: 999px;
   border: 1px solid rgba(0, 0, 0, 0.12);
@@ -763,6 +823,29 @@ body.home .quest-quiz {
   font-size: 0.95em;
 }
 
+body.home .quest-quiz-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+body.home .quest-quiz-title {
+  font-weight: 600;
+}
+
+body.home .quest-quiz-meta {
+  font-size: 0.85em;
+  opacity: 0.75;
+  font-weight: 500;
+}
+
+body.home .quest-quiz.locked {
+  background: rgba(0, 0, 0, 0.07);
+  border-color: rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 body.home .quest-quiz.complete {
   background: rgba(43, 160, 91, 0.18);
   border-color: rgba(43, 160, 91, 0.4);
@@ -771,10 +854,6 @@ body.home .quest-quiz.complete {
 body.home .quest-quiz:focus-visible {
   outline: 3px solid var(--color-accent);
   outline-offset: 2px;
-}
-
-body.home .quest-quiz-status {
-  font-size: 1.05em;
 }
 
 body.home .quest-actions {
@@ -968,7 +1047,7 @@ body.home .socials a.chip {
   display: block;
   width: 100%;
   max-width: 760px;
-  margin: 0 auto 0.8em;
+  margin: 0 auto 0;
   text-align: left;
   background: var(--color-bg);
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -1168,7 +1247,7 @@ body.home .socials a.chip {
 @media (max-width: 560px) {
   .player-card { 
     padding: 0.9em 1em; 
-    margin: 0 auto 0.8em;
+    margin: 0 auto 0;
     width: 100%;
     box-sizing: border-box;
     position: relative;
@@ -1574,7 +1653,7 @@ body.questions-quiz .correct-line {
   
   .player-card { 
     padding: 0.8em 0.8em; 
-    margin: 0 auto 0.8em;
+    margin: 0 auto 0;
     width: 100%;
   }
   .player-metrics { 

@@ -76,5 +76,17 @@
     "thai": "มี",
     "phonetic": "mii",
     "emoji": "✅"
+  },
+  {
+    "english": "before",
+    "thai": "ก่อน",
+    "phonetic": "gɔ̀ɔn",
+    "emoji": "⏮️"
+  },
+  {
+    "english": "after",
+    "thai": "หลัง",
+    "phonetic": "lǎŋ",
+    "emoji": "⏭️"
   }
 ]

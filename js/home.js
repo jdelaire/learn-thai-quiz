@@ -582,6 +582,7 @@
 
     const STORAGE_HOME_FILTER_CATEGORY = 'thaiQuest.home.filter.category';
     const STORAGE_HOME_VIEW_MODE = 'thaiQuest.home.viewMode';
+    const STORAGE_HOME_QUEST_COLLAPSED_PREFIX = 'thaiQuest.home.questCollapsed.';
     const MODE_BROWSE = 'browse';
     const MODE_QUEST = 'quest';
 
@@ -590,6 +591,8 @@
     let categories = [];
     let selectedCategoryFilter = '';
     let isQuizzesLoaded = false;
+
+    const collapsedQuestState = Object.create(null);
 
     let questsData = null;
     let questsLoadPromise = null;
@@ -655,6 +658,38 @@
       } catch (_) {}
     }
 
+    function getQuestCollapsedStored(questId) {
+      if (!questId) return false;
+      try {
+        const key = STORAGE_HOME_QUEST_COLLAPSED_PREFIX + questId;
+        const stored = window.StorageService && window.StorageService.getItem(key);
+        return stored === '1';
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function isQuestCollapsed(questId) {
+      if (!questId) return false;
+      if (!(questId in collapsedQuestState)) {
+        collapsedQuestState[questId] = getQuestCollapsedStored(questId);
+      }
+      return !!collapsedQuestState[questId];
+    }
+
+    function setQuestCollapsed(questId, collapsed) {
+      if (!questId) return;
+      collapsedQuestState[questId] = !!collapsed;
+      const key = STORAGE_HOME_QUEST_COLLAPSED_PREFIX + questId;
+      try {
+        if (collapsed) {
+          window.StorageService && window.StorageService.setItem(key, '1');
+        } else {
+          window.StorageService && window.StorageService.removeItem(key);
+        }
+      } catch (_) {}
+    }
+
     function ensureQuestData() {
       if (questsData) return Promise.resolve(questsData);
       if (questsLoadPromise) return questsLoadPromise;
@@ -677,10 +712,8 @@
 
     function isQuizCompleted(quizId) {
       try {
-        const progress = Utils.getQuizProgress(quizId);
-        const cap = Utils.getQuestionCap ? Utils.getQuestionCap() : 100;
-        const answered = progress && progress.questionsAnswered != null ? parseInt(progress.questionsAnswered, 10) : 0;
-        return answered >= cap;
+        const stars = Utils.getQuizStars ? Utils.getQuizStars(quizId) : 0;
+        return stars > 0;
       } catch (_) {
         return false;
       }
@@ -703,12 +736,36 @@
           const meta = quizMetaById[id] || {};
           const label = meta.title || id;
           const href = meta.href || ('quiz.html?quiz=' + id);
-          const done = isQuizCompleted(id);
+          let answered = 0;
+          let cap = 100;
+          let starCount = 0;
+          let starDisplay = '';
+          try {
+            const progress = Utils.getQuizProgress ? Utils.getQuizProgress(id) : { questionsAnswered: 0 };
+            answered = progress && progress.questionsAnswered != null ? parseInt(progress.questionsAnswered, 10) || 0 : 0;
+          } catch (_) { answered = 0; }
+          try {
+            cap = Utils.getQuestionCap ? Utils.getQuestionCap() : 100;
+          } catch (_) { cap = 100; }
+          try {
+            starCount = Utils.getQuizStars ? Utils.getQuizStars(id) : 0;
+            if (Utils && typeof Utils.formatStars === 'function' && starCount >= 0) {
+              starDisplay = Utils.formatStars(starCount);
+            }
+          } catch (_) { starCount = 0; }
+          const cappedAnswered = Math.max(0, Math.min(cap, answered));
+          const done = starCount > 0;
           quizzesInStep.push({
             id: id,
             title: label,
             href: href,
-            complete: done
+            complete: done,
+            answered: cappedAnswered,
+            cap: cap,
+            stars: starCount,
+            starText: starDisplay,
+            progressLabel: 'Questions: ' + cappedAnswered + '/' + cap,
+            starsLabel: 'Stars: ' + starCount + '/3'
           });
           totalQuizzes += 1;
           if (done) {
@@ -767,13 +824,32 @@
         return;
       }
 
+      const statusById = Object.create(null);
+      const questsById = Object.create(null);
+      for (let i = 0; i < quests.length; i++) {
+        const quest = quests[i] || {};
+        const questId = quest.id || ('quest-' + i);
+        questsById[questId] = quest;
+        statusById[questId] = computeQuestStatus(quest);
+      }
+
       const frag = document.createDocumentFragment();
       for (let i = 0; i < quests.length; i++) {
         const quest = quests[i] || {};
-        const status = computeQuestStatus(quest);
+        const questId = quest.id || ('quest-' + i);
+        let isPreview = !!quest.preview;
+        const status = statusById[questId] || { total: 0, completed: 0, nextQuiz: null, steps: [] };
+        const requiredQuestId = quest.requiresQuestId || quest.unlocksAfter || '';
+        if (isPreview && requiredQuestId) {
+          const reqStatus = statusById[requiredQuestId];
+          if (reqStatus && reqStatus.total > 0 && reqStatus.completed >= reqStatus.total) {
+            isPreview = false;
+          }
+        }
 
         const card = document.createElement('div');
         card.className = 'quest-card';
+        if (isPreview) card.className += ' preview';
 
         const header = document.createElement('div');
         header.className = 'quest-header';
@@ -782,7 +858,7 @@
         const prefix = quest.emoji ? quest.emoji + ' ' : '';
         titleEl.textContent = prefix + (quest.title || 'Quest');
         header.appendChild(titleEl);
-        if (quest.tagline) {
+        if (quest.tagline && !isPreview) {
           const tagline = document.createElement('div');
           tagline.className = 'quest-tagline';
           tagline.textContent = quest.tagline;
@@ -797,6 +873,47 @@
           card.appendChild(goal);
         }
 
+        if (isPreview) {
+          const previewSteps = document.createElement('div');
+          previewSteps.className = 'quest-steps preview';
+          const steps = Array.isArray(quest.steps) ? quest.steps : [];
+          for (let s = 0; s < steps.length; s++) {
+            const step = steps[s] || {};
+            if (!step.title) continue;
+            const stepEl = document.createElement('div');
+            stepEl.className = 'quest-step preview';
+            const stepHeader = document.createElement('div');
+            stepHeader.className = 'quest-step-header';
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'quest-step-status';
+            iconSpan.textContent = '📝';
+            stepHeader.appendChild(iconSpan);
+            const titleSpan = document.createElement('span');
+            titleSpan.textContent = step.title;
+            stepHeader.appendChild(titleSpan);
+            stepEl.appendChild(stepHeader);
+            previewSteps.appendChild(stepEl);
+          }
+          card.appendChild(previewSteps);
+
+          const overlay = document.createElement('div');
+          overlay.className = 'quest-lock-overlay';
+          try { overlay.setAttribute('aria-hidden', 'true'); } catch (_) {}
+          const overlayMsg = document.createElement('div');
+          overlayMsg.className = 'quest-lock-message';
+          const questName = quest.title || 'this quest';
+          if (requiredQuestId && questsById[requiredQuestId] && questsById[requiredQuestId].title) {
+            overlayMsg.textContent = 'Finish ' + questsById[requiredQuestId].title + ' to unlock ' + questName + '.';
+          } else {
+            overlayMsg.textContent = questName + ' is coming soon.';
+          }
+          overlay.appendChild(overlayMsg);
+          card.appendChild(overlay);
+
+          frag.appendChild(card);
+          continue;
+        }
+
         const progress = document.createElement('div');
         progress.className = 'quest-progress';
         if (status.total > 0) {
@@ -807,6 +924,33 @@
           progress.textContent = 'No quizzes assigned yet.';
         }
         card.appendChild(progress);
+
+        const isQuestComplete = status.total > 0 && status.completed >= status.total;
+        if (!isQuestComplete && isQuestCollapsed(questId)) {
+          setQuestCollapsed(questId, false);
+        }
+
+        let isCollapsed = isQuestComplete && isQuestCollapsed(questId);
+        if (isCollapsed) {
+          card.classList.add('collapsed');
+        }
+
+        if (isQuestComplete) {
+          const collapseBtn = document.createElement('button');
+          collapseBtn.type = 'button';
+          collapseBtn.className = 'quest-collapse-btn';
+          const expanded = !isCollapsed;
+          collapseBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+          collapseBtn.textContent = isCollapsed ? 'Show details' : 'Hide details';
+          collapseBtn.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            const next = !isQuestCollapsed(questId);
+            setQuestCollapsed(questId, next);
+            updateUI();
+          });
+          card.appendChild(collapseBtn);
+        }
 
         const stepsWrap = document.createElement('div');
         stepsWrap.className = 'quest-steps';
@@ -824,6 +968,7 @@
           const statusIcon = document.createElement('span');
           statusIcon.className = 'quest-step-status';
           let icon = '🔒';
+          let isLocked = false;
           if (stepInfo.complete) {
             icon = '✅';
           } else if (!activeAssigned && stepInfo.hasQuizzes && stepInfo.quizzes.some(function(q){ return q.id === nextQuizId; })) {
@@ -834,6 +979,8 @@
             activeAssigned = true;
           } else if (!stepInfo.hasQuizzes) {
             icon = '📝';
+          } else {
+            isLocked = true;
           }
           statusIcon.textContent = icon;
           if (!stepInfo.complete) statusIcon.classList.add('incomplete');
@@ -852,24 +999,45 @@
 
           stepEl.appendChild(stepHeader);
 
+          if (isLocked) {
+            stepEl.classList.add('locked');
+            try { stepEl.setAttribute('aria-disabled', 'true'); } catch (_) {}
+          }
+
           if (stepInfo.hasQuizzes) {
             const quizWrap = document.createElement('div');
             quizWrap.className = 'quest-step-quizzes';
             for (let q = 0; q < stepInfo.quizzes.length; q++) {
               const quiz = stepInfo.quizzes[q];
               const link = document.createElement('a');
-              link.className = 'quest-quiz' + (quiz.complete ? ' complete' : '');
+              let linkClass = 'quest-quiz';
+              if (quiz.complete) linkClass += ' complete';
+              if (isLocked) linkClass += ' locked';
+              link.className = linkClass;
               link.href = quiz.href;
-              const iconSpan = document.createElement('span');
-              iconSpan.className = 'quest-quiz-status';
-              iconSpan.textContent = quiz.complete ? '✅' : '⏳';
-              link.appendChild(iconSpan);
-              link.appendChild(document.createTextNode(quiz.title));
+              const textWrap = document.createElement('span');
+              textWrap.className = 'quest-quiz-text';
+              const titleSpan = document.createElement('span');
+              titleSpan.className = 'quest-quiz-title';
+              titleSpan.textContent = quiz.title;
+              textWrap.appendChild(titleSpan);
+              const metaSpan = document.createElement('span');
+              metaSpan.className = 'quest-quiz-meta';
+              let starInfo = quiz.starsLabel;
+              if (quiz.starText) starInfo += ' ' + quiz.starText;
+              metaSpan.textContent = quiz.progressLabel + ' • ' + starInfo;
+              textWrap.appendChild(metaSpan);
+              link.appendChild(textWrap);
               try {
                 const labelPrefix = quiz.complete ? 'Review ' : 'Open ';
-                link.setAttribute('aria-label', labelPrefix + quiz.title);
+                const ariaDetails = quiz.progressLabel + ', Stars ' + quiz.stars + ' of 3';
+                link.setAttribute('aria-label', labelPrefix + quiz.title + ' (' + ariaDetails + ')');
                 link.title = quiz.title;
+                if (isLocked) link.setAttribute('aria-disabled', 'true');
               } catch (_) {}
+              if (isLocked) {
+                try { link.tabIndex = -1; } catch (_) {}
+              }
               quizWrap.appendChild(link);
             }
             stepEl.appendChild(quizWrap);
@@ -878,27 +1046,29 @@
           stepsWrap.appendChild(stepEl);
         }
 
-        card.appendChild(stepsWrap);
+        if (!isCollapsed) {
+          card.appendChild(stepsWrap);
 
-        const actions = document.createElement('div');
-        actions.className = 'quest-actions';
-        if (status.total > 0) {
-          if (status.completed >= status.total) {
-            const done = document.createElement('span');
-            done.className = 'quest-finished';
-            done.textContent = 'Quest complete! 🎉';
-            actions.appendChild(done);
-          } else if (status.nextQuiz) {
-            const btn = document.createElement('a');
-            btn.className = 'start-btn quest-action-btn';
-            btn.href = status.nextQuiz.href;
-            const startText = status.completed === 0 ? 'Start quest' : 'Continue';
-            btn.textContent = startText;
-            try { btn.setAttribute('aria-label', startText + ' with ' + status.nextQuiz.title); } catch (_) {}
-            actions.appendChild(btn);
+          const actions = document.createElement('div');
+          actions.className = 'quest-actions';
+          if (status.total > 0) {
+            if (status.completed >= status.total) {
+              const done = document.createElement('span');
+              done.className = 'quest-finished';
+              done.textContent = 'Quest complete! 🎉';
+              actions.appendChild(done);
+            } else if (status.nextQuiz) {
+              const btn = document.createElement('a');
+              btn.className = 'start-btn quest-action-btn';
+              btn.href = status.nextQuiz.href;
+              const startText = status.completed === 0 ? 'Start quest' : 'Continue';
+              btn.textContent = startText;
+              try { btn.setAttribute('aria-label', startText + ' with ' + status.nextQuiz.title); } catch (_) {}
+              actions.appendChild(btn);
+            }
           }
+          card.appendChild(actions);
         }
-        card.appendChild(actions);
 
         frag.appendChild(card);
       }

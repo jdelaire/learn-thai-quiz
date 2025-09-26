@@ -27,5 +27,36 @@
         "quizIds": ["questions"]
       }
     ]
+  },
+  {
+    "id": "quest-daily-life",
+    "title": "Quest 2: Daily Life",
+    "emoji": "🟡",
+    "tagline": "Elementary Conversation",
+    "goal": "Order food, talk about daily routine, make simple plans.",
+    "preview": true,
+    "requiresQuestId": "quest-survival-basics",
+    "steps": [
+      {
+        "title": "Food & drinks vocabulary",
+        "quizIds": ["foods"]
+      },
+      {
+        "title": "Family & people",
+        "quizIds": ["family", "jobs"]
+      },
+      {
+        "title": "Places in town",
+        "quizIds": ["rooms", "prepositions"]
+      },
+      {
+        "title": "Tense markers (yesterday, already, not yet)",
+        "quizIds": ["tenses", "time"]
+      },
+      {
+        "title": "Using \"before/after\" structures",
+        "quizIds": ["verbs", "prepositions"]
+      }
+    ]
   }
 ]
