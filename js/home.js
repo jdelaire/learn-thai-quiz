@@ -575,30 +575,350 @@
     const quizListEl = document.getElementById('quiz-list');
     if (!quizListEl) return;
 
-    /**
-     * Quizzes metadata loaded from JSON so homepage scales as more are added.
-     */
-    let quizzes = [];
-    let categories = [];
-
-    // Persisted filter keys + state
-    const STORAGE_HOME_FILTER_CATEGORY = 'thaiQuest.home.filter.category';
-    let selectedCategoryFilter = '';
-
     const searchInput = document.getElementById('search-input');
     const categoryFilters = document.getElementById('category-filters');
+    const filtersRoot = document.getElementById('filters');
+    const viewToggle = document.getElementById('view-toggle');
+
+    const STORAGE_HOME_FILTER_CATEGORY = 'thaiQuest.home.filter.category';
+    const STORAGE_HOME_VIEW_MODE = 'thaiQuest.home.viewMode';
+    const MODE_BROWSE = 'browse';
+    const MODE_QUEST = 'quest';
+
+    let quizzes = [];
+    let quizMetaById = Object.create(null);
+    let categories = [];
+    let selectedCategoryFilter = '';
+    let isQuizzesLoaded = false;
+
+    let questsData = null;
+    let questsLoadPromise = null;
+    let questsLoadError = null;
+
+    let viewMode = MODE_BROWSE;
+    try {
+      const storedMode = (window.StorageService && window.StorageService.getItem(STORAGE_HOME_VIEW_MODE)) || '';
+      if (storedMode === MODE_QUEST) viewMode = MODE_QUEST;
+    } catch (_) {}
+
+    function updateViewToggleUI() {
+      if (!viewToggle) return;
+      const chips = viewToggle.querySelectorAll('.view-chip');
+      for (let i = 0; i < chips.length; i++) {
+        const chip = chips[i];
+        const mode = chip && chip.dataset ? chip.dataset.mode : '';
+        const isActive = mode === viewMode || (!mode && viewMode === MODE_BROWSE);
+        if (isActive) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+        try { chip.setAttribute('aria-pressed', isActive ? 'true' : 'false'); } catch (_) {}
+      }
+    }
+
+    function updateFiltersVisibility() {
+      const hide = viewMode === MODE_QUEST;
+      if (filtersRoot) {
+        if (hide) {
+          filtersRoot.setAttribute('aria-hidden', 'true');
+        } else {
+          filtersRoot.removeAttribute('aria-hidden');
+        }
+      }
+      if (searchInput) {
+        try { searchInput.disabled = hide; } catch (_) {}
+      }
+      if (categoryFilters) {
+        const chipButtons = categoryFilters.querySelectorAll('.chip');
+        for (let i = 0; i < chipButtons.length; i++) {
+          const btn = chipButtons[i];
+          if (!btn) continue;
+          if (typeof btn.disabled === 'boolean') {
+            btn.disabled = hide;
+          } else if (hide) {
+            btn.setAttribute('tabindex', '-1');
+          } else {
+            btn.removeAttribute('tabindex');
+          }
+        }
+        if (hide) {
+          categoryFilters.setAttribute('aria-hidden', 'true');
+        } else {
+          categoryFilters.removeAttribute('aria-hidden');
+        }
+      }
+      try {
+        if (document && document.body && document.body.classList) {
+          document.body.classList.toggle('quest-mode', hide);
+        }
+      } catch (_) {}
+    }
+
+    function ensureQuestData() {
+      if (questsData) return Promise.resolve(questsData);
+      if (questsLoadPromise) return questsLoadPromise;
+      questsLoadPromise = Utils.fetchJSONCached('data/quests.json')
+        .then(function(data){
+          questsLoadPromise = null;
+          questsLoadError = null;
+          questsData = Array.isArray(data) ? data : [];
+          return questsData;
+        })
+        .catch(function(err){
+          questsLoadPromise = null;
+          questsLoadError = err;
+          questsData = null;
+          Utils.logError(err, 'home.js: failed to load data/quests.json');
+          throw err;
+        });
+      return questsLoadPromise;
+    }
+
+    function isQuizCompleted(quizId) {
+      try {
+        const progress = Utils.getQuizProgress(quizId);
+        const cap = Utils.getQuestionCap ? Utils.getQuestionCap() : 100;
+        const answered = progress && progress.questionsAnswered != null ? parseInt(progress.questionsAnswered, 10) : 0;
+        return answered >= cap;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function computeQuestStatus(quest) {
+      const steps = Array.isArray(quest && quest.steps) ? quest.steps : [];
+      const details = [];
+      let totalQuizzes = 0;
+      let completedQuizzes = 0;
+      let nextQuiz = null;
+
+      for (let i = 0; i < steps.length; i++) {
+        const step = steps[i] || {};
+        const ids = Array.isArray(step.quizIds) ? step.quizIds.filter(function(id){ return !!id; }) : [];
+        const quizzesInStep = [];
+        let completedInStep = 0;
+        for (let j = 0; j < ids.length; j++) {
+          const id = ids[j];
+          const meta = quizMetaById[id] || {};
+          const label = meta.title || id;
+          const href = meta.href || ('quiz.html?quiz=' + id);
+          const done = isQuizCompleted(id);
+          quizzesInStep.push({
+            id: id,
+            title: label,
+            href: href,
+            complete: done
+          });
+          totalQuizzes += 1;
+          if (done) {
+            completedInStep += 1;
+            completedQuizzes += 1;
+          } else if (!nextQuiz) {
+            nextQuiz = { id: id, title: label, href: href };
+          }
+        }
+        const isComplete = quizzesInStep.length > 0 && completedInStep === quizzesInStep.length;
+        details.push({
+          title: step.title || ('Stage ' + (i + 1)),
+          quizzes: quizzesInStep,
+          hasQuizzes: quizzesInStep.length > 0,
+          complete: isComplete,
+          completedCount: completedInStep
+        });
+      }
+
+      return {
+        total: totalQuizzes,
+        completed: completedQuizzes,
+        nextQuiz: nextQuiz,
+        steps: details
+      };
+    }
+
+    function renderQuestCards() {
+      Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(quizListEl); })();
+
+      if (questsLoadError) {
+        const error = document.createElement('div');
+        error.className = 'empty';
+        error.textContent = 'Failed to load quests.';
+        quizListEl.appendChild(error);
+        return;
+      }
+
+      if (!questsData) {
+        const loading = document.createElement('div');
+        loading.className = 'empty';
+        loading.textContent = 'Loading quests…';
+        quizListEl.appendChild(loading);
+        ensureQuestData()
+          .then(function(){ if (viewMode === MODE_QUEST) renderQuestCards(); })
+          .catch(function(){ if (viewMode === MODE_QUEST) renderQuestCards(); });
+        return;
+      }
+
+      const quests = Array.isArray(questsData) ? questsData : [];
+      if (!quests.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = 'Quests coming soon!';
+        quizListEl.appendChild(empty);
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < quests.length; i++) {
+        const quest = quests[i] || {};
+        const status = computeQuestStatus(quest);
+
+        const card = document.createElement('div');
+        card.className = 'quest-card';
+
+        const header = document.createElement('div');
+        header.className = 'quest-header';
+        const titleEl = document.createElement('div');
+        titleEl.className = 'quest-title';
+        const prefix = quest.emoji ? quest.emoji + ' ' : '';
+        titleEl.textContent = prefix + (quest.title || 'Quest');
+        header.appendChild(titleEl);
+        if (quest.tagline) {
+          const tagline = document.createElement('div');
+          tagline.className = 'quest-tagline';
+          tagline.textContent = quest.tagline;
+          header.appendChild(tagline);
+        }
+        card.appendChild(header);
+
+        if (quest.goal) {
+          const goal = document.createElement('p');
+          goal.className = 'quest-goal';
+          goal.textContent = 'Goal: ' + quest.goal;
+          card.appendChild(goal);
+        }
+
+        const progress = document.createElement('div');
+        progress.className = 'quest-progress';
+        if (status.total > 0) {
+          const clamped = Math.min(status.completed, status.total);
+          progress.textContent = clamped + ' / ' + status.total + ' quizzes complete';
+          try { progress.setAttribute('aria-label', 'Quest progress: ' + clamped + ' of ' + status.total + ' quizzes complete'); } catch (_) {}
+        } else {
+          progress.textContent = 'No quizzes assigned yet.';
+        }
+        card.appendChild(progress);
+
+        const stepsWrap = document.createElement('div');
+        stepsWrap.className = 'quest-steps';
+        let activeAssigned = false;
+        const nextQuizId = status.nextQuiz ? status.nextQuiz.id : '';
+
+        for (let s = 0; s < status.steps.length; s++) {
+          const stepInfo = status.steps[s];
+          const stepEl = document.createElement('div');
+          stepEl.className = 'quest-step';
+
+          const stepHeader = document.createElement('div');
+          stepHeader.className = 'quest-step-header';
+
+          const statusIcon = document.createElement('span');
+          statusIcon.className = 'quest-step-status';
+          let icon = '🔒';
+          if (stepInfo.complete) {
+            icon = '✅';
+          } else if (!activeAssigned && stepInfo.hasQuizzes && stepInfo.quizzes.some(function(q){ return q.id === nextQuizId; })) {
+            icon = '🧭';
+            activeAssigned = true;
+          } else if (!activeAssigned && stepInfo.hasQuizzes && !nextQuizId) {
+            icon = '🧭';
+            activeAssigned = true;
+          } else if (!stepInfo.hasQuizzes) {
+            icon = '📝';
+          }
+          statusIcon.textContent = icon;
+          if (!stepInfo.complete) statusIcon.classList.add('incomplete');
+          stepHeader.appendChild(statusIcon);
+
+          const titleSpan = document.createElement('span');
+          titleSpan.textContent = stepInfo.title || ('Stage ' + (s + 1));
+          stepHeader.appendChild(titleSpan);
+
+          if (stepInfo.hasQuizzes) {
+            const stepProgress = document.createElement('span');
+            stepProgress.className = 'quest-step-progress';
+            stepProgress.textContent = stepInfo.completedCount + ' / ' + stepInfo.quizzes.length + ' complete';
+            stepHeader.appendChild(stepProgress);
+          }
+
+          stepEl.appendChild(stepHeader);
+
+          if (stepInfo.hasQuizzes) {
+            const quizWrap = document.createElement('div');
+            quizWrap.className = 'quest-step-quizzes';
+            for (let q = 0; q < stepInfo.quizzes.length; q++) {
+              const quiz = stepInfo.quizzes[q];
+              const link = document.createElement('a');
+              link.className = 'quest-quiz' + (quiz.complete ? ' complete' : '');
+              link.href = quiz.href;
+              const iconSpan = document.createElement('span');
+              iconSpan.className = 'quest-quiz-status';
+              iconSpan.textContent = quiz.complete ? '✅' : '⏳';
+              link.appendChild(iconSpan);
+              link.appendChild(document.createTextNode(quiz.title));
+              try {
+                const labelPrefix = quiz.complete ? 'Review ' : 'Open ';
+                link.setAttribute('aria-label', labelPrefix + quiz.title);
+                link.title = quiz.title;
+              } catch (_) {}
+              quizWrap.appendChild(link);
+            }
+            stepEl.appendChild(quizWrap);
+          }
+
+          stepsWrap.appendChild(stepEl);
+        }
+
+        card.appendChild(stepsWrap);
+
+        const actions = document.createElement('div');
+        actions.className = 'quest-actions';
+        if (status.total > 0) {
+          if (status.completed >= status.total) {
+            const done = document.createElement('span');
+            done.className = 'quest-finished';
+            done.textContent = 'Quest complete! 🎉';
+            actions.appendChild(done);
+          } else if (status.nextQuiz) {
+            const btn = document.createElement('a');
+            btn.className = 'start-btn quest-action-btn';
+            btn.href = status.nextQuiz.href;
+            const startText = status.completed === 0 ? 'Start quest' : 'Continue';
+            btn.textContent = startText;
+            try { btn.setAttribute('aria-label', startText + ' with ' + status.nextQuiz.title); } catch (_) {}
+            actions.appendChild(btn);
+          }
+        }
+        card.appendChild(actions);
+
+        frag.appendChild(card);
+      }
+
+      quizListEl.appendChild(frag);
+    }
 
     function renderCategoryChips() {
       if (!categoryFilters) return;
       Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(categoryFilters); })();
 
-      // Count quizzes in each category
       const categoryCounts = {};
-      quizzes.forEach(q => {
-        (q.categories || []).forEach(cat => {
+      for (let i = 0; i < quizzes.length; i++) {
+        const quiz = quizzes[i];
+        const cats = quiz && Array.isArray(quiz.categories) ? quiz.categories : [];
+        for (let j = 0; j < cats.length; j++) {
+          const cat = cats[j];
           categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
-        });
-      });
+        }
+      }
 
       const allChip = document.createElement('button');
       allChip.type = 'button';
@@ -608,7 +928,8 @@
       if (!selectedCategoryFilter) allChip.classList.add('active');
       categoryFilters.appendChild(allChip);
 
-      categories.forEach(cat => {
+      for (let i = 0; i < categories.length; i++) {
+        const cat = categories[i];
         const chip = document.createElement('button');
         chip.type = 'button';
         chip.className = 'chip';
@@ -616,7 +937,7 @@
         chip.dataset.value = cat;
         if (selectedCategoryFilter && selectedCategoryFilter === cat) chip.classList.add('active');
         categoryFilters.appendChild(chip);
-      });
+      }
     }
 
     function filterQuizzes() {
@@ -624,12 +945,12 @@
       const activeChip = categoryFilters ? categoryFilters.querySelector('.chip.active') : null;
       const activeCategory = activeChip ? (activeChip.dataset.value || '') : '';
 
-      return quizzes.filter(q => {
+      return quizzes.filter(function(q){
         const matchesTerm = !term || (
-          q._titleLower.includes(term) ||
-          q._descriptionLower.includes(term)
+          q._titleLower.indexOf(term) !== -1 ||
+          q._descriptionLower.indexOf(term) !== -1
         );
-        const matchesCategory = !activeCategory || q.categories.includes(activeCategory);
+        const matchesCategory = !activeCategory || (q.categories && q.categories.indexOf(activeCategory) !== -1);
         return matchesTerm && matchesCategory;
       });
     }
@@ -645,7 +966,8 @@
       }
 
       const frag = document.createDocumentFragment();
-      items.forEach(q => {
+      for (let i = 0; i < items.length; i++) {
+        const q = items[i];
         const card = document.createElement('div');
         card.className = 'quiz-card';
         card.onclick = function() { window.location.href = q.href; };
@@ -656,8 +978,7 @@
         const p = document.createElement('p');
         p.textContent = q.description;
 
-        // Star rating based on local progress (0-3 stars)
-        let starsWrap = document.createElement('div');
+        const starsWrap = document.createElement('div');
         starsWrap.className = 'star-rating';
         try {
           const starsCount = Utils.getQuizStars(q.id);
@@ -676,11 +997,12 @@
 
         const features = document.createElement('ul');
         features.className = 'features';
-        q.bullets.forEach(b => {
+        const bulletList = Array.isArray(q.bullets) ? q.bullets : [];
+        for (let b = 0; b < bulletList.length; b++) {
           const li = document.createElement('li');
-          li.textContent = '✅ ' + b;
+          li.textContent = '✅ ' + bulletList[b];
           features.appendChild(li);
-        });
+        }
 
         const a = document.createElement('a');
         a.href = q.href;
@@ -693,12 +1015,24 @@
         card.appendChild(features);
         card.appendChild(a);
         frag.appendChild(card);
-      });
+      }
       quizListEl.appendChild(frag);
     }
 
     function updateUI() {
-      renderQuizCards(filterQuizzes());
+      if (!isQuizzesLoaded && viewMode === MODE_BROWSE) {
+        Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(quizListEl); })();
+        const loading = document.createElement('div');
+        loading.className = 'empty';
+        loading.textContent = 'Loading quizzes…';
+        quizListEl.appendChild(loading);
+        return;
+      }
+      if (viewMode === MODE_QUEST) {
+        renderQuestCards();
+      } else {
+        renderQuizCards(filterQuizzes());
+      }
     }
 
     function debounce(fn, ms) {
@@ -712,14 +1046,29 @@
 
     const updateUIDebounced = debounce(updateUI, 120);
 
+    function setViewMode(mode, options) {
+      const next = mode === MODE_QUEST ? MODE_QUEST : MODE_BROWSE;
+      const force = options && options.force;
+      const changed = viewMode !== next || !!force;
+      viewMode = next;
+      if (!(options && options.skipStorage)) {
+        try { window.StorageService && window.StorageService.setItem(STORAGE_HOME_VIEW_MODE, next); } catch (_) {}
+      }
+      updateViewToggleUI();
+      updateFiltersVisibility();
+      if (changed) updateUI();
+    }
+
     function wireUpEvents() {
       if (searchInput) {
         searchInput.addEventListener('input', function(){
+          if (viewMode !== MODE_BROWSE) return;
           updateUIDebounced();
         });
       }
       if (categoryFilters) {
         categoryFilters.addEventListener('click', function(ev) {
+          if (viewMode !== MODE_BROWSE) return;
           const target = ev.target;
           if (!(target instanceof Element)) return;
           const chip = target.closest('.chip');
@@ -734,32 +1083,54 @@
           updateUI();
         });
       }
+      if (viewToggle) {
+        viewToggle.addEventListener('click', function(ev) {
+          const target = ev.target;
+          if (!(target instanceof Element)) return;
+          const chip = target.closest('.view-chip');
+          if (!chip) return;
+          const mode = chip.dataset.mode || MODE_BROWSE;
+          setViewMode(mode);
+        });
+      }
     }
+
+    updateViewToggleUI();
+    updateFiltersVisibility();
+    updateUI();
 
     (function init(){
       Utils.fetchJSONCached('data/quizzes.json')
         .then(function(data){
           quizzes = Array.isArray(data) ? data : [];
-          // Precompute lowercase fields for faster filtering
-          quizzes.forEach(function(q){
+          quizMetaById = Object.create(null);
+          for (let i = 0; i < quizzes.length; i++) {
+            const q = quizzes[i];
             q._titleLower = (q.title || '').toLowerCase();
             q._descriptionLower = (q.description || '').toLowerCase();
-          });
-          // Sort quizzes alphabetically by title
+            if (q && q.id) quizMetaById[q.id] = q;
+          }
           quizzes.sort(function(a, b) {
             return (a.title || '').localeCompare(b.title || '');
           });
-          const categorySet = new Set();
-          quizzes.forEach(q => (q.categories || []).forEach(c => categorySet.add(c)));
-          categories = Array.from(categorySet).sort();
-          // Restore saved filters (category only)
+          const categorySet = {};
+          for (let i = 0; i < quizzes.length; i++) {
+            const quiz = quizzes[i];
+            const cats = quiz && Array.isArray(quiz.categories) ? quiz.categories : [];
+            for (let j = 0; j < cats.length; j++) {
+              categorySet[cats[j]] = true;
+            }
+          }
+          categories = Object.keys(categorySet).sort();
           try {
             const savedCat = (window.StorageService && window.StorageService.getItem(STORAGE_HOME_FILTER_CATEGORY)) || '';
             if (savedCat && categories.indexOf(savedCat) !== -1) selectedCategoryFilter = savedCat;
           } catch (_) {}
           renderCategoryChips();
+          updateFiltersVisibility();
           wireUpEvents();
-          updateUI();
+          isQuizzesLoaded = true;
+          setViewMode(viewMode, { skipStorage: true, force: true });
         })
         .catch(function(err){
           const error = document.createElement('div');
