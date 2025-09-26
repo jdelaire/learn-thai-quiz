@@ -18,6 +18,46 @@
   var phonetics = (NS.quiz && NS.quiz.phonetics) || {};
 
   var noop = function(){};
+  function resolveTextUtil(){
+    try {
+      var ns = global.__TQ;
+      return ns && ns.util && ns.util.text;
+    } catch (_) {
+      return null;
+    }
+  }
+  function dynamicFn(resolver, key, fallback){
+    return function(){
+      var source = resolver();
+      var fn = (source && typeof source[key] === 'function') ? source[key] : fallback;
+      try {
+        return fn.apply(source, arguments);
+      } catch (err) {
+        try { err && err.message; } catch (_) {}
+        return fallback.apply(source, arguments);
+      }
+    };
+  }
+  function fallbackHighlight(text){
+    try {
+      if (!global || !global.document) return null;
+      var frag = global.document.createDocumentFragment();
+      frag.appendChild(global.document.createTextNode(String(text == null ? '' : text)));
+      return frag;
+    } catch (_) {
+      return null;
+    }
+  }
+  function fallbackFormatExample(answer){
+    return { text: String((answer && answer.text) || ''), highlight: { english: '', thai: '', phonetic: '' } };
+  }
+  function fallbackNormalizeAnswer(answer){
+    return {
+      english: answer && typeof answer === 'string' ? String(answer) : '',
+      thai: '',
+      phonetic: ''
+    };
+  }
   function questionCap() {
     try {
       if (player && typeof player.getQuestionCap === 'function') {
@@ -74,6 +114,11 @@
     renderVowelSymbol: ui.renderVowelSymbol,
     renderConsonantSymbol: ui.renderConsonantSymbol,
     dismissExampleOverlay: ui.dismissExampleOverlay,
+
+    // text helpers
+    buildHighlightedNodes: dynamicFn(resolveTextUtil, 'buildHighlightedNodes', fallbackHighlight),
+    formatExample: dynamicFn(resolveTextUtil, 'formatExample', fallbackFormatExample),
+    normalizeAnswer: dynamicFn(resolveTextUtil, 'normalizeAnswer', fallbackNormalizeAnswer),
 
     // platform helpers
     platform: {
