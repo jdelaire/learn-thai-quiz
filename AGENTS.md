@@ -12,9 +12,9 @@
 - `js/builders/index.js` registers all per-quiz builders, composing datasets and overrides before calling `ThaiQuiz.setupQuiz`.
 - `js/quiz.js` exposes `window.ThaiQuiz.setupQuiz`, renders questions, persists per-quiz progress, injects stats and stars, and wires optional text-to-speech controls.
 - `js/quiz-loader.js` reads `quiz` from the query string, loads metadata from `data/quizzes.json`, applies `bodyClass`/`symbolNote`/`supportsVoice`/`supportsPhonetics`, and invokes the appropriate builder or falls back to `data/<id>.json`.
-- `js/home.js` powers the landing page search, category chips, resume button, player card (level, XP, avatar, Today in Thai), and the "What's New" popover which pulls `data/changelog.json`.
+- `js/home.js` powers the landing page search, category chips, resume button, player card (level, XP, avatar, Today in Thai), the Browse/Quest view toggle, and the "What's New" popover which pulls `data/changelog.json`.
 - `js/smoke.js` contains the in-browser regression suite that drives `smoke.html`.
-- `data/` stores quiz datasets; many quizzes have paired `*-examples.json` files that builders join with base data. `data/quizzes.json` is the metadata source of truth (ids, titles, bodyClass, supportsVoice, supportsPhonetics, phoneticLocales, proTip, bullets, categories). `data/changelog.json` feeds the home page drawer; keep ISO 8601 timestamps, newest first.
+- `data/` stores quiz datasets; many quizzes have paired `*-examples.json` files that builders join with base data. `data/quizzes.json` is the metadata source of truth (ids, titles, bodyClass, supportsVoice, supportsPhonetics, phoneticLocales, proTip, bullets, categories). `data/quests.json` defines quest progression (see notes below). `data/changelog.json` feeds the home page drawer; keep ISO 8601 timestamps, newest first.
 - `css/styles.css` owns all styling and per-quiz overrides (using body classes such as `body.colors-quiz`).
 - `asset/` contains images/icons plus the manifest and favicons used by the PWA hooks.
 
@@ -29,7 +29,7 @@
 - Quiz ids, dataset filenames, and entries in `data/quizzes.json` must stay in sync (`foods` -> `data/foods.json`, `quiz.html?quiz=foods`).
 
 ## Testing Guidelines
-- Use `smoke.html` as the regression suite. It validates quiz metadata, navigates to each quiz, verifies accessibility hooks, and submits at least one answer.
+- Use `smoke.html` as the regression suite. It validates quiz metadata, navigates to each quiz, verifies accessibility hooks, and submits at least one answer. The suite now seeds `thaiQuest.home.viewMode = "browse"` so home-card star assertions run even if a previous session left the UI in quest view.
 - When iterating locally, run `smoke.html?limit=4` for a quick subset; pass `quiz=<id>` for targeted checks.
 - Document any manual verification for quiz logic (for example, confirming examples render) when sending work for review.
 
@@ -45,3 +45,11 @@
 - Quiz stats and stars cap at `state.maxQuestions` (default 100). After the cap, progress is frozen until the "Restart Quizz" button (appended to the footer) resets per-quiz storage via `Utils.saveQuizProgress`.
 - Quizzes that set `supportsVoice` in metadata enable voice controls; use the helpers in `js/ui/sound.js`/`Utils.TTS` instead of custom speech synthesis code.
 - Quizzes that set `supportsPhonetics` add a footer dropdown; rely on `Utils.phoneticsUI.injectControls` (called inside `ThaiQuiz.setupQuiz`) and fetch/store locales with `Utils.getQuizPhoneticLocale(quizId)`/`Utils.setQuizPhoneticLocale(quizId, locale)`.
+
+## Quest Mode Notes
+
+- Quests live in `data/quests.json`. Each entry supports `preview` (boolean) and `requiresQuestId` to lock a quest until the prerequisite has at least one star on every quiz listed in its steps.
+- `js/home.js` renders quest cards from that JSON. Progress is derived from storage: quizzes count as complete once `Utils.getQuizStars(quizId) > 0`. Chips show `Questions: answered/100` (capped via `Utils.getQuestionCap()`) and `Stars: n/3` text.
+- Browse/Quest mode is persisted under `thaiQuest.home.viewMode` (`browse` vs `quest`). Quest collapse state persists under `thaiQuest.home.questCollapsed.<questId>`; only completed quests can collapse.
+- Locked quests display a grey overlay message (“Finish Quest X to unlock Quest Y”). Individual quiz chips gain the `locked` class until they become the next target; the next eligible quiz chip is tagged with `quest-quiz next` for styling.
+- Quest cards are full-width with `box-sizing: border-box` to avoid mobile clipping. Chip links use a rounded pill radius matching the surrounding card per latest design.
