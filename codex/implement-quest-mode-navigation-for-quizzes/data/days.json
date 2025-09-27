@@ -1,9 +1,0 @@
-[
-  { "english": "Monday", "thai": "วันจันทร์", "phonetic": "wan jan", "planet": "Moon", "color": "sǐi lɯ̌aŋ (yellow)", "emoji": "🟡" },
-  { "english": "Tuesday", "thai": "วันอังคาร", "phonetic": "wan ang-khaan", "planet": "Mars", "color": "sǐi chom-phuu (pink)", "emoji": "🌸" },
-  { "english": "Wednesday", "thai": "วันพุธ", "phonetic": "wan phút", "planet": "Mercury", "color": "sǐi khǐaw (green)", "emoji": "🟢" },
-  { "english": "Thursday", "thai": "วันพฤหัสบดี", "phonetic": "wan phá-rʉ́-hàt-baw-dii", "planet": "Jupiter", "color": "sǐi sôm (orange)", "emoji": "🟠" },
-  { "english": "Friday", "thai": "วันศุกร์", "phonetic": "wan sùk", "planet": "Venus", "color": "sǐi fáa (light blue)", "emoji": "🔷" },
-  { "english": "Saturday", "thai": "วันเสาร์", "phonetic": "wan sǎo", "planet": "Saturn", "color": "sǐi mûaŋ (purple)", "emoji": "🟣" },
-  { "english": "Sunday", "thai": "วันอาทิตย์", "phonetic": "wan aa-thít", "planet": "Sun", "color": "sǐi dɛɛŋ (red)", "emoji": "🔴" }
-]
