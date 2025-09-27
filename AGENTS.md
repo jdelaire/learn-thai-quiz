@@ -8,6 +8,7 @@
 - `js/util/` contains shared helpers: `common.js` (DOM utilities, sanitizer, i18n strings, safe random choice helpers), `color.js`, `text.js`, and `platform.js`.
 - `js/ui/` centralizes DOM glue: `renderers.js` for shared markup, `meta.js` for applying quiz metadata and body classes, `quiz-ui.js` for stats helpers, `sound.js` for opt-in speech controls, and `preferences.js` for per-quiz phonetic locale UI.
 - `js/quiz/` holds the quiz engine pieces: `progressive.js` (adaptive choice counts), `factories.js` (standard quiz scaffolding), `player.js` (XP curve, avatar generation, progress aggregation), and `phonetics.js` (locale-aware transliteration helpers).
+- `js/quiz/composite.js` provides helpers for assembling cross-quiz data sources and building composite quizzes on the fly.
 - `js/utils-agg.js` is the single point that assembles `window.Utils` from the `__TQ` namespace; expose new helpers there instead of creating fresh globals.
 - `js/builders/index.js` registers all per-quiz builders, composing datasets and overrides before calling `ThaiQuiz.setupQuiz`.
 - `js/quiz.js` exposes `window.ThaiQuiz.setupQuiz`, renders questions, persists per-quiz progress, injects stats and stars, and wires optional text-to-speech controls.
@@ -29,7 +30,7 @@
 - Quiz ids, dataset filenames, and entries in `data/quizzes.json` must stay in sync (`foods` -> `data/foods.json`, `quiz.html?quiz=foods`).
 
 ## Testing Guidelines
-- Use `smoke.html` as the regression suite. It validates quiz metadata, navigates to each quiz, verifies accessibility hooks, and submits at least one answer. The suite now seeds `thaiQuest.home.viewMode = "browse"` so home-card star assertions run even if a previous session left the UI in quest view.
+- Use `smoke.html` as the regression suite. It validates quiz metadata, navigates to each quiz, verifies accessibility hooks, and submits at least one answer. The suite now seeds `thaiQuest.home.viewMode = "browse"` so home-card star assertions run even if a previous session left the UI in quest view, and it toggles quest mode to confirm locked previews, overlays, unlocks, and collapse state.
 - When iterating locally, run `smoke.html?limit=4` for a quick subset; pass `quiz=<id>` for targeted checks.
 - Document any manual verification for quiz logic (for example, confirming examples render) when sending work for review.
 
@@ -45,6 +46,15 @@
 - Quiz stats and stars cap at `state.maxQuestions` (default 100). After the cap, progress is frozen until the "Restart Quizz" button (appended to the footer) resets per-quiz storage via `Utils.saveQuizProgress`.
 - Quizzes that set `supportsVoice` in metadata enable voice controls; use the helpers in `js/ui/sound.js`/`Utils.TTS` instead of custom speech synthesis code.
 - Quizzes that set `supportsPhonetics` add a footer dropdown; rely on `Utils.phoneticsUI.injectControls` (called inside `ThaiQuiz.setupQuiz`) and fetch/store locales with `Utils.getQuizPhoneticLocale(quizId)`/`Utils.setQuizPhoneticLocale(quizId, locale)`.
+
+## Composite Quiz Notes
+
+- Define composite quizzes via `data/quizzes.json` using either `composite.sources` (array of quiz ids/descriptors) or the legacy shortcut `compositeOf`. No manual builder entry is required; `quiz-loader.js` auto-registers the builder by calling `QuizBuilders.registerComposite`.
+- Each descriptor supports strings (existing quiz ids). When registering via JS you can pass richer objects with `quizId`, `filter`, `map`, `dataUrl`, and optional `examplesUrl`, or inline data arrays. Items are tagged with `__sourceQuizId`; example keys are remapped to `__compositeKey` for stable lookups.
+- Customise behaviour with `composite.answerKey`, `composite.quizParams`, `composite.quizOverrides`, and `composite.onSourcesLoaded(payload)` (called after all sources load so the payload can be shuffled or truncated).
+- `Utils.composite.combineSources(options)` and `Utils.composite.createBuilder(options)` expose the same helpers if you need to orchestrate composite data outside of the default builder.
+- Reference implementation: the `quest1-mixed` entry in `data/quizzes.json` combines the Survival Starter quizzes into one composite.
+- Set `visible: false` on any quiz metadata entry to hide it from the Browse list (quests and direct links still work). Hidden quizzes are skipped by smoke auto-discovery.
 
 ## Quest Mode Notes
 

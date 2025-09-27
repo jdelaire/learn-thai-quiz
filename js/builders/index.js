@@ -4,6 +4,7 @@
   // Single source of Utils/defaultElements for this module
   const Utils = global.Utils;
   const defaultElements = Utils.defaultElements;
+  const compositeNs = (global.__TQ && global.__TQ.quiz && global.__TQ.quiz.composite) || null;
   const getPhoneticBundle = (Utils && typeof Utils.getPhoneticBundle === 'function')
     ? function(item){ try { return Utils.getPhoneticBundle(item); } catch (_) { return fallbackBundle(item); } }
     : fallbackBundle;
@@ -73,6 +74,58 @@
     const data = (results && results[0]) || [];
     const examples = (results && results[1]) || {};
     return Object.assign({ data: data, examples: examples }, overrides || {});
+  }
+
+  function normalizeCompositeSource(entry) {
+    if (!entry) return null;
+    if (typeof entry === 'string') return { quizId: entry };
+    if (Array.isArray(entry)) return { data: entry };
+    if (typeof entry === 'object') return Object.assign({}, entry);
+    return null;
+  }
+
+  function normalizeCompositeSources(list) {
+    if (!list) return [];
+    const arr = Array.isArray(list) ? list : [list];
+    const out = [];
+    for (let i = 0; i < arr.length; i++) {
+      const normalized = normalizeCompositeSource(arr[i]);
+      if (normalized) out.push(normalized);
+    }
+    return out;
+  }
+
+  function registerCompositeQuiz(quizId, options) {
+    if (!quizId || !compositeNs || typeof compositeNs.createBuilder !== 'function') return null;
+    const config = Object.assign({}, options || {});
+    if (!config.sources && Array.isArray(config.compositeOf)) {
+      config.sources = config.compositeOf;
+    }
+    config.sources = normalizeCompositeSources(config.sources);
+    if (!config.sources.length) return null;
+
+    config.quizId = quizId;
+    config.utils = Utils;
+    config.defaultElements = defaultElements;
+    if (!config.quizParams || typeof config.quizParams !== 'object') config.quizParams = {};
+    if (config.answerKey && !config.quizParams.answerKey) {
+      config.quizParams.answerKey = config.answerKey;
+    }
+    if (!config.answerKey && config.quizParams && config.quizParams.answerKey) {
+      config.answerKey = config.quizParams.answerKey;
+    }
+    if (!config.answerKey) {
+      config.answerKey = 'phonetic';
+      if (!config.quizParams.answerKey) config.quizParams.answerKey = 'phonetic';
+    }
+    delete config.compositeOf;
+
+    const builder = compositeNs.createBuilder(config);
+    if (builder) {
+      QuizBuilders[quizId] = builder;
+      return builder;
+    }
+    return null;
   }
 
   const QuizBuilders = {
@@ -402,5 +455,6 @@
     })
   };
 
+  QuizBuilders.registerComposite = registerCompositeQuiz;
   global.QuizBuilders = QuizBuilders;
 })(window);

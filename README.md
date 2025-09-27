@@ -9,6 +9,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 ### Features
 
 - **Quest mode**: Sequential quest cards with progress chips, lock states, and preview overlays until the previous quest is finished
+- **Composite quizzes**: Create blended practice sets that pull questions from multiple quiz ids via shared metadata (no new JS files per quiz required)
 - **Multiple quizzes**: Consonants, Vowels, Colors (with modifiers), Numbers, Time, Questions, Family, Classifiers
 - **Clean UI**: Responsive layout, touch‑friendly buttons, subtle animations for correct/incorrect answers
 - **Search and filter**: Find quizzes by keyword and category chips on the home page
@@ -66,6 +67,16 @@ All quests draw from the expandable library of quizzes available in **Browse all
 - **Consonants in Final Position (Individually)**: Thai consonants as final sounds with examples; maps to collapsed finals like k/t/p and nasals m/n/ŋ.
 - **Consonant Clusters**: True vs fake clusters with Thai examples and phonetics
 
+### Composite quizzes
+
+- Add a quiz entry in `data/quizzes.json` and include either `"composite": { "sources": ["greetings","numbers"] }` or `"compositeOf": ["greetings","numbers"]`.
+- Sources accept strings (existing quiz ids). When registering composites programmatically (via `QuizBuilders.registerComposite(...)`), you can also pass descriptor objects (with `quizId`, `filter`, `map`, `dataUrl`, etc.) or inline data arrays (`{ "data": [...] }`).
+- At load time, `quiz-loader.js` auto-registers a composite builder that fetches each source, tags items with `__sourceQuizId`, and merges them into one question pool.
+- Customize behaviour with optional fields: `composite.answerKey`, `composite.quizParams` (passed to `Utils.createQuizWithProgressiveDifficulty`), `composite.quizOverrides` (merged into the final `ThaiQuiz.setupQuiz` config), and `composite.onSourcesLoaded(payload)` for last-minute shuffling or trimming.
+- Example entries are remapped automatically. Each item gets a stable key (`item.__compositeKey`) derived from the source id, so cross-quiz examples and stats remain distinct.
+- Example in repo: `quest1-mixed` bundles the five Survival Starter quizzes into a single mixed-practice quiz.
+- To hide a quiz from the home browse view while keeping metadata for quests or direct links, set `"visible": false` in its `data/quizzes.json` entry (defaults to visible when omitted).
+
 ### Quick start (local)
 
 Because the app fetches JSON files, use a local web server (opening `index.html` via `file://` will block fetches).
@@ -97,6 +108,7 @@ What it does now:
 - Auto-discovers quizzes from `data/quizzes.json` (fallback: parses links on the home page) and runs each via `quiz.html?quiz=<id>`.
 - For each quiz, asserts basic accessibility/chrome: per‑quiz body class `<id>-quiz`, `#symbol` has an `aria-label`, `#options` has `role="group"`.
 - Ensures options render, clicks an option, and verifies stats increment robustly (compares current vs. baseline rather than a fixed value).
+- Exercises quest mode: toggles the Browse/Quest view, verifies locked previews and overlays, and confirms Quest 2 unlocks once Quest 1 earns stars.
 - Catches runtime errors and reports pass/fail per check; no external dependencies.
 
 Run options (URL query params):

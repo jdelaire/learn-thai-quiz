@@ -659,34 +659,36 @@
     }
 
     function getQuestCollapsedStored(questId) {
-      if (!questId) return false;
+      if (!questId) return null;
       try {
         const key = STORAGE_HOME_QUEST_COLLAPSED_PREFIX + questId;
         const stored = window.StorageService && window.StorageService.getItem(key);
-        return stored === '1';
+        if (stored === '1') return true;
+        if (stored === '0') return false;
+        return null;
       } catch (_) {
-        return false;
+        return null;
       }
     }
 
-    function isQuestCollapsed(questId) {
-      if (!questId) return false;
+    function getQuestCollapsedRaw(questId) {
+      if (!questId) return null;
       if (!(questId in collapsedQuestState)) {
         collapsedQuestState[questId] = getQuestCollapsedStored(questId);
       }
-      return !!collapsedQuestState[questId];
+      return collapsedQuestState[questId];
+    }
+
+    function isQuestCollapsed(questId) {
+      return getQuestCollapsedRaw(questId) === true;
     }
 
     function setQuestCollapsed(questId, collapsed) {
       if (!questId) return;
-      collapsedQuestState[questId] = !!collapsed;
+      collapsedQuestState[questId] = collapsed === true;
       const key = STORAGE_HOME_QUEST_COLLAPSED_PREFIX + questId;
       try {
-        if (collapsed) {
-          window.StorageService && window.StorageService.setItem(key, '1');
-        } else {
-          window.StorageService && window.StorageService.removeItem(key);
-        }
+        window.StorageService && window.StorageService.setItem(key, collapsed ? '1' : '0');
       } catch (_) {}
     }
 
@@ -916,11 +918,17 @@
         card.appendChild(progress);
 
         const isQuestComplete = status.total > 0 && status.completed >= status.total;
-        if (!isQuestComplete && isQuestCollapsed(questId)) {
-          setQuestCollapsed(questId, false);
+        let collapsePreference = getQuestCollapsedRaw(questId);
+        if (isQuestComplete) {
+          if (collapsePreference == null) {
+            setQuestCollapsed(questId, true);
+            collapsePreference = true;
+          }
+        } else {
+          collapsePreference = false;
         }
 
-        let isCollapsed = isQuestComplete && isQuestCollapsed(questId);
+        let isCollapsed = collapsePreference === true;
         if (isCollapsed) {
           card.classList.add('collapsed');
         }
@@ -932,6 +940,7 @@
           const expanded = !isCollapsed;
           collapseBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
           collapseBtn.textContent = isCollapsed ? 'Show details' : 'Hide details';
+          collapseBtn.classList.add(isCollapsed ? 'collapsed' : 'expanded');
           collapseBtn.addEventListener('click', function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
@@ -1228,14 +1237,19 @@
     (function init(){
       Utils.fetchJSONCached('data/quizzes.json')
         .then(function(data){
-          quizzes = Array.isArray(data) ? data : [];
+          const rawList = Array.isArray(data) ? data : [];
           quizMetaById = Object.create(null);
-          for (let i = 0; i < quizzes.length; i++) {
-            const q = quizzes[i];
+          const visibleList = [];
+          for (let i = 0; i < rawList.length; i++) {
+            const q = rawList[i];
+            if (!q) continue;
             q._titleLower = (q.title || '').toLowerCase();
             q._descriptionLower = (q.description || '').toLowerCase();
-            if (q && q.id) quizMetaById[q.id] = q;
+            if (q.id) quizMetaById[q.id] = q;
+            if (q.visible === false) continue;
+            visibleList.push(q);
           }
+          quizzes = visibleList;
           quizzes.sort(function(a, b) {
             return (a.title || '').localeCompare(b.title || '');
           });
