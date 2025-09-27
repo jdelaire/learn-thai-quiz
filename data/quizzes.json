@@ -447,5 +447,24 @@
     "bodyClass": "questions-quiz",
     "proTip": "Comparatives use \"gwàa\"; superlatives often use \"thîi-sùt\".",
     "supportsVoice": true
+  },
+  {
+    "id": "quest1-mixed",
+    "title": "Quest 1 Mix 🎯",
+    "href": "quiz.html?quiz=quest1-mixed",
+    "description": "Mixed practice across all Survival Starter quizzes.",
+    "bullets": [
+      "Draws from greetings, numbers, colors, family, adjectives",
+      "Keeps progressive difficulty and examples"
+    ],
+    "categories": [
+      "Quest Mix",
+      "Conversation"
+    ],
+    "bodyClass": "quest-mix-quiz",
+    "visible": false,
+    "composite": {
+      "sources": ["greetings", "numbers", "colors", "family", "adjectives"]
+    }
   }
 ]

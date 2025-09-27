@@ -16,6 +16,7 @@
   var factories = (NS.quiz && NS.quiz.factories) || {};
   var player = (NS.quiz && NS.quiz.player) || {};
   var phonetics = (NS.quiz && NS.quiz.phonetics) || {};
+  var composite = (NS.quiz && NS.quiz.composite) || {};
 
   var noop = function(){};
   function resolveTextUtil(){
@@ -56,6 +57,14 @@
       english: answer && typeof answer === 'string' ? String(answer) : '',
       thai: '',
       phonetic: ''
+    };
+  }
+  function fallbackCombineSources(){
+    return Promise.resolve({ data: [], examples: null, sources: [], errors: [] });
+  }
+  function fallbackCreateCompositeBuilder(){
+    return function(){
+      return Promise.reject(new Error('Composite builder unavailable'));
     };
   }
   function questionCap() {
@@ -208,6 +217,11 @@
           }
         } catch (_) {}
       })
+    },
+
+    composite: {
+      combineSources: pickFn(composite, 'combineSources', fallbackCombineSources),
+      createBuilder: pickFn(composite, 'createBuilder', fallbackCreateCompositeBuilder)
     },
 
     // progressive & factories

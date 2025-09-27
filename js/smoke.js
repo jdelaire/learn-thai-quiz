@@ -82,6 +82,18 @@
 
   function wait(ms) { return new Promise(function(r){ setTimeout(r, ms); }); }
 
+  async function waitForCondition(checkFn, timeoutMs, intervalMs) {
+    const deadline = Date.now() + (timeoutMs || 4000);
+    const delay = intervalMs || 100;
+    while (Date.now() < deadline) {
+      try {
+        if (checkFn()) return true;
+      } catch (_) {}
+      await wait(delay);
+    }
+    return false;
+  }
+
   function extractQuestionsAnswered(statsEl) {
     try {
       const text = String(statsEl && statsEl.textContent || '');
@@ -98,10 +110,83 @@
       if (keep === '1' || keep === 'true') return false;
       if (window.StorageService && typeof window.StorageService.clearPrefix === 'function') {
         window.StorageService.clearPrefix('thaiQuest.progress.');
+        window.StorageService.clearPrefix('thaiQuest.lastAttempt.');
+        window.StorageService.clearPrefix('thaiQuest.home.questCollapsed.');
+        try { window.StorageService.removeItem('thaiQuest.home.viewMode'); } catch (_) {}
         return true;
       }
     } catch (_) {}
     return false;
+  }
+
+  const QUEST_MODE_VIEW_KEY = 'thaiQuest.home.viewMode';
+  const QUEST_COLLAPSE_PREFIX = 'thaiQuest.home.questCollapsed.';
+  const QUEST1_ID = 'quest-survival-basics';
+  const QUEST2_ID = 'quest-daily-life';
+  const QUEST1_QUIZ_IDS = ['greetings','numbers','colors','family','adjectives'];
+  const QUEST2_QUIZ_IDS = ['days','months','time','prepositions','countries'];
+
+  function setHomeViewMode(mode) {
+    try {
+      if (!window.StorageService) return;
+      if (mode) {
+        window.StorageService.setItem(QUEST_MODE_VIEW_KEY, mode);
+      } else {
+        window.StorageService.removeItem(QUEST_MODE_VIEW_KEY);
+      }
+    } catch (_) {}
+  }
+
+  function clearQuestCollapseState(questId) {
+    try {
+      if (!window.StorageService) return;
+      window.StorageService.removeItem(QUEST_COLLAPSE_PREFIX + questId);
+    } catch (_) {}
+  }
+
+  function setQuizProgressForSmoke(quizId, answered, correct) {
+    try {
+      if (!quizId || !window.StorageService) return;
+      window.StorageService.setJSON('thaiQuest.progress.' + quizId, {
+        questionsAnswered: answered,
+        correctAnswers: correct
+      });
+      window.StorageService.setNumber('thaiQuest.lastAttempt.' + quizId, Date.now());
+    } catch (_) {}
+  }
+
+  function clearQuizProgressForSmoke(quizId) {
+    try {
+      if (!quizId || !window.StorageService) return;
+      window.StorageService.removeItem('thaiQuest.progress.' + quizId);
+      window.StorageService.removeItem('thaiQuest.lastAttempt.' + quizId);
+    } catch (_) {}
+  }
+
+  function clearManyQuizProgress(ids) {
+    if (!Array.isArray(ids)) return;
+    for (let i = 0; i < ids.length; i++) {
+      clearQuizProgressForSmoke(ids[i]);
+    }
+  }
+
+  function findQuestCard(doc, titleSubstring) {
+    const cards = doc.querySelectorAll('.quest-card');
+    for (let i = 0; i < cards.length; i++) {
+      const titleEl = cards[i].querySelector('.quest-title');
+      const text = titleEl && titleEl.textContent || '';
+      if (text.indexOf(titleSubstring) !== -1) return cards[i];
+    }
+    return null;
+  }
+
+  function clearQuestSmokeArtifacts() {
+    clearQuestCollapseState(QUEST1_ID);
+    clearQuestCollapseState(QUEST2_ID);
+    setHomeViewMode('browse');
+    try { window.StorageService && window.StorageService.removeItem(QUEST_MODE_VIEW_KEY); } catch (_) {}
+    clearManyQuizProgress(QUEST1_QUIZ_IDS);
+    clearManyQuizProgress(QUEST2_QUIZ_IDS);
   }
 
   async function discoverQuizIds(serverRoot) {
@@ -110,7 +195,10 @@
       const res = await fetch(serverRoot + '/data/quizzes.json', { cache: 'no-cache' });
       if (res && res.ok) {
         const arr = await res.json();
-        const ids = Array.isArray(arr) ? arr.map(function(it){ return it && it.id; }).filter(Boolean) : [];
+        const ids = Array.isArray(arr)
+          ? arr.filter(function(it){ return it && it.id && it.visible !== false; })
+              .map(function(it){ return it.id; })
+          : [];
         if (ids.length) return ids;
       }
     } catch (_) {}
@@ -890,6 +978,142 @@
     }
   }
 
+  async function testQuestDefaultLocking(serverRoot) {
+    const name = 'Quest mode locks later quests until prerequisites complete';
+    const iframe = createFrame();
+    const affectedQuizzes = QUEST1_QUIZ_IDS.concat(QUEST2_QUIZ_IDS);
+    try {
+      clearQuestSmokeArtifacts();
+
+      const nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      const doc = nav.doc;
+
+      let questChip = null;
+      const chipReady = await waitForCondition(function(){
+        questChip = doc.querySelector('.view-chip[data-mode="quest"]');
+        return !!questChip;
+      }, 5000);
+      if (!chipReady || !questChip) return { name: name, ok: false, details: 'Quest toggle not found' };
+
+      click(questChip);
+
+      const switched = await waitForCondition(function(){
+        return doc.body && doc.body.classList && doc.body.classList.contains('quest-mode') && doc.querySelectorAll('.quest-card').length > 0;
+      }, 5000);
+      if (!switched) return { name: name, ok: false, details: 'Quest view did not activate' };
+
+      const quest1 = findQuestCard(doc, 'Quest 1');
+      const quest2 = findQuestCard(doc, 'Quest 2');
+      if (!quest1 || !quest2) return { name: name, ok: false, details: 'Quest cards not rendered' };
+
+      if (!quest2.classList.contains('preview')) return { name: name, ok: false, details: 'Quest 2 should be in preview mode' };
+      const overlay = quest2.querySelector('.quest-lock-overlay');
+      const overlayMsg = overlay && overlay.querySelector('.quest-lock-message');
+      const overlayText = overlayMsg && overlayMsg.textContent || '';
+      if (!overlay || overlayText.indexOf('Finish') === -1) {
+        return { name: name, ok: false, details: 'Quest 2 lock overlay missing' };
+      }
+
+      const firstChip = quest1.querySelector('.quest-quiz');
+      const firstMeta = firstChip && firstChip.querySelector('.quest-quiz-meta');
+      const metaText = firstMeta && firstMeta.textContent || '';
+      if (!firstChip || metaText.indexOf('Questions: 0/100') === -1 || metaText.indexOf('Stars: 0/3') === -1) {
+        return { name: name, ok: false, details: 'Quest 1 chip meta not showing progress baseline' };
+      }
+
+      const nextChip = quest1.querySelector('.quest-quiz.next');
+      if (!nextChip) return { name: name, ok: false, details: 'Next target chip missing on Quest 1' };
+
+      const lockedChips = quest1.querySelectorAll('.quest-quiz.locked');
+      if (!lockedChips || lockedChips.length === 0) {
+        return { name: name, ok: false, details: 'Quest 1 should lock later quizzes until started' };
+      }
+
+      const startBtn = quest1.querySelector('.quest-actions .quest-action-btn');
+      const startText = startBtn && startBtn.textContent || '';
+      if (!startBtn || startText.toLowerCase().indexOf('start quest') === -1) {
+        return { name: name, ok: false, details: 'Quest 1 start button missing' };
+      }
+
+      return { name: name, ok: true };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      clearQuestSmokeArtifacts();
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+    }
+  }
+
+  async function testQuestUnlockFlow(serverRoot) {
+    const name = 'Quest unlocks once previous quest earns stars';
+    const iframe = createFrame();
+    try {
+      const targetStarAnswered = 100;
+      const targetStarCorrect = 95;
+      for (let i = 0; i < QUEST1_QUIZ_IDS.length; i++) {
+        setQuizProgressForSmoke(QUEST1_QUIZ_IDS[i], targetStarAnswered, targetStarCorrect);
+      }
+      clearManyQuizProgress(QUEST2_QUIZ_IDS);
+      clearQuestCollapseState(QUEST1_ID);
+      clearQuestCollapseState(QUEST2_ID);
+      setHomeViewMode('quest');
+
+      const nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not load');
+      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
+      const doc = nav.doc;
+
+      const questReady = await waitForCondition(function(){
+        const card = findQuestCard(doc, 'Quest 1');
+        const progress = card && card.querySelector('.quest-progress');
+        const finished = card && card.querySelector('.quest-finished');
+        return !!(card && progress && finished && /5\s*\/\s*5/.test(progress.textContent || ''));
+      }, 6000);
+      if (!questReady) return { name: name, ok: false, details: 'Quest 1 did not reflect completion' };
+
+      let quest1 = findQuestCard(doc, 'Quest 1');
+      if (!quest1) return { name: name, ok: false, details: 'Quest 1 card missing after completion' };
+      const completedChips = quest1.querySelectorAll('.quest-quiz.complete');
+      if (!completedChips || completedChips.length !== QUEST1_QUIZ_IDS.length) {
+        return { name: name, ok: false, details: 'Quest 1 chips not all marked complete' };
+      }
+      const collapseBtn = quest1.querySelector('.quest-collapse-btn');
+      if (!collapseBtn) return { name: name, ok: false, details: 'Collapse toggle missing on completed quest' };
+
+      const quest2 = findQuestCard(doc, 'Quest 2');
+      if (!quest2) return { name: name, ok: false, details: 'Quest 2 card missing' };
+      if (quest2.classList.contains('preview')) {
+        return { name: name, ok: false, details: 'Quest 2 should unlock after Quest 1 completion' };
+      }
+      if (quest2.querySelector('.quest-lock-overlay')) {
+        return { name: name, ok: false, details: 'Quest 2 lock overlay still visible after unlock' };
+      }
+
+      const quest2Next = quest2.querySelector('.quest-quiz.next');
+      if (!quest2Next) return { name: name, ok: false, details: 'Quest 2 next quiz highlight missing' };
+      const quest2Locked = quest2.querySelectorAll('.quest-quiz.locked');
+      if (!quest2Locked || quest2Locked.length !== (QUEST2_QUIZ_IDS.length - 1)) {
+        return { name: name, ok: false, details: 'Quest 2 locking state unexpected' };
+      }
+
+      click(collapseBtn);
+      const collapsed = await waitForCondition(function(){
+        const card = findQuestCard(doc, 'Quest 1');
+        if (!card) return false;
+        const btn = card.querySelector('.quest-collapse-btn');
+        return card.classList.contains('collapsed') && btn && btn.getAttribute('aria-expanded') === 'false';
+      }, 4000);
+      if (!collapsed) return { name: name, ok: false, details: 'Quest collapse toggle did not persist' };
+
+      return { name: name, ok: true };
+    } catch (e) {
+      return { name: name, ok: false, details: String(e && e.message || e) };
+    } finally {
+      clearQuestSmokeArtifacts();
+      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
+    }
+  }
+
   async function runAll(onProgress, totalExpected) {
     const results = [];
     const root = (new URL('.', window.location.href)).href.replace(/\/$/, '');
@@ -919,6 +1143,10 @@
     if (typeof onProgress === 'function') onProgress();
     results.push(await testHomePersistCategoryFilter(root));
     if (typeof onProgress === 'function') onProgress();
+    results.push(await testQuestDefaultLocking(root));
+    if (typeof onProgress === 'function') onProgress();
+    results.push(await testQuestUnlockFlow(root));
+    if (typeof onProgress === 'function') onProgress();
 
     // Discover subset of quizzes to run
     let quizIds = await discoverQuizIds(root);
@@ -934,7 +1162,11 @@
       const res = await withTimeout(fetch(root + '/data/quizzes.json', { cache: 'no-cache' }), 5000, 'Could not fetch quizzes.json');
       if (res && res.ok) {
         const list = await res.json();
-        (Array.isArray(list) ? list : []).forEach(function(it){ if (it && it.id) metaMap[it.id] = it; });
+        (Array.isArray(list) ? list : []).forEach(function(it){
+          if (!it || !it.id) return;
+          if (it.visible === false) return;
+          metaMap[it.id] = it;
+        });
       }
     } catch (_) {}
 

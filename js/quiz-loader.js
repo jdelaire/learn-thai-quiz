@@ -128,7 +128,20 @@
         applyQuizMetadata(meta, quizId);
 
         // Build and start the selected quiz
-        const builder = QuizBuilders[quizId];
+        let builder = QuizBuilders[quizId];
+        if (!builder && meta) {
+          const registerComposite = (typeof QuizBuilders.registerComposite === 'function') ? QuizBuilders.registerComposite : null;
+          if (registerComposite && (Array.isArray(meta.compositeOf) || (meta.composite && meta.composite.sources))) {
+            const compositeConfig = Object.assign({}, meta.composite || {});
+            if (!compositeConfig.sources && Array.isArray(meta.compositeOf)) {
+              compositeConfig.sources = meta.compositeOf.slice();
+            }
+            if (!compositeConfig.answerKey && typeof meta.compositeAnswerKey === 'string') {
+              compositeConfig.answerKey = meta.compositeAnswerKey;
+            }
+            builder = registerComposite(quizId, compositeConfig) || builder;
+          }
+        }
         if (!builder) {
           // Fallback: try to load data/<quizId>.json as a standard quiz dataset
           try {
