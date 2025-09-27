@@ -1,9 +1,24 @@
 {
   "hello": "สวัสดีครับ ผมชื่อจอห์น → sà-wàt-dii khráp, phǒm chʉ̂ʉ John → Hello, my name is John",
+  "hi (informal)": "หวัดดี เพื่อน! → wàt-dii phʉ̂an → Hi, friend!",
+  "good morning": "สวัสดีตอนเช้าครับ → sà-wàt-dii dtaawn-cháao khráp → Good morning",
+  "good afternoon": "สวัสดีตอนบ่ายค่ะ → sà-wàt-dii dtaawn-bàai khâ → Good afternoon",
+  "good evening": "สวัสดีตอนเย็นครับ → sà-wàt-dii dtaawn-yen khráp → Good evening",
+  "good night": "ราตรีสวัสดิ์ครับ → raa-dtrii sà-wàt khráp → Good night",
   "thank you": "ขอบคุณมากครับ → khɔ̀ɔp-khun mâak khráp → Thank you very much",
+  "thank you very much": "ขอบคุณมากจริงๆค่ะ → khɔ̀ɔp-khun mâak jing-jing khâ → Thank you so much",
+  "you’re welcome": "ยินดีครับ → yin-dii khráp → You’re welcome",
   "never mind / it’s ok": "ไม่เป็นไรครับ → mâi-bpen-rai khráp → Never mind / That’s okay",
   "sorry / excuse me": "ขอโทษครับ ผมมาสาย → khɔ̌ɔ-thôot khráp, phǒm maa sǎai → Sorry, I am late",
+  "excuse me (passing through)": "ขอทางหน่อยครับ → khɔ̌ɔ thaang nɔ̀i khráp → Excuse me, let me pass",
+  "long time no see": "ไม่ได้เจอกันนานครับ → mâi dâai jooe gan naan khráp → Long time no see",
   "nice to meet you": "ยินดีที่ได้รู้จักครับ → yin-dii thîi dâai rúu-jàk khráp → Nice to meet you",
-  "how about you?": "ผมสบายดี แล้วคุณล่ะ → phǒm sabaai-dii, lɛ́ɛo khun-là → I’m fine, how about you?"
+  "see you later": "แล้วเจอกันครับ → lɛ́ɛo jooe gan khráp → See you later",
+  "take care": "ดูแลตัวเองด้วยนะครับ → duu-lɛɛ dtua-eeng dûay ná khráp → Take care of yourself",
+  "how are you?": "คุณสบายดีไหมครับ → khun sà-baai-dii mái khráp → How are you?",
+  "I’m fine": "ผมสบายดีครับ → phǒm sà-baai-dii khráp → I’m fine",
+  "how about you?": "ผมสบายดี แล้วคุณล่ะ → phǒm sà-baai-dii, lɛ́ɛo khun-là → I’m fine, how about you?",
+  "good luck": "ขอให้โชคดีครับ → khɔ̌ɔ hâi chôok-dii khráp → Good luck",
+  "congratulations": "ยินดีด้วยครับ → yin-dii dûay khráp → Congratulations",
+  "happy birthday": "สุขสันต์วันเกิดครับ → sùk-sǎn wan gə̀ət khráp → Happy Birthday"
 }
-
