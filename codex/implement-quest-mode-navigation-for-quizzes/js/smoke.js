@@ -853,6 +853,9 @@
       window.StorageService && window.StorageService.setJSON(pkey, { questionsAnswered: 100, correctAnswers: 100 });
       const akey = 'thaiQuest.lastAttempt.' + quizId;
       window.StorageService && window.StorageService.setNumber(akey, Date.now());
+      // Force Browse All view so the quiz cards render with star ratings
+      const viewKey = 'thaiQuest.home.viewMode';
+      window.StorageService && window.StorageService.setItem(viewKey, 'browse');
 
       const nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not load');
       if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
