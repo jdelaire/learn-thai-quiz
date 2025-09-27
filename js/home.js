@@ -874,27 +874,17 @@
         }
 
         if (isPreview) {
-          const previewSteps = document.createElement('div');
-          previewSteps.className = 'quest-steps preview';
           const steps = Array.isArray(quest.steps) ? quest.steps : [];
+          const topics = document.createElement('ul');
+          topics.className = 'quest-preview-topics';
           for (let s = 0; s < steps.length; s++) {
             const step = steps[s] || {};
             if (!step.title) continue;
-            const stepEl = document.createElement('div');
-            stepEl.className = 'quest-step preview';
-            const stepHeader = document.createElement('div');
-            stepHeader.className = 'quest-step-header';
-            const iconSpan = document.createElement('span');
-            iconSpan.className = 'quest-step-status';
-            iconSpan.textContent = '📝';
-            stepHeader.appendChild(iconSpan);
-            const titleSpan = document.createElement('span');
-            titleSpan.textContent = step.title;
-            stepHeader.appendChild(titleSpan);
-            stepEl.appendChild(stepHeader);
-            previewSteps.appendChild(stepEl);
+            const li = document.createElement('li');
+            li.textContent = step.title;
+            topics.appendChild(li);
           }
-          card.appendChild(previewSteps);
+          if (topics.children.length) card.appendChild(topics);
 
           const overlay = document.createElement('div');
           overlay.className = 'quest-lock-overlay';
@@ -952,102 +942,68 @@
           card.appendChild(collapseBtn);
         }
 
-        const stepsWrap = document.createElement('div');
-        stepsWrap.className = 'quest-steps';
-        let activeAssigned = false;
+        const chipsWrap = document.createElement('div');
+        chipsWrap.className = 'quest-steps';
         const nextQuizId = status.nextQuiz ? status.nextQuiz.id : '';
+        let nextUnlocked = !nextQuizId;
 
         for (let s = 0; s < status.steps.length; s++) {
           const stepInfo = status.steps[s];
-          const stepEl = document.createElement('div');
-          stepEl.className = 'quest-step';
-
-          const stepHeader = document.createElement('div');
-          stepHeader.className = 'quest-step-header';
-
-          const statusIcon = document.createElement('span');
-          statusIcon.className = 'quest-step-status';
-          let icon = '🔒';
-          let isLocked = false;
-          if (stepInfo.complete) {
-            icon = '✅';
-          } else if (!activeAssigned && stepInfo.hasQuizzes && stepInfo.quizzes.some(function(q){ return q.id === nextQuizId; })) {
-            icon = '🧭';
-            activeAssigned = true;
-          } else if (!activeAssigned && stepInfo.hasQuizzes && !nextQuizId) {
-            icon = '🧭';
-            activeAssigned = true;
-          } else if (!stepInfo.hasQuizzes) {
-            icon = '📝';
-          } else {
-            isLocked = true;
-          }
-          statusIcon.textContent = icon;
-          if (!stepInfo.complete) statusIcon.classList.add('incomplete');
-          stepHeader.appendChild(statusIcon);
-
-          const titleSpan = document.createElement('span');
-          titleSpan.textContent = stepInfo.title || ('Stage ' + (s + 1));
-          stepHeader.appendChild(titleSpan);
-
-          if (stepInfo.hasQuizzes) {
-            const stepProgress = document.createElement('span');
-            stepProgress.className = 'quest-step-progress';
-            stepProgress.textContent = stepInfo.completedCount + ' / ' + stepInfo.quizzes.length + ' complete';
-            stepHeader.appendChild(stepProgress);
-          }
-
-          stepEl.appendChild(stepHeader);
-
-          if (isLocked) {
-            stepEl.classList.add('locked');
-            try { stepEl.setAttribute('aria-disabled', 'true'); } catch (_) {}
-          }
-
-          if (stepInfo.hasQuizzes) {
-            const quizWrap = document.createElement('div');
-            quizWrap.className = 'quest-step-quizzes';
-            for (let q = 0; q < stepInfo.quizzes.length; q++) {
-              const quiz = stepInfo.quizzes[q];
-              const link = document.createElement('a');
-              let linkClass = 'quest-quiz';
-              if (quiz.complete) linkClass += ' complete';
-              if (isLocked) linkClass += ' locked';
-              link.className = linkClass;
-              link.href = quiz.href;
-              const textWrap = document.createElement('span');
-              textWrap.className = 'quest-quiz-text';
-              const titleSpan = document.createElement('span');
-              titleSpan.className = 'quest-quiz-title';
-              titleSpan.textContent = quiz.title;
-              textWrap.appendChild(titleSpan);
-              const metaSpan = document.createElement('span');
-              metaSpan.className = 'quest-quiz-meta';
-              let starInfo = quiz.starsLabel;
-              if (quiz.starText) starInfo += ' ' + quiz.starText;
-              metaSpan.textContent = quiz.progressLabel + ' • ' + starInfo;
-              textWrap.appendChild(metaSpan);
-              link.appendChild(textWrap);
-              try {
-                const labelPrefix = quiz.complete ? 'Review ' : 'Open ';
-                const ariaDetails = quiz.progressLabel + ', Stars ' + quiz.stars + ' of 3';
-                link.setAttribute('aria-label', labelPrefix + quiz.title + ' (' + ariaDetails + ')');
-                link.title = quiz.title;
-                if (isLocked) link.setAttribute('aria-disabled', 'true');
-              } catch (_) {}
-              if (isLocked) {
-                try { link.tabIndex = -1; } catch (_) {}
+          const quizzes = Array.isArray(stepInfo.quizzes) ? stepInfo.quizzes : [];
+          for (let q = 0; q < quizzes.length; q++) {
+            const quiz = quizzes[q];
+            const link = document.createElement('a');
+            let linkClass = 'quest-quiz';
+            if (quiz.complete) linkClass += ' complete';
+            let isLocked = false;
+            if (!quiz.complete) {
+              if (!nextQuizId) {
+                isLocked = false;
+              } else if (!nextUnlocked && quiz.id === nextQuizId) {
+                isLocked = false;
+                nextUnlocked = true;
+              } else if (!nextUnlocked) {
+                isLocked = true;
+              } else {
+                isLocked = true;
               }
-              quizWrap.appendChild(link);
             }
-            stepEl.appendChild(quizWrap);
-          }
+            if (!quiz.complete && !isLocked && quiz.id === nextQuizId) {
+              linkClass += ' next';
+            }
+            if (isLocked) linkClass += ' locked';
+            link.className = linkClass;
+            link.href = quiz.href;
 
-          stepsWrap.appendChild(stepEl);
+            const textWrap = document.createElement('span');
+            textWrap.className = 'quest-quiz-text';
+            const titleSpan = document.createElement('span');
+            titleSpan.className = 'quest-quiz-title';
+            titleSpan.textContent = quiz.title;
+            textWrap.appendChild(titleSpan);
+            const metaSpan = document.createElement('span');
+            metaSpan.className = 'quest-quiz-meta';
+            let starInfo = quiz.starsLabel;
+            if (quiz.starText) starInfo += ' ' + quiz.starText;
+            metaSpan.textContent = quiz.progressLabel + ' • ' + starInfo;
+            textWrap.appendChild(metaSpan);
+            link.appendChild(textWrap);
+            try {
+              const labelPrefix = quiz.complete ? 'Review ' : 'Open ';
+              const ariaDetails = quiz.progressLabel + ', Stars ' + quiz.stars + ' of 3';
+              link.setAttribute('aria-label', labelPrefix + quiz.title + ' (' + ariaDetails + ')');
+              link.title = quiz.title;
+              if (isLocked) link.setAttribute('aria-disabled', 'true');
+            } catch (_) {}
+            if (isLocked) {
+              try { link.tabIndex = -1; } catch (_) {}
+            }
+            chipsWrap.appendChild(link);
+          }
         }
 
         if (!isCollapsed) {
-          card.appendChild(stepsWrap);
+          if (chipsWrap.children.length) card.appendChild(chipsWrap);
 
           const actions = document.createElement('div');
           actions.className = 'quest-actions';

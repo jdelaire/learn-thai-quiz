@@ -669,9 +669,10 @@ body.home .quest-card {
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.06);
   transition: transform 0.2s ease;
   cursor: default;
-  min-width: 320px;
+  width: 100%;
   max-width: 640px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 body.home .quest-card:hover {
@@ -724,41 +725,16 @@ body.home .quest-progress {
   font-weight: 700;
 }
 
-body.home .quest-steps {
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-  margin: 1.4em 0 1.6em;
-}
-
-body.home .quest-step {
-  background: rgba(0, 0, 0, 0.03);
-  border-radius: 16px;
-  padding: 0.9em 1.1em;
-}
-
 body.home .quest-card.preview {
   border-style: dashed;
   position: relative;
 }
 
-body.home .quest-step.locked {
-  opacity: 0.5;
-  background: rgba(0, 0, 0, 0.05);
-}
-
-body.home .quest-card.preview .quest-steps {
-  margin-top: 1.2em;
-}
-
-body.home .quest-card.preview .quest-step {
-  border-style: dashed;
-  border-radius: 16px;
-  opacity: 0.85;
-}
-
-body.home .quest-card.preview .quest-step-status {
-  opacity: 0.7;
+body.home .quest-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6em;
+  margin: 1.4em 0 1.6em;
 }
 
 body.home .quest-lock-overlay {
@@ -782,32 +758,17 @@ body.home .quest-lock-message {
   color: var(--color-text);
 }
 
-body.home .quest-step-header {
-  display: flex;
-  align-items: center;
-  gap: 0.6em;
-  font-weight: 700;
+body.home .quest-preview-topics {
+  margin: 1.2em 0 0;
+  padding-left: 1.4em;
+  list-style: disc;
+  font-weight: 600;
+  opacity: 0.85;
+  text-align: left;
 }
 
-body.home .quest-step-progress {
-  margin-left: auto;
-  font-size: 0.9em;
-  opacity: 0.65;
-}
-
-body.home .quest-step-status {
-  font-size: 1.2em;
-}
-
-body.home .quest-step-status.incomplete {
-  opacity: 0.6;
-}
-
-body.home .quest-step-quizzes {
-  margin-top: 0.6em;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6em;
+body.home .quest-preview-topics li {
+  margin: 0.3em 0;
 }
 
 body.home .quest-quiz {
