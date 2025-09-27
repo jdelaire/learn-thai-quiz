@@ -733,7 +733,7 @@ body.home .quest-steps {
 
 body.home .quest-step {
   background: rgba(0, 0, 0, 0.03);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 0.9em 1.1em;
 }
 
@@ -753,6 +753,7 @@ body.home .quest-card.preview .quest-steps {
 
 body.home .quest-card.preview .quest-step {
   border-style: dashed;
+  border-radius: 16px;
   opacity: 0.85;
 }
 
@@ -814,7 +815,7 @@ body.home .quest-quiz {
   align-items: flex-start;
   gap: 0.6em;
   padding: 0.45em 0.9em;
-  border-radius: 999px;
+  border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.12);
   background: rgba(255, 255, 255, 0.9);
   text-decoration: none;
