@@ -735,6 +735,7 @@ body.home .quest-steps {
   flex-wrap: wrap;
   gap: 0.6em;
   margin: 1.4em 0 1.6em;
+  justify-content: center;
 }
 
 body.home .quest-lock-overlay {
@@ -820,7 +821,8 @@ body.home .quest-quiz:focus-visible {
 
 body.home .quest-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  margin-top: 1em;
 }
 
 body.home .quest-action-btn {
