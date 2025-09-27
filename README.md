@@ -8,6 +8,7 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 
 ### Features
 
+- **Quest mode**: Sequential quest cards with progress chips, lock states, and preview overlays until the previous quest is finished
 - **Multiple quizzes**: Consonants, Vowels, Colors (with modifiers), Numbers, Time, Questions, Family, Classifiers
 - **Clean UI**: Responsive layout, touch‑friendly buttons, subtle animations for correct/incorrect answers
 - **Search and filter**: Find quizzes by keyword and category chips on the home page
@@ -19,7 +20,25 @@ Hosted with GitHub Pages: [https://jdelaire.github.io/learn-thai-quiz](https://j
 - **Per‑quiz progress & stars**: Progress is saved via a storage service (localStorage under the hood); earn up to 3 stars per quiz based on accuracy when you reach 100 correct answers
 - **Player profile card**: Enabled on the home page; shows Level and XP bar, plus aggregated metrics: Avg accuracy, Quizzes completed, and Total stars earned
 
-### Quizzes included
+### Quest mode
+
+- Switch between **Browse all** and **Quest** views using the chips at the top of the home page. The current mode is stored under `thaiQuest.home.viewMode` so returning players resume where they left off.
+- Quest cards share a fixed width across desktop and mobile and list every quiz as a chip showing `Questions: answered/goal` and `Stars: earned/3`.
+- A quiz counts as complete once it has at least one star. Completing an entire quest unlocks the next quest and reveals its full content (previews only show the quest goal and topics).
+- Locked quests display a greyed preview with an overlay message (“Finish Quest X to unlock Quest Y”). Individual quiz chips are also disabled until it is their turn in the quest sequence; the next target quiz is highlighted.
+- Completed quests can collapse down to a summary (`Hide details` / `Show details`) and persist the state via `thaiQuest.home.questCollapsed.<questId>`.
+- The smoke suite seeds `thaiQuest.home.viewMode = "browse"` before validating home page star ratings so the card grid always renders during automated checks.
+
+### Quests and quizzes
+
+- **Quest 1: Survival Starter** — greetings, numbers, colors, family, adjectives
+- **Quest 2: Daily Life Explorer** *(unlocks after Quest 1)* — days, months, time, prepositions, countries
+- **Quest 3: Script Foundations** *(unlocks after Quest 2)* — consonants, vowels, final consonants
+- **Quest 4: Word Builder** *(unlocks after Quest 3)* — vowel changes, consonant clusters, Sara ใ words
+- **Quest 5: Everyday Conversation** *(unlocks after Quest 4)* — questions, verbs, foods, rooms, jobs
+- **Quest 6: Grammar & Tone Mastery** *(unlocks after Quest 5)* — classifiers, tone rules, tense markers
+
+All quests draw from the expandable library of quizzes available in **Browse all** mode. Highlights include:
 
 - **Consonants**: All 44 Thai consonants with meanings and tone classes (color‑coded). Progressive difficulty increases choices from 4→5→6→7→8.
 - **Vowels**: 32 Thai vowels, symbols and sounds. On some browsers a placeholder consonant ก ("goo gai") is shown to indicate where a vowel attaches; it's not part of the answer.
