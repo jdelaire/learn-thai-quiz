@@ -562,10 +562,17 @@ body.quiz-page {
 body.quiz-page #symbol {
   font-size: var(--symbol-font-size);
   margin: var(--symbol-margin);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-width: min(720px, calc(var(--options-max-width, 620px) + 160px));
+  box-sizing: border-box;
   font-weight: var(--symbol-font-weight);
   color: var(--symbol-color);
   text-shadow: var(--symbol-text-shadow);
   line-height: var(--symbol-line-height);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 body.quiz-page .options { max-width: var(--options-max-width); }
 
