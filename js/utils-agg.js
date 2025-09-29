@@ -125,6 +125,8 @@
     renderVowelSymbol: ui.renderVowelSymbol,
     renderConsonantSymbol: ui.renderConsonantSymbol,
     dismissExampleOverlay: ui.dismissExampleOverlay,
+    renderStarCelebration: ui.renderStarCelebration,
+    dismissStarCelebration: ui.dismissStarCelebration,
 
     // text helpers
     buildHighlightedNodes: dynamicFn(resolveTextUtil, 'buildHighlightedNodes', fallbackHighlight),

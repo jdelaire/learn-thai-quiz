@@ -43,8 +43,130 @@
     } catch (e) { logError(e, 'ui.renderers.renderEnglishThaiSymbol'); }
   }
 
+  var starOverlayTimerId = null;
+  function removeStarCelebrationOverlay() {
+    try {
+      if (starOverlayTimerId != null) {
+        clearTimeout(starOverlayTimerId);
+        starOverlayTimerId = null;
+      }
+      var existing = document.querySelector('.star-celebration-overlay');
+      if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+    } catch (_) {}
+  }
+
+  function renderStarCelebration(payload) {
+    try {
+      var stars = 0;
+      var answered = null;
+      var correct = null;
+      var quizId = '';
+      if (typeof payload === 'number') {
+        stars = payload;
+      } else if (payload && typeof payload === 'object') {
+        if (payload.stars != null) stars = payload.stars;
+        if (payload.questionsAnswered != null) answered = payload.questionsAnswered;
+        if (payload.correctAnswers != null) correct = payload.correctAnswers;
+        if (payload.quizId) quizId = String(payload.quizId);
+      }
+      stars = Math.max(0, Math.min(3, parseInt(stars, 10) || 0));
+      if (typeof answered !== 'number' || !isFinite(answered)) answered = null;
+      if (typeof correct !== 'number' || !isFinite(correct)) correct = null;
+
+      removeStarCelebrationOverlay();
+
+      var overlay = document.createElement('div');
+      overlay.className = 'star-celebration-overlay';
+      try {
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-label', 'Star milestone reached');
+      } catch (_) {}
+
+      var card = document.createElement('div');
+      card.className = 'star-celebration-card';
+
+      var heading = document.createElement('div');
+      heading.className = 'celebrate-heading';
+      var icon = document.createElement('span');
+      icon.className = 'celebrate-icon';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.textContent = '⭐';
+      heading.appendChild(icon);
+      heading.appendChild(document.createTextNode('Milestone reached!'));
+
+      var starsRow = document.createElement('div');
+      starsRow.className = 'celebrate-stars';
+      var starString = '';
+      for (var i = 0; i < 3; i++) starString += i < stars ? '★' : '☆';
+      starsRow.textContent = starString;
+      try {
+        var aria = stars === 1 ? '1 star earned' : (stars + ' stars earned');
+        starsRow.setAttribute('aria-label', aria);
+      } catch (_) {}
+
+      var message = '';
+      if (stars >= 3) message = 'Outstanding accuracy! You earned all three stars.';
+      else if (stars === 2) message = 'Great job! Two stars earned.';
+      else if (stars === 1) message = 'Nice work! You earned 1 star.';
+      else message = 'You reached 100 questions. Keep practicing to earn stars!';
+      var messageEl = document.createElement('div');
+      messageEl.className = 'celebrate-message';
+      messageEl.textContent = message;
+
+      var metaText = '';
+      if (correct != null && answered != null) {
+        metaText = correct + ' correct out of ' + answered + ' questions';
+      }
+      if (quizId) {
+        metaText = metaText ? metaText + ' · ' + quizId : quizId;
+      }
+      var metaEl = document.createElement('div');
+      metaEl.className = 'celebrate-meta';
+      metaEl.textContent = metaText;
+
+      var closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'celebrate-close';
+      closeBtn.textContent = 'Continue';
+      closeBtn.addEventListener('click', function(ev){
+        ev.preventDefault();
+        removeStarCelebrationOverlay();
+      });
+
+      card.appendChild(heading);
+      card.appendChild(starsRow);
+      card.appendChild(messageEl);
+      if (metaText) card.appendChild(metaEl);
+      card.appendChild(closeBtn);
+
+      overlay.appendChild(card);
+      overlay.addEventListener('click', function(ev){
+        if (ev.target === overlay) removeStarCelebrationOverlay();
+      });
+
+      document.body.appendChild(overlay);
+
+      starOverlayTimerId = setTimeout(function(){ removeStarCelebrationOverlay(); }, 7000);
+    } catch (e) { logError(e, 'ui.renderers.renderStarCelebration'); }
+  }
+
+  function dismissStarCelebration() {
+    try {
+      removeStarCelebrationOverlay();
+    } catch (e) { logError(e, 'ui.renderers.dismissStarCelebration'); }
+  }
+
   function renderExample(feedbackEl, exampleText) {
     try {
+      // Skip success overlay if a star celebration is active
+      try {
+        if (document.querySelector('.star-celebration-overlay')) {
+          while (feedbackEl.firstChild) feedbackEl.removeChild(feedbackEl.firstChild);
+          return;
+        }
+      } catch (_) {}
+
       // Clear any inline feedback content and remove previous overlays
       while (feedbackEl.firstChild) feedbackEl.removeChild(feedbackEl.firstChild);
       removeExistingExampleOverlay();
@@ -243,6 +365,8 @@
     insertConsonantLegend: insertConsonantLegend,
     renderVowelSymbol: renderVowelSymbol,
     renderConsonantSymbol: renderConsonantSymbol,
-    dismissExampleOverlay: dismissExampleOverlay
+    dismissExampleOverlay: dismissExampleOverlay,
+    renderStarCelebration: renderStarCelebration,
+    dismissStarCelebration: dismissStarCelebration
   };
 })(window);
