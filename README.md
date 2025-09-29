@@ -190,6 +190,17 @@ Tip: if your quiz shows an example sentence on correct answers, you can loop thr
 6. The engine handles input (click/keyboard), plays feedback animations, auto‑advances on correct answers, and updates stats.
 7. Per‑quiz progress (questions answered and correct answers) is persisted through the storage service (backed by localStorage); the home page displays a 0–3 star rating for each quiz.
 
+### Thai TTS sound controls
+
+- Voice controls surface only when quiz metadata sets `supportsVoice` and a Thai system voice is detected.
+- `Utils.sound` exposes:
+  - `injectControls()` – renders the toggle in the quiz footer when supported.
+  - `maybeSpeakThaiFromAnswer(answer)` – plays the Thai prompt (returns `true` when speech fires).
+  - `isSoundOn()` / `setSoundOn(on)` – persists the opt-in state via `StorageService`.
+  - `getRate()` – returns the active playback rate (always the default when speech is available).
+  - `getDefaultRate()` – canonical Thai TTS speed (`0.6x`).
+- `setRate()` was removed with the speed selector; composite callers should rely on the default rate helpers above.
+
 ### Player profile & metrics
 
 The home page header includes a player profile card with:

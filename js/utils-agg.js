@@ -79,6 +79,8 @@
     return (source && typeof source[key] === 'function') ? source[key] : fallback;
   }
 
+  var DEFAULT_TTS_RATE = (sound && typeof sound.DEFAULT_RATE === 'number') ? sound.DEFAULT_RATE : 0.6;
+
   global.Utils = {
     // Storage service re-export
     Storage: global.StorageService || null,
@@ -146,8 +148,8 @@
       maybeSpeakThaiFromAnswer: pickFn(sound, 'maybeSpeakThaiFromAnswer', function(){ return false; }),
       isSoundOn: pickFn(sound, 'isSoundOn', function(){ return false; }),
       setSoundOn: pickFn(sound, 'setSoundOn', noop),
-      getRate: pickFn(sound, 'getRate', function(){ return 0.6; }),
-      setRate: pickFn(sound, 'setRate', noop)
+      getRate: pickFn(sound, 'getRate', function(){ return DEFAULT_TTS_RATE; }),
+      getDefaultRate: function(){ return DEFAULT_TTS_RATE; }
     },
 
     // phonetic controls UI

@@ -24,7 +24,6 @@
 
   function clearLegacyRate(){ try { StorageService && StorageService.removeItem && StorageService.removeItem(RATE_KEY); } catch (_) {} }
   function getRate(){ clearLegacyRate(); return DEFAULT_RATE; }
-  function setRate(){ clearLegacyRate(); return DEFAULT_RATE; }
 
   function getThaiVoiceInstallMessage(){
     try {
@@ -92,12 +91,12 @@
   }
 
   NS.ui.sound = {
+    DEFAULT_RATE: DEFAULT_RATE,
     injectControls: injectControls,
     maybeSpeakThaiFromAnswer: maybeSpeakThaiFromAnswer,
     // expose for any external UI usage
     isSoundOn: isSoundOn,
     setSoundOn: setSoundOn,
-    getRate: getRate,
-    setRate: setRate
+    getRate: getRate
   };
 })(window);

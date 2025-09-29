@@ -47,8 +47,14 @@
       maybeSpeakThaiFromAnswer: function(){ return false; },
       isSoundOn: function(){ return false; },
       setSoundOn: function(){},
-      getRate: function(){ return 0.6; },
-      setRate: function(){}
+      getRate: function(){
+        try {
+          if (utils && utils.sound && typeof utils.sound.getDefaultRate === 'function') {
+            return utils.sound.getDefaultRate();
+          }
+        } catch (_) {}
+        return 0.6;
+      }
     };
     const soundControls = (utils && utils.sound) || defaultSoundControls;
     const phoneticControls = (utils && utils.phoneticsUI && typeof utils.phoneticsUI.injectControls === 'function')
