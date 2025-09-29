@@ -218,18 +218,21 @@
           if (shouldCountQuestion && state.correctAnswers < questionCap) {
             state.correctAnswers = Math.min(questionCap, state.correctAnswers + 1);
           }
-          state.isAwaitingAnswer = false;
-          feedbackEl.textContent = '';
-          btn.classList.add('answer-correct');
-          btn.addEventListener('animationend', function handle(){
-            btn.classList.remove('answer-correct');
-          }, { once: true });
-          try { soundControls.maybeSpeakThaiFromAnswer(answer); } catch (_) {}
-          quizUI.disableOtherButtons(optionsEl, btn);
-          Utils.ErrorHandler.safeDOM(function(){ btn.onclick = null; })();
-          nextBtn.style.display = 'none';
+        state.isAwaitingAnswer = false;
+        feedbackEl.textContent = '';
+        btn.classList.add('answer-correct');
+        btn.addEventListener('animationend', function handle(){
+          btn.classList.remove('answer-correct');
+        }, { once: true });
+        try { soundControls.maybeSpeakThaiFromAnswer(answer); } catch (_) {}
+        quizUI.disableOtherButtons(optionsEl, btn);
+        Utils.ErrorHandler.safeDOM(function(){ btn.onclick = null; })();
+        nextBtn.style.display = 'none';
+        var shouldAutoAdvance = state.questionsAnswered < questionCap;
+        if (shouldAutoAdvance) {
           const delay = (typeof config.onAnswered === 'function') ? 3000 : 1500;
           quizUI.scheduleAutoAdvance(state, pickQuestion, delay);
+        }
         } else {
           feedbackEl.textContent = '';
           btn.classList.add('answer-wrong');

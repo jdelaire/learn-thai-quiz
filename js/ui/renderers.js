@@ -125,13 +125,18 @@
       metaEl.className = 'celebrate-meta';
       metaEl.textContent = metaText;
 
+      function redirectHome() {
+        try { removeStarCelebrationOverlay(); } catch (_) {}
+        try { window.location.href = 'index.html'; } catch (_) {}
+      }
+
       var closeBtn = document.createElement('button');
       closeBtn.type = 'button';
       closeBtn.className = 'celebrate-close';
       closeBtn.textContent = 'Continue';
       closeBtn.addEventListener('click', function(ev){
         ev.preventDefault();
-        removeStarCelebrationOverlay();
+        redirectHome();
       });
 
       card.appendChild(heading);
