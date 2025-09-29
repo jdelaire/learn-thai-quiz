@@ -88,12 +88,7 @@
 
       var heading = document.createElement('div');
       heading.className = 'celebrate-heading';
-      var icon = document.createElement('span');
-      icon.className = 'celebrate-icon';
-      icon.setAttribute('aria-hidden', 'true');
-      icon.textContent = '⭐';
-      heading.appendChild(icon);
-      heading.appendChild(document.createTextNode('Milestone reached!'));
+      heading.textContent = 'Milestone reached!';
 
       var starsRow = document.createElement('div');
       starsRow.className = 'celebrate-stars';
@@ -145,6 +140,25 @@
       if (metaText) card.appendChild(metaEl);
       card.appendChild(closeBtn);
 
+      var flagsWrap = document.createElement('div');
+      flagsWrap.className = 'flags-wrap';
+      try { flagsWrap.setAttribute('aria-hidden', 'true'); } catch (_) {}
+      var flagCount = 18;
+      for (var i = 0; i < flagCount; i++) {
+        var flag = document.createElement('span');
+        flag.className = 'flag';
+        flag.textContent = '\uD83C\uDDF9\uD83C\uDDED';
+        var left = 4 + Math.random() * 92;
+        var sizePx = 14 + Math.floor(Math.random() * 9);
+        flag.style.left = left + '%';
+        flag.style.fontSize = sizePx + 'px';
+        flag.style.animationDelay = Math.floor(Math.random() * 260) + 'ms';
+        flag.style.setProperty('--flag-rotate', (220 + Math.floor(Math.random() * 280)) + 'deg');
+        flag.style.animationDuration = (3600 + Math.floor(Math.random() * 2200)) + 'ms';
+        flagsWrap.appendChild(flag);
+      }
+
+      overlay.appendChild(flagsWrap);
       overlay.appendChild(card);
       overlay.addEventListener('click', function(ev){
         if (ev.target === overlay) removeStarCelebrationOverlay();
