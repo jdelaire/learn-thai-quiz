@@ -146,7 +146,7 @@
       maybeSpeakThaiFromAnswer: pickFn(sound, 'maybeSpeakThaiFromAnswer', function(){ return false; }),
       isSoundOn: pickFn(sound, 'isSoundOn', function(){ return false; }),
       setSoundOn: pickFn(sound, 'setSoundOn', noop),
-      getRate: pickFn(sound, 'getRate', function(){ return 0.8; }),
+      getRate: pickFn(sound, 'getRate', function(){ return 0.6; }),
       setRate: pickFn(sound, 'setRate', noop)
     },
 
