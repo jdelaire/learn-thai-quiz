@@ -76,6 +76,15 @@
     };
     const quizUI = (utils && utils.quizUI) || fallbackQuizUI;
 
+    function safeComputeStars(correctAnswers, answered) {
+      try {
+        if (Utils && typeof Utils.computeStarRating === 'function') {
+          return Utils.computeStarRating(correctAnswers, answered);
+        }
+      } catch (_) {}
+      return 0;
+    }
+
     // Ensure options container is focusable for scoped keyboard events
     Utils.ErrorHandler.safeDOM(function() {
       if (!optionsEl.hasAttribute('tabindex')) optionsEl.setAttribute('tabindex', '0');
@@ -99,6 +108,8 @@
       autoAdvanceTimerId: null,
       isAwaitingAnswer: true,
       maxQuestions: questionCap
+      ,
+      starCelebrationShown: false
     };
 
     var restartButton = null;
@@ -138,12 +149,16 @@
       state.questionsAnswered = 0;
       state.correctAnswers = 0;
       state.isAwaitingAnswer = true;
+      state.starCelebrationShown = false;
       Utils.ErrorHandler.safeDOM(function(){ feedbackEl.textContent = ''; })();
       Utils.ErrorHandler.safeDOM(function(){ nextBtn.style.display = 'none'; })();
       Utils.ErrorHandler.safe(function(){
         if (quizId && global && global.Utils && typeof global.Utils.saveQuizProgress === 'function') {
           global.Utils.saveQuizProgress(quizId, { questionsAnswered: 0, correctAnswers: 0 });
         }
+      })();
+      Utils.ErrorHandler.safe(function(){
+        if (Utils && typeof Utils.dismissStarCelebration === 'function') Utils.dismissStarCelebration();
       })();
       quizUI.updateStats(statsEl, quizId, state);
       updateRestartButtonVisibility();
@@ -166,6 +181,7 @@
     function createChoiceButton(choice, answer) {
       const btn = document.createElement('button');
       Utils.ErrorHandler.safeDOM(function(){ btn.type = 'button'; })();
+      const previousQuestions = state.questionsAnswered;
       if (typeof config.renderButtonContent === 'function') {
         const content = config.renderButtonContent(choice, state);
         if (content && typeof content === 'object' && 'nodeType' in content) {
@@ -187,7 +203,6 @@
       }
 
       btn.onclick = function(){
-        var previousQuestions = state.questionsAnswered;
         var shouldCountQuestion = previousQuestions < questionCap;
         if (shouldCountQuestion) {
           state.questionsAnswered = Math.min(questionCap, previousQuestions + 1);
@@ -234,6 +249,23 @@
 
         quizUI.updateStats(statsEl, quizId, state);
         updateRestartButtonVisibility();
+
+        var reachedCapNow = shouldCountQuestion && previousQuestions < questionCap && state.questionsAnswered >= questionCap;
+        if (reachedCapNow && !state.starCelebrationShown) {
+          var starsEarned = safeComputeStars(state.correctAnswers, Math.min(state.questionsAnswered, questionCap));
+          state.starCelebrationShown = true;
+          Utils.ErrorHandler.safe(function(){
+            if (Utils && typeof Utils.dismissExampleOverlay === 'function') Utils.dismissExampleOverlay();
+            if (Utils && typeof Utils.renderStarCelebration === 'function') {
+              Utils.renderStarCelebration({
+                stars: starsEarned,
+                quizId: quizId || '',
+                questionsAnswered: Math.min(state.questionsAnswered, questionCap),
+                correctAnswers: Math.min(state.correctAnswers, questionCap)
+              });
+            }
+          })();
+        }
 
         if (typeof config.onAnswered === 'function') {
           Utils.ErrorHandler.wrap(config.onAnswered, 'quiz.js: onAnswered')({ correct: isCorrect, choice: choice, answer: answer, state: state });
