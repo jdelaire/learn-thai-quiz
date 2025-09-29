@@ -270,6 +270,19 @@
           } catch (e) { logError(e, 'quiz.composite.onSourcesLoaded("' + quizId + '")'); }
         }
 
+        var itemsBySource = {};
+        try {
+          for (var idx = 0; idx < payload.data.length; idx++) {
+            var item = payload.data[idx];
+            if (!item) continue;
+            var sourceId = item.__sourceQuizId ? String(item.__sourceQuizId) : '__composite';
+            if (!itemsBySource[sourceId]) itemsBySource[sourceId] = [];
+            itemsBySource[sourceId].push(item);
+          }
+        } catch (e) {
+          logError(e, 'quiz.composite.groupBySource("' + quizId + '")');
+        }
+
         var quizParams = Object.assign({}, options.quizParams || {});
         if (options.answerKey) quizParams.answerKey = options.answerKey;
         if (options.progressiveDifficulty != null) quizParams.progressiveDifficulty = options.progressiveDifficulty;
@@ -298,6 +311,57 @@
         var finalConfig = Object.assign({ elements: defaultElements, quizId: quizId }, baseConfig || {});
         if (options.quizOverrides && typeof options.quizOverrides === 'object') {
           finalConfig = Object.assign(finalConfig, options.quizOverrides);
+        }
+
+        var pickUniqueChoices = (options.utils && options.utils.pickUniqueChoices) || function(pool, count, keyFn, seed) {
+          var out = [];
+          var used = {};
+          var safeKey = function(item) {
+            try { return keyFn ? keyFn(item) : item; } catch (_) { return item; }
+          };
+          if (seed != null) {
+            out.push(seed);
+            var seedKey = safeKey(seed);
+            if (seedKey != null) used[String(seedKey)] = true;
+          }
+          while (out.length < count && pool && out.length < pool.length) {
+            var candidate = pool[Math.floor(Math.random() * pool.length)];
+            var key = safeKey(candidate);
+            if (key == null) continue;
+            var keyStr = String(key);
+            if (!used[keyStr]) {
+              used[keyStr] = true;
+              out.push(candidate);
+            }
+          }
+          return out;
+        };
+
+        var originalPickRound = (typeof finalConfig.pickRound === 'function') ? finalConfig.pickRound : null;
+        if (originalPickRound) {
+          finalConfig.pickRound = function(state) {
+            var round = originalPickRound(state);
+            if (!round || !round.answer) return round;
+            var answer = round.answer;
+            var sourceId = answer.__sourceQuizId ? String(answer.__sourceQuizId) : null;
+            if (!sourceId || !itemsBySource[sourceId] || !itemsBySource[sourceId].length) return round;
+            var desired = (round.choices && Array.isArray(round.choices) && round.choices.length) ? round.choices.length : 0;
+            if (desired <= 0) desired = 1;
+            var keyFn = function(item) {
+              if (!item) return '';
+              if (item.__compositeKey) return item.__compositeKey;
+              if (item.id != null) return 'id::' + item.id;
+              if (item.english) return 'en::' + item.english;
+              if (item.thai) return 'th::' + item.thai;
+              if (item.phonetic) return 'ph::' + item.phonetic;
+              return String(itemsBySource[sourceId].indexOf(item));
+            };
+            var sameSourceChoices = pickUniqueChoices(itemsBySource[sourceId], Math.max(1, desired), keyFn, answer);
+            if (sameSourceChoices && sameSourceChoices.length) {
+              round.choices = sameSourceChoices;
+            }
+            return round;
+          };
         }
 
         return function init(){
