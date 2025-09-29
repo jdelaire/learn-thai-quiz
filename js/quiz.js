@@ -47,7 +47,7 @@
       maybeSpeakThaiFromAnswer: function(){ return false; },
       isSoundOn: function(){ return false; },
       setSoundOn: function(){},
-      getRate: function(){ return 0.8; },
+      getRate: function(){ return 0.6; },
       setRate: function(){}
     };
     const soundControls = (utils && utils.sound) || defaultSoundControls;

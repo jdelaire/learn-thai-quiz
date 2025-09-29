@@ -10,6 +10,7 @@
 
   var SOUND_KEY = 'thaiQuest.settings.sound';
   var RATE_KEY = 'thaiQuest.settings.soundRate';
+  var DEFAULT_RATE = 0.6;
 
   function isPerQuizVoiceSupported(){
     try { return !!(document && document.body && document.body.dataset && document.body.dataset.voiceSupported === '1'); } catch (_) { return false; }
@@ -21,9 +22,9 @@
   function isSoundOn(){ try { var v = StorageService && StorageService.getItem(SOUND_KEY); return String(v || '').toLowerCase() === 'on'; } catch (_) { return false; } }
   function setSoundOn(on){ try { StorageService && StorageService.setItem(SOUND_KEY, on ? 'on' : 'off'); } catch (_) {} }
 
-  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-  function getRate(){ try { var raw = StorageService && StorageService.getItem(RATE_KEY); var n = parseFloat(raw); if (!isFinite(n)) n = 0.8; return clamp(n, 0.5, 1.5); } catch (_) { return 0.8; } }
-  function setRate(r){ try { StorageService && StorageService.setItem(RATE_KEY, String(r)); } catch (_) {} }
+  function clearLegacyRate(){ try { StorageService && StorageService.removeItem && StorageService.removeItem(RATE_KEY); } catch (_) {} }
+  function getRate(){ clearLegacyRate(); return DEFAULT_RATE; }
+  function setRate(){ clearLegacyRate(); return DEFAULT_RATE; }
 
   function getThaiVoiceInstallMessage(){
     try {
@@ -35,8 +36,6 @@
       return 'Thai voice not available. Install Thai TTS in your system settings.';
     } catch (_) { return 'Thai voice not available. Install Thai TTS in your system settings.'; }
   }
-
-  function labelForRate(rate){ return 'Speed: ' + (rate.toFixed(1) + 'x'); }
 
   function injectControls(){
     try {
@@ -71,23 +70,6 @@
       });
       wrap.appendChild(btn);
 
-      var speedBtn = document.createElement('button');
-      speedBtn.type = 'button';
-      speedBtn.className = 'chip sound-speed-toggle';
-      var RATES = [0.6, 0.8, 1.0];
-      function nearestRate(val){ var r = parseFloat(val); if (!isFinite(r)) r = 0.8; var best = RATES[0], diff = Math.abs(r - best); for (var i=1;i<RATES.length;i++){ var d = Math.abs(r - RATES[i]); if (d < diff) { diff = d; best = RATES[i]; } } return best; }
-      var current = nearestRate(getRate());
-      setRate(current);
-      speedBtn.textContent = labelForRate(current);
-      speedBtn.addEventListener('click', function(){
-        var idx = 0; for (var i=0;i<RATES.length;i++){ if (Math.abs(RATES[i]-current) < 0.001) { idx = i; break; } }
-        current = RATES[(idx + 1) % RATES.length];
-        setRate(current);
-        try { speedBtn.textContent = labelForRate(current); } catch (_) {}
-        try { global.speechSynthesis && global.speechSynthesis.resume(); } catch (_) {}
-      });
-      wrap.appendChild(speedBtn);
-
       footer.appendChild(wrap);
     } catch (e) { logError(e, 'ui.sound.injectControls'); }
   }
@@ -119,4 +101,3 @@
     setRate: setRate
   };
 })(window);
-
