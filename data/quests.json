@@ -2,7 +2,7 @@
   {
     "id": "quest-survival-basics",
     "title": "Quest 1: Survival Starter",
-    "emoji": "🟢",
+    "emoji": "🌱",
     "tagline": "Beginner Conversation",
     "goal": "Hold a very simple intro conversation, ask the time/day, count things.",
     "steps": [
@@ -31,7 +31,7 @@
   {
     "id": "quest-daily-life",
     "title": "Quest 2: Daily Life Explorer",
-    "emoji": "🟡",
+    "emoji": "🌿",
     "tagline": "Elementary Conversation",
     "goal": "Order food, talk about daily routine, make simple plans.",
     "preview": true,
@@ -62,7 +62,7 @@
   {
     "id": "quest-script-foundations",
     "title": "Quest 3: Script Foundations",
-    "emoji": "🔵",
+    "emoji": "📖",
     "tagline": "Reading & Writing Level 1",
     "goal": "Recognize and write the 44 consonants, read simple syllables.",
     "preview": true,
@@ -85,7 +85,7 @@
   {
     "id": "quest-word-builder",
     "title": "Quest 4: Word Builder",
-    "emoji": "🟣",
+    "emoji": "🧱",
     "tagline": "Reading boosts",
     "goal": "Build confidence reading multi-letter syllables and special vowel forms.",
     "preview": true,
@@ -108,7 +108,7 @@
   {
     "id": "quest-everyday-conversation",
     "title": "Quest 5: Everyday Conversation",
-    "emoji": "🔴",
+    "emoji": "💬",
     "tagline": "Make plans, talk daily life",
     "goal": "Carry on everyday conversations about food, home, and routines.",
     "preview": true,
@@ -139,7 +139,7 @@
   {
     "id": "quest-grammar-tone",
     "title": "Quest 6: Grammar & Tone Mastery",
-    "emoji": "⚫",
+    "emoji": "🎯",
     "tagline": "Pronounce with confidence",
     "goal": "Use classifiers correctly, master tones, and talk about time with accuracy.",
     "preview": true,

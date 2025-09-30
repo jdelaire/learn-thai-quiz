@@ -76,23 +76,26 @@
     return Utils.ErrorHandler.safe(function() { return doc.querySelector(sel); }, null)();
   }
 
-  function click(el) { 
+  function fireMouseClick(el) {
     Utils.ErrorHandler.safe(function() {
       if (!el) return;
-      var dispatched = false;
       try {
-        var win = el.ownerDocument && el.ownerDocument.defaultView;
+        var doc = el.ownerDocument;
+        var win = doc && doc.defaultView;
         if (win && typeof win.MouseEvent === 'function') {
           var evt = new win.MouseEvent('click', { bubbles: true, cancelable: true, view: win });
-          dispatched = el.dispatchEvent(evt) === true;
+          el.dispatchEvent(evt);
+          return;
         }
       } catch (_) {}
-      try {
-        if (!dispatched && typeof el.click === 'function') {
-          el.click();
-        }
-      } catch (_) {}
+      if (typeof el.click === 'function') {
+        try { el.click(); } catch (_) {}
+      }
     })();
+  }
+
+  function click(el) {
+    fireMouseClick(el);
   }
 
   function wait(ms) { return new Promise(function(r){ setTimeout(r, ms); }); }
