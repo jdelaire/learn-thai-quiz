@@ -268,7 +268,7 @@
     const name = 'Home search filters show empty state';
     const iframe = createFrame();
     try {
-      const nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not load');
+      const nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html?mode=browse'), 6000, 'Home did not load');
       if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
       const doc = nav.doc;
       const win = nav.win;
@@ -358,7 +358,7 @@
       await wait(120);
 
       // Reload home into the same frame
-      const nav2 = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not reload');
+      const nav2 = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html?mode=browse'), 6000, 'Home did not reload');
       if (!nav2.ok) return { name: name, ok: false, details: String(nav2.error) };
       const doc2 = nav2.doc;
       const filters2 = doc2.getElementById('category-filters');
