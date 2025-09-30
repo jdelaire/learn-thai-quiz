@@ -599,10 +599,13 @@
     let questsLoadError = null;
 
     let viewMode = MODE_BROWSE;
+    let modeStored = false;
     try {
       const storedMode = (window.StorageService && window.StorageService.getItem(STORAGE_HOME_VIEW_MODE)) || '';
       if (storedMode === MODE_QUEST) viewMode = MODE_QUEST;
+      if (storedMode) modeStored = true;
     } catch (_) {}
+    if (!modeStored) viewMode = MODE_QUEST;
 
     function updateViewToggleUI() {
       if (!viewToggle) return;
