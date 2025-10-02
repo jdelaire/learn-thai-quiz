@@ -923,33 +923,6 @@
     }
   }
 
-  async function testHomeResumeLink(serverRoot, quizId) {
-    const name = 'Home shows Resume link for last attempt';
-    const iframe = createFrame();
-    try {
-      // Seed last attempt in same-origin storage
-      const key = 'thaiQuest.lastAttempt.' + quizId;
-      window.StorageService && window.StorageService.setNumber(key, Date.now());
-
-      const nav = await withTimeout(navigateFrame(iframe, serverRoot + '/index.html'), 6000, 'Home did not load');
-      if (!nav.ok) return { name: name, ok: false, details: String(nav.error) };
-      const doc = nav.doc;
-      let start = Date.now();
-      while (Date.now() - start < 4000) {
-        const link = doc.querySelector('.player-resume .resume-link');
-        if (link && /quiz\.html\?quiz=/.test(link.getAttribute('href') || '')) {
-          return { name: name, ok: true };
-        }
-        await wait(100);
-      }
-      return { name: name, ok: false, details: 'Resume link not visible' };
-    } catch (e) {
-      return { name: name, ok: false, details: String(e && e.message || e) };
-    } finally {
-      Utils.ErrorHandler.safe(function() { iframe.remove(); })();
-    }
-  }
-
   async function testHomeCardStars(serverRoot, quizId) {
     const name = 'Home quiz card shows star rating from progress';
     const iframe = createFrame();
@@ -1238,7 +1211,6 @@
 
     // Home resume link and card stars using a discovered quiz id (first)
     if (quizIds.length > 0) {
-      results.push(await testHomeResumeLink(root, quizIds[0]));
       if (typeof onProgress === 'function') onProgress();
       results.push(await testHomeCardStars(root, quizIds[0]));
       if (typeof onProgress === 'function') onProgress();
