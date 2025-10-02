@@ -564,7 +564,7 @@ body.quiz-page .stats {
   font-size: 0.95em;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .star-celebration-card .celebrate-close:hover,
@@ -1110,8 +1110,6 @@ body.home .footer {
   margin: 0 auto;
   background: var(--color-bg);
   border-radius: 24px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1197,12 +1195,13 @@ body.home .footer {
 }
 
 .player-identity {
-  padding: 0 1.6em;
+  padding: 0.2em 1.6em 0.1em;
   margin-top: 0.4em;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.25em;
+  width: 100%;
 }
 
 .player-name {
@@ -1211,6 +1210,11 @@ body.home .footer {
   color: var(--color-text);
   transition: color 0.2s ease;
   cursor: pointer;
+  width: 100%;
+  text-align: center;
+  display: block;
+  position: relative;
+  padding: 0 1.6em;
 }
 
 .player-name:hover {
@@ -1218,10 +1222,15 @@ body.home .footer {
 }
 
 .player-name::after {
-  content: ' ✏️';
+  content: '✏️';
   opacity: 0;
   transition: opacity 0.2s ease;
-  font-size: 0.8em;
+  font-size: 0.9em;
+  position: absolute;
+  right: 0.4em;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .player-name:hover::after {
@@ -1240,6 +1249,8 @@ body.home .footer {
   font-family: inherit;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   text-align: center;
+  display: block;
+  margin: 0 auto;
 }
 
 .player-name-edit:focus {
@@ -1271,31 +1282,30 @@ body.home .footer {
 }
 
 .pt-thai {
-  font-size: clamp(1.1em, 3.2vw, 1.4em);
+  font-size: clamp(0.95em, 2.7vw, 1.15em);
   font-weight: 800;
   color: var(--color-text);
   line-height: 1.25;
 }
 
 .pt-phonetic {
-  font-size: clamp(0.82em, 2.6vw, 1em);
+  font-size: clamp(0.72em, 2vw, 0.88em);
   opacity: 0.85;
   letter-spacing: 0.02em;
 }
 
 .player-metrics {
   width: 100%;
-  padding: 1.4em 1.6em 0;
+  padding: 1.2em 1.8em 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.9em;
-  border-top: 1px solid rgba(0, 0, 0, 0.04);
+  gap: 0.8em;
 }
 
 .metric {
-  flex: 1 1 120px;
-  min-width: 120px;
+  flex: 1 1 100px;
+  min-width: 100px;
   background: rgba(244, 247, 255, 0.7);
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 16px;
@@ -1327,7 +1337,6 @@ body.home .footer {
   flex-direction: column;
   align-items: center;
   gap: 0.6em;
-  border-top: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .player-resume .resume-label {
@@ -1344,26 +1353,19 @@ body.home .footer {
   font-weight: 700;
   font-size: 0.95em;
   color: #ffffff;
-  background: linear-gradient(135deg, var(--color-brand) 0%, var(--color-accent) 100%);
+  background: var(--color-accent);
   padding: 0.65em 1.4em;
   border-radius: 999px;
   text-decoration: none;
-  box-shadow: 0 14px 28px rgba(2, 36, 125, 0.25);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.player-resume .resume-link::after {
-  content: '→';
-  font-size: 1em;
 }
 
 .player-resume .resume-link:hover {
   transform: translateY(-1px);
-  box-shadow: 0 18px 32px rgba(2, 36, 125, 0.3);
 }
 
 .player-resume .resume-link:focus-visible {
-  outline: 3px solid rgba(0, 36, 125, 0.3);
+  outline: 3px solid rgba(165, 25, 49, 0.35);
   outline-offset: 4px;
 }
 
@@ -1401,7 +1403,7 @@ body.home .footer {
   }
 
   .player-metrics {
-    padding: 1.1em 1.2em 0;
+    padding: 1.1em 1.6em 0;
     gap: 0.7em;
   }
 
@@ -1788,7 +1790,7 @@ body.questions-quiz .correct-line {
   }
 
   .player-metrics {
-    padding: 0.9em 1em 0;
+    padding: 0.9em 1.3em 0;
     gap: 0.6em;
   }
 

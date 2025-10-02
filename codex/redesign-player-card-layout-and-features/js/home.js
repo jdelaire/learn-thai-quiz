@@ -44,6 +44,8 @@
         padding: 2px 6px;
         outline: none;
         width: ${inputWidth}px;
+        max-width: 100%;
+        box-sizing: border-box;
         font-family: inherit;
       `;
       
@@ -273,7 +275,7 @@
 
             const label = document.createElement('div');
             label.className = 'resume-label';
-            label.textContent = 'Next quiz';
+            label.textContent = 'Resume';
 
             const a = document.createElement('a');
             a.className = 'resume-link';
@@ -292,7 +294,7 @@
               Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(resumeEl); })();
               const label = document.createElement('div');
               label.className = 'resume-label';
-              label.textContent = 'Next quiz';
+              label.textContent = 'Resume quiz';
               const a = document.createElement('a');
               a.className = 'resume-link';
               a.href = 'quiz.html?quiz=' + latest.quizId;
