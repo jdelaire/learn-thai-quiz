@@ -1,0 +1,45 @@
+[
+  { "symbol": "ก", "final": "k", "exampleThai": "ปาก", "phonetic": "bpàak (mouth)", "emoji": "👄" },
+  { "symbol": "ข", "final": "k", "exampleThai": "ผัก", "phonetic": "phàk (vegetable)", "emoji": "🥬" },
+  { "symbol": "ค", "final": "k", "exampleThai": "เอก", "phonetic": "èek (first)", "emoji": "🥇" },
+  { "symbol": "ฆ", "final": "k", "exampleThai": "นก", "phonetic": "nók (bird)", "emoji": "🐦" },
+
+  { "symbol": "ด", "final": "t", "exampleThai": "ปิด", "phonetic": "bpìt (to close)", "emoji": "🔒" },
+  { "symbol": "ต", "final": "t", "exampleThai": "เล็ด", "phonetic": "lét (to leak)", "emoji": "💧" },
+  { "symbol": "ฎ", "final": "t", "exampleThai": "ชฎา", "phonetic": "chà-daa (archaic use)", "emoji": "👑" },
+  { "symbol": "ฏ", "final": "t", "exampleThai": "กฎ", "phonetic": "gòt (rule)", "emoji": "⚖️" },
+  { "symbol": "จ", "final": "t", "exampleThai": "จัด", "phonetic": "jàt (arrange)", "emoji": "🗂️" },
+  { "symbol": "ช", "final": "t", "exampleThai": "ชัด", "phonetic": "chát (clear)", "emoji": "🔍" },
+  { "symbol": "ซ", "final": "t", "exampleThai": "ลด", "phonetic": "lót (reduce)", "emoji": "⬇️" },
+  { "symbol": "ศ", "final": "t", "exampleThai": "เศษ", "phonetic": "sèet (scrap)", "emoji": "🗑️" },
+  { "symbol": "ษ", "final": "t", "exampleThai": "กษัตริย์", "phonetic": "gà-sàt (king)", "emoji": "👑" },
+  { "symbol": "ส", "final": "t", "exampleThai": "ปราสาท", "phonetic": "bpraa-sàat (palace)", "emoji": "🏰" },
+  { "symbol": "ฐ", "final": "t", "exampleThai": "ฐาน", "phonetic": "thǎan (base)", "emoji": "🧱" },
+  { "symbol": "ฑ", "final": "t", "exampleThai": "มณฑป", "phonetic": "mon-dòp (pavilion)", "emoji": "🏛️" },
+  { "symbol": "ฒ", "final": "t", "exampleThai": "วิทูรย์", "phonetic": "wí-thuun (proper name)", "emoji": "📜" },
+
+  { "symbol": "บ", "final": "p", "exampleThai": "พบ", "phonetic": "phóp (to meet)", "emoji": "🤝" },
+  { "symbol": "ป", "final": "p", "exampleThai": "จับ", "phonetic": "jàp (catch)", "emoji": "✋" },
+  { "symbol": "พ", "final": "p", "exampleThai": "ลาพ", "phonetic": "laap (farewell)", "emoji": "👋" },
+  { "symbol": "ภ", "final": "p", "exampleThai": "ภาพ", "phonetic": "phâap (picture)", "emoji": "🖼️" },
+  { "symbol": "ฟ", "final": "p", "exampleThai": "ลอฟ", "phonetic": "lɔ́p (loanword)", "emoji": "🔤" },
+
+  { "symbol": "ม", "final": "m", "exampleThai": "ทำ", "phonetic": "tham (do)", "emoji": "🛠️" },
+
+  { "symbol": "น", "final": "n", "exampleThai": "ดิน", "phonetic": "din (soil)", "emoji": "🌱" },
+  { "symbol": "ณ", "final": "n", "exampleThai": "พจน", "phonetic": "phót-jan (dictionary, part)", "emoji": "📚" },
+  { "symbol": "ญ", "final": "n", "exampleThai": "กาญจน์", "phonetic": "gaan (province name)", "emoji": "🗺️" },
+  { "symbol": "ร", "final": "n", "exampleThai": "กร", "phonetic": "gɔɔn (prefix, syllable-final n)", "emoji": "🧩" },
+  { "symbol": "ล", "final": "n", "exampleThai": "ผล", "phonetic": "phǒn (result)", "emoji": "✅" },
+  { "symbol": "ฬ", "final": "n", "exampleThai": "กีฬา", "phonetic": "gii-laa (sport)", "emoji": "🏅" },
+
+  { "symbol": "ง", "final": "ŋ", "exampleThai": "กาง", "phonetic": "gaaŋ (spread)", "emoji": "👐" },
+
+  { "symbol": "ว", "final": "w", "exampleThai": "ดาว", "phonetic": "daaw (star)", "emoji": "⭐" },
+  { "symbol": "ย", "final": "y", "exampleThai": "ไทย", "phonetic": "thai (Thai)", "emoji": "🇹🇭" },
+
+  { "symbol": "ห", "final": "silent", "exampleThai": "", "phonetic": "— (silent)", "emoji": "🤫" },
+  { "symbol": "ฮ", "final": "silent", "exampleThai": "", "phonetic": "— (silent)", "emoji": "🤐" },
+  { "symbol": "อ", "final": "silent", "exampleThai": "", "phonetic": "— (silent / vowel carrier)", "emoji": "🔤" }
+]
+
