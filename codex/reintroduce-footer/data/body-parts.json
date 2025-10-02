@@ -1,0 +1,218 @@
+[
+  {
+    "english": "body",
+    "thai": "ร่างกาย",
+    "phonetic": "râaŋ-gaay",
+    "emoji": "🧍"
+  },
+  {
+    "english": "head",
+    "thai": "หัว",
+    "phonetic": "hǔa",
+    "emoji": "🧠"
+  },
+  {
+    "english": "face",
+    "thai": "หน้า",
+    "phonetic": "nâa",
+    "emoji": "😊"
+  },
+  {
+    "english": "hair (on head)",
+    "thai": "ผม",
+    "phonetic": "phǒm",
+    "emoji": "🧠"
+  },
+  {
+    "english": "forehead",
+    "thai": "หน้าผาก",
+    "phonetic": "nâa-phàak",
+    "emoji": "🧠"
+  },
+  {
+    "english": "eye",
+    "thai": "ตา",
+    "phonetic": "dtaa",
+    "emoji": "👁️"
+  },
+  {
+    "english": "eyebrow",
+    "thai": "คิ้ว",
+    "phonetic": "khíu",
+    "emoji": "👁️"
+  },
+  {
+    "english": "eyelash",
+    "thai": "ขนตา",
+    "phonetic": "khǒn-dtaa",
+    "emoji": "👁️"
+  },
+  {
+    "english": "ear",
+    "thai": "หู",
+    "phonetic": "hǔu",
+    "emoji": "👂"
+  },
+  {
+    "english": "nose",
+    "thai": "จมูก",
+    "phonetic": "jà-mùuk",
+    "emoji": "👃"
+  },
+  {
+    "english": "cheek",
+    "thai": "แก้ม",
+    "phonetic": "gɛ̂ɛm",
+    "emoji": "😊"
+  },
+  {
+    "english": "mouth",
+    "thai": "ปาก",
+    "phonetic": "bpàak",
+    "emoji": "👄"
+  },
+  {
+    "english": "lip",
+    "thai": "ริมฝีปาก",
+    "phonetic": "rim-fǐi-bpàak",
+    "emoji": "💋"
+  },
+  {
+    "english": "tooth",
+    "thai": "ฟัน",
+    "phonetic": "fan",
+    "emoji": "🦷"
+  },
+  {
+    "english": "tongue",
+    "thai": "ลิ้น",
+    "phonetic": "lín",
+    "emoji": "👅"
+  },
+  {
+    "english": "neck",
+    "thai": "คอ",
+    "phonetic": "khɔɔ",
+    "emoji": "🦒"
+  },
+  {
+    "english": "shoulder",
+    "thai": "ไหล่",
+    "phonetic": "lài",
+    "emoji": "🧑‍🎤"
+  },
+  {
+    "english": "arm",
+    "thai": "แขน",
+    "phonetic": "kɛɛn",
+    "emoji": "💪"
+  },
+  {
+    "english": "elbow",
+    "thai": "ข้อศอก",
+    "phonetic": "khɔɔ-sɔɔk",
+    "emoji": "🦴"
+  },
+  {
+    "english": "wrist",
+    "thai": "ข้อมือ",
+    "phonetic": "khɔɔ-mʉʉ",
+    "emoji": "⌚"
+  },
+  {
+    "english": "hand",
+    "thai": "มือ",
+    "phonetic": "mʉʉ",
+    "emoji": "✋"
+  },
+  {
+    "english": "finger",
+    "thai": "นิ้วมือ",
+    "phonetic": "níu-mʉʉ",
+    "emoji": "☝️"
+  },
+  {
+    "english": "thumb",
+    "thai": "หัวแม่มือ",
+    "phonetic": "hǔa-mɛɛ-mʉʉ",
+    "emoji": "👍"
+  },
+  {
+    "english": "chest",
+    "thai": "อก",
+    "phonetic": "òk",
+    "emoji": "🤸"
+  },
+  {
+    "english": "back",
+    "thai": "หลัง",
+    "phonetic": "lǎŋ",
+    "emoji": "🧍‍♂️"
+  },
+  {
+    "english": "waist",
+    "thai": "เอว",
+    "phonetic": "eeo",
+    "emoji": "🧍‍♀️"
+  },
+  {
+    "english": "stomach",
+    "thai": "ท้อง",
+    "phonetic": "thɔɔŋ",
+    "emoji": "🤰"
+  },
+  {
+    "english": "hip",
+    "thai": "สะโพก",
+    "phonetic": "sà-phôok",
+    "emoji": "🕺"
+  },
+  {
+    "english": "leg",
+    "thai": "ขา",
+    "phonetic": "khǎa",
+    "emoji": "🦵"
+  },
+  {
+    "english": "knee",
+    "thai": "หัวเข่า",
+    "phonetic": "hǔa-khào",
+    "emoji": "🦵"
+  },
+  {
+    "english": "ankle",
+    "thai": "ข้อเท้า",
+    "phonetic": "khɔɔ-tháao",
+    "emoji": "🦶"
+  },
+  {
+    "english": "foot",
+    "thai": "เท้า",
+    "phonetic": "tháao",
+    "emoji": "🦶"
+  },
+  {
+    "english": "toe",
+    "thai": "นิ้วเท้า",
+    "phonetic": "níu-tháao",
+    "emoji": "🦶"
+  },
+  {
+    "english": "skin",
+    "thai": "ผิวหนัง",
+    "phonetic": "phǐw-nǎŋ",
+    "emoji": "🧴"
+  },
+  {
+    "english": "bone",
+    "thai": "กระดูก",
+    "phonetic": "grà-dùuk",
+    "emoji": "🦴"
+  },
+  {
+    "english": "heart",
+    "thai": "หัวใจ",
+    "phonetic": "hǔa-jai",
+    "emoji": "👂"
+  }
+]
