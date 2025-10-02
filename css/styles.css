@@ -606,7 +606,6 @@ body.quiz-page .stats {
 .footer {
   text-align: center;
   margin-top: auto;
-  padding: 2.5em 0 1.5em;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -701,10 +700,6 @@ body.quiz-page .footer .restart-quiz { order: 3; }
 body.quiz-page .footer .sound-controls { order: 4; }
 body.quiz-page .footer .sound-help { order: 5; }
 body.quiz-page .footer .feedback-link { order: 6; }
-body.quiz-page .footer .coffee-btn {
-  order: 7;
-  margin-left: 0;
-}
 body.quiz-page .footer .sound-controls { display: inline-flex; gap: 0.5em; flex-wrap: wrap; align-items: center; justify-content: center; }
 body.quiz-page .footer .sound-help { font-size: 0.85em; opacity: 0.85; max-width: 720px; }
 
@@ -714,7 +709,7 @@ body.quiz-page .footer .sound-help { font-size: 0.85em; opacity: 0.85; max-width
   }
 }
 
-.back-btn, .coffee-btn {
+.back-btn {
   color: var(--color-brand);
   text-decoration: none;
   padding: 0.8em 1.5em;
@@ -727,13 +722,12 @@ body.quiz-page .footer .sound-help { font-size: 0.85em; opacity: 0.85; max-width
   backdrop-filter: none;
   display: inline-block;
 }
-.coffee-btn { margin-left: 1em; }
 
 body.quiz-page .back-btn {
   margin-top: 1em;
 }
 
-.back-btn:hover, .coffee-btn:hover {
+.back-btn:hover {
   background: #f7faff;
   transform: translateY(-2px);
   box-shadow: 0 5px 14px rgba(0,0,0,0.08);
