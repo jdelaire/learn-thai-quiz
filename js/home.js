@@ -107,30 +107,6 @@
     }
   }
 
-  let quizzesMetaCache = null;
-  let quizzesMetaPromise = null;
-  let lastResumeQuizId = null;
-
-  function loadQuizzesMeta(){
-    if (quizzesMetaCache) return Promise.resolve(quizzesMetaCache);
-    if (!quizzesMetaPromise) {
-      quizzesMetaPromise = Utils.fetchJSONCached('data/quizzes.json').then(function(list){
-        const arr = Array.isArray(list) ? list : [];
-        const map = Object.create(null);
-        for (let i = 0; i < arr.length; i++) {
-          const it = arr[i];
-          if (it && it.id) map[it.id] = it;
-        }
-        quizzesMetaCache = { list: arr, map: map };
-        return quizzesMetaCache;
-      }).catch(function(err){
-        quizzesMetaPromise = null;
-        throw err;
-      });
-    }
-    return quizzesMetaPromise;
-  }
-
   try {
     const playerCard = document.querySelector('.player-card');
     const dom = {
@@ -141,7 +117,6 @@
       xpBar: playerCard ? playerCard.querySelector('.xp-bar') : document.querySelector('.xp-bar'),
       metrics: playerCard ? playerCard.querySelectorAll('.metric-value') : document.querySelectorAll('.metric-value'),
       today: playerCard ? playerCard.querySelector('.player-today') : document.querySelector('.player-today'),
-      resume: playerCard ? playerCard.querySelector('.player-resume') : document.querySelector('.player-resume'),
       avatar: playerCard ? playerCard.querySelector('.player-avatar') : document.querySelector('.player-avatar')
     };
 
@@ -226,97 +201,12 @@
 
     updateHeaderMetrics();
 
-    // Render resume quick link (below today card, above metrics)
-    function renderResumeQuickLink() {
-      try {
-        const playerCard = dom.card || document.querySelector('.player-card');
-        if (!playerCard) return;
-        const metricsEl = playerCard.querySelector('.player-metrics');
-
-        let resumeEl = dom.resume || playerCard.querySelector('.player-resume');
-        if (!resumeEl) {
-          resumeEl = document.createElement('div');
-          resumeEl.className = 'player-resume';
-          resumeEl.hidden = true;
-          if (metricsEl && metricsEl.nextSibling) {
-            playerCard.insertBefore(resumeEl, metricsEl.nextSibling);
-          } else if (metricsEl) {
-            playerCard.appendChild(resumeEl);
-          } else {
-            playerCard.appendChild(resumeEl);
-          }
-          dom.resume = resumeEl;
-        } else if (metricsEl && resumeEl.previousElementSibling !== metricsEl) {
-          playerCard.insertBefore(resumeEl, metricsEl.nextSibling);
-        }
-
-        const latest = (Utils && typeof Utils.getLatestAttempt === 'function') ? Utils.getLatestAttempt() : null;
-        if (!latest || !latest.quizId) {
-          lastResumeQuizId = null;
-          resumeEl.hidden = true;
-          Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(resumeEl); })();
-          return;
-        }
-
-        if (latest.quizId === lastResumeQuizId && resumeEl.childNodes.length > 0) {
-          resumeEl.hidden = false;
-          return;
-        }
-
-        lastResumeQuizId = latest.quizId;
-
-        // Resolve quiz metadata (title and href)
-        loadQuizzesMeta()
-          .then(function(metaBundle){
-            const map = metaBundle && metaBundle.map;
-            const meta = (map && map[latest.quizId]) || { id: latest.quizId, title: latest.quizId, href: 'quiz.html?quiz=' + latest.quizId };
-
-            Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(resumeEl); })();
-
-            const label = document.createElement('div');
-            label.className = 'resume-label';
-            label.textContent = 'Resume';
-
-            const a = document.createElement('a');
-            a.className = 'resume-link';
-            a.href = meta.href || ('quiz.html?quiz=' + latest.quizId);
-            a.textContent = meta.title || latest.quizId;
-            a.setAttribute('aria-label', 'Continue ' + (meta.title || latest.quizId));
-
-            resumeEl.appendChild(label);
-            resumeEl.appendChild(a);
-            
-            resumeEl.hidden = false;
-          })
-          .catch(function(err){
-            // Fallback to link without nice title
-            try {
-              Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(resumeEl); })();
-              const label = document.createElement('div');
-              label.className = 'resume-label';
-              label.textContent = 'Resume quiz';
-              const a = document.createElement('a');
-              a.className = 'resume-link';
-              a.href = 'quiz.html?quiz=' + latest.quizId;
-              a.textContent = 'Continue ' + latest.quizId;
-              a.setAttribute('aria-label', 'Continue ' + latest.quizId);
-              resumeEl.appendChild(label);
-              resumeEl.appendChild(a);
-              resumeEl.hidden = false;
-            } catch (_) {}
-            lastResumeQuizId = null;
-            Utils.logError(err, 'home.js: renderResumeQuickLink fetch quizzes');
-          });
-      } catch (e) { Utils.logError(e, 'home.js: renderResumeQuickLink'); }
-    }
-
     // Refresh player card when returning to the page or when progress/name changes
     (function wirePlayerCardRefreshers(){
       try {
         function rerenderHeader() {
           updateHeaderLevelAndXP();
           updateHeaderMetrics();
-          renderResumeQuickLink();
         }
 
         // Fires on bfcache restore and normal navigation back to this page
@@ -339,9 +229,6 @@
         });
       } catch (e) { Utils.logError(e, 'home.js: wire player card refreshers'); }
     })();
-
-    // Initial render of resume quick link
-    renderResumeQuickLink();
 
   } catch (e) { Utils.logError(e, 'home.js: player card data population'); }
   
