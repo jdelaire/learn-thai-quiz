@@ -44,6 +44,8 @@
         padding: 2px 6px;
         outline: none;
         width: ${inputWidth}px;
+        max-width: 100%;
+        box-sizing: border-box;
         font-family: inherit;
       `;
       
@@ -137,7 +139,6 @@
       level: playerCard ? playerCard.querySelector('.player-level') : document.querySelector('.player-level'),
       xpValue: playerCard ? playerCard.querySelector('.xp-value') : document.querySelector('.xp-value'),
       xpBar: playerCard ? playerCard.querySelector('.xp-bar') : document.querySelector('.xp-bar'),
-      xpFill: playerCard ? playerCard.querySelector('.xp-fill') : document.querySelector('.xp-fill'),
       metrics: playerCard ? playerCard.querySelectorAll('.metric-value') : document.querySelectorAll('.metric-value'),
       today: playerCard ? playerCard.querySelector('.player-today') : document.querySelector('.player-today'),
       resume: playerCard ? playerCard.querySelector('.player-resume') : document.querySelector('.player-resume'),
@@ -186,10 +187,12 @@
 
         const xpProgress = Utils.getXPProgressPercentage();
         const xpBarEl = dom.xpBar;
-        const xpFillEl = dom.xpFill;
-        if (xpBarEl && xpFillEl) {
+        if (xpBarEl) {
           xpBarEl.setAttribute('aria-valuenow', xpProgress);
-          xpFillEl.style.width = `${xpProgress}%`;
+          try {
+            const clamped = Math.max(0, Math.min(100, Number(xpProgress) || 0));
+            xpBarEl.style.setProperty('--xp-progress', (clamped * 3.6) + 'deg');
+          } catch (_) {}
         }
 
         // Update avatars so visuals evolve with level/XP
@@ -228,21 +231,23 @@
       try {
         const playerCard = dom.card || document.querySelector('.player-card');
         if (!playerCard) return;
-        const todayEl = dom.today || playerCard.querySelector('.player-today');
         const metricsEl = playerCard.querySelector('.player-metrics');
-        if (!metricsEl) return;
 
         let resumeEl = dom.resume || playerCard.querySelector('.player-resume');
         if (!resumeEl) {
           resumeEl = document.createElement('div');
           resumeEl.className = 'player-resume';
-          // Insert after todayEl when present, otherwise before metrics
-          if (todayEl && todayEl.nextSibling) {
-            playerCard.insertBefore(resumeEl, todayEl.nextSibling);
+          resumeEl.hidden = true;
+          if (metricsEl && metricsEl.nextSibling) {
+            playerCard.insertBefore(resumeEl, metricsEl.nextSibling);
+          } else if (metricsEl) {
+            playerCard.appendChild(resumeEl);
           } else {
-            playerCard.insertBefore(resumeEl, metricsEl);
+            playerCard.appendChild(resumeEl);
           }
           dom.resume = resumeEl;
+        } else if (metricsEl && resumeEl.previousElementSibling !== metricsEl) {
+          playerCard.insertBefore(resumeEl, metricsEl.nextSibling);
         }
 
         const latest = (Utils && typeof Utils.getLatestAttempt === 'function') ? Utils.getLatestAttempt() : null;
@@ -270,13 +275,13 @@
 
             const label = document.createElement('div');
             label.className = 'resume-label';
-            label.textContent = 'Resume your quiz';
+            label.textContent = 'Resume';
 
             const a = document.createElement('a');
             a.className = 'resume-link';
             a.href = meta.href || ('quiz.html?quiz=' + latest.quizId);
             a.textContent = meta.title || latest.quizId;
-            a.setAttribute('aria-label', 'Resume your latest quiz ' + (meta.title || latest.quizId));
+            a.setAttribute('aria-label', 'Continue ' + (meta.title || latest.quizId));
 
             resumeEl.appendChild(label);
             resumeEl.appendChild(a);
@@ -287,10 +292,15 @@
             // Fallback to link without nice title
             try {
               Utils.ErrorHandler.safeDOM(function(){ Utils.clearChildren(resumeEl); })();
+              const label = document.createElement('div');
+              label.className = 'resume-label';
+              label.textContent = 'Resume quiz';
               const a = document.createElement('a');
               a.className = 'resume-link';
               a.href = 'quiz.html?quiz=' + latest.quizId;
-              a.textContent = 'Resume ' + latest.quizId;
+              a.textContent = 'Continue ' + latest.quizId;
+              a.setAttribute('aria-label', 'Continue ' + latest.quizId);
+              resumeEl.appendChild(label);
               resumeEl.appendChild(a);
               resumeEl.hidden = false;
             } catch (_) {}
