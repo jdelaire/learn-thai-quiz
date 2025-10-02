@@ -27,91 +27,35 @@
     }
   })();
 
-  function setText(id, text) {
-    Utils.ErrorHandler.safe(Utils.setText)(id, text);
-  }
-
-  function fallbackShowNotFound(quizId) {
-    try {
-      setText('page-title', 'Quiz not found');
-      setText('page-subtitle', 'Unknown quiz: ' + (quizId || ''));
-    } catch (_) {}
-  }
-
   function showNotFound(quizId) {
-    if (metaHelpers && typeof metaHelpers.showNotFound === 'function') {
+    const handler = metaHelpers && metaHelpers.showNotFound;
+    if (typeof handler === 'function') {
       try {
-        metaHelpers.showNotFound(quizId);
+        Utils.ErrorHandler.safe(handler).call(metaHelpers, quizId);
         return;
       } catch (err) {
         Utils.logError(err, 'quiz-loader.js: showNotFound');
       }
     }
-    fallbackShowNotFound(quizId);
-  }
-
-  function fallbackApplyQuizMetadata(meta, quizId) {
     try {
-      document.title = (meta.title || 'ThaiQuest') + ' — ThaiQuest';
-    } catch (_) {}
-    try { setText('page-title', meta.title || 'ThaiQuest'); } catch (_) {}
-    try { setText('page-subtitle', meta.description || ''); } catch (_) {}
-    try {
-      var metaDesc = document.querySelector('meta[name="description"]');
-      if (!metaDesc) {
-        metaDesc = document.createElement('meta');
-        metaDesc.setAttribute('name', 'description');
-        document.head.appendChild(metaDesc);
-      }
-      metaDesc.setAttribute('content', meta.description || 'ThaiQuest quiz: practice Thai with interactive, accessible quizzes.');
-    } catch (_) {}
-    try {
-      if (meta && meta.bodyClass) document.body.classList.add(meta.bodyClass);
-    } catch (_) {}
-    try {
-      if (quizId) {
-        document.body.classList.add(quizId + '-quiz');
-        document.body.dataset.quizId = quizId;
-        try { document.body.dataset.voiceSupported = (meta && meta.supportsVoice) ? '1' : '0'; } catch (_) {}
-        try {
-          document.body.dataset.phoneticsSupported = (meta && meta.supportsPhonetics) ? '1' : '0';
-          if (meta && meta.supportsPhonetics && Array.isArray(meta.phoneticLocales) && meta.phoneticLocales.length) {
-            document.body.dataset.phoneticLocales = meta.phoneticLocales.join(',');
-          } else {
-            try { delete document.body.dataset.phoneticLocales; } catch (_) { document.body.dataset.phoneticLocales = ''; }
-          }
-        } catch (_) {}
-      }
-    } catch (_) {}
-    try {
-      if (meta && meta.proTip) Utils.insertProTip(meta.proTip);
-    } catch (_) {}
-    try {
-      if (meta && meta.symbolNote) {
-        const anchor = document.getElementById('symbol');
-        if (anchor && !document.querySelector('.quiz-symbol-note')) {
-          const note = document.createElement('div');
-          var cls = 'quiz-symbol-note';
-          if (meta.symbolNoteClass) cls += ' ' + meta.symbolNoteClass;
-          note.className = cls;
-          note.setAttribute('role', meta.symbolNoteRole || 'note');
-          note.textContent = meta.symbolNote;
-          anchor.insertAdjacentElement('afterend', note);
-        }
-      }
+      const safeSetText = Utils.ErrorHandler.safe(Utils.setText);
+      safeSetText('page-title', 'Quiz not found');
+      safeSetText('page-subtitle', 'Unknown quiz: ' + (quizId || ''));
     } catch (_) {}
   }
 
   function applyQuizMetadata(meta, quizId) {
-    if (metaHelpers && typeof metaHelpers.applyQuizMetadata === 'function') {
+    const handler = metaHelpers && metaHelpers.applyQuizMetadata;
+    if (typeof handler === 'function') {
       try {
-        metaHelpers.applyQuizMetadata(meta, quizId);
+        Utils.ErrorHandler.safe(handler).call(metaHelpers, meta || {}, quizId);
         return;
       } catch (err) {
         Utils.logError(err, 'quiz-loader.js: applyQuizMetadata');
+        return;
       }
     }
-    fallbackApplyQuizMetadata(meta || {}, quizId);
+    Utils.logError(new Error('ui.meta.applyQuizMetadata missing'), 'quiz-loader.js: applyQuizMetadata fallback');
   }
 
   function initFromQuery() {
