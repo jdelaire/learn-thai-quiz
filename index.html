@@ -61,21 +61,20 @@
     </div>
 
     <div class="player-card" role="region" aria-label="Player profile">
-      <div class="player-top">
-        <img class="player-avatar" src="https://placehold.co/80x80/png" alt="Player avatar" />
-        <div class="player-identity">
-          <div class="player-name">PlayerID</div>
-          <div class="player-level">Level 0</div>
+      <div class="player-hero">
+        <div class="xp-bar" role="progressbar" aria-valuemin="0" aria-valuenow="0" aria-valuemax="100">
+          <div class="player-avatar-shell">
+            <img class="player-avatar" src="https://placehold.co/80x80/png" alt="Player avatar" />
+          </div>
         </div>
-      </div>
-      <div class="player-xp">
-        <div class="xp-labels">
+        <div class="xp-readout">
           <span class="xp-title">XP</span>
           <span class="xp-value">0 / 0</span>
         </div>
-        <div class="xp-bar" role="progressbar" aria-valuemin="0" aria-valuenow="0" aria-valuemax="100">
-          <div class="xp-fill" style="width:0%"></div>
-        </div>
+      </div>
+      <div class="player-identity">
+        <div class="player-name">PlayerID</div>
+        <div class="player-level">Level 0</div>
       </div>
       <div class="player-today" aria-label="Today in Thai">
         <div class="pt-line pt-thai" id="player-daymonth-thai">...</div>
@@ -95,6 +94,7 @@
           <div class="metric-value">0</div>
         </div>
       </div>
+      <div class="player-resume" hidden></div>
     </div>
   </header>
   
@@ -109,15 +109,6 @@
   </div>
 
   <div class="quiz-container" id="quiz-list" aria-live="polite"></div>
-
-  <div class="socials" aria-label="Social links">
-    <img class="avatar" src="asset/profile.jpg" alt="Profile photo" loading="lazy" />
-    <div class="social-links">
-      <a class="chip" href="https://www.instagram.com/john.dlr/" target="_blank" rel="noopener noreferrer">📸 Instagram</a>
-      <a class="chip" href="https://youtube.com/@landscapesuhd" target="_blank" rel="noopener noreferrer">▶️ YouTube</a>
-      <a class="chip" href="https://buymeacoffee.com/jdelaire" target="_blank" rel="noopener noreferrer">☕ Buy me a coffee</a>
-    </div>
-  </div>
 
   <div class="footer">
     <a class="feedback-link" aria-label="Send feedback via email" href="mailto:jdelaire@gmail.com?subject=ThaiQuest%20feedback&body=Hi%20ThaiQuest%20team,%0A%0APlease%20share%20your%20feedback%20below:%0A-%20What%20were%20you%20doing?%0A-%20What%20did%20you%20expect%20to%20happen?%0A-%20Additional%20details:%0A%0ADevice:%20%5Bdevice%5D%0ABrowser:%20%5Bbrowser%5D%0A">Send feedback</a>
