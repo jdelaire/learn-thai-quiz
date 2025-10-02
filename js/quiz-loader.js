@@ -31,24 +31,20 @@
     const handler = metaHelpers && metaHelpers.showNotFound;
     if (typeof handler === 'function') {
       try {
-        Utils.ErrorHandler.safe(handler).call(metaHelpers, quizId);
+        handler.call(metaHelpers, quizId);
         return;
       } catch (err) {
         Utils.logError(err, 'quiz-loader.js: showNotFound');
       }
     }
-    try {
-      const safeSetText = Utils.ErrorHandler.safe(Utils.setText);
-      safeSetText('page-title', 'Quiz not found');
-      safeSetText('page-subtitle', 'Unknown quiz: ' + (quizId || ''));
-    } catch (_) {}
+    Utils.logError(new Error('ui.meta.showNotFound missing'), 'quiz-loader.js: showNotFound fallback');
   }
 
   function applyQuizMetadata(meta, quizId) {
     const handler = metaHelpers && metaHelpers.applyQuizMetadata;
     if (typeof handler === 'function') {
       try {
-        Utils.ErrorHandler.safe(handler).call(metaHelpers, meta || {}, quizId);
+        handler.call(metaHelpers, meta || {}, quizId);
         return;
       } catch (err) {
         Utils.logError(err, 'quiz-loader.js: applyQuizMetadata');
