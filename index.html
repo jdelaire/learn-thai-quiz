@@ -4,15 +4,14 @@
   <meta charset="utf-8" />
   <title>ThaiQuest Has Moved</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="refresh" content="0; url=https://thaiquest.pages.dev" />
+  <meta http-equiv="refresh" content="0; url=https://thaiquest.pages.dev/" />
   <script>
     (function() {
-      var target = 'https://thaiquest.pages.dev';
+      var target = 'https://thaiquest.pages.dev/';
       try {
-        var path = window.location.pathname || '';
         var search = window.location.search || '';
         var hash = window.location.hash || '';
-        window.location.replace(target + path + search + hash);
+        window.location.replace(target + (search || '') + (hash || ''));
       } catch (_) {
         window.location.href = target;
       }
@@ -27,7 +26,7 @@
   <h1>ThaiQuest Has Moved</h1>
   <p>
     The project now lives at
-    <a href="https://thaiquest.pages.dev">https://thaiquest.pages.dev</a>.
+    <a href="https://thaiquest.pages.dev/">https://thaiquest.pages.dev/</a>.
     You should be redirected automatically.
   </p>
 </body>
