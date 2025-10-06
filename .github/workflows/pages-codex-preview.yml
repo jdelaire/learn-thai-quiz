@@ -1,0 +1,54 @@
+name: Deploy codex/* branches to Pages previews
+
+on:
+  push:
+    branches:
+      - 'codex/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "pages-preview"
+  cancel-in-progress: true        # supersede older preview runs for the same branch
+
+env:
+  RAW_BRANCH: ${{ github.ref_name }}
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Optional build goes here if you need it
+      # - run: |
+      #     npm ci
+      #     npm run build
+
+      - name: Sanitize branch name for URL/path
+        id: sanitize
+        shell: bash
+        run: |
+          # Strip leading "codex/" prefix for nicer URLs
+          BR="${RAW_BRANCH#codex/}"
+          # Replace anything not [A-Za-z0-9-] with '-'
+          SAFE="$(echo "$BR" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g')"
+          echo "safe_branch=$SAFE" >> $GITHUB_OUTPUT
+          echo "Publishing branch '$RAW_BRANCH' to /codex/$SAFE"
+
+      - name: Deploy to gh-pages subfolder
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: .                                # change to build output if you have one
+          target-folder: codex/${{ steps.sanitize.outputs.safe_branch }}
+          clean: false                             # keep other previews and prod
+          commit-message: "preview(codex): ${{ github.sha }} → codex/${{ steps.sanitize.outputs.safe_branch }}"
+
+      - name: Preview URL
+        run: |
+          echo "Preview: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/codex/${{ steps.sanitize.outputs.safe_branch }}/" >> $GITHUB_STEP_SUMMARY
+          echo "::notice title=Preview URL::https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/codex/${{ steps.sanitize.outputs.safe_branch }}/"
